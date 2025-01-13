@@ -1,11 +1,11 @@
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { useState, useMemo } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';  // Solo importamos HashRouter
 import ThemeCustomizer from './components/ThemeCustomizer';
 import Dashboard from './components/Dashboard';
 import AppTabs from './components/AppTabs'
 import TemplateList from './components/TemplateList'
-import AppRoutes from './routes'; // Importa el archivo de rutas
+import AppRoutes from './routes';
 
 function App() {
   const [themeSettings, setThemeSettings] = useState({
@@ -28,7 +28,6 @@ function App() {
         },
       },
       components: {
-        
         MuiButton: {
           styleOverrides: {
             containedPrimary: {
@@ -48,21 +47,16 @@ function App() {
   );
 
   return (
-    <BrowserRouter>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <div style={{ padding: '20px' }}>
-
-
-        {/*<ThemeCustomizer settings={themeSettings} onSettingsChange={setThemeSettings} />*/}
-        <AppTabs />
-        <AppRoutes />
-        
-        
-      </div>
-      
-    </ThemeProvider>
-    </BrowserRouter>
+    <HashRouter>  {/* Solo usamos HashRouter */}
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <div style={{ padding: '20px' }}>
+          {/*<ThemeCustomizer settings={themeSettings} onSettingsChange={setThemeSettings} />*/}
+          <AppTabs />
+          <AppRoutes />
+        </div>
+      </ThemeProvider>
+    </HashRouter>
   );
 }
 

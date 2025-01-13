@@ -7,6 +7,9 @@ import {
     Typography
 } from '@mui/material';
 import TemplateForm from '../components/TemplateForm';
+import BodyMessage from '../components/BodyMessage';
+import FooterEditor from '../components/FooterEditor';
+import QuickReplyButtons from '../components/QuickReplyButtons';
 
 const CreateTemplatePage = () => (
 
@@ -46,6 +49,9 @@ const CreateTemplatePage = () => (
         </Box>        
 
         <TemplateForm />
+        <BodyMessage />
+        <FooterEditor />
+        <QuickReplyButtons />
     </Box>
     
 

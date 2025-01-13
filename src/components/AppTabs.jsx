@@ -57,7 +57,7 @@ export default function BasicTabs() {
       {/* Contenido de las pestañas */}
       <CustomTabPanel value={value} index={0}>
         {/* Contenido para la pestaña "Templates" */}
-        Aquí va el contenido de Templates.
+        
       </CustomTabPanel>
     </Box>
   );
