@@ -3,10 +3,9 @@ import { Card, CardContent, Typography, CardActions, Button, Grid, Box } from '@
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 
-
 // Componente reutilizable para las tarjetas
 const TemplateCard = ({ title, subtitle, description, onEdit }) => (
-  <Card sx={{ minWidth: 275, border: '1px solid', borderColor: 'grey.200'}}>
+  <Card sx={{ minWidth: 275, border: '1px solid', borderColor: 'grey.200' }}>
     <CardContent>
       <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
         {subtitle}
@@ -28,8 +27,12 @@ const TemplateCard = ({ title, subtitle, description, onEdit }) => (
 export default function BasicCard() {
   const navigate = useNavigate();
 
-  const handleClick = () => {
-    navigate('/create-template-page'); // Navega a la ruta /create-template
+  const handleCreateClick = () => {
+    navigate('/create-template-page'); // Navega a la página para crear plantilla
+  };
+
+  const handleEditClick = (templateId) => {
+    navigate(`/edit-template/${templateId}`); // Navega a la página para editar la plantilla con su ID
   };
 
   return (
@@ -40,34 +43,42 @@ export default function BasicCard() {
           <p>Mira el listado de plantillas que puedes utilizar.</p>
           <p>Están aprobadas por WhatsApp para tu aplicación.</p>
         </Box>
-        <Button color="primary" variant="contained" size="large"  onClick={handleClick} endIcon={<AddIcon />}>
+        <Button
+          color="primary"
+          variant="contained"
+          size="large"
+          onClick={handleCreateClick}
+          endIcon={<AddIcon />}
+        >
           Crear Template
         </Button>
       </Box>
 
+      {/* Tarjeta única */}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TemplateCard
             title="App name"
             subtitle="onboarding"
             description="namespace"
-            onEdit={() => console.log('Editando Tarjeta Única')}
+            onEdit={() => handleEditClick('unique-template-id')}
           />
         </Grid>
-        </Grid>
-        
+      </Grid>
+
+      {/* Lista de tarjetas */}
       <Grid container spacing={2} sx={{ marginTop: 2 }}>
         {[
-          { title: 'Template 1', subtitle: 'GUPSHUP', description: 'Descripción del Template 1' },
-          { title: 'Template 2', subtitle: 'GUPSHUP', description: 'Descripción del Template 2' },
-          { title: 'Template 3', subtitle: 'GUPSHUP', description: 'Descripción del Template 3' },
-        ].map((template, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
+          { id: '1', title: 'Template 1', subtitle: 'GUPSHUP', description: 'Descripción del Template 1' },
+          { id: '2', title: 'Template 2', subtitle: 'GUPSHUP', description: 'Descripción del Template 2' },
+          { id: '3', title: 'Template 3', subtitle: 'GUPSHUP', description: 'Descripción del Template 3' },
+        ].map((template) => (
+          <Grid item xs={12} sm={6} md={4} key={template.id}>
             <TemplateCard
               title={template.title}
               subtitle={template.subtitle}
               description={template.description}
-              onEdit={() => console.log(`Editando ${template.title}`)}
+              onEdit={() => handleEditClick(template.id)}
             />
           </Grid>
         ))}
