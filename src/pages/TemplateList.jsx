@@ -48,7 +48,7 @@ export default function BasicCard() {
   const navigate = useNavigate();
 
   const handleCreateClick = () => {
-    navigate('/create-template-page'); // Navega a la página para crear plantilla
+    navigate('/create-template-page}'); // Navega a la página para crear plantilla
   };
 
   const handleVerTemplates = () => {
