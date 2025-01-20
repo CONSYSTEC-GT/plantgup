@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import TemplateList from './components/TemplateList';
+import TemplateList from './pages/TemplateList';
 import CreateTemplatePage from './pages/CreateTemplatePage';
 import EditTemplatePage from './pages/EditTemplatePage'; // Importa el nuevo componente
 

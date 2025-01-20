@@ -49,9 +49,9 @@ const CreateTemplatePage = () => (
         </Box>        
 
         <TemplateForm />
-        <BodyMessage />
-        <FooterEditor />
-        <QuickReplyButtons />
+        {/*<BodyMessage />*/}
+        {/*<FooterEditor />*/}
+        {/*<QuickReplyButtons />*/}
     </Box>
     
 

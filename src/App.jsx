@@ -4,14 +4,14 @@ import { HashRouter } from 'react-router-dom';  // Solo importamos HashRouter
 import ThemeCustomizer from './components/ThemeCustomizer';
 import Dashboard from './components/Dashboard';
 import AppTabs from './components/AppTabs'
-import TemplateList from './components/TemplateList'
+import TemplateList from './pages/TemplateList'
 import AppRoutes from './routes';
 
 function App() {
   const [themeSettings, setThemeSettings] = useState({
     primaryColor: '#00C3FF',
     secondaryColor: '#DBDBDB',
-    fontFamily: 'Roboto',
+    fontFamily: 'Helvetica',
   });
 
   const theme = useMemo(() => 
