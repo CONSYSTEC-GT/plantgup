@@ -48,12 +48,13 @@ export default function BasicCard() {
   const navigate = useNavigate();
 
   const handleCreateClick = () => {
-    navigate('/create-template-page}'); // Navega a la página para crear plantilla
-  };
+    navigate('/create-template-page'); // Navega a la página para crear plantilla
+};
 
-  const handleVerTemplates = () => {
-    navigate(`/edit-template/}`); // Navega a la página para editar la plantilla con su ID
-  };
+const handleVerTemplates = () => {
+    navigate('/edit-template/'); // Navega a la página para editar la plantilla con su ID
+};
+
 
   const handleDeleteClick = (templateId) => {
     // Aquí puedes implementar la lógica para eliminar la plantilla
