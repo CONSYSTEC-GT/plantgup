@@ -72,19 +72,27 @@ const TemplateForm = () => {
         <Typography variant="body1" mb={2}>
           {templateName || 'No name provided'}
         </Typography>
-
+  
         <Typography variant="subtitle2" color="text.secondary">
           Category:
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-          {categories.find(cat => cat.id === selectedCategory)?.icon}
-          <Typography variant="body1">
-            {categories.find(cat => cat.id === selectedCategory)?.title}
-          </Typography>
+          {/* Verificación de si se encuentra la categoría */}
+          {categories.find(cat => cat.id === selectedCategory) ? (
+            <>
+              {categories.find(cat => cat.id === selectedCategory)?.icon}
+              <Typography variant="body1">
+                {categories.find(cat => cat.id === selectedCategory)?.title}
+              </Typography>
+            </>
+          ) : (
+            <Typography variant="body1">No category selected</Typography>
+          )}
         </Box>
       </Paper>
     </Box>
   );
+  
 
   // Componentes para el bodymessage
   const handleVariableChange = (index, field, value) => {
@@ -365,7 +373,7 @@ const TemplateForm = () => {
           height: '100vh'
         }}>
           <Preview />
-          <PreviewWhatsAppStyle />
+          {/*<PreviewWhatsAppStyle />*/}
         </Box>
 
 

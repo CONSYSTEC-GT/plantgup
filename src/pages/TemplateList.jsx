@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, Typography, CardActions, Button, Grid, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
+import CreateTemplatePage from './CreateTemplatePage';
 
 // Componente reutilizable para las tarjetas
 const TemplateCard = ({ title, subtitle, description, onEdit, onDelete, whatsappStyle }) => (
@@ -48,7 +49,7 @@ export default function BasicCard() {
   const navigate = useNavigate();
 
   const handleCreateClick = () => {
-    navigate('/create-template-page'); // Navega a la página para crear plantilla
+    navigate('/CreateTemplatePage'); // Navega a la página para crear plantilla
 };
 
 const handleVerTemplates = () => {

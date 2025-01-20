@@ -8,8 +8,8 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<TemplateList />} />
-      <Route path="/create-template-page" element={<CreateTemplatePage />} />
-      <Route path="/edit-template/:templateId" element={<EditTemplatePage />} /> {/* Nueva ruta */}
+      <Route path="/CreateTemplatePage" element={<CreateTemplatePage />} />
+      <Route path="/edit-template/" element={<EditTemplatePage />} /> {/* Nueva ruta */}
     </Routes>
   );
 };
