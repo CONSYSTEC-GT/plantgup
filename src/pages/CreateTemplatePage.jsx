@@ -14,7 +14,7 @@ const CreateTemplatePage = () => {
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Página inicial
+        Crear template
       </Typography>
 
       <Tooltip title="Regresar">

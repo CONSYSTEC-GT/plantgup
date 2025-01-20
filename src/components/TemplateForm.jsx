@@ -7,14 +7,12 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import Delete from '@mui/icons-material/Delete';
-import PreviewWhatsAppStyle from './PreviewWhatsapp';
-
 
 const TemplateForm = () => {
+
   const [selectedCategory, setSelectedCategory] = useState('marketing');
   const [templateName, setTemplateName] = useState('');
-
-  const [message, setMessage] = useState('Please provide feedback for {{}} by clicking on {{}}. Thanks!');
+  const [message, setMessage] = useState('');
   const [variables, setVariables] = useState([{ key: '{{1}}', value: '' }, { key: '{{2}}', value: '' }]);
 
   const categories = [
@@ -59,58 +57,8 @@ const TemplateForm = () => {
     setTemplateName(event.target.value);
   };
 
-  // Componente Preview
-  const Preview = () => (
-    <Box sx={{ p: 3, bgcolor: 'grey.100', height: '100%', borderRadius: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Preview
-      </Typography>
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="subtitle2" color="text.secondary">
-          Template Name:
-        </Typography>
-        <Typography variant="body1" mb={2}>
-          {templateName || 'No name provided'}
-        </Typography>
-  
-        <Typography variant="subtitle2" color="text.secondary">
-          Category:
-        </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-          {/* Verificación de si se encuentra la categoría */}
-          {categories.find(cat => cat.id === selectedCategory) ? (
-            <>
-              {categories.find(cat => cat.id === selectedCategory)?.icon}
-              <Typography variant="body1">
-                {categories.find(cat => cat.id === selectedCategory)?.title}
-              </Typography>
-            </>
-          ) : (
-            <Typography variant="body1">No category selected</Typography>
-          )}
-        </Box>
-      </Paper>
-    </Box>
-  );
-  
-
-  // Componentes para el bodymessage
-  const handleVariableChange = (index, field, value) => {
-    const updatedVariables = [...variables];
-    updatedVariables[index][field] = value;
-    setVariables(updatedVariables);
-  };
-
   const renderMessage = () => {
-    let renderedMessage = message;
-    variables.forEach(({ key, value }) => {
-      renderedMessage = renderedMessage.replace(key, value || key);
-    });
-    return renderedMessage;
-  };
-
-  const addVariable = () => {
-    setVariables([...variables, { key: `{{${variables.length + 1}}}`, value: '' }]);
+    return message || 'No message provided';
   };
 
   //componentes del footer
@@ -146,6 +94,7 @@ const TemplateForm = () => {
     };
 
 
+    
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
       {/* Formulario (70%) */}
@@ -153,7 +102,7 @@ const TemplateForm = () => {
         <Box sx={{ height: '100%', overflowY: 'auto', pr: 2 }}>
           {/*Template Name */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" mb={2}>
-              Template name*
+              Nombre de la plantilla*
             </Typography>
             <TextField
               fullWidth
@@ -167,7 +116,7 @@ const TemplateForm = () => {
           {/*Categoría */}<Box sx={{ maxWidth: '100%', border: "1px solid #ddd", borderRadius: 2, marginTop: 2, p: 3 }}>
             <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="h6" component="h2">
-                Category*
+                Categoría*
               </Typography>
               <Tooltip title="Choose what type of message template you want to create">
                 <IconButton size="small">
@@ -205,49 +154,44 @@ const TemplateForm = () => {
             </RadioGroup>
           </Box>
 
-          {/*Language */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          {/*Tipo de plantilla */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" mb={2}>
-              Language*
+              Tipo de plantilla*
             </Typography>
             <TextField
               fullWidth
               label="Select"
               helperText="Choose wich languages your message template will be sent in."
-              value={templateName}
-              onChange={handleTemplateNameChange}
             />
           </Box>
 
-          {/*Label */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <Typography variant="h5" mb={2}>
-              Template Label*
+          {/*Idioma */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          <Typography variant="h5" mb={2}>
+              Idioma de plantilla*
             </Typography>
             <TextField
               fullWidth
-              label="Template Label"
-              helperText="Define what use-case does this template serves e.g Account update, OTP, etc."
-              value={templateName}
-              onChange={handleTemplateNameChange}
+              label="Select"
+              helperText="Choose wich languages your message template will be sent in."
             />
-          </Box>
+          </Box>          
 
-          {/* Header */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-
+          {/*Etiquetas de plantilla */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" mb={2}>
-              Header
+              Etiquetas de plantilla*
             </Typography>
             <TextField
               fullWidth
-              label="Headers"
+              label="Etiquetas de plantilla"
               helperText="Define what use-case does this template serves e.g Account update, OTP, etc."
-              value={templateName}
-              onChange={handleTemplateNameChange}
             />
           </Box>
+
+
 
           {/* BodyMessage */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>
-              Dynamic Message Editor
+              Contenido
             </Typography>
             <TextField
               fullWidth
@@ -258,30 +202,21 @@ const TemplateForm = () => {
               onChange={(e) => setMessage(e.target.value)}
               sx={{ mb: 3 }}
             />
-            {variables.map((variable, index) => (
-              <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <TextField
-                  label={`Variable ${index + 1}`}
-                  value={variable.key}
-                  onChange={(e) => handleVariableChange(index, 'key', e.target.value)}
-                  sx={{ mr: 2, flex: 1 }}
-                />
-                <TextField
-                  label="Sample Value"
-                  value={variable.value}
-                  onChange={(e) => handleVariableChange(index, 'value', e.target.value)}
-                  sx={{ flex: 1 }}
-                />
-              </Box>
-            ))}
-            <Button variant="contained" onClick={addVariable} sx={{ mb: 3 }}>
-              Add Variable
-            </Button>
-            <Typography variant="h6">Rendered Message:</Typography>
-            <Typography variant="body1" sx={{ backgroundColor: '#f4f4f4', p: 2, borderRadius: 1 }}>
-              {renderMessage()}
-            </Typography>
           </Box>
+
+          {/* Header */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+
+          <Typography variant="h5" mb={2}>
+              Header
+            </Typography>
+            <TextField
+              fullWidth
+              label="Headers"
+              helperText="Define what use-case does this template serves e.g Account update, OTP, etc."
+              value={templateName}
+              onChange={handleTemplateNameChange}
+            />
+          </Box>          
 
           {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>
@@ -367,13 +302,28 @@ const TemplateForm = () => {
 
       {/* Preview (30%) */}
       <Grid item xs={4}>
-        <Box sx={{
-          position: 'sticky',
-          top: 0,
-          height: '100vh'
-        }}>
-          <Preview />
-          {/*<PreviewWhatsAppStyle />*/}
+        <Box sx={{ position: 'sticky', top: 0, height: '100vh' }}>          
+          <Box sx={{ p: 3, bgcolor: '#fef9f3', height: '100%', borderRadius: 2, display: 'flex', flexDirection: 'column', gap: 2, }}>
+
+            <Typography variant="h6" gutterBottom>
+              Preview
+            </Typography>
+
+            <Box sx={{ bgcolor: '#e1ffc7', p: 2, borderRadius: 2, alignSelf: 'flex-end', maxWidth: '70%' }}>
+              <Typography variant="body1" color="text.primary">
+                {message || 'No name provided'}
+              </Typography>
+            </Box>
+
+            <Box sx={{ bgcolor: '#fff', p: 2, borderRadius: 2, alignSelf: 'flex-start', maxWidth: '70%', border: '1px solid #ddd', }}>
+
+              <Typography variant="body1">
+                {'¡CONSYSTEC TalkMe!'}
+              </Typography>
+
+            </Box>
+
+          </Box>
         </Box>
 
 

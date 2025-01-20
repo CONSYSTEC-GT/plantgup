@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { 
-  Autocomplete, 
-  Box, 
-  Button, 
-  Card, 
-  CardContent, 
-  CardActions, 
-  Stack, 
-  TextField, 
-  Typography 
-} from '@mui/material';
+import { Autocomplete, Box, Button, Card, CardContent, CardActions, Stack, TextField, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 
