@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Box, Radio, RadioGroup, FormControlLabel, Typography, Paper, Stack, IconButton, TextField, Tooltip, alpha, Grid} from '@mui/material';
+import { Button, Box, Radio, RadioGroup, FormControl, FormControlLabel, FormHelperText, InputLabel, MenuItem, Typography, Paper, Select, Stack, IconButton, TextField, Tooltip, alpha, Grid} from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
@@ -19,34 +19,35 @@ const TemplateForm = () => {
     {
       id: 'marketing',
       title: 'Marketing',
-      description: 'Send promo offers, product offers and more to increase awareness and engagement.',
+      description: 'Envía ofertas promocionales, ofertas de productos y más para aumentar la conciencia y el compromiso.',
       icon: <EmailOutlinedIcon />,
-    },
-    {
+  },
+  {
       id: 'utility',
-      title: 'Utility',
-      description: 'Send account updates, order updates, alerts and more to share important information.',
+      title: 'Utilidad',
+      description: 'Envía actualizaciones de cuenta, actualizaciones de pedidos, alertas y más para compartir información importante.',
       icon: <NotificationsNoneOutlinedIcon />,
-    },
-    {
+  },
+  {
       id: 'authentication',
-      title: 'Authentication',
-      description: 'Send codes that allow your customers to access their account.',
+      title: 'Autenticación',
+      description: 'Envía códigos que permiten a tus clientes acceder a su cuenta.',
       icon: <VpnKeyOutlinedIcon />,
       disabled: true
-    },
-    {
+  },
+  {
       id: 'custom',
-      title: 'Custom Message',
-      description: 'Send promotional offers, announcements and more to increase awareness and engagement.',
+      title: 'Mensaje Personalizado',
+      description: 'Envía ofertas promocionales, anuncios y más para aumentar la conciencia y el compromiso.',
       icon: <ImportExportIcon />,
-    },
-    {
+  },
+  {
       id: 'product',
-      title: 'Product Message',
-      description: 'Send messages about your entire catalogue or multiple products from it.',
+      title: 'Mensaje de Producto',
+      description: 'Envía mensajes sobre tu catálogo completo o múltiples productos de este.',
       icon: <InventoryIcon />,
-    }
+  }
+  
   ];
 
   const handleCategoryChange = (event) => {
@@ -61,15 +62,26 @@ const TemplateForm = () => {
     return message || 'No message provided';
   };
 
+  //componentes del header
+  const [header, setHeader] = useState('');
+      
+    const handleHeaderChange = (h) => {
+      if (h.target.value.length <= charLimit) {
+        setHeader(h.target.value);
+      }
+    };
+
   //componentes del footer
   const [footer, setFooter] = useState('');
-    const charLimit = 60;
+    
   
     const handleFooterChange = (e) => {
       if (e.target.value.length <= charLimit) {
         setFooter(e.target.value);
       }
     };
+
+    const charLimit = 60;
 
     //componentes de los botones quickreply
     const [buttons, setButtons] = useState([]);
@@ -106,8 +118,8 @@ const TemplateForm = () => {
             </Typography>
             <TextField
               fullWidth
-              label="Template name"
-              helperText="Template names can only contain small letters, numbers, and underscores."
+              label="Nombre"
+              helperText="El nombre debe hacer referencia al texto de su plantilla."
               value={templateName}
               onChange={handleTemplateNameChange}
             />
@@ -118,7 +130,7 @@ const TemplateForm = () => {
               <Typography variant="h6" component="h2">
                 Categoría*
               </Typography>
-              <Tooltip title="Choose what type of message template you want to create">
+              <Tooltip title="Tu plantilla debe pertencer a una de estas categorías">
                 <IconButton size="small">
                   <HelpOutlineIcon fontSize="small" />
                 </IconButton>
@@ -158,22 +170,44 @@ const TemplateForm = () => {
             <Typography variant="h5" mb={2}>
               Tipo de plantilla*
             </Typography>
-            <TextField
-              fullWidth
-              label="Select"
-              helperText="Choose wich languages your message template will be sent in."
-            />
+            <FormControl fullWidth>
+              <InputLabel id="template-type-label">Selección</InputLabel>
+              <Select
+                labelId="template-type-label"
+                id="template-type"
+                label="Select"
+              >
+                <MenuItem value="text">TEXT</MenuItem>
+                <MenuItem value="image">IMAGE</MenuItem>
+                <MenuItem value="document">DOCUMENT</MenuItem>
+                {/* Agrega más opciones según sea necesario */}
+              </Select>
+              <FormHelperText>
+                Escoge el tipo de plantilla que se va a crear
+              </FormHelperText>
+            </FormControl>
           </Box>
 
           {/*Idioma */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <Typography variant="h5" mb={2}>
               Idioma de plantilla*
             </Typography>
-            <TextField
-              fullWidth
-              label="Select"
-              helperText="Choose wich languages your message template will be sent in."
-            />
+            <FormControl fullWidth>
+              <InputLabel id="template-idioma">Selección</InputLabel>
+              <Select
+                labelId="template-idioma"
+                id="template-idioma"
+                label="Escoge el idioma"
+              >
+                <MenuItem value="español">ESPAÑOL</MenuItem>
+                <MenuItem value="inglés">INGLES</MenuItem>
+                <MenuItem value="frances">FRANCES</MenuItem>
+                {/* Agrega más opciones según sea necesario */}
+              </Select>
+              <FormHelperText>
+                Escoge el idioma de plantilla que se va a crear
+              </FormHelperText>
+            </FormControl>
           </Box>          
 
           {/*Etiquetas de plantilla */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
@@ -182,12 +216,10 @@ const TemplateForm = () => {
             </Typography>
             <TextField
               fullWidth
-              label="Etiquetas de plantilla"
-              helperText="Define what use-case does this template serves e.g Account update, OTP, etc."
+              label="Escribe"
+              helperText="Defina para qué caso de uso, por ejemplo, actualización de cuenta, OTP, etc, en 2 o 3 palabras"
             />
           </Box>
-
-
 
           {/* BodyMessage */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>
@@ -197,7 +229,7 @@ const TemplateForm = () => {
               fullWidth
               multiline
               rows={4}
-              label="Message"
+              label="Escribe"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               sx={{ mb: 3 }}
@@ -209,21 +241,25 @@ const TemplateForm = () => {
           <Typography variant="h5" mb={2}>
               Header
             </Typography>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Agregue un encabezado de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
+            </Typography>
             <TextField
               fullWidth
               label="Headers"
-              helperText="Define what use-case does this template serves e.g Account update, OTP, etc."
-              value={templateName}
-              onChange={handleTemplateNameChange}
+              value={header}
+              onChange={handleHeaderChange}
+              helperText={`${header.length} / ${charLimit} characters`}
+              sx={{ mb: 3 }}
             />
           </Box>          
 
           {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Footer Editor
+            <Typography variant="h5" gutterBottom>
+              Footer
             </Typography>
             <Typography variant="body2" color="text.secondary" gutterBottom>
-              Add a 60-character footer to your message. Variables are not supported in the footer.
+              Agregue un pie de página de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
             </Typography>
             <TextField
               fullWidth
@@ -233,13 +269,6 @@ const TemplateForm = () => {
               helperText={`${footer.length} / ${charLimit} characters`}
               sx={{ mb: 3 }}
             />
-            <Typography variant="h6">Preview:</Typography>
-            <Typography
-              variant="body1"
-              sx={{ backgroundColor: '#f4f4f4', p: 2, borderRadius: 1 }}
-            >
-              {footer || 'Sample Footer'}
-            </Typography>
           </Box>
 
           {/* Botones QuickReply */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
@@ -311,7 +340,7 @@ const TemplateForm = () => {
 
             <Box sx={{ bgcolor: '#e1ffc7', p: 2, borderRadius: 2, alignSelf: 'flex-end', maxWidth: '70%' }}>
               <Typography variant="body1" color="text.primary">
-                {message || 'No name provided'}
+                {message || 'Plantilla Nueva'}
               </Typography>
             </Box>
 
