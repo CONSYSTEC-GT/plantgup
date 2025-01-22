@@ -34,22 +34,9 @@ const TemplateForm = () => {
       description: 'Envía códigos que permiten a tus clientes acceder a su cuenta.',
       icon: <VpnKeyOutlinedIcon />,
       disabled: true
-  },
-  {
-      id: 'custom',
-      title: 'Mensaje Personalizado',
-      description: 'Envía ofertas promocionales, anuncios y más para aumentar la conciencia y el compromiso.',
-      icon: <ImportExportIcon />,
-  },
-  {
-      id: 'product',
-      title: 'Mensaje de Producto',
-      description: 'Envía mensajes sobre tu catálogo completo o múltiples productos de este.',
-      icon: <InventoryIcon />,
-  }
-  
+  }  
   ];
-
+  // CATEGORIAS
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
   };
@@ -63,47 +50,62 @@ const TemplateForm = () => {
   };
 
   //componentes del header
+  const [templateType, setTemplateType] = useState("text"); // Tipo de plantilla
   const [header, setHeader] = useState('');
-      
-    const handleHeaderChange = (h) => {
-      if (h.target.value.length <= charLimit) {
-        setHeader(h.target.value);
-      }
-    };
+  const [mediaType, setMediaType] = useState(""); // Tipo de media (image, video, etc.)
+  const [mediaURL, setMediaURL] = useState(""); // URL del media
+
+  const handleTemplateTypeChange = (event) => {
+    setTemplateType(event.target.value);
+    setHeader(""); // Resetear el header al cambiar de tipo
+    setMediaType("");
+    setMediaURL("");
+  };
+
+  const handleHeaderChange = (event) => {
+    setHeader(event.target.value);
+  };
+
+  const handleMediaTypeChange = (event) => {
+    setMediaType(event.target.value);
+  };
+
+  const handleMediaURLChange = (event) => {
+    setMediaURL(event.target.value);
+  };
 
   //componentes del footer
   const [footer, setFooter] = useState('');
-    
-  
-    const handleFooterChange = (e) => {
-      if (e.target.value.length <= charLimit) {
-        setFooter(e.target.value);
-      }
-    };
 
-    const charLimit = 60;
+  const handleFooterChange = (e) => {
+    if (e.target.value.length <= charLimit) {
+      setFooter(e.target.value);
+    }
+  };
 
-    //componentes de los botones quickreply
-    const [buttons, setButtons] = useState([]);
-    const maxButtons = 10;
-  
-    const addButton = () => {
-      if (buttons.length < maxButtons) {
-        setButtons([...buttons, { id: Date.now(), title: '' }]);
-      }
-    };
-  
-    const removeButton = (id) => {
-      setButtons(buttons.filter((button) => button.id !== id));
-    };
-  
-    const updateButtonTitle = (id, title) => {
-      setButtons(
-        buttons.map((button) =>
-          button.id === id ? { ...button, title } : button
-        )
-      );
-    };
+  const charLimit = 60;
+
+  //componentes de los botones quickreply
+  const [buttons, setButtons] = useState([]);
+  const maxButtons = 10;
+
+  const addButton = () => {
+    if (buttons.length < maxButtons) {
+      setButtons([...buttons, { id: Date.now(), title: '' }]);
+    }
+  };
+
+  const removeButton = (id) => {
+    setButtons(buttons.filter((button) => button.id !== id));
+  };
+
+  const updateButtonTitle = (id, title) => {
+    setButtons(
+      buttons.map((button) =>
+        button.id === id ? { ...button, title } : button
+      )
+    );
+  };
 
 
     
@@ -140,7 +142,7 @@ const TemplateForm = () => {
             <RadioGroup value={selectedCategory} onChange={handleCategoryChange}>
               <Stack spacing={2}>
                 {categories.map((category) => (
-                  <Paper key={category.id} sx={{p: 2, cursor: category.disabled ? 'default' : 'pointer', opacity: category.disabled ? 0.5 : 1,'&:hover': {bgcolor: category.disabled ? 'transparent' : (theme) => alpha(theme.palette.primary.main, 0.04)}}}>
+                  <Paper key={category.id} sx={{ p: 2, cursor: category.disabled ? 'default' : 'pointer', opacity: category.disabled ? 0.5 : 1, '&:hover': { bgcolor: category.disabled ? 'transparent' : (theme) => alpha(theme.palette.primary.main, 0.04) } }}>
                     <FormControlLabel
                       value={category.id}
                       disabled={category.disabled}
@@ -158,7 +160,7 @@ const TemplateForm = () => {
                           </Typography>
                         </Box>
                       }
-                      sx={{margin: 0, width: '100%'}}
+                      sx={{ margin: 0, width: '100%' }}
                     />
                   </Paper>
                 ))}
@@ -166,7 +168,7 @@ const TemplateForm = () => {
             </RadioGroup>
           </Box>
 
-          {/*Tipo de plantilla */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          {/* Tipo de plantilla */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" mb={2}>
               Tipo de plantilla*
             </Typography>
@@ -175,6 +177,8 @@ const TemplateForm = () => {
               <Select
                 labelId="template-type-label"
                 id="template-type"
+                value={templateType}
+                onChange={handleTemplateTypeChange}
                 label="Select"
               >
                 <MenuItem value="text">TEXT</MenuItem>
@@ -222,8 +226,8 @@ const TemplateForm = () => {
           </Box>
 
           {/* BodyMessage */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Contenido
+            <Typography variant="h5" gutterBottom>
+              Contenido*
             </Typography>
             <TextField
               fullWidth
@@ -236,22 +240,53 @@ const TemplateForm = () => {
             />
           </Box>
 
-          {/* Header */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-
-          <Typography variant="h5" mb={2}>
+          {/* Header */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+            <Typography variant="h5" mb={2}>
               Header
             </Typography>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Agregue un encabezado de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
-            </Typography>
-            <TextField
-              fullWidth
-              label="Headers"
-              value={header}
-              onChange={handleHeaderChange}
-              helperText={`${header.length} / ${charLimit} characters`}
-              sx={{ mb: 3 }}
-            />
+            {templateType === "text" && (
+              <>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  Agregue un encabezado de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="Header"
+                  value={header}
+                  onChange={handleHeaderChange}
+                  helperText={`${header.length} / ${charLimit} characters`}
+                  sx={{ mb: 3 }}
+                />
+              </>
+            )}
+
+            {templateType !== "text" && (
+              <>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  Seleccione el tipo de media y proporcione un enlace.
+                </Typography>
+                <FormControl fullWidth sx={{ mb: 3 }}>
+                  <RadioGroup
+                    row
+                    value={mediaType}
+                    onChange={handleMediaTypeChange}
+                  >
+                    <FormControlLabel value="image" control={<Radio />} label="Image" />
+                    <FormControlLabel value="video" control={<Radio />} label="Video" />
+                    <FormControlLabel value="document" control={<Radio />} label="Document" />
+                  </RadioGroup>
+                </FormControl>
+                {mediaType && (
+                  <TextField
+                    fullWidth
+                    label="Media URL"
+                    value={mediaURL}
+                    onChange={handleMediaURLChange}
+                    helperText="Proporcione un enlace válido al archivo multimedia."
+                  />
+                )}
+              </>
+            )}
           </Box>          
 
           {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
