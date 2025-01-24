@@ -63,7 +63,7 @@ export default function BasicCard() {
       console.log('Auth Code:', authCode);
       
       // Example: You might want to store these in state or make an API call
-      // fetchTemplatesWithAuth(appId, authCode);
+      fetchTemplates(appId, authCode);
     }
   }, [location]);
     //fetchTemplates();
