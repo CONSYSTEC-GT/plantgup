@@ -53,27 +53,37 @@ export default function BasicCard() {
   const [templates, setTemplates] = useState([]);
 
   useEffect(() => {
-    fetchTemplates();
-  }, []);
+    const searchParams = new URLSearchParams(location.search);
+    const appId = searchParams.get('app_id');
+    const authCode = searchParams.get('auth_code');
 
-  const fetchTemplates = async () => {
-    try {
-        const response = await fetch('https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates', {
-            method: 'GET', // Método de la solicitud
-            headers: {
-                'Authorization': 'sk_2662b472ec0f4eeebd664238d72b61da', // Reemplaza con tu clave de autorización
-            }
-        });
-        const data = await response.json();
-        if (data.status === 'success') {
-          // Limitar a 3 o 4 plantillas
-          setTemplates(data.templates.slice(0, 4)); // Aquí cambias el número según lo que quieras mostrar
-            //setTemplates(data.templates);
-        }
-    } catch (error) {
-        console.error('Error fetching templates:', error);
+    if (appId && authCode) {
+      // Use these parameters as needed
+      console.log('App ID:', appId);
+      console.log('Auth Code:', authCode);
+      
+      // Example: You might want to store these in state or make an API call
+      // fetchTemplatesWithAuth(appId, authCode);
     }
-};
+  }, [location]);
+    //fetchTemplates();
+
+    const fetchTemplates = async (appId, authCode) => {
+      try {
+          const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+              method: 'GET',
+              headers: {
+                  'Authorization': authCode,
+              }
+          });
+          const data = await response.json();
+          if (data.status === 'success') {
+              setTemplates(data.templates.slice(0, 4));
+          }
+      } catch (error) {
+          console.error('Error fetching templates:', error);
+      }
+  };
 
 const getStatusColor = (status) => {
   switch (status) {
