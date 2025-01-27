@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { Autocomplete, Box, Button, Card, CardContent, CardActions, Stack, TextField, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 
 const EditTemplatePage = () => {
@@ -46,9 +45,9 @@ const EditTemplatePage = () => {
   return (
     <Box>
       <Box sx={{ display: 'flex' }}>
-        <Sidebar />
+        
         <Box sx={{ flexGrow: 1, p: 3 }}>
-          <Stack direction="row" spacing={2} sx={{ width: '100%', mb: 4 }}>
+          {/*<Stack direction="row" spacing={2} sx={{ width: '100%', mb: 4 }}>
             <TextField 
               label="Search by template name" 
               sx={{ flexGrow: 1 }}
@@ -72,10 +71,10 @@ const EditTemplatePage = () => {
             >
               Crear Template
             </Button>
-          </Stack>
+          </Stack>*/}
 
           <Typography variant="h4" gutterBottom>
-            Editar Plantilla
+            Catalogo de Plantillas
           </Typography>
           
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>

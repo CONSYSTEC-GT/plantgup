@@ -1,27 +1,134 @@
-import React from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+import * as React from 'react';
+import { extendTheme, styled } from '@mui/material/styles';
+import { Outlet } from 'react-router-dom';
+import { AppProvider } from '@toolpad/core/AppProvider';
+import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import { PageContainer } from '@toolpad/core/PageContainer';
+import Grid from '@mui/material/Grid2';
 
-const Sidebar = () => {
-  const filters = ["All", "Approved", "Rejected", "Submitted", "Paused", "Failed", "Deactivated"];
+//iconos
+import TemplateList from '../pages/TemplateList';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import DescriptionIcon from '@mui/icons-material/Description';
+import LayersIcon from '@mui/icons-material/Layers';
+import CreateIcon from '@mui/icons-material/Create';
+import CheckIcon from '@mui/icons-material/Check';
+import SendIcon from '@mui/icons-material/Send';
+import SmsFailedIcon from '@mui/icons-material/SmsFailed';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+
+
+const NAVIGATION = [
+  {
+    kind: 'header',
+    title: 'Main items',
+  },
+  {
+    segment: 'dashboard',
+    title: 'Dashboard',
+    icon: <DashboardIcon />,
+  },
+  {
+    segment: 'CreateTemplatePage',
+    title: 'Crear Plantillas',
+    icon: <CreateIcon />,
+  },
+  {
+    kind: 'divider',
+  },
+  {
+    kind: 'header',
+    title: 'Analytics',
+  },
+  {
+    segment: 'plantillas',
+    title: 'Plantillas',
+    icon: <BarChartIcon />,
+    children: [
+      {
+        segment: 'todas',
+        title: 'Todas',
+        icon: <DescriptionIcon />,
+      },
+      {
+        segment: 'aprovadas',
+        title: 'Aprovadas',
+        icon: <CheckIcon />,
+      },
+      {
+        segment: 'enviadas',
+        title: 'Enviadas',
+        icon: <SendIcon />,
+      },
+      {
+        segment: 'fallidas',
+        title: 'Fallidas',
+        icon: <SmsFailedIcon />,
+      },
+      {
+        segment: 'rechazadas',
+        title: 'Rechazadas',
+        icon: <ThumbDownIcon />,
+      },
+    ],
+  },
+];
+
+const demoTheme = extendTheme({
+  primaryColor: '#00C3FF',
+  secondaryColor: '#DBDBDB',
+  fontFamily: 'Helvetica',
+  colorSchemes: { light: true, dark: true },
+  colorSchemeSelector: 'class',
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 600,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
+});
+
+function useDemoRouter(initialPath) {
+  const [pathname, setPathname] = React.useState(initialPath);
+
+  const router = React.useMemo(() => {
+    return {
+      pathname,
+      searchParams: new URLSearchParams(),
+      navigate: (path) => setPathname(String(path)),
+    };
+  }, [pathname]);
+
+  return router;
+}
+
+const Skeleton = styled('div')(({ theme, height }) => ({
+  backgroundColor: theme.palette.action.hover,
+  borderRadius: theme.shape.borderRadius,
+  height,
+  content: '" "',
+}));
+
+export default function Sidebar(props) {
+  const { window } = props;
 
   return (
-    <Box sx={{ width: 200, backgroundColor: '#0000', height: '100vh', padding: 2, marginRight: 2, borderRight: '1px solid gray' }}>
-      <List>
-        {filters.map((filter) => (
-          <ListItem key={filter}>
-            <ListItemButton>
-              <ListItemText primary={filter} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Box>
+    <AppProvider navigation={NAVIGATION} theme={demoTheme}  branding={{ title: 'TalkMe', logo: (
+      <img
+        src="https://www.talkme.pro/wp-content/uploads/2019/07/logoidentity.png" // Aquí coloca la URL del logo en la nube
+        alt="TalkMe Logo"
+        style={{ width: 'auto', height: 'auto' }}
+      />
+    ),
+  }}>
+      <DashboardLayout>
+        <Outlet />
+      </DashboardLayout>
+    </AppProvider>
   );
-};
-
-export default Sidebar;
+}

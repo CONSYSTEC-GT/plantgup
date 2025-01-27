@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import CreateTemplatePage from './CreateTemplatePage';
 import Sidebar from '../components/Sidebar';
+import { Padding } from '@mui/icons-material';
 
 // Componente reutilizable para las tarjetas
 const TemplateCard = ({ title, subtitle, description, onEdit, onDelete, whatsappStyle }) => (
@@ -51,16 +52,20 @@ export default function BasicCard() {
 
   const { templateId } = useParams();
   const [templates, setTemplates] = useState([]);
+  const [appName, setAppName] = useState('');
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const appId = searchParams.get('app_id');
     const authCode = searchParams.get('auth_code');
+    const appName = searchParams.get('app_name');
+    const appNameFromParams = searchParams.get('app_name');
 
     if (appId && authCode) {
       // Use these parameters as needed
       console.log('App ID:', appId);
       console.log('Auth Code:', authCode);
+      setAppName(appNameFromParams || '')
       
       // Example: You might want to store these in state or make an API call
       fetchTemplates(appId, authCode);
@@ -112,14 +117,14 @@ const handleVerTemplates = () => {
   };
 
   return (
-    <Box>
+    <Box sx={{marginLeft: 2}}>
       <h2>Plantillas TalkMe</h2>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Box>
+        <Box sx={{marginLeft: 2}}>
           <p>Mira el listado de plantillas que puedes utilizar.</p>
           <p>Están aprobadas por WhatsApp para tu aplicación.</p>
         </Box>
-        <Button
+        <Button sx={{marginTop: 2, marginRight: 2}}
           color="primary"
           variant="contained"
           size="large"
@@ -134,19 +139,17 @@ const handleVerTemplates = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TemplateCard
-            title="App name"
-            subtitle="onboarding"
-            description="namespace"
+            title={appName}
+            subtitle="App Name"
             onEdit={() => handleEditClick('unique-template-id')}
             onDelete={() => handleDeleteClick('unique-template-id')}
           />
         </Grid>
       </Grid>
 
-      <Box display="flex" justifyContent="flex-end" sx={{marginTop: 2}}>
-        <Button color='primary' variant='contained' onClick={handleVerTemplates}>
+      <Box display="flex" justifyContent="flex-end" sx={{marginTop: 2, marginRight: 2}}>
+        <Button color='primary' variant='contained' size='large' onClick={handleVerTemplates}>
           Ver Todas
-          
         </Button>
       </Box>
 

@@ -1,11 +1,11 @@
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { useState, useMemo } from 'react';
-import { HashRouter } from 'react-router-dom';  // Solo importamos HashRouter
-import ThemeCustomizer from './components/ThemeCustomizer';
-import Dashboard from './components/Dashboard';
-import AppTabs from './components/AppTabs'
-import TemplateList from './pages/TemplateList'
+import { BrowserRouter } from 'react-router-dom';
+
+import { Box } from '@mui/material';
+
 import AppRoutes from './routes';
+import Sidebar from './components/Sidebar';
 
 function App() {
   const [themeSettings, setThemeSettings] = useState({
@@ -47,16 +47,15 @@ function App() {
   );
 
   return (
-    <HashRouter>  {/* Solo usamos HashRouter */}
+    <BrowserRouter>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <div style={{ padding: '20px' }}>
-          {/*<ThemeCustomizer settings={themeSettings} onSettingsChange={setThemeSettings} />*/}
-          <AppTabs />
+        <Box sx={{ display: "flex" }}>
           <AppRoutes />
-        </div>
+        </Box>
       </ThemeProvider>
-    </HashRouter>
+      </BrowserRouter>
+    
   );
 }
 
