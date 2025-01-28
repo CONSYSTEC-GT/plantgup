@@ -1,9 +1,12 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import TemplateList from './pages/TemplateList';
 import CreateTemplatePage from './pages/CreateTemplatePage';
-import EditTemplatePage from './pages/EditTemplatePage'; // Importa el nuevo componente
+import EditTemplatePage from './pages/EditTemplatePage';
+import TemplateAproved from './pages/TemplateAproved';
+import TemplateRejected from './pages/TemplateRejected';
+import TemplateFailed from './pages/TemplateFailed';
+import TemplateSend from './pages/TemplateSend';
 import Sidebar from './components/Sidebar';
 
 const AppRoutes = () => {
@@ -16,6 +19,10 @@ const AppRoutes = () => {
         <Route path="/CreateTemplatePage" element={<CreateTemplatePage />} />
         <Route path="/edit-template" element={<EditTemplatePage />} />
         <Route path="/plantillas/todas" element={<EditTemplatePage />} />
+        <Route path="/plantillas/aprovadas" element={<TemplateAproved />} />
+        <Route path="/plantillas/rechazadas" element={<TemplateRejected />} />
+        <Route path="/plantillas/fallidas" element={<TemplateFailed />} />
+        <Route path="/plantillas/enviadas" element={<TemplateSend />} />
       </Route>
     </Routes>
   );

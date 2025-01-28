@@ -6,29 +6,33 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 
 
-const EditTemplatePage = () => {
+const TemplateAproved = () => {
   //PARA MANEJAR EL STATUS DE LAS PLANTILLAS | VARIABLES
   const { templateId } = useParams();
   const [templates, setTemplates] = useState([]);
   const [filteredTemplates, setFilteredTemplates] = useState([]);
   const [activeFilter, setActiveFilter] = useState('todas');
 //FETCH DE LAS PLANTILLAS
-  const fetchTemplates = async () => {
-    try {
-      const response = await fetch('https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates', {
-        method: 'GET', // Método de la solicitud
-        headers: {
-          'Authorization': 'sk_2662b472ec0f4eeebd664238d72b61da', // Reemplaza con tu clave de autorización
-        }
-      });
-      const data = await response.json();
-      if (data.status === 'success') {
-        setTemplates(data.templates);
-      }
-    } catch (error) {
-      console.error('Error fetching templates:', error);
+const fetchTemplates = async () => {
+  try {
+    const response = await fetch('https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates', {
+      method: 'GET',
+      headers: {
+        'Authorization': 'sk_2662b472ec0f4eeebd664238d72b61da', // Reemplaza con tu clave de autorización
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      // Filtrar plantillas con status "APPROVED"
+      const approvedTemplates = data.templates.filter(template => template.status === 'PENDING');
+      setTemplates(approvedTemplates);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching templates:', error);
+  }
+};
 //MODIFICAR EL COLOR DEPENDIENDO DEL STATUS DE LAS PLANTILLAS
   const getStatusColor = (status) => {
     switch (status) {
@@ -40,10 +44,10 @@ const EditTemplatePage = () => {
         return '#f5f5f5';
     }
   };
-//
-  useEffect(() => {
-    fetchTemplates();
-  }, []);
+
+    useEffect(() => {
+      fetchTemplates();
+    }, []);
 
 
 
@@ -111,4 +115,4 @@ const EditTemplatePage = () => {
   );
 };
 
-export default EditTemplatePage;
+export default TemplateAproved;

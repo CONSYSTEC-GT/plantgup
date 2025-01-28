@@ -13,11 +13,11 @@ const CreateTemplatePage = () => {
 
   return (
     <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
+      {/*Titulo*/}<Typography variant="h4" component="h1" gutterBottom>
         Crear template
       </Typography>
 
-      <Tooltip title="Regresar">
+      {/*Boton Regresar*/}<Tooltip title="Volver al Dashboard">
         <Button
           variant="contained"
           color="primary"
@@ -29,9 +29,7 @@ const CreateTemplatePage = () => {
         </Button>
       </Tooltip>
 
-      <Box
-        sx={{ backgroundColor: '#fdf3f5', padding: 2, borderRadius: 1, marginTop: 3 }}
-      >
+      {/*Informacion inicial*/}<Box sx={{ backgroundColor: '#fdf3f5', padding: 2, borderRadius: 1, marginTop: 3 }}>
         <Typography variant="body1">
           Tenga en cuenta que ahora es obligatorio proporcionar muestras al crear plantillas de mensajes.
           <br />

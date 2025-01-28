@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Box, Radio, RadioGroup, FormControl, FormControlLabel, FormHelperText, InputLabel, MenuItem, Typography, Paper, Select, Stack, IconButton, TextField, Tooltip, alpha, Grid} from '@mui/material';
+import { Button, Box, Radio, RadioGroup, FormControl, FormControlLabel, FormHelperText, InputLabel, MenuItem, Typography, Paper, Select, Stack, IconButton, TextField, Tooltip, alpha, Grid, Grid2} from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import ImportExportIcon from '@mui/icons-material/ImportExport';
-import InventoryIcon from '@mui/icons-material/Inventory';
 import Delete from '@mui/icons-material/Delete';
 
 const TemplateForm = () => {
@@ -15,6 +13,7 @@ const TemplateForm = () => {
   const [message, setMessage] = useState('');
   const [variables, setVariables] = useState([{ key: '{{1}}', value: '' }, { key: '{{2}}', value: '' }]);
 
+  // CATEGORIAS
   const categories = [
     {
       id: 'marketing',
@@ -36,7 +35,6 @@ const TemplateForm = () => {
       disabled: true
   }  
   ];
-  // CATEGORIAS
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
   };
@@ -111,8 +109,8 @@ const TemplateForm = () => {
     
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
-      {/* Formulario (70%) */}
-      <Grid item xs={8}>
+      
+      {/* Formulario (70%) */}<Grid item xs={8}>
         <Box sx={{ height: '100%', overflowY: 'auto', pr: 2 }}>
           {/*Template Name */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" mb={2}>
@@ -306,7 +304,7 @@ const TemplateForm = () => {
             />
           </Box>
 
-          {/* Botones QuickReply */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          {/* Botones*/}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>
               Buttons (Optional)
             </Typography>
@@ -364,8 +362,8 @@ const TemplateForm = () => {
         </Box>
       </Grid>
 
-      {/* Preview (30%) */}
-      <Grid item xs={4}>
+      
+      {/* Preview (30%) */}<Grid item xs={4}>
         <Box sx={{ position: 'sticky', top: 0, height: '100vh' }}>          
           <Box sx={{ p: 3, bgcolor: '#fef9f3', height: '100%', borderRadius: 2, display: 'flex', flexDirection: 'column', gap: 2, }}>
 
@@ -385,7 +383,32 @@ const TemplateForm = () => {
                 {'¡CONSYSTEC TalkMe!'}
               </Typography>
 
+              {/* Aquí renderizamos los botones en la vista previa */}
+        <Stack spacing={2} sx={{ mt: 2 }}>
+          {buttons.map((button) => (
+            <Box
+              key={button.id}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+                border: '1px solid #ccc',
+                borderRadius: 1,
+                p: 2,
+                backgroundColor: '#f9f9f9',
+              }}
+            >
+              <Typography variant="body1">
+                {button.title}
+              </Typography>
             </Box>
+          ))}
+        </Stack>
+
+
+
+            </Box>
+
 
           </Box>
         </Box>
