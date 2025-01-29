@@ -8,9 +8,53 @@ import Delete from '@mui/icons-material/Delete';
 
 const TemplateForm = () => {
 
-  const [selectedCategory, setSelectedCategory] = useState('marketing');
-  const [templateName, setTemplateName] = useState('');
-  const [message, setMessage] = useState('');
+  //CAMPOS DEL FORMULARIO PARA EL REQUEST
+const [templateName, setTemplateName] = useState("");
+const [selectedCategory, setSelectedCategory] = useState("");
+const [templateType, setTemplateType] = useState("text");
+const [languageCode, setLanguageCode] = useState("español");
+const [vertical, setVertical] = useState("");
+const [message, setMessage] = useState("");
+const [header, setHeader] = useState("");
+const [footer, setFooter] = useState("");
+const [buttons, setButtons] = useState([]);
+const [example, setExample] = useState("");
+
+const buildCurlCommand = () => {
+  const url = "https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates";
+  const headers = {
+    Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
+    "Content-Type": "application/x-www-form-urlencoded",
+  };
+
+  const data = {
+    elementName: templateName,
+    category: selectedCategory,
+    languageCode: languageCode === "español" ? "es" : languageCode === "inglés" ? "en" : "fr",
+    templateType: templateType.toUpperCase(),
+    vertical: vertical,
+    content: message,
+    buttons: JSON.stringify(
+      buttons.map((button) => ({
+        type: "QUICK_REPLY",
+        text: button.title,
+      }))
+    ),
+    example: example,
+    enableSample: true,
+    allowTemplateCategoryChange: false,
+  };
+
+  const curlCommand = `curl --location '${url}' \\
+--header 'Authorization: ${headers.Authorization}' \\
+--header 'Content-Type: ${headers["Content-Type"]}' \\
+${Object.entries(data)
+  .map(([key, value]) => `--data-urlencode '${key}=${value}'`)
+  .join(" \\\n")}`;
+
+  return curlCommand;
+};
+
   const [variables, setVariables] = useState([{ key: '{{1}}', value: '' }, { key: '{{2}}', value: '' }]);
 
   // CATEGORIAS
@@ -47,9 +91,7 @@ const TemplateForm = () => {
     return message || 'No message provided';
   };
 
-  //componentes del header
-  const [templateType, setTemplateType] = useState("text"); // Tipo de plantilla
-  const [header, setHeader] = useState('');
+
   const [mediaType, setMediaType] = useState(""); // Tipo de media (image, video, etc.)
   const [mediaURL, setMediaURL] = useState(""); // URL del media
 
@@ -72,8 +114,7 @@ const TemplateForm = () => {
     setMediaURL(event.target.value);
   };
 
-  //componentes del footer
-  const [footer, setFooter] = useState('');
+  
 
   const handleFooterChange = (e) => {
     if (e.target.value.length <= charLimit) {
@@ -82,9 +123,6 @@ const TemplateForm = () => {
   };
 
   const charLimit = 60;
-
-  //componentes de los botones quickreply
-  const [buttons, setButtons] = useState([]);
   const maxButtons = 10;
 
   const addButton = () => {
@@ -112,7 +150,7 @@ const TemplateForm = () => {
       
       {/* Formulario (70%) */}<Grid item xs={8}>
         <Box sx={{ height: '100%', overflowY: 'auto', pr: 2 }}>
-          {/*Template Name */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          {/*Template Name --data-urlenconde-elementName*/}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" mb={2}>
               Nombre de la plantilla*
             </Typography>
@@ -125,7 +163,7 @@ const TemplateForm = () => {
             />
           </Box>
 
-          {/*Categoría */}<Box sx={{ maxWidth: '100%', border: "1px solid #ddd", borderRadius: 2, marginTop: 2, p: 3 }}>
+          {/*Categoría --data-urlencode 'category*/}<Box sx={{ maxWidth: '100%', border: "1px solid #ddd", borderRadius: 2, marginTop: 2, p: 3 }}>
             <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="h6" component="h2">
                 Categoría*
@@ -166,7 +204,7 @@ const TemplateForm = () => {
             </RadioGroup>
           </Box>
 
-          {/* Tipo de plantilla */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          {/* Tipo de plantilla --data-urlencode templateType*/}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" mb={2}>
               Tipo de plantilla*
             </Typography>
@@ -190,8 +228,8 @@ const TemplateForm = () => {
             </FormControl>
           </Box>
 
-          {/*Idioma */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <Typography variant="h5" mb={2}>
+          {/*Idioma --data-urlencode languageCode */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+            <Typography variant="h5" mb={2}>
               Idioma de plantilla*
             </Typography>
             <FormControl fullWidth>
@@ -210,9 +248,9 @@ const TemplateForm = () => {
                 Escoge el idioma de plantilla que se va a crear
               </FormHelperText>
             </FormControl>
-          </Box>          
+          </Box>
 
-          {/*Etiquetas de plantilla */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          {/*Etiquetas de plantilla --data-urlencode vertical*/}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" mb={2}>
               Etiquetas de plantilla*
             </Typography>
@@ -223,7 +261,7 @@ const TemplateForm = () => {
             />
           </Box>
 
-          {/* BodyMessage */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          {/* BodyMessage --data-urlencode content */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" gutterBottom>
               Contenido*
             </Typography>
@@ -285,7 +323,7 @@ const TemplateForm = () => {
                 )}
               </>
             )}
-          </Box>          
+          </Box>
 
           {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" gutterBottom>
@@ -304,7 +342,7 @@ const TemplateForm = () => {
             />
           </Box>
 
-          {/* Botones*/}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          {/* Botones --data-urlencode 'buttons*/}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>
               Buttons (Optional)
             </Typography>
@@ -359,12 +397,28 @@ const TemplateForm = () => {
               {buttons.length} / {maxButtons} buttons added
             </Typography>
           </Box>
+
+          {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+            <Typography variant="h5" gutterBottom>
+              Ejemplo*
+            </Typography>
+            <TextField
+              fullWidth
+              multiline
+              rows={4}
+              label="Escribe"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              sx={{ mb: 3 }}
+            />
+          </Box>
+
         </Box>
       </Grid>
 
-      
+
       {/* Preview (30%) */}<Grid item xs={4}>
-        <Box sx={{ position: 'sticky', top: 0, height: '100vh' }}>          
+        <Box sx={{ position: 'sticky', top: 0, height: '100vh' }}>
           <Box sx={{ p: 3, bgcolor: '#fef9f3', height: '100%', borderRadius: 2, display: 'flex', flexDirection: 'column', gap: 2, }}>
 
             <Typography variant="h6" gutterBottom>
@@ -375,6 +429,29 @@ const TemplateForm = () => {
               <Typography variant="body1" color="text.primary">
                 {message || 'Plantilla Nueva'}
               </Typography>
+
+
+              <Stack spacing={2} sx={{ mt: 2 }}>
+                {buttons.map((button) => (
+                  <Box
+                    key={button.id}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 2,
+                      border: '1px solid #ccc',
+                      borderRadius: 1,
+                      p: 2,
+                      backgroundColor: '#f9f9f9',
+                    }}
+                  >
+                    <Typography variant="body1">
+                      {button.title}
+                    </Typography>
+                  </Box>
+                ))}
+              </Stack>
+
             </Box>
 
             <Box sx={{ bgcolor: '#fff', p: 2, borderRadius: 2, alignSelf: 'flex-start', maxWidth: '70%', border: '1px solid #ddd', }}>
@@ -383,37 +460,35 @@ const TemplateForm = () => {
                 {'¡CONSYSTEC TalkMe!'}
               </Typography>
 
-              {/* Aquí renderizamos los botones en la vista previa */}
-        <Stack spacing={2} sx={{ mt: 2 }}>
-          {buttons.map((button) => (
-            <Box
-              key={button.id}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-                border: '1px solid #ccc',
-                borderRadius: 1,
-                p: 2,
-                backgroundColor: '#f9f9f9',
-              }}
+
+            </Box>
+
+            {/*Boton Guardar Plantilla*/}<Button
+              variant="contained"
+              color="primary"
+              sx={{ marginBottom: 2 }}
             >
-              <Typography variant="body1">
-                {button.title}
+              Guardar y enviar plantilla
+            </Button>
+
+            <Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+              <Typography variant="h5" gutterBottom>
+                Comando cURL
               </Typography>
+              <TextField
+                fullWidth
+                multiline
+                rows={6}
+                value={buildCurlCommand()}
+                InputProps={{
+                  readOnly: true,
+                }}
+                sx={{ mb: 3 }}
+              />
             </Box>
-          ))}
-        </Stack>
-
-
-
-            </Box>
-
 
           </Box>
         </Box>
-
-
       </Grid>
     </Grid>
   );
