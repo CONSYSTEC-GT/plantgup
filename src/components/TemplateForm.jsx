@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Box, Radio, RadioGroup, FormControl, FormControlLabel, FormHelperText, InputLabel, MenuItem, Typography, Paper, Select, Stack, IconButton, TextField, Tooltip, alpha, Grid, Grid2} from '@mui/material';
+import { Alert, Button, Box, Radio, RadioGroup, FormControl, FormControlLabel, FormHelperText, InputLabel, MenuItem, Typography, Paper, Select, Stack, Snackbar, IconButton, TextField, Tooltip, alpha, Grid, Grid2} from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Delete from '@mui/icons-material/Delete';
+
 
 const TemplateForm = () => {
 
@@ -12,7 +13,7 @@ const TemplateForm = () => {
 const [templateName, setTemplateName] = useState("");
 const [selectedCategory, setSelectedCategory] = useState("");
 const [templateType, setTemplateType] = useState("text");
-const [languageCode, setLanguageCode] = useState("español");
+const [languageCode, setLanguageCode] = useState("");
 const [vertical, setVertical] = useState("");
 const [message, setMessage] = useState("");
 const [header, setHeader] = useState("");
@@ -20,6 +21,24 @@ const [footer, setFooter] = useState("");
 const [buttons, setButtons] = useState([]);
 const [example, setExample] = useState("");
 
+const [openSnackbar, setOpenSnackbar] = useState(false);
+const [snackbarMessage, setSnackbarMessage] = useState("");
+const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+// Función para mostrar Snackbar
+const showSnackbar = (message, severity) => {
+  setSnackbarMessage(message);
+  setSnackbarSeverity(severity);
+  setOpenSnackbar(true);
+};
+
+// Función para cerrar Snackbar
+const handleCloseSnackbar = (_, reason) => {
+  if (reason === "clickaway") return;
+  setOpenSnackbar(false);
+};
+
+// CONSTRUYO EL cURL REQUEST
 const buildCurlCommand = () => {
   const url = "https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates";
   const headers = {
@@ -29,8 +48,8 @@ const buildCurlCommand = () => {
 
   const data = {
     elementName: templateName,
-    category: selectedCategory,
-    languageCode: languageCode === "español" ? "es" : languageCode === "inglés" ? "en" : "fr",
+    category: selectedCategory.toUpperCase(),
+    languageCode: languageCode,
     templateType: templateType.toUpperCase(),
     vertical: vertical,
     content: message,
@@ -53,6 +72,52 @@ ${Object.entries(data)
   .join(" \\\n")}`;
 
   return curlCommand;
+};
+
+// FUNCION PARA ENVIAR LA SOLICITUD
+const sendRequest = async () => {
+  const url = "https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates";
+  const headers = {
+    Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
+    "Content-Type": "application/x-www-form-urlencoded",
+  };
+
+  const data = new URLSearchParams();
+  data.append("elementName", templateName);
+  data.append("category", selectedCategory.toUpperCase());
+  data.append("languageCode", languageCode === "español" ? "es" : languageCode === "inglés" ? "en" : "fr");
+  data.append("templateType", templateType.toUpperCase());
+  data.append("vertical", vertical);
+  data.append("content", message);
+  data.append("buttons", JSON.stringify(buttons.map((button) => ({ type: "QUICK_REPLY", text: button.title }))));
+  data.append("example", example);
+  data.append("enableSample", true);
+  data.append("allowTemplateCategoryChange", false);
+
+  console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: data,
+    });
+
+    if (!response.ok) {
+      // Captura el mensaje de error de la respuesta
+      const errorResponse = await response.json(); // O response.text() si no es JSON
+      console.error("Error response:", errorResponse);
+      showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
+      return; // Detén la ejecución aquí
+    }
+
+    const result = await response.json();
+    showSnackbar("✅ Plantilla creada exitosamente", "success");
+    console.log("Response: ", result);
+  } catch (error) {
+    console.error("Error en la solicitud:", error);
+    showSnackbar("❌ Error al crear la plantilla", "error");
+  }
 };
 
   const [variables, setVariables] = useState([{ key: '{{1}}', value: '' }, { key: '{{2}}', value: '' }]);
@@ -83,18 +148,35 @@ ${Object.entries(data)
     setSelectedCategory(event.target.value);
   };
 
+  //NOMBRE PLANTILLA
   const handleTemplateNameChange = (event) => {
     setTemplateName(event.target.value);
   };
 
-  const renderMessage = () => {
-    return message || 'No message provided';
+  //IDIOMA PLANTILLA
+  const handleLanguageCodeChange = (event) => {
+  setLanguageCode(languageMap[event.target.value] || event.target.value);
+  }
+  const languageMap = {
+    español: "es",
+    inglés: "en",
+    frances: "fr",
+  };
+  const reverseLanguageMap = {
+    es: "español",
+    en: "inglés",
+    fr: "frances",
   };
 
+  //VERTICAL PLANTILLA
+  const handleVerticalChange = (event) =>{
+    setVertical(event.target.value)
+  }
 
   const [mediaType, setMediaType] = useState(""); // Tipo de media (image, video, etc.)
   const [mediaURL, setMediaURL] = useState(""); // URL del media
 
+  //TIPO PLANTILLA
   const handleTemplateTypeChange = (event) => {
     setTemplateType(event.target.value);
     setHeader(""); // Resetear el header al cambiar de tipo
@@ -102,6 +184,7 @@ ${Object.entries(data)
     setMediaURL("");
   };
 
+  //HEADER PLANTILLA
   const handleHeaderChange = (event) => {
     setHeader(event.target.value);
   };
@@ -114,8 +197,7 @@ ${Object.entries(data)
     setMediaURL(event.target.value);
   };
 
-  
-
+  //FOOTER PLANTILLA
   const handleFooterChange = (e) => {
     if (e.target.value.length <= charLimit) {
       setFooter(e.target.value);
@@ -125,6 +207,7 @@ ${Object.entries(data)
   const charLimit = 60;
   const maxButtons = 10;
 
+  //BOTONES PLANTILLA
   const addButton = () => {
     if (buttons.length < maxButtons) {
       setButtons([...buttons, { id: Date.now(), title: '' }]);
@@ -147,7 +230,18 @@ ${Object.entries(data)
     
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
-      
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: "100%" }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
       {/* Formulario (70%) */}<Grid item xs={8}>
         <Box sx={{ height: '100%', overflowY: 'auto', pr: 2 }}>
           {/*Template Name --data-urlenconde-elementName*/}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
@@ -228,27 +322,27 @@ ${Object.entries(data)
             </FormControl>
           </Box>
 
-          {/*Idioma --data-urlencode languageCode */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <Typography variant="h5" mb={2}>
-              Idioma de plantilla*
-            </Typography>
+          {/*Idioma --data-urlencode languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+            <Typography variant="h5" mb={2}>Idioma de plantilla*</Typography>
             <FormControl fullWidth>
-              <InputLabel id="template-idioma">Selección</InputLabel>
+              <InputLabel id="languageCode">Selección</InputLabel>
               <Select
-                labelId="template-idioma"
-                id="template-idioma"
+                labelId="languageCode"
+                id="languageCode"
                 label="Escoge el idioma"
+                value={reverseLanguageMap[languageCode] || ""}
+                onChange={handleLanguageCodeChange}
               >
-                <MenuItem value="español">ESPAÑOL</MenuItem>
-                <MenuItem value="inglés">INGLES</MenuItem>
-                <MenuItem value="frances">FRANCES</MenuItem>
-                {/* Agrega más opciones según sea necesario */}
+                {Object.keys(languageMap).map((key) => (
+                  <MenuItem key={key} value={key}>
+                    {key.toUpperCase()}
+                  </MenuItem>
+                ))}
               </Select>
-              <FormHelperText>
-                Escoge el idioma de plantilla que se va a crear
-              </FormHelperText>
+              <FormHelperText>Escoge el idioma de plantilla que se va a crear</FormHelperText>
             </FormControl>
           </Box>
+
 
           {/*Etiquetas de plantilla --data-urlencode vertical*/}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" mb={2}>
@@ -258,6 +352,7 @@ ${Object.entries(data)
               fullWidth
               label="Escribe"
               helperText="Defina para qué caso de uso, por ejemplo, actualización de cuenta, OTP, etc, en 2 o 3 palabras"
+              onChange={handleVerticalChange}
             />
           </Box>
 
@@ -407,8 +502,8 @@ ${Object.entries(data)
               multiline
               rows={4}
               label="Escribe"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              value={example}
+              onChange={(e) => setExample(e.target.value)}
               sx={{ mb: 3 }}
             />
           </Box>
@@ -463,13 +558,11 @@ ${Object.entries(data)
 
             </Box>
 
-            {/*Boton Guardar Plantilla*/}<Button
-              variant="contained"
-              color="primary"
-              sx={{ marginBottom: 2 }}
-            >
-              Guardar y enviar plantilla
-            </Button>
+            {/*Boton Guardar Plantilla*/}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+              <Button variant="contained" color="primary" onClick={sendRequest}>
+                Enviar solicitud
+              </Button>
+            </Box>
 
             <Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
               <Typography variant="h5" gutterBottom>
@@ -478,7 +571,7 @@ ${Object.entries(data)
               <TextField
                 fullWidth
                 multiline
-                rows={6}
+                rows={10}
                 value={buildCurlCommand()}
                 InputProps={{
                   readOnly: true,
