@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Alert, Button, Box, Radio, RadioGroup, FormControl, FormControlLabel, FormHelperText, InputLabel, MenuItem, Typography, Paper, Select, Stack, Snackbar, IconButton, TextField, Tooltip, alpha, Grid, Grid2} from '@mui/material';
+
+import CustomHeader from './CustomHeader';
+
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
@@ -173,9 +176,6 @@ const sendRequest = async () => {
     setVertical(event.target.value)
   }
 
-  const [mediaType, setMediaType] = useState(""); // Tipo de media (image, video, etc.)
-  const [mediaURL, setMediaURL] = useState(""); // URL del media
-
   //TIPO PLANTILLA
   const handleTemplateTypeChange = (event) => {
     setTemplateType(event.target.value);
@@ -185,6 +185,10 @@ const sendRequest = async () => {
   };
 
   //HEADER PLANTILLA
+  const [mediaType, setMediaType] = useState(""); // Tipo de media (image, video, etc.)
+  const [mediaURL, setMediaURL] = useState(""); // URL del media
+  const [selectedFile, setSelectedFile] = useState(null);
+
   const handleHeaderChange = (event) => {
     setHeader(event.target.value);
   };
@@ -196,6 +200,13 @@ const sendRequest = async () => {
   const handleMediaURLChange = (event) => {
     setMediaURL(event.target.value);
   };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedFile(file);
+    console.log('Archivo seleccionado:', file);
+  };
+
 
   //FOOTER PLANTILLA
   const handleFooterChange = (e) => {
@@ -231,7 +242,7 @@ const sendRequest = async () => {
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
 
-      <Snackbar
+      {/* Notificaciones */}<Snackbar
         open={openSnackbar}
         autoHideDuration={4000}
         onClose={handleCloseSnackbar}
@@ -372,53 +383,69 @@ const sendRequest = async () => {
           </Box>
 
           {/* Header */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <Typography variant="h5" mb={2}>
-              Header
-            </Typography>
-            {templateType === "text" && (
-              <>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  Agregue un encabezado de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
+                <Typography variant="h5" mb={2}>
+                  Header
                 </Typography>
-                <TextField
-                  fullWidth
-                  label="Header"
-                  value={header}
-                  onChange={handleHeaderChange}
-                  helperText={`${header.length} / ${charLimit} characters`}
-                  sx={{ mb: 3 }}
-                />
-              </>
-            )}
-
-            {templateType !== "text" && (
-              <>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  Seleccione el tipo de media y proporcione un enlace.
-                </Typography>
-                <FormControl fullWidth sx={{ mb: 3 }}>
-                  <RadioGroup
-                    row
-                    value={mediaType}
-                    onChange={handleMediaTypeChange}
-                  >
-                    <FormControlLabel value="image" control={<Radio />} label="Image" />
-                    <FormControlLabel value="video" control={<Radio />} label="Video" />
-                    <FormControlLabel value="document" control={<Radio />} label="Document" />
-                  </RadioGroup>
-                </FormControl>
-                {mediaType && (
-                  <TextField
-                    fullWidth
-                    label="Media URL"
-                    value={mediaURL}
-                    onChange={handleMediaURLChange}
-                    helperText="Proporcione un enlace válido al archivo multimedia."
-                  />
+                {templateType === "text" && (
+                  <>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Agregue un encabezado de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      label="Header"
+                      value={header}
+                      onChange={handleHeaderChange}
+                      helperText={`${header.length} / ${charLimit} characters`}
+                      sx={{ mb: 3 }}
+                    />
+                  </>
                 )}
-              </>
-            )}
-          </Box>
+          
+                {templateType !== "text" && (
+                  <>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Seleccione el tipo de media y cargue un archivo.
+                    </Typography>
+                    <FormControl fullWidth sx={{ mb: 3 }}>
+                      <RadioGroup
+                        row
+                        value={mediaType}
+                        onChange={handleMediaTypeChange}
+                      >
+                        <FormControlLabel value="image" control={<Radio />} label="Image" />
+                        <FormControlLabel value="video" control={<Radio />} label="Video" />
+                        <FormControlLabel value="document" control={<Radio />} label="Document" />
+                      </RadioGroup>
+                    </FormControl>
+                    {mediaType && (
+                      <Box sx={{ mt: 2 }}>
+                        <input
+                          accept={
+                            mediaType === 'image' ? 'image/*' :
+                            mediaType === 'video' ? 'video/*' :
+                            mediaType === 'document' ? 'application/pdf, .doc, .docx, .txt' : ''
+                          }
+                          style={{ display: 'none' }}
+                          id="file-upload"
+                          type="file"
+                          onChange={handleFileChange}
+                        />
+                        <label htmlFor="file-upload">
+                          <Button variant="contained" component="span">
+                            Seleccionar Archivo
+                          </Button>
+                        </label>
+                        {selectedFile && (
+                          <Typography variant="body2" sx={{ mt: 2 }}>
+                            Archivo seleccionado: {selectedFile.name}
+                          </Typography>
+                        )}
+                      </Box>
+                    )}
+                  </>
+                )}
+              </Box>
 
           {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" gutterBottom>
@@ -510,7 +537,6 @@ const sendRequest = async () => {
 
         </Box>
       </Grid>
-
 
       {/* Preview (30%) */}<Grid item xs={4}>
         <Box sx={{ position: 'sticky', top: 0, height: '100vh' }}>
