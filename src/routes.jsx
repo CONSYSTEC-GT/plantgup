@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import TemplateList from './pages/TemplateList';
 import CreateTemplatePage from './pages/CreateTemplatePage';
 import EditTemplatePage from './pages/EditTemplatePage';
+import TemplateAll from './pages/TemplateAll';
 import TemplateAproved from './pages/TemplateAproved';
 import TemplateRejected from './pages/TemplateRejected';
 import TemplateFailed from './pages/TemplateFailed';
@@ -18,7 +19,7 @@ const AppRoutes = () => {
         <Route path="/dashboard" element={<TemplateList />} />
         <Route path="/CreateTemplatePage" element={<CreateTemplatePage />} />
         <Route path="/edit-template" element={<EditTemplatePage />} />
-        <Route path="/plantillas/todas" element={<EditTemplatePage />} />
+        <Route path="/plantillas/todas" element={<TemplateAll />} />
         <Route path="/plantillas/aprovadas" element={<TemplateAproved />} />
         <Route path="/plantillas/rechazadas" element={<TemplateRejected />} />
         <Route path="/plantillas/fallidas" element={<TemplateFailed />} />

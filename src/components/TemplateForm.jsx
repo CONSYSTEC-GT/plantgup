@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Button, Box, Radio, RadioGroup, FormControl, FormControlLabel, FormHelperText, InputLabel, MenuItem, Typography, Paper, Select, Stack, Snackbar, IconButton, TextField, Tooltip, alpha, Grid, Grid2} from '@mui/material';
+import { Alert, Box, Button, Container, FormControl, FormControlLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 
 import CustomHeader from './CustomHeader';
 
@@ -9,119 +9,121 @@ import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Delete from '@mui/icons-material/Delete';
 
+import FileUploadComponent from './FileUploadComponent';
+
 
 const TemplateForm = () => {
 
   //CAMPOS DEL FORMULARIO PARA EL REQUEST
-const [templateName, setTemplateName] = useState("");
-const [selectedCategory, setSelectedCategory] = useState("");
-const [templateType, setTemplateType] = useState("text");
-const [languageCode, setLanguageCode] = useState("");
-const [vertical, setVertical] = useState("");
-const [message, setMessage] = useState("");
-const [header, setHeader] = useState("");
-const [footer, setFooter] = useState("");
-const [buttons, setButtons] = useState([]);
-const [example, setExample] = useState("");
+  const [templateName, setTemplateName] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [templateType, setTemplateType] = useState("text");
+  const [languageCode, setLanguageCode] = useState("");
+  const [vertical, setVertical] = useState("");
+  const [message, setMessage] = useState("");
+  const [header, setHeader] = useState("");
+  const [footer, setFooter] = useState("");
+  const [buttons, setButtons] = useState([]);
+  const [example, setExample] = useState("");
 
-const [openSnackbar, setOpenSnackbar] = useState(false);
-const [snackbarMessage, setSnackbarMessage] = useState("");
-const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-// Función para mostrar Snackbar
-const showSnackbar = (message, severity) => {
-  setSnackbarMessage(message);
-  setSnackbarSeverity(severity);
-  setOpenSnackbar(true);
-};
-
-// Función para cerrar Snackbar
-const handleCloseSnackbar = (_, reason) => {
-  if (reason === "clickaway") return;
-  setOpenSnackbar(false);
-};
-
-// CONSTRUYO EL cURL REQUEST
-const buildCurlCommand = () => {
-  const url = "https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates";
-  const headers = {
-    Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
-    "Content-Type": "application/x-www-form-urlencoded",
+  // Función para mostrar Snackbar
+  const showSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setOpenSnackbar(true);
   };
 
-  const data = {
-    elementName: templateName,
-    category: selectedCategory.toUpperCase(),
-    languageCode: languageCode,
-    templateType: templateType.toUpperCase(),
-    vertical: vertical,
-    content: message,
-    buttons: JSON.stringify(
-      buttons.map((button) => ({
-        type: "QUICK_REPLY",
-        text: button.title,
-      }))
-    ),
-    example: example,
-    enableSample: true,
-    allowTemplateCategoryChange: false,
+  // Función para cerrar Snackbar
+  const handleCloseSnackbar = (_, reason) => {
+    if (reason === "clickaway") return;
+    setOpenSnackbar(false);
   };
 
-  const curlCommand = `curl --location '${url}' \\
+  // CONSTRUYO EL cURL REQUEST
+  const buildCurlCommand = () => {
+    const url = "https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates";
+    const headers = {
+      Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
+      "Content-Type": "application/x-www-form-urlencoded",
+    };
+
+    const data = {
+      elementName: templateName,
+      category: selectedCategory.toUpperCase(),
+      languageCode: languageCode,
+      templateType: templateType.toUpperCase(),
+      vertical: vertical,
+      content: message,
+      buttons: JSON.stringify(
+        buttons.map((button) => ({
+          type: "QUICK_REPLY",
+          text: button.title,
+        }))
+      ),
+      example: example,
+      enableSample: true,
+      allowTemplateCategoryChange: false,
+    };
+
+    const curlCommand = `curl --location '${url}' \\
 --header 'Authorization: ${headers.Authorization}' \\
 --header 'Content-Type: ${headers["Content-Type"]}' \\
 ${Object.entries(data)
-  .map(([key, value]) => `--data-urlencode '${key}=${value}'`)
-  .join(" \\\n")}`;
+        .map(([key, value]) => `--data-urlencode '${key}=${value}'`)
+        .join(" \\\n")}`;
 
-  return curlCommand;
-};
-
-// FUNCION PARA ENVIAR LA SOLICITUD
-const sendRequest = async () => {
-  const url = "https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates";
-  const headers = {
-    Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
-    "Content-Type": "application/x-www-form-urlencoded",
+    return curlCommand;
   };
 
-  const data = new URLSearchParams();
-  data.append("elementName", templateName);
-  data.append("category", selectedCategory.toUpperCase());
-  data.append("languageCode", languageCode === "español" ? "es" : languageCode === "inglés" ? "en" : "fr");
-  data.append("templateType", templateType.toUpperCase());
-  data.append("vertical", vertical);
-  data.append("content", message);
-  data.append("buttons", JSON.stringify(buttons.map((button) => ({ type: "QUICK_REPLY", text: button.title }))));
-  data.append("example", example);
-  data.append("enableSample", true);
-  data.append("allowTemplateCategoryChange", false);
+  // FUNCION PARA ENVIAR LA SOLICITUD
+  const sendRequest = async () => {
+    const url = "https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates";
+    const headers = {
+      Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
+      "Content-Type": "application/x-www-form-urlencoded",
+    };
 
-  console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
+    const data = new URLSearchParams();
+    data.append("elementName", templateName);
+    data.append("category", selectedCategory.toUpperCase());
+    data.append("languageCode", languageCode === "español" ? "es" : languageCode === "inglés" ? "en" : "fr");
+    data.append("templateType", templateType.toUpperCase());
+    data.append("vertical", vertical);
+    data.append("content", message);
+    data.append("buttons", JSON.stringify(buttons.map((button) => ({ type: "QUICK_REPLY", text: button.title }))));
+    data.append("example", example);
+    data.append("enableSample", true);
+    data.append("allowTemplateCategoryChange", false);
 
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: headers,
-      body: data,
-    });
+    console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
 
-    if (!response.ok) {
-      // Captura el mensaje de error de la respuesta
-      const errorResponse = await response.json(); // O response.text() si no es JSON
-      console.error("Error response:", errorResponse);
-      showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
-      return; // Detén la ejecución aquí
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: data,
+      });
+
+      if (!response.ok) {
+        // Captura el mensaje de error de la respuesta
+        const errorResponse = await response.json(); // O response.text() si no es JSON
+        console.error("Error response:", errorResponse);
+        showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
+        return; // Detén la ejecución aquí
+      }
+
+      const result = await response.json();
+      showSnackbar("✅ Plantilla creada exitosamente", "success");
+      console.log("Response: ", result);
+    } catch (error) {
+      console.error("Error en la solicitud:", error);
+      showSnackbar("❌ Error al crear la plantilla", "error");
     }
-
-    const result = await response.json();
-    showSnackbar("✅ Plantilla creada exitosamente", "success");
-    console.log("Response: ", result);
-  } catch (error) {
-    console.error("Error en la solicitud:", error);
-    showSnackbar("❌ Error al crear la plantilla", "error");
-  }
-};
+  };
 
   const [variables, setVariables] = useState([{ key: '{{1}}', value: '' }, { key: '{{2}}', value: '' }]);
 
@@ -132,20 +134,20 @@ const sendRequest = async () => {
       title: 'Marketing',
       description: 'Envía ofertas promocionales, ofertas de productos y más para aumentar la conciencia y el compromiso.',
       icon: <EmailOutlinedIcon />,
-  },
-  {
+    },
+    {
       id: 'utility',
       title: 'Utilidad',
       description: 'Envía actualizaciones de cuenta, actualizaciones de pedidos, alertas y más para compartir información importante.',
       icon: <NotificationsNoneOutlinedIcon />,
-  },
-  {
+    },
+    {
       id: 'authentication',
       title: 'Autenticación',
       description: 'Envía códigos que permiten a tus clientes acceder a su cuenta.',
       icon: <VpnKeyOutlinedIcon />,
       disabled: true
-  }  
+    }
   ];
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
@@ -158,7 +160,7 @@ const sendRequest = async () => {
 
   //IDIOMA PLANTILLA
   const handleLanguageCodeChange = (event) => {
-  setLanguageCode(languageMap[event.target.value] || event.target.value);
+    setLanguageCode(languageMap[event.target.value] || event.target.value);
   }
   const languageMap = {
     español: "es",
@@ -172,7 +174,7 @@ const sendRequest = async () => {
   };
 
   //VERTICAL PLANTILLA
-  const handleVerticalChange = (event) =>{
+  const handleVerticalChange = (event) => {
     setVertical(event.target.value)
   }
 
@@ -184,10 +186,24 @@ const sendRequest = async () => {
     setMediaURL("");
   };
 
+  const handleHeaderTemplateTypeChange = (event) => {
+    setTemplateType(event.target.value);
+    setHeader(''); // Resetear el header al cambiar el tipo
+  };
+
+  const handleHeaderTypeChange = (event) => {
+    const value = event.target.value;
+    if (value.length <= charLimit) {
+      setHeader(value);
+    }
+  };
+
   //HEADER PLANTILLA
   const [mediaType, setMediaType] = useState(""); // Tipo de media (image, video, etc.)
   const [mediaURL, setMediaURL] = useState(""); // URL del media
   const [selectedFile, setSelectedFile] = useState(null);
+  const MAX_IMG_SIZE = 5 * 1024 * 1024; // 5 MB en bytes
+  const [error, setError] = useState(''); // Estado para manejar errores
 
   const handleHeaderChange = (event) => {
     setHeader(event.target.value);
@@ -197,15 +213,78 @@ const sendRequest = async () => {
     setMediaType(event.target.value);
   };
 
+  const handleCloseError = () => {
+    setError(''); // Cerrar el mensaje de error
+  };
+
   const handleMediaURLChange = (event) => {
     setMediaURL(event.target.value);
   };
 
+  const [file, setFile] = useState(null);
+  const [uploadedUrl, setUploadedUrl] = useState('');
+
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setSelectedFile(file);
-    console.log('Archivo seleccionado:', file);
+    const selectedFile = event.target.files[0];
+    if (selectedFile && selectedFile.size > MAX_IMG_SIZE) {
+      setError('El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.');
+      setSelectedFile(null);//Limpiar el archivo seleccionado
+    } else {
+      setError(''); //Limpio el mensaje de error
+      setSelectedFile(selectedFile);
+      console.log('Archivo seleccionado:', selectedFile);
+    }
   };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      alert('Por favor, selecciona un archivo.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const base64Content = event.target.result.split(',')[1]; // Obtener solo el contenido en Base64
+
+      const payload = {
+        idEmpresa: 2,
+        idBot: 257,
+        idBotRedes: 721,
+        idUsuario: 48,
+        tipoCarga: 3,
+        nombreArchivo: file.name,
+        contenidoArchivo: base64Content,
+      };
+
+      try {
+        const response = await fetch('https://dev.talkme.pro/WsFTP/api/ftp/upload', {
+          method: 'POST',
+          headers: {
+            'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
+            'Origin': 'https://dev.talkme.pro/',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al subir el archivo');
+        }
+
+        const data = await response.json();
+        setUploadedUrl(data.url); // Asumiendo que la API devuelve un objeto con una propiedad 'url'
+        alert('Archivo subido con éxito: ' + data.url);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error al subir el archivo');
+      }
+    };
+
+    reader.readAsDataURL(file); // Leer el archivo como Data URL (Base64)
+  };
+
+
+
 
 
   //FOOTER PLANTILLA
@@ -214,31 +293,33 @@ const sendRequest = async () => {
       setFooter(e.target.value);
     }
   };
-
   const charLimit = 60;
   const maxButtons = 10;
 
   //BOTONES PLANTILLA
   const addButton = () => {
     if (buttons.length < maxButtons) {
-      setButtons([...buttons, { id: Date.now(), title: '' }]);
+      setButtons([
+        ...buttons,
+        { id: Date.now(), type: "QUICK_REPLY", title: "", url: "", phoneNumber: "" }
+      ]);
     }
   };
-
+  const updateButton = (id, key, value) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, [key]: value } : button
+      )
+    );
+  };
   const removeButton = (id) => {
     setButtons(buttons.filter((button) => button.id !== id));
   };
 
-  const updateButtonTitle = (id, title) => {
-    setButtons(
-      buttons.map((button) =>
-        button.id === id ? { ...button, title } : button
-      )
-    );
-  };
+  
 
 
-    
+
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
 
@@ -325,7 +406,6 @@ const sendRequest = async () => {
                 <MenuItem value="text">TEXT</MenuItem>
                 <MenuItem value="image">IMAGE</MenuItem>
                 <MenuItem value="document">DOCUMENT</MenuItem>
-                {/* Agrega más opciones según sea necesario */}
               </Select>
               <FormHelperText>
                 Escoge el tipo de plantilla que se va a crear
@@ -354,7 +434,6 @@ const sendRequest = async () => {
             </FormControl>
           </Box>
 
-
           {/*Etiquetas de plantilla --data-urlencode vertical*/}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" mb={2}>
               Etiquetas de plantilla*
@@ -382,70 +461,33 @@ const sendRequest = async () => {
             />
           </Box>
 
-          {/* Header */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-                <Typography variant="h5" mb={2}>
-                  Header
-                </Typography>
-                {templateType === "text" && (
-                  <>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                      Agregue un encabezado de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      label="Header"
-                      value={header}
-                      onChange={handleHeaderChange}
-                      helperText={`${header.length} / ${charLimit} characters`}
-                      sx={{ mb: 3 }}
-                    />
-                  </>
-                )}
-          
-                {templateType !== "text" && (
-                  <>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                      Seleccione el tipo de media y cargue un archivo.
-                    </Typography>
-                    <FormControl fullWidth sx={{ mb: 3 }}>
-                      <RadioGroup
-                        row
-                        value={mediaType}
-                        onChange={handleMediaTypeChange}
-                      >
-                        <FormControlLabel value="image" control={<Radio />} label="Image" />
-                        <FormControlLabel value="video" control={<Radio />} label="Video" />
-                        <FormControlLabel value="document" control={<Radio />} label="Document" />
-                      </RadioGroup>
-                    </FormControl>
-                    {mediaType && (
-                      <Box sx={{ mt: 2 }}>
-                        <input
-                          accept={
-                            mediaType === 'image' ? 'image/*' :
-                            mediaType === 'video' ? 'video/*' :
-                            mediaType === 'document' ? 'application/pdf, .doc, .docx, .txt' : ''
-                          }
-                          style={{ display: 'none' }}
-                          id="file-upload"
-                          type="file"
-                          onChange={handleFileChange}
-                        />
-                        <label htmlFor="file-upload">
-                          <Button variant="contained" component="span">
-                            Seleccionar Archivo
-                          </Button>
-                        </label>
-                        {selectedFile && (
-                          <Typography variant="body2" sx={{ mt: 2 }}>
-                            Archivo seleccionado: {selectedFile.name}
-                          </Typography>
-                        )}
-                      </Box>
-                    )}
-                  </>
-                )}
-              </Box>
+          {/* Header */}{templateType === 'TEXT' ? (
+            <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+              <Typography variant="h5" gutterBottom>
+                Header
+              </Typography>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
+                Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
+              </Typography>
+              <TextField
+                fullWidth
+                label="Header text"
+                value={header}
+                onChange={handleHeaderChange}
+                helperText={`${header.length} / ${charLimit} caracteres`}
+                sx={{ mb: 3 }}
+                error={header.length === charLimit}
+              />
+            </Box>
+          ) : (
+            <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+              <Typography variant="h5" gutterBottom>
+                Header
+              </Typography>
+              <FileUploadComponent templateType={templateType} />
+            </Box>
+          )}
+
 
           {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" gutterBottom>
@@ -464,7 +506,7 @@ const sendRequest = async () => {
             />
           </Box>
 
-          {/* Botones --data-urlencode 'buttons*/}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          {/* Botones --data-urlencode 'buttons*/}<Box sx={{ width: "100%", marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>
               Buttons (Optional)
             </Typography>
@@ -472,12 +514,7 @@ const sendRequest = async () => {
               Please choose buttons to be added to the template. You can choose up to {maxButtons} buttons.
             </Typography>
 
-            <Button
-              variant="contained"
-              onClick={addButton}
-              disabled={buttons.length >= maxButtons}
-              sx={{ mb: 3 }}
-            >
+            <Button variant="contained" onClick={addButton} disabled={buttons.length >= maxButtons} sx={{ mb: 3 }}>
               + Add Button
             </Button>
 
@@ -486,36 +523,62 @@ const sendRequest = async () => {
                 <Box
                   key={button.id}
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    display: "flex",
+                    flexDirection: "column",
                     gap: 2,
-                    border: '1px solid #ccc',
+                    border: "1px solid #ccc",
                     borderRadius: 1,
                     p: 2,
-                    backgroundColor: '#f9f9f9',
+                    backgroundColor: "#f9f9f9",
                   }}
                 >
+                  {/* Selector de tipo de botón */}
+                  <Select
+                    value={button.type}
+                    onChange={(e) => updateButton(button.id, "type", e.target.value)}
+                    fullWidth
+                  >
+                    <MenuItem value="QUICK_REPLY">Quick Reply</MenuItem>
+                    <MenuItem value="URL">URL</MenuItem>
+                    <MenuItem value="PHONE_NUMBER">Phone Number</MenuItem>
+                  </Select>
+
+                  {/* Campo de texto para el título del botón */}
                   <TextField
-                    label={`Quick Reply Title`}
+                    label="Button Title"
                     value={button.title}
-                    onChange={(e) => updateButtonTitle(button.id, e.target.value)}
+                    onChange={(e) => updateButton(button.id, "title", e.target.value)}
                     fullWidth
                   />
-                  <IconButton
-                    color="error"
-                    onClick={() => removeButton(button.id)}
-                  >
+
+                  {/* Campo adicional según el tipo de botón */}
+                  {button.type === "URL" && (
+                    <TextField
+                      label="URL"
+                      value={button.url}
+                      onChange={(e) => updateButton(button.id, "url", e.target.value)}
+                      fullWidth
+                    />
+                  )}
+
+                  {button.type === "PHONE_NUMBER" && (
+                    <TextField
+                      label="Phone Number"
+                      value={button.phoneNumber}
+                      onChange={(e) => updateButton(button.id, "phoneNumber", e.target.value)}
+                      fullWidth
+                    />
+                  )}
+
+                  {/* Botón para eliminar */}
+                  <IconButton color="error" onClick={() => removeButton(button.id)}>
                     <Delete />
                   </IconButton>
                 </Box>
               ))}
             </Stack>
 
-            <Typography
-              variant="body2"
-              color={buttons.length >= maxButtons ? 'error' : 'text.secondary'}
-              sx={{ mt: 2 }}
-            >
+            <Typography variant="body2" color={buttons.length >= maxButtons ? "error" : "text.secondary"} sx={{ mt: 2 }}>
               {buttons.length} / {maxButtons} buttons added
             </Typography>
           </Box>
@@ -534,7 +597,6 @@ const sendRequest = async () => {
               sx={{ mb: 3 }}
             />
           </Box>
-
         </Box>
       </Grid>
 
