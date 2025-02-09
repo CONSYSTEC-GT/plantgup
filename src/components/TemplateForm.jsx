@@ -50,7 +50,7 @@ const TemplateForm = () => {
       Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
       "Content-Type": "application/x-www-form-urlencoded",
     };
-
+  
     const data = {
       elementName: templateName,
       category: selectedCategory.toUpperCase(),
@@ -59,23 +59,34 @@ const TemplateForm = () => {
       vertical: vertical,
       content: message,
       buttons: JSON.stringify(
-        buttons.map((button) => ({
-          type: "QUICK_REPLY",
-          text: button.title,
-        }))
+        buttons.map((button) => {
+          const buttonData = {
+            type: button.type, // Usar el tipo de botón seleccionado por el usuario
+            text: button.title,
+          };
+  
+          // Agregar campos adicionales según el tipo de botón
+          if (button.type === "URL") {
+            buttonData.url = button.url;
+          } else if (button.type === "PHONE_NUMBER") {
+            buttonData.phoneNumber = button.phoneNumber;
+          }
+  
+          return buttonData;
+        })
       ),
       example: example,
       enableSample: true,
       allowTemplateCategoryChange: false,
     };
-
+  
     const curlCommand = `curl --location '${url}' \\
---header 'Authorization: ${headers.Authorization}' \\
---header 'Content-Type: ${headers["Content-Type"]}' \\
-${Object.entries(data)
-        .map(([key, value]) => `--data-urlencode '${key}=${value}'`)
-        .join(" \\\n")}`;
-
+  --header 'Authorization: ${headers.Authorization}' \\
+  --header 'Content-Type: ${headers["Content-Type"]}' \\
+  ${Object.entries(data)
+          .map(([key, value]) => `--data-urlencode '${key}=${value}'`)
+          .join(" \\\n")}`;
+  
     return curlCommand;
   };
 
@@ -86,7 +97,7 @@ ${Object.entries(data)
       Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
       "Content-Type": "application/x-www-form-urlencoded",
     };
-
+  
     const data = new URLSearchParams();
     data.append("elementName", templateName);
     data.append("category", selectedCategory.toUpperCase());
@@ -94,20 +105,38 @@ ${Object.entries(data)
     data.append("templateType", templateType.toUpperCase());
     data.append("vertical", vertical);
     data.append("content", message);
-    data.append("buttons", JSON.stringify(buttons.map((button) => ({ type: "QUICK_REPLY", text: button.title }))));
+  
+    // Construir el objeto buttons correctamente
+    const formattedButtons = buttons.map((button) => {
+      const buttonData = {
+        type: button.type, // Usar el tipo de botón seleccionado por el usuario
+        text: button.title,
+      };
+  
+      // Agregar campos adicionales según el tipo de botón
+      if (button.type === "URL") {
+        buttonData.url = button.url;
+      } else if (button.type === "PHONE_NUMBER") {
+        buttonData.phone_number = button.phoneNumber; // Mapear phoneNumber a phone_number
+      }
+  
+      return buttonData;
+    });
+  
+    data.append("buttons", JSON.stringify(formattedButtons)); // Enviar los botones correctamente formateados
     data.append("example", example);
     data.append("enableSample", true);
     data.append("allowTemplateCategoryChange", false);
-
+  
     console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
-
+  
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: headers,
         body: data,
       });
-
+  
       if (!response.ok) {
         // Captura el mensaje de error de la respuesta
         const errorResponse = await response.json(); // O response.text() si no es JSON
@@ -115,7 +144,7 @@ ${Object.entries(data)
         showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
         return; // Detén la ejecución aquí
       }
-
+  
       const result = await response.json();
       showSnackbar("✅ Plantilla creada exitosamente", "success");
       console.log("Response: ", result);
@@ -283,10 +312,7 @@ ${Object.entries(data)
     reader.readAsDataURL(file); // Leer el archivo como Data URL (Base64)
   };
 
-
-
-
-
+  
   //FOOTER PLANTILLA
   const handleFooterChange = (e) => {
     if (e.target.value.length <= charLimit) {
