@@ -12,19 +12,16 @@ import {
   Alert
 } from '@mui/material';
 
-const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
+const FileUploadComponent = ({ templateType = 'media' }) => {
   const charLimit = 60;
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-  const APP_ID = 'f63360ab-87b0-44da-9790-63a0d524f9dd';
-  const TOKEN = 'sk_2662b472ec0f4eeebd664238d72b61da';
 
   // Estados
   const [header, setHeader] = useState('');
   const [mediaType, setMediaType] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [mediaId, setMediaId] = useState('');
+  const [uploadedUrl, setUploadedUrl] = useState('');
   const [error, setError] = useState('');
-  const [uploadStatus, setUploadStatus] = useState('');
 
   // Manejadores de eventos
   const handleHeaderChange = (event) => {
@@ -32,15 +29,13 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
   };
 
   const handleMediaTypeChange = (event) => {
-    console.log('Tipo de medio cambiado a:', event.target.value);
     setMediaType(event.target.value);
-    setSelectedFile(null);
-    setMediaId('');
+    setSelectedFile(null); // Resetear archivo al cambiar tipo
+    setUploadedUrl(''); // Resetear URL
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    console.log('Archivo seleccionado:', file);
 
     if (!file) return;
 
@@ -50,18 +45,8 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
       return;
     }
 
-    console.log('Detalles del archivo:', {
-      nombre: file.name,
-      tipo: file.type,
-      tamaño: `${(file.size / 1024 / 1024).toFixed(2)} MB`
-    });
-
     setError('');
     setSelectedFile(file);
-  };
-
-  const handleUploadSuccess = (mediaId) => {
-    setMediaId(mediaId);
   };
 
   const handleUpload = async () => {
@@ -69,64 +54,60 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
       setError('Por favor, selecciona un archivo.');
       return;
     }
-  
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('file_type', selectedFile.type);
-  
-    const requestConfig = {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'token': TOKEN
-      },
-      body: formData,
-    };
 
-    const url = `/gupshup/partner/app/${APP_ID}/upload/media`;
-  
     try {
-      setUploadStatus('Subiendo archivo...');
-      const response = await fetch(url, requestConfig);
-  
+      const base64Content = await convertToBase64(selectedFile);
+      const payload = {
+        idEmpresa: 2,
+        idBot: 257,
+        idBotRedes: 721,
+        idUsuario: 48,
+        tipoCarga: 3,
+        nombreArchivo: selectedFile.name,
+        contenidoArchivo: base64Content.split(',')[1],
+      };
+
+      const response = await fetch('/WsFTP/api/ftp/upload', {
+        method: 'POST',
+        headers: {
+          'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error en la respuesta:', {
-          status: response.status,
-          statusText: response.statusText,
-          errorDetails: errorText
-        });
-        setUploadStatus('Error al subir el archivo');
-        throw new Error(`Error en la respuesta del servidor: ${response.status} ${response.statusText}`);
+        throw new Error('Error en la respuesta del servidor');
       }
-  
+
       const data = await response.json();
-      console.log('=== Respuesta exitosa ===', data);
-      
-      // Extraer el mediaId del handleId.message
-      const mediaId = data.handleId.message;
-      setMediaId(mediaId);
-      setUploadStatus('¡Archivo subido exitosamente!');
-      
-      // Notificar al componente padre con el mediaId correcto
-      if (onUploadSuccess) {
-        onUploadSuccess(mediaId);
-      }
+      setUploadedUrl(data.url);
     } catch (error) {
-      console.error('=== Error en el upload ===', error);
+      console.error('Error:', error);
       setError('Error al subir el archivo. Por favor, intenta nuevamente.');
-      setUploadStatus('Error al subir el archivo');
     }
   };
 
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
+
   const getAcceptedFileTypes = () => {
-    const types = {
-      image: 'image/*',
-      video: 'video/*',
-      document: '.pdf,.doc,.docx,.txt'
-    };
-    console.log('Tipos de archivo aceptados:', types[mediaType] || '');
-    return types[mediaType] || '';
+    switch (mediaType) {
+      case 'image':
+        return 'image/*';
+      case 'video':
+        return 'video/*';
+      case 'document':
+        return '.pdf,.doc,.docx,.txt';
+      default:
+        return '';
+    }
   };
 
   return (
@@ -199,10 +180,18 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
                 </Typography>
               )}
 
-              {mediaId && (
+              {uploadedUrl && (
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="body2">
-                    Media ID: {mediaId}
+                    URL del archivo subido:
+                    <a
+                      href={uploadedUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ marginLeft: '8px' }}
+                    >
+                      {uploadedUrl}
+                    </a>
                   </Typography>
                 </Box>
               )}
@@ -220,20 +209,6 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
           {error}
         </Alert>
       </Snackbar>
-
-      <div className="space-y-4">
-      {/* ... otros elementos ... */}
-      {uploadStatus && (
-        <div className={`mt-2 p-2 rounded ${
-          uploadStatus.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
-        }`}>
-          {uploadStatus}
-        </div>
-      )}
-    </div>
-
-
-
     </Box>
   );
 };

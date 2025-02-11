@@ -8,6 +8,7 @@ import TemplateAproved from './pages/TemplateAproved';
 import TemplateRejected from './pages/TemplateRejected';
 import TemplateFailed from './pages/TemplateFailed';
 import TemplateSend from './pages/TemplateSend';
+import ModifyTemplatePage from './pages/ModifyTemplatePage';
 import Sidebar from './components/Sidebar';
 
 const AppRoutes = () => {
@@ -19,6 +20,7 @@ const AppRoutes = () => {
         <Route path="/dashboard" element={<TemplateList />} />
         <Route path="/CreateTemplatePage" element={<CreateTemplatePage />} />
         <Route path="/edit-template" element={<EditTemplatePage />} />
+        <Route path="/modify-template" element={<ModifyTemplatePage />} />
         <Route path="/plantillas/todas" element={<TemplateAll />} />
         <Route path="/plantillas/aprovadas" element={<TemplateAproved />} />
         <Route path="/plantillas/rechazadas" element={<TemplateRejected />} />

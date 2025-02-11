@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { alpha, Box, Button, Card, CardActions, CardContent, Menu, MenuItem, styled, Typography } from '@mui/material';
 
@@ -18,6 +19,8 @@ const TemplateAll = () => {
   const [activeFilter, setActiveFilter] = useState('todas');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+  const navigate = useNavigate(); // Inicializa useNavigate
 
   //FETCH DE LAS PLANTILLAS
   const fetchTemplates = async () => {
@@ -61,9 +64,8 @@ const TemplateAll = () => {
     setAnchorEl(null);
   };
 
-  const handleEdit = () => {
-    console.log('Editar:', selectedTemplate);
-    handleClose();
+  const handleEdit = (template) => {
+    navigate('/modify-template', { state: { template } });
   };
 
 // Función para manejar el clic en eliminar
@@ -216,7 +218,10 @@ const handleDeleteClick = () => {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                   >
-                    <MenuItem onClick={handleEdit} disableRipple>
+                    <MenuItem
+                      onClick={() => handleEdit(selectedTemplate)} // Pasamos el selectedTemplate
+                      disableRipple
+                    >
                       <EditIcon />
                       Editar
                     </MenuItem>

@@ -25,10 +25,16 @@ const TemplateForm = () => {
   const [footer, setFooter] = useState("");
   const [buttons, setButtons] = useState([]);
   const [example, setExample] = useState("");
+  const [exampleMedia, setExampleMedia] = useState("");
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  //ESTE ES PARA EL EXAMPLE MEDIA
+  const [mediaId, setMediaId] = useState('');
+
+  
 
   // Función para mostrar Snackbar
   const showSnackbar = (message, severity) => {
@@ -50,43 +56,49 @@ const TemplateForm = () => {
       Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
       "Content-Type": "application/x-www-form-urlencoded",
     };
-  
+
     const data = {
       elementName: templateName,
       category: selectedCategory.toUpperCase(),
-      languageCode: languageCode,
+      languageCode: languageCode === "español" ? "es" : languageCode === "inglés" ? "en" : "fr",
       templateType: templateType.toUpperCase(),
       vertical: vertical,
       content: message,
       buttons: JSON.stringify(
         buttons.map((button) => {
           const buttonData = {
-            type: button.type, // Usar el tipo de botón seleccionado por el usuario
+            type: button.type,
             text: button.title,
           };
-  
-          // Agregar campos adicionales según el tipo de botón
+
           if (button.type === "URL") {
             buttonData.url = button.url;
           } else if (button.type === "PHONE_NUMBER") {
-            buttonData.phoneNumber = button.phoneNumber;
+            buttonData.phone_number = button.phoneNumber;
           }
-  
+
           return buttonData;
         })
       ),
       example: example,
+      exampleMedia: mediaId,
       enableSample: true,
       allowTemplateCategoryChange: false,
     };
-  
+
+    // Solo agregar mediaId si existe
+    if (mediaId) {
+      data.exampleMedia = mediaId;
+    }
+
     const curlCommand = `curl --location '${url}' \\
-  --header 'Authorization: ${headers.Authorization}' \\
-  --header 'Content-Type: ${headers["Content-Type"]}' \\
-  ${Object.entries(data)
-          .map(([key, value]) => `--data-urlencode '${key}=${value}'`)
-          .join(" \\\n")}`;
-  
+--header 'Authorization: ${headers.Authorization}' \\
+--header 'Content-Type: ${headers["Content-Type"]}' \\
+${Object.entries(data)
+        .filter(([_, value]) => value !== undefined && value !== '') // Filtrar valores vacíos
+        .map(([key, value]) => `--data-urlencode '${key}=${value}'`)
+        .join(" \\\n")}`;
+
     return curlCommand;
   };
 
@@ -97,7 +109,7 @@ const TemplateForm = () => {
       Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
       "Content-Type": "application/x-www-form-urlencoded",
     };
-  
+
     const data = new URLSearchParams();
     data.append("elementName", templateName);
     data.append("category", selectedCategory.toUpperCase());
@@ -105,46 +117,49 @@ const TemplateForm = () => {
     data.append("templateType", templateType.toUpperCase());
     data.append("vertical", vertical);
     data.append("content", message);
-  
-    // Construir el objeto buttons correctamente
+
+    // Agregar mediaId si existe
+    if (mediaId) {
+      data.append("exampleMedia", mediaId);
+    }
+
+    // Construir el objeto buttons
     const formattedButtons = buttons.map((button) => {
       const buttonData = {
-        type: button.type, // Usar el tipo de botón seleccionado por el usuario
+        type: button.type,
         text: button.title,
       };
-  
-      // Agregar campos adicionales según el tipo de botón
+
       if (button.type === "URL") {
         buttonData.url = button.url;
       } else if (button.type === "PHONE_NUMBER") {
-        buttonData.phone_number = button.phoneNumber; // Mapear phoneNumber a phone_number
+        buttonData.phone_number = button.phoneNumber;
       }
-  
+
       return buttonData;
     });
-  
-    data.append("buttons", JSON.stringify(formattedButtons)); // Enviar los botones correctamente formateados
+
+    data.append("buttons", JSON.stringify(formattedButtons));
     data.append("example", example);
     data.append("enableSample", true);
     data.append("allowTemplateCategoryChange", false);
-  
+
     console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
-  
+
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: headers,
         body: data,
       });
-  
+
       if (!response.ok) {
-        // Captura el mensaje de error de la respuesta
-        const errorResponse = await response.json(); // O response.text() si no es JSON
+        const errorResponse = await response.json();
         console.error("Error response:", errorResponse);
         showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
-        return; // Detén la ejecución aquí
+        return;
       }
-  
+
       const result = await response.json();
       showSnackbar("✅ Plantilla creada exitosamente", "success");
       console.log("Response: ", result);
@@ -155,6 +170,16 @@ const TemplateForm = () => {
   };
 
   const [variables, setVariables] = useState([{ key: '{{1}}', value: '' }, { key: '{{2}}', value: '' }]);
+
+
+  //MEDIA
+  const handleUploadSuccess = (uploadedMediaId) => {
+    console.log('Media subida exitosamente, ID:', uploadedMediaId);
+    setMediaId(uploadedMediaId);
+    // Mostrar mensaje de éxito
+    showSnackbar("✅ Archivo subido exitosamente", "success");
+  };
+
 
   // CATEGORIAS
   const categories = [
@@ -189,13 +214,17 @@ const TemplateForm = () => {
 
   //IDIOMA PLANTILLA
   const handleLanguageCodeChange = (event) => {
-    setLanguageCode(languageMap[event.target.value] || event.target.value);
-  }
+    const selectedLanguage = event.target.value; // "español", "inglés" o "frances"
+    const newLanguageCode = languageMap[selectedLanguage]; // Convierte a "es", "en" o "fr"
+    setLanguageCode(newLanguageCode);
+  };
+
   const languageMap = {
     español: "es",
     inglés: "en",
     frances: "fr",
   };
+
   const reverseLanguageMap = {
     es: "español",
     en: "inglés",
@@ -312,7 +341,7 @@ const TemplateForm = () => {
     reader.readAsDataURL(file); // Leer el archivo como Data URL (Base64)
   };
 
-  
+
   //FOOTER PLANTILLA
   const handleFooterChange = (e) => {
     if (e.target.value.length <= charLimit) {
@@ -341,9 +370,6 @@ const TemplateForm = () => {
   const removeButton = (id) => {
     setButtons(buttons.filter((button) => button.id !== id));
   };
-
-  
-
 
 
   return (
@@ -439,26 +465,26 @@ const TemplateForm = () => {
             </FormControl>
           </Box>
 
-          {/*Idioma --data-urlencode languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <Typography variant="h5" mb={2}>Idioma de plantilla*</Typography>
-            <FormControl fullWidth>
-              <InputLabel id="languageCode">Selección</InputLabel>
-              <Select
-                labelId="languageCode"
-                id="languageCode"
-                label="Escoge el idioma"
-                value={reverseLanguageMap[languageCode] || ""}
-                onChange={handleLanguageCodeChange}
-              >
-                {Object.keys(languageMap).map((key) => (
-                  <MenuItem key={key} value={key}>
-                    {key.toUpperCase()}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>Escoge el idioma de plantilla que se va a crear</FormHelperText>
-            </FormControl>
-          </Box>
+          {/*Idioma --data-urlencode languageCode */}    <Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+      <Typography variant="h5" mb={2}>Idioma de plantilla*</Typography>
+      <FormControl fullWidth>
+        <InputLabel id="languageCode">Selección</InputLabel>
+        <Select
+          labelId="languageCode"
+          id="languageCode"
+          label="Escoge el idioma"
+          value={reverseLanguageMap[languageCode] || ""} // Convierte "es" a "español", etc.
+          onChange={handleLanguageCodeChange}
+        >
+          {Object.keys(languageMap).map((key) => (
+            <MenuItem key={key} value={key}>
+              {key.toUpperCase()}
+            </MenuItem>
+          ))}
+        </Select>
+        <FormHelperText>Escoge el idioma de plantilla que se va a crear</FormHelperText>
+      </FormControl>
+    </Box>
 
           {/*Etiquetas de plantilla --data-urlencode vertical*/}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <Typography variant="h5" mb={2}>
@@ -487,7 +513,7 @@ const TemplateForm = () => {
             />
           </Box>
 
-          {/* Header */}{templateType === 'TEXT' ? (
+          {/* Header {templateType === 'TEXT' ? (
             <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
               <Typography variant="h5" gutterBottom>
                 Header
@@ -513,6 +539,28 @@ const TemplateForm = () => {
               <FileUploadComponent templateType={templateType} />
             </Box>
           )}
+
+          
+          */}
+
+          <FileUploadComponent onUploadSuccess={handleUploadSuccess} />
+
+          {/* Header */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+            <Typography variant="h5" gutterBottom>
+              Header
+            </Typography>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el encabezado.
+            </Typography>
+            <TextField
+              fullWidth
+              label="Header text"
+              value={header}
+              onChange={handleHeaderChange}
+              helperText={`${header.length} / ${charLimit} characters`}
+              sx={{ mb: 3 }}
+            />
+          </Box>
 
 
           {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
@@ -680,7 +728,7 @@ const TemplateForm = () => {
 
             <Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
               <Typography variant="h5" gutterBottom>
-                Comando cURL
+                Comando cURL {mediaId && <span style={{ color: 'green' }}>✓ con media</span>}
               </Typography>
               <TextField
                 fullWidth
