@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, CardContent, Typography, CardActions, Button, Grid, Box, Stack, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+//componentes
+import { Card, CardContent, Typography, CardActions, Button, Grid, Box, Stack, TextField, Paper } from '@mui/material';
+//iconos
 import AddIcon from '@mui/icons-material/Add';
-import CreateTemplatePage from './CreateTemplatePage';
-import Sidebar from '../components/Sidebar';
-import { Padding } from '@mui/icons-material';
+import FindInPageIcon from '@mui/icons-material/FindInPage';
 
 // Componente reutilizable para las tarjetas
 const TemplateCard = ({ title, subtitle, description, onEdit, onDelete, whatsappStyle }) => (
@@ -48,8 +48,8 @@ const TemplateCard = ({ title, subtitle, description, onEdit, onDelete, whatsapp
 );
 
 export default function BasicCard() {
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const { templateId } = useParams();
   const [templates, setTemplates] = useState([]);
   const [appName, setAppName] = useState('');
@@ -66,48 +66,48 @@ export default function BasicCard() {
       console.log('App ID:', appId);
       console.log('Auth Code:', authCode);
       setAppName(appNameFromParams || '')
-      
+
       // Example: You might want to store these in state or make an API call
       fetchTemplates(appId, authCode);
     }
   }, [location]);
-    //fetchTemplates();
+  //fetchTemplates();
 
-    const fetchTemplates = async (appId, authCode) => {
-      try {
-          const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
-              method: 'GET',
-              headers: {
-                  'Authorization': authCode,
-              }
-          });
-          const data = await response.json();
-          if (data.status === 'success') {
-              setTemplates(data.templates.slice(0, 4));
-          }
-      } catch (error) {
-          console.error('Error fetching templates:', error);
+  const fetchTemplates = async (appId, authCode) => {
+    try {
+      const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+        method: 'GET',
+        headers: {
+          'Authorization': authCode,
+        }
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+        setTemplates(data.templates.slice(0, 4));
       }
+    } catch (error) {
+      console.error('Error fetching templates:', error);
+    }
   };
 
-const getStatusColor = (status) => {
-  switch (status) {
-    case 'REJECTED':
-      return '#ffebee';
-    case 'FAILED':
-      return '#fff3e0';
-    default:
-      return '#f5f5f5';
-  }
-};
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'REJECTED':
+        return '#ffebee';
+      case 'FAILED':
+        return '#fff3e0';
+      default:
+        return '#f5f5f5';
+    }
+  };
 
   const handleCreateClick = () => {
     navigate('/CreateTemplatePage'); // Navega a la página para crear plantilla
-};
+  };
 
-const handleVerTemplates = () => {
+  const handleVerTemplates = () => {
     navigate('/edit-template/'); // Navega a la página para editar la plantilla con su ID
-};
+  };
 
 
   const handleDeleteClick = (templateId) => {
@@ -117,97 +117,120 @@ const handleVerTemplates = () => {
   };
 
   return (
-    <Box sx={{marginLeft: 2}}>
-      <h2>Plantillas TalkMe</h2>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Box sx={{marginLeft: 2}}>
-          <p>Mira el listado de plantillas que puedes utilizar.</p>
-          <p>Están aprobadas por WhatsApp para tu aplicación.</p>
-        </Box>
-        <Button sx={{marginTop: 2, marginRight: 2}}
-          color="primary"
-          variant="contained"
-          size="large"
-          onClick={handleCreateClick}
-          endIcon={<AddIcon />}
-        >
-          Crear Template
-        </Button>
-      </Box>
+    <Box sx={{ marginLeft: 2, marginRight: 2, marginTop: 3 }}>
+      {/*TITULO PRIMER BLOQUE */}<Paper elevation={3} sx={{ padding: 3, borderRadius: 2 }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
+          Plantillas TalkMe
+        </Typography>
 
-      {/* Tarjeta única */}
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box sx={{ maxWidth: "60%" }}>
+            <Typography variant="body1" color="textSecondary">
+              Mira el listado de plantillas que puedes utilizar.
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+              Están aprobadas por WhatsApp para tu aplicación.
+            </Typography>
+          </Box>
+
+          <Button color="primary" variant="contained" size="large" onClick={handleCreateClick} endIcon={<AddIcon />} sx={{ borderRadius: 2 }}>
+            Crear Template
+          </Button>
+        </Box>
+      </Paper>
+
+      {/*APP NAME TARJTA UNICA*/}<Box sx={{ padding: 3 }}>
+        <Typography variant="h6" fontWeight="bold" gutterBottom>
+          Lista de Plantillas
+        </Typography>
+
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: 3,
+            justifyContent: "center",
+          }}
+        >
           <TemplateCard
             title={appName}
             subtitle="App Name"
             onEdit={() => handleEditClick('unique-template-id')}
             onDelete={() => handleDeleteClick('unique-template-id')}
           />
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
 
-      <Box display="flex" justifyContent="flex-end" sx={{marginTop: 2, marginRight: 2}}>
-        <Button color='primary' variant='contained' size='large' onClick={handleVerTemplates}>
+      {/*BOTON VER PLANTILLAS*/}<Box display="flex" justifyContent="flex-end" sx={{ marginTop: 2, marginRight: 2 }}>
+        <Button color="primary" variant="contained" size="large" onClick={handleVerTemplates} endIcon={<FindInPageIcon />} sx={{ borderRadius: 2 }}>
           Ver Todas
         </Button>
       </Box>
 
       {/* Lista de tarjetas */}
-      
+      <Box sx={{ p: 3 }}>
+      <Typography variant="h5" fontWeight="bold" gutterBottom>
+        Lista de Plantillas
+      </Typography>
 
-      <Box>
-        <Box sx={{ display: 'flex' }}>
-          <Box sx={{ flexGrow: 1, p: 3 }}>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-              {templates.map((template) => (
-                <Card
-                  key={template.id}
-                  sx={{ width: 300, backgroundColor: getStatusColor(template.status) }}
-                >
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      {template.elementName}
-                    </Typography>
-                    <Typography color="textSecondary" gutterBottom>
-                      Status: {template.status}
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                      Category: {template.category}
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                      Type: {template.templateType}
-                    </Typography>
-                    <Typography variant="body2">
-                      {template.data}
-                    </Typography>
-                    {template.reason && (
-                      <Typography
-                        color="error"
-                        variant="caption"
-                        display="block"
-                        sx={{ mt: 1 }}
-                      >
-                        Reason: {template.reason}
-                      </Typography>
-                    )}
-                    <Typography
-                      variant="caption"
-                      display="block"
-                      sx={{ mt: 1 }}
-                    >
-                      Created: {new Date(template.createdOn).toLocaleString()}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small">Manage</Button>
-                  </CardActions>
-                </Card>
-              ))}
-            </Box>
-          </Box>
-        </Box>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: 3,
+          justifyContent: "center",
+        }}
+      >
+        {templates.map((template) => (
+          <Card
+            key={template.id}
+            sx={{
+              width: 300,
+              backgroundColor: getStatusColor(template.status),
+              borderRadius: 3,
+              boxShadow: 3,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              transition: "transform 0.2s ease-in-out",
+              "&:hover": { transform: "scale(1.02)" },
+            }}
+          >
+            <CardContent>
+              <Typography variant="h6" fontWeight="bold">
+                {template.elementName}
+              </Typography>
+              <Typography color="textSecondary">Status: {template.status}</Typography>
+              <Typography variant="body2">Category: {template.category}</Typography>
+              <Typography variant="body2">Type: {template.templateType}</Typography>
+              <Typography variant="body2">{template.data}</Typography>
+
+              {template.reason && (
+                <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
+                  Reason: {template.reason}
+                </Typography>
+              )}
+
+              <Typography variant="caption" sx={{ mt: 1, display: "block" }}>
+                Created: {new Date(template.createdOn).toLocaleString()}
+              </Typography>
+            </CardContent>
+
+            {/* Botón fijo en la parte inferior izquierda */}
+            <CardActions sx={{ padding: 2 }}>
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                sx={{ borderRadius: 2, marginLeft: "auto" }}
+              >
+                Manage
+              </Button>
+            </CardActions>
+          </Card>
+        ))}
       </Box>
+    </Box>
 
     </Box>
   );
