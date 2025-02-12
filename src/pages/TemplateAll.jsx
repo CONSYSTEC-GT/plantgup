@@ -8,7 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-// MODAL PARA
+// MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
 
 const TemplateAll = () => {
@@ -150,7 +150,7 @@ const handleDeleteClick = () => {
         <Box sx={{ flexGrow: 1, p: 3 }}>
           {/* Título */}
           <Typography variant="h4" gutterBottom>
-            Catalogo de Plantillas
+            Catálogo de Plantillas
           </Typography>
 
           <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 3, justifyContent: "center" }}>
