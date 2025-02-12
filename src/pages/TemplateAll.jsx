@@ -153,13 +153,20 @@ const handleDeleteClick = () => {
             Catalogo de Plantillas
           </Typography>
 
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+          <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 3, justifyContent: "center" }}>
             {templates.map((template) => (
               <Card
                 key={template.id}
                 sx={{
                   width: 300,
                   backgroundColor: getStatusColor(template.status),
+                  borderRadius: 3,
+                  boxShadow: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  transition: "transform 0.2s ease-in-out",
+                  "&:hover": { transform: "scale(1.02)" },
                 }}
               >
                 <CardContent>
@@ -196,6 +203,7 @@ const handleDeleteClick = () => {
                     Created: {new Date(template.createdOn).toLocaleString()}
                   </Typography>
                 </CardContent>
+
                 <CardActions>
                   <Button
                     id="manage-button"
@@ -206,6 +214,7 @@ const handleDeleteClick = () => {
                     disableElevation
                     onClick={(event) => {console.log("Template seleccionado:", template); handleClick(event, template)}}  // Pasamos el template correcto
                     endIcon={<KeyboardArrowDownIcon />}
+                    sx={{ borderRadius: 2, marginLeft: "auto" }}
                   >
                     Manage
                   </Button>
@@ -234,6 +243,7 @@ const handleDeleteClick = () => {
                     </MenuItem>
                   </StyledMenu>
                 </CardActions>
+
               </Card>
             ))}
           </Box>
