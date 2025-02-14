@@ -218,7 +218,7 @@ const fetchTemplates = async () => {
                     endIcon={<KeyboardArrowDownIcon />}
                     sx={{ borderRadius: 2, marginLeft: "auto" }}
                   >
-                    Manage
+                    Administrar
                   </Button>
                   <StyledMenu
                     id="manage-menu"

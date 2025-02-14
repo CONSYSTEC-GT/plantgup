@@ -3,8 +3,7 @@ import { extendTheme, styled } from '@mui/material/styles';
 import { Outlet } from 'react-router-dom';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { PageContainer } from '@toolpad/core/PageContainer';
-import Grid from '@mui/material/Grid2';
+
 
 //iconos
 import TemplateList from '../pages/TemplateList';
@@ -22,10 +21,6 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
 const NAVIGATION = [
   {
-    kind: 'header',
-    title: 'Main items',
-  },
-  {
     segment: 'dashboard',
     title: 'Dashboard',
     icon: <DashboardIcon />,
@@ -40,39 +35,32 @@ const NAVIGATION = [
   },
   {
     kind: 'header',
-    title: 'Analytics',
+    title: 'Plantillas',
   },
   {
-    segment: 'plantillas',
-    title: 'Plantillas',
-    icon: <BarChartIcon />,
-    children: [
-      {
-        segment: 'todas',
-        title: 'Todas',
-        icon: <DescriptionIcon />,
-      },
-      {
-        segment: 'aprovadas',
-        title: 'Aprovadas',
-        icon: <CheckIcon />,
-      },
-      {
-        segment: 'enviadas',
-        title: 'Enviadas',
-        icon: <SendIcon />,
-      },
-      {
-        segment: 'fallidas',
-        title: 'Fallidas',
-        icon: <SmsFailedIcon />,
-      },
-      {
-        segment: 'rechazadas',
-        title: 'Rechazadas',
-        icon: <ThumbDownIcon />,
-      },
-    ],
+    segment: 'plantillas/todas',
+    title: 'Todas',
+    icon: <DescriptionIcon />,
+  },
+  {
+    segment: 'plantillas/aprovadas',
+    title: 'Aprovadas',
+    icon: <CheckIcon />,
+  },
+  {
+    segment: 'plantillas/enviadas',
+    title: 'Enviadas',
+    icon: <SendIcon />,
+  },
+  {
+    segment: 'plantillas/fallidas',
+    title: 'Fallidas',
+    icon: <SmsFailedIcon />,
+  },
+  {
+    segment: 'plantillas/rechazadas',
+    title: 'Rechazadas',
+    icon: <ThumbDownIcon />,
   },
 ];
 

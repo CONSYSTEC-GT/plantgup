@@ -4,6 +4,7 @@ import {
   Typography,
   TextField,
   FormControl,
+  FormLabel,
   RadioGroup,
   FormControlLabel,
   Radio,
@@ -134,9 +135,11 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
 
       {templateType === "text" ? (
         <>
-          <Typography variant="h5" gutterBottom>
-            Media
-          </Typography>
+                    <FormControl fullWidth>
+              <FormLabel>
+                *Archivos
+              </FormLabel>
+            </FormControl>
           <Typography variant="body2" color="text.secondary" gutterBottom>
             Agregue un encabezado de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
           </Typography>
@@ -151,9 +154,11 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
         </>
       ) : (
         <>
-          <Typography variant="h5" gutterBottom>
-            Media
-          </Typography>
+                    <FormControl fullWidth>
+              <FormLabel>
+                *Archivos
+              </FormLabel>
+            </FormControl>
           <Typography variant="body2" color="text.secondary" gutterBottom>
             Seleccione el tipo de media y cargue un archivo.
           </Typography>

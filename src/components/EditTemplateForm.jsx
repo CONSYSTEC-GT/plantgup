@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Box, Button, Container, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
+import { Alert, Box, Button, Container, FormControl, FormControlLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 
 import CustomHeader from './CustomHeader';
 
@@ -8,22 +8,16 @@ import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNone
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Delete from '@mui/icons-material/Delete';
-import ArrowForward from "@mui/icons-material/ArrowForward";
-import Link from "@mui/icons-material/Link";
-import Phone from "@mui/icons-material/Phone";
-
 
 import FileUploadComponent from './FileUploadComponent';
 
 
-const TemplateForm = () => {
+const EditTemplateForm = () => {
 
   //CAMPOS DEL FORMULARIO PARA EL REQUEST
   const [templateName, setTemplateName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [templateType, setTemplateType] = useState("text");
-  const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al texto de su plantilla.");
-  const [templateNameError, setTemplateNameError] = useState(false);
   const [languageCode, setLanguageCode] = useState("");
   const [vertical, setVertical] = useState("");
   const [message, setMessage] = useState("");
@@ -60,7 +54,7 @@ const TemplateForm = () => {
       Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
       "Content-Type": "application/x-www-form-urlencoded",
     };
-
+  
     const data = {
       elementName: templateName,
       category: selectedCategory.toUpperCase(),
@@ -74,13 +68,13 @@ const TemplateForm = () => {
             type: button.type,
             text: button.title,
           };
-
+  
           if (button.type === "URL") {
             buttonData.url = button.url;
           } else if (button.type === "PHONE_NUMBER") {
             buttonData.phone_number = button.phoneNumber;
           }
-
+  
           return buttonData;
         })
       ),
@@ -89,20 +83,20 @@ const TemplateForm = () => {
       enableSample: true,
       allowTemplateCategoryChange: false,
     };
-
+  
     // Solo agregar mediaId si existe
     if (mediaId) {
       data.exampleMedia = mediaId;
     }
-
+  
     const curlCommand = `curl --location '${url}' \\
   --header 'Authorization: ${headers.Authorization}' \\
   --header 'Content-Type: ${headers["Content-Type"]}' \\
   ${Object.entries(data)
-        .filter(([_, value]) => value !== undefined && value !== '') // Filtrar valores vacíos
-        .map(([key, value]) => `--data-urlencode '${key}=${value}'`)
-        .join(" \\\n")}`;
-
+      .filter(([_, value]) => value !== undefined && value !== '') // Filtrar valores vacíos
+      .map(([key, value]) => `--data-urlencode '${key}=${value}'`)
+      .join(" \\\n")}`;
+  
     return curlCommand;
   };
 
@@ -113,7 +107,7 @@ const TemplateForm = () => {
       Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
       "Content-Type": "application/x-www-form-urlencoded",
     };
-
+  
     const data = new URLSearchParams();
     data.append("elementName", templateName);
     data.append("category", selectedCategory.toUpperCase());
@@ -121,49 +115,49 @@ const TemplateForm = () => {
     data.append("templateType", templateType.toUpperCase());
     data.append("vertical", vertical);
     data.append("content", message);
-
+  
     // Agregar mediaId si existe
     if (mediaId) {
       data.append("exampleMedia", mediaId);
     }
-
+  
     // Construir el objeto buttons
     const formattedButtons = buttons.map((button) => {
       const buttonData = {
         type: button.type,
         text: button.title,
       };
-
+  
       if (button.type === "URL") {
         buttonData.url = button.url;
       } else if (button.type === "PHONE_NUMBER") {
         buttonData.phone_number = button.phoneNumber;
       }
-
+  
       return buttonData;
     });
-
+  
     data.append("buttons", JSON.stringify(formattedButtons));
     data.append("example", example);
     data.append("enableSample", true);
     data.append("allowTemplateCategoryChange", false);
-
+  
     console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
-
+  
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: headers,
         body: data,
       });
-
+  
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Error response:", errorResponse);
         showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
         return;
       }
-
+  
       const result = await response.json();
       showSnackbar("✅ Plantilla creada exitosamente", "success");
       console.log("Response: ", result);
@@ -391,28 +385,23 @@ const TemplateForm = () => {
       {/* Formulario (70%) */}<Grid item xs={8}>
         <Box sx={{ height: '100%', overflowY: 'auto', pr: 2 }}>
           {/*Template Name --data-urlenconde-elementName*/}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth> {/* Usamos FormControl */}
-              <FormLabel htmlFor="template-name-input"> {/* FormLabel para accesibilidad */}
-                *Nombre de la plantilla
-              </FormLabel>
-              <TextField
-                id="template-name-input" // Conecta FormLabel con TextField
-                aria-required="true" // Accesibilidad
-                helperText={templateNameHelperText}
-                error={templateNameError} // Para mostrar errores
-                value={templateName}
-                onChange={handleTemplateNameChange}
-              />
-            </FormControl>
+            <Typography variant="h5" mb={2}>
+              Nombre de la plantilla*
+            </Typography>
+            <TextField
+              fullWidth
+              label="Nombre"
+              helperText="El nombre debe hacer referencia al texto de su plantilla."
+              value={templateName}
+              onChange={handleTemplateNameChange}
+            />
           </Box>
 
           {/*Categoría --data-urlencode 'category*/}<Box sx={{ maxWidth: '100%', border: "1px solid #ddd", borderRadius: 2, marginTop: 2, p: 3 }}>
             <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <FormControl fullWidth>
-                <FormLabel>
-                  *Categoría
-                </FormLabel>
-              </FormControl>
+              <Typography variant="h6" component="h2">
+                Categoría*
+              </Typography>
               <Tooltip title="Tu plantilla debe pertencer a una de estas categorías">
                 <IconButton size="small">
                   <HelpOutlineIcon fontSize="small" />
@@ -450,14 +439,18 @@ const TemplateForm = () => {
           </Box>
 
           {/* Tipo de plantilla --data-urlencode templateType*/}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+            <Typography variant="h5" mb={2}>
+              Tipo de plantilla*
+            </Typography>
             <FormControl fullWidth>
-              <FormLabel>
-                *Tipo de plantilla
-              </FormLabel>
-            </FormControl>
-
-            <FormControl fullWidth>
-              <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select">
+              <InputLabel id="template-type-label">Selección</InputLabel>
+              <Select
+                labelId="template-type-label"
+                id="template-type"
+                value={templateType}
+                onChange={handleTemplateTypeChange}
+                label="Select"
+              >
                 <MenuItem value="text">TEXT</MenuItem>
                 <MenuItem value="image">IMAGE</MenuItem>
                 <MenuItem value="document">DOCUMENT</MenuItem>
@@ -468,12 +461,8 @@ const TemplateForm = () => {
             </FormControl>
           </Box>
 
-          {/*Idioma --data-urlencode languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                *Idioma de plantilla
-              </FormLabel>
-            </FormControl>
+          {/*Idioma --data-urlencode languageCode */}    <Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+            <Typography variant="h5" mb={2}>Idioma de plantilla*</Typography>
             <FormControl fullWidth>
               <InputLabel id="languageCode">Selección</InputLabel>
               <Select
@@ -494,24 +483,21 @@ const TemplateForm = () => {
           </Box>
 
           {/*Etiquetas de plantilla --data-urlencode vertical*/}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                *Etiquetas de plantilla
-              </FormLabel>
-            </FormControl>
+            <Typography variant="h5" mb={2}>
+              Etiquetas de plantilla*
+            </Typography>
             <TextField
               fullWidth
+              label="Escribe"
               helperText="Defina para qué caso de uso, por ejemplo, actualización de cuenta, OTP, etc, en 2 o 3 palabras"
               onChange={handleVerticalChange}
             />
           </Box>
 
           {/* BodyMessage --data-urlencode content */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                *Contenido
-              </FormLabel>
-            </FormControl>
+            <Typography variant="h5" gutterBottom>
+              Contenido*
+            </Typography>
             <TextField
               fullWidth
               multiline
@@ -523,13 +509,11 @@ const TemplateForm = () => {
             />
           </Box>
 
-          {/* Header*/} {templateType === 'TEXT' ? (
+          {/* Header {templateType === 'TEXT' ? (
             <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-              <FormControl fullWidth>
-                <FormLabel>
-                  Encabezado
-                </FormLabel>
-              </FormControl>
+              <Typography variant="h5" gutterBottom>
+                Header
+              </Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>
                 Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
               </Typography>
@@ -545,69 +529,63 @@ const TemplateForm = () => {
             </Box>
           ) : (
             <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-              <FormControl fullWidth>
-                <FormLabel>
-                  Encabezado
-                </FormLabel>
-              </FormControl>
+              <Typography variant="h5" gutterBottom>
+                Header
+              </Typography>
               <FileUploadComponent templateType={templateType} />
             </Box>
           )}
 
-
-
+          
+          */}
 
           <FileUploadComponent onUploadSuccess={handleUploadSuccess} />
 
           {/* Header */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                Encabezado
-              </FormLabel>
-            </FormControl>
+            <Typography variant="h5" gutterBottom>
+              Header
+            </Typography>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el encabezado.
+            </Typography>
             <TextField
               fullWidth
+              label="Header text"
               value={header}
               onChange={handleHeaderChange}
               helperText={`${header.length} / ${charLimit} characters`}
               sx={{ mb: 3 }}
             />
-            <FormHelperText>
-              Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el encabezado.
-            </FormHelperText>
           </Box>
 
+
           {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                Pie de página
-              </FormLabel>
-            </FormControl>
+            <Typography variant="h5" gutterBottom>
+              Footer
+            </Typography>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Agregue un pie de página de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
+            </Typography>
             <TextField
               fullWidth
+              label="Footer text"
               value={footer}
               onChange={handleFooterChange}
               helperText={`${footer.length} / ${charLimit} characters`}
               sx={{ mb: 3 }}
             />
-            <FormHelperText>
-              Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el encabezado.
-            </FormHelperText>
           </Box>
 
           {/* Botones --data-urlencode 'buttons*/}<Box sx={{ width: "100%", marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                Botones
-              </FormLabel>
-            </FormControl>
+            <Typography variant="h6" gutterBottom>
+              Buttons (Optional)
+            </Typography>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Please choose buttons to be added to the template. You can choose up to {maxButtons} buttons.
+            </Typography>
 
-            <FormHelperText>
-              Elija los botones que se agregarán a la plantilla. Puede elegir hasta 10 botones.
-            </FormHelperText>
-
-            <Button variant="contained" onClick={addButton} disabled={buttons.length >= maxButtons} sx={{ mt: 3, mb: 3 }}>
-              + Agregar botón
+            <Button variant="contained" onClick={addButton} disabled={buttons.length >= maxButtons} sx={{ mb: 3 }}>
+              + Add Button
             </Button>
 
             <Stack spacing={2}>
@@ -616,14 +594,25 @@ const TemplateForm = () => {
                   key={button.id}
                   sx={{
                     display: "flex",
-                    alignItems: "center",
+                    flexDirection: "column",
                     gap: 2,
                     border: "1px solid #ccc",
-                    borderRadius: 2,
+                    borderRadius: 1,
                     p: 2,
                     backgroundColor: "#f9f9f9",
                   }}
                 >
+                  {/* Selector de tipo de botón */}
+                  <Select
+                    value={button.type}
+                    onChange={(e) => updateButton(button.id, "type", e.target.value)}
+                    fullWidth
+                  >
+                    <MenuItem value="QUICK_REPLY">Quick Reply</MenuItem>
+                    <MenuItem value="URL">URL</MenuItem>
+                    <MenuItem value="PHONE_NUMBER">Phone Number</MenuItem>
+                  </Select>
+
                   {/* Campo de texto para el título del botón */}
                   <TextField
                     label="Button Title"
@@ -631,17 +620,6 @@ const TemplateForm = () => {
                     onChange={(e) => updateButton(button.id, "title", e.target.value)}
                     fullWidth
                   />
-
-                  {/* Selector de tipo de botón */}
-                  <Select
-                    value={button.type}
-                    onChange={(e) => updateButton(button.id, "type", e.target.value)}
-                    sx={{ minWidth: 150 }}
-                  >
-                    <MenuItem value="QUICK_REPLY">Quick Reply</MenuItem>
-                    <MenuItem value="URL">URL</MenuItem>
-                    <MenuItem value="PHONE_NUMBER">Phone Number</MenuItem>
-                  </Select>
 
                   {/* Campo adicional según el tipo de botón */}
                   {button.type === "URL" && (
@@ -662,11 +640,6 @@ const TemplateForm = () => {
                     />
                   )}
 
-                  {/* Icono según el tipo de botón */}
-                  {button.type === "QUICK_REPLY" && <ArrowForward />}
-                  {button.type === "URL" && <Link />}
-                  {button.type === "PHONE_NUMBER" && <Phone />}
-
                   {/* Botón para eliminar */}
                   <IconButton color="error" onClick={() => removeButton(button.id)}>
                     <Delete />
@@ -681,11 +654,9 @@ const TemplateForm = () => {
           </Box>
 
           {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                *Ejemplo
-              </FormLabel>
-            </FormControl>
+            <Typography variant="h5" gutterBottom>
+              Ejemplo*
+            </Typography>
             <TextField
               fullWidth
               multiline
@@ -696,98 +667,82 @@ const TemplateForm = () => {
               sx={{ mb: 3 }}
             />
           </Box>
-
-          {/*Boton Guardar Plantilla*/}<Button variant="contained" size="large" color="primary" onClick={sendRequest} sx={{ mt: 3, mb: 3 }}>
-            Enviar solicitud
-          </Button>
-
-
         </Box>
       </Grid>
 
       {/* Preview (30%) */}<Grid item xs={4}>
-  <Box sx={{ position: "sticky", top: 0, height: "100vh", mt: 2, borderRadius: 2 }}>
-    <Box
-      sx={{
-        p: 3,
-        bgcolor: "#fef9f3",
-        height: "100%",
-        borderRadius: 2,
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
-      }}
-    >
-      <Typography variant="h6" gutterBottom>
-        Vista previa
-      </Typography>
+        <Box sx={{ position: 'sticky', top: 0, height: '100vh' }}>
+          <Box sx={{ p: 3, bgcolor: '#fef9f3', height: '100%', borderRadius: 2, display: 'flex', flexDirection: 'column', gap: 2, }}>
 
-      {/* Mensaje de WhatsApp */}<Box
-        sx={{
-          bgcolor: "#ffffff",
-          p: 1,
-          borderRadius: 2,
-          alignSelf: "flex",
-          maxWidth: "100%",
-          minHeight: "40px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 0.5,
-          boxShadow: 1,
-        }}
-      >
-        <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif" }}>
-          {message}
-        </Typography>
-
-        <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
-          {new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: true })}
-        </Typography>
-      </Box>
-      
-      {/* Botones */}<Stack spacing={1} sx={{ mt: 0 }}> {/* Eliminamos el margen superior (mt) */}
-        {buttons.map((button) => (
-          <Box
-            key={button.id}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-start", // Alineamos a la izquierda
-              gap: 1, // Reducimos el espacio entre elementos
-              border: "1px solid #ccc",
-              borderRadius: "20px",
-              p: 1, // Reducimos el padding
-              backgroundColor: "#ffffff",
-              boxShadow: 1,
-              cursor: "pointer",
-              "&:hover": {
-                backgroundColor: "#f5f5f5",
-              },
-            }}
-          >
-            {/* Icono pequeño según el tipo de botón */}
-            {button.type === "QUICK_REPLY" && (
-              <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
-            )}
-            {button.type === "URL" && (
-              <Link sx={{ fontSize: "16px", color: "#075e54" }} />
-            )}
-            {button.type === "PHONE_NUMBER" && (
-              <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
-            )}
-
-            {/* Título del botón */}
-            <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
-              {button.title}
+            <Typography variant="h6" gutterBottom>
+              Preview
             </Typography>
+
+            <Box sx={{ bgcolor: '#e1ffc7', p: 2, borderRadius: 2, alignSelf: 'flex-end', maxWidth: '70%' }}>
+              <Typography variant="body1" color="text.primary">
+                {message || 'Plantilla Nueva'}
+              </Typography>
+
+
+              <Stack spacing={2} sx={{ mt: 2 }}>
+                {buttons.map((button) => (
+                  <Box
+                    key={button.id}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 2,
+                      border: '1px solid #ccc',
+                      borderRadius: 1,
+                      p: 2,
+                      backgroundColor: '#f9f9f9',
+                    }}
+                  >
+                    <Typography variant="body1">
+                      {button.title}
+                    </Typography>
+                  </Box>
+                ))}
+              </Stack>
+
+            </Box>
+
+            <Box sx={{ bgcolor: '#fff', p: 2, borderRadius: 2, alignSelf: 'flex-start', maxWidth: '70%', border: '1px solid #ddd', }}>
+
+              <Typography variant="body1">
+                {'¡CONSYSTEC TalkMe!'}
+              </Typography>
+
+
+            </Box>
+
+            {/*Boton Guardar Plantilla*/}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+              <Button variant="contained" color="primary" onClick={sendRequest}>
+                Enviar solicitud
+              </Button>
+            </Box>
+
+            <Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+              <Typography variant="h5" gutterBottom>
+                Comando cURL {mediaId && <span style={{ color: 'green' }}>✓ con media</span>}
+              </Typography>
+              <TextField
+                fullWidth
+                multiline
+                rows={10}
+                value={buildCurlCommand()}
+                InputProps={{
+                  readOnly: true,
+                }}
+                sx={{ mb: 3 }}
+              />
+            </Box>
+
           </Box>
-        ))}
-      </Stack>
-    </Box>
-  </Box>
-</Grid>
+        </Box>
+      </Grid>
     </Grid>
   );
 };
 
-export default TemplateForm;
+export default EditTemplateForm;

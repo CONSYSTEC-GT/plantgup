@@ -68,13 +68,12 @@ const TemplateAll = () => {
     navigate('/modify-template', { state: { template } });
   };
 
-// Función para manejar el clic en eliminar
-const handleDeleteClick = () => {
-  console.log("Template a eliminar:", selectedTemplate); // Verifica el template en el estado
-  setDeleteModalOpen(true); // Abre el modal
-  handleClose(); // Cierra el menú
-};
-
+  // Función para manejar el clic en eliminar
+  const handleDeleteClick = () => {
+    console.log("Template a eliminar:", selectedTemplate); // Verifica el template en el estado
+    setDeleteModalOpen(true); // Abre el modal
+    handleClose(); // Cierra el menú
+  };
 
   // Función para cancelar la eliminación
   const handleDeleteCancel = () => {
@@ -87,11 +86,11 @@ const handleDeleteClick = () => {
     try {
       // Aquí iría tu lógica para eliminar la plantilla
       console.log('Eliminando plantilla:', selectedTemplate);
-      
+
       // Cierra el modal y limpia el estado
       setDeleteModalOpen(false);
       setSelectedTemplate(null);
-      
+
       // Opcional: Recargar la lista de plantillas
       await fetchTemplates();
     } catch (error) {
@@ -212,11 +211,11 @@ const handleDeleteClick = () => {
                     aria-expanded={anchorEl ? 'true' : undefined}
                     variant="contained"
                     disableElevation
-                    onClick={(event) => {console.log("Template seleccionado:", template); handleClick(event, template)}}  // Pasamos el template correcto
+                    onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}  // Pasamos el template correcto
                     endIcon={<KeyboardArrowDownIcon />}
                     sx={{ borderRadius: 2, marginLeft: "auto" }}
                   >
-                    Manage
+                    Administrar
                   </Button>
                   <StyledMenu
                     id="manage-menu"

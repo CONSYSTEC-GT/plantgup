@@ -193,7 +193,7 @@ export default function BasicCard() {
           </Box>
 
           <Button color="primary" variant="contained" size="large" onClick={handleCreateClick} endIcon={<AddIcon />} sx={{ borderRadius: 2 }}>
-            Crear Template
+            Crear plantilla
           </Button>
         </Box>
       </Paper>
@@ -213,7 +213,7 @@ export default function BasicCard() {
         >
           <TemplateCard
             title={appName}
-            subtitle="App Name"
+            subtitle="Nombre de la aplicación"
             onEdit={() => handleEditClick('unique-template-id')}
             onDelete={() => handleDeleteClick('unique-template-id')}
           />
@@ -229,7 +229,7 @@ export default function BasicCard() {
 
       {/* Lista de tarjetas */}<Box sx={{ p: 3 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Lista de Plantillas
+          Últimas plantillas creadas
         </Typography>
 
         <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 3, justifyContent: "center" }}>
@@ -281,7 +281,7 @@ export default function BasicCard() {
                     endIcon={<KeyboardArrowDownIcon />}
                     sx={{ borderRadius: 2, marginLeft: "auto" }}
                   >
-                    Manage
+                    Administrar
                   </Button>
 
                 <StyledMenu

@@ -10,7 +10,7 @@ const CreateTemplateButton = () => {
 
   return (
     <Button type="primary" icon={<PlusOutlined />} onClick={handleClick}>
-      Create Template
+      Crear plantilla
     </Button>
   );
 };

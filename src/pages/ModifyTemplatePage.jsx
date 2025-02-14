@@ -1,11 +1,17 @@
 import React from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Tooltip, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import TemplateForm from '../components/TemplateForm';
+import { useNavigate, useLocation } from 'react-router-dom';
+import EditTemplateForm from '../components/EditTemplateForm';
+
+
 
 const ModifyTemplatePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const template = location.state?.template || {}; // Si no hay plantilla, usa un objeto vacío
+
+
 
   const handleHome = () => {
     navigate('/'); // Navega a la página Home
@@ -29,8 +35,10 @@ const ModifyTemplatePage = () => {
         </Button>
       </Tooltip>
 
+      {/* Pasa el objeto template a TemplateForm */}
+      <EditTemplateForm />
+      
 
-      <TemplateForm />
     </Box>
   );
 };
