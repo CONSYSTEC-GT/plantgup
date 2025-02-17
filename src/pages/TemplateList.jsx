@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Importación correcta
 
+import LoginRequired from './LoginRequired';
+
 //componentes
 import { alpha, Card, CardContent, Typography, CardActions, Button, Grid, Box, Menu, MenuItem, Stack, TextField, Paper, styled } from '@mui/material';
 //iconos
@@ -59,6 +61,7 @@ export default function BasicCard() {
   const [templates, setTemplates] = useState([]);
   const [appName, setAppName] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
+  const [tokenValid, setTokenValid] = useState(true); // Estado para controlar si el token es válido
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search); // Usa location.search
@@ -80,6 +83,7 @@ export default function BasicCard() {
 
         // Si el token es válido, puedes usar los datos decodificados
         const { app_id, auth_code, app_name } = decoded;
+        setAppName(app_name);
         fetchTemplates(app_id, auth_code);
 
       } catch (error) {
@@ -108,6 +112,10 @@ export default function BasicCard() {
       console.error('Error fetching templates:', error);
     }
   };
+  // Si el token no es válido, muestra la página de error
+  if (!tokenValid) {
+    return <LoginRequired />;
+  }
 
   const getStatusColor = (status) => {
     switch (status) {
