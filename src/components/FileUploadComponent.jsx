@@ -70,11 +70,11 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
       setError('Por favor, selecciona un archivo.');
       return;
     }
-  
+
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('file_type', selectedFile.type);
-  
+
     const requestConfig = {
       method: 'POST',
       headers: {
@@ -85,11 +85,11 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
     };
 
     const url = `/gupshup/partner/app/${APP_ID}/upload/media`;
-  
+
     try {
       setUploadStatus('Subiendo archivo...');
       const response = await fetch(url, requestConfig);
-  
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error en la respuesta:', {
@@ -100,15 +100,15 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
         setUploadStatus('Error al subir el archivo');
         throw new Error(`Error en la respuesta del servidor: ${response.status} ${response.statusText}`);
       }
-  
+
       const data = await response.json();
       console.log('=== Respuesta exitosa ===', data);
-      
+
       // Extraer el mediaId del handleId.message
       const mediaId = data.handleId.message;
       setMediaId(mediaId);
       setUploadStatus('¡Archivo subido exitosamente!');
-      
+
       // Notificar al componente padre con el mediaId correcto
       if (onUploadSuccess) {
         onUploadSuccess(mediaId);
@@ -131,18 +131,11 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
   };
 
   return (
-    <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+    <Box>
 
       {templateType === "text" ? (
         <>
-                    <FormControl fullWidth>
-              <FormLabel>
-                *Archivos
-              </FormLabel>
-            </FormControl>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            Agregue un encabezado de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
-          </Typography>
+          
           <TextField
             fullWidth
             label="Header"
@@ -154,11 +147,11 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
         </>
       ) : (
         <>
-                    <FormControl fullWidth>
-              <FormLabel>
-                *Archivos
-              </FormLabel>
-            </FormControl>
+          <FormControl fullWidth>
+            <FormLabel>
+              Archivos
+            </FormLabel>
+          </FormControl>
           <Typography variant="body2" color="text.secondary" gutterBottom>
             Seleccione el tipo de media y cargue un archivo.
           </Typography>
@@ -168,9 +161,9 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
               value={mediaType}
               onChange={handleMediaTypeChange}
             >
-              <FormControlLabel value="image" control={<Radio />} label="Image" />
+              <FormControlLabel value="image" control={<Radio />} label="Imagen" />
               <FormControlLabel value="video" control={<Radio />} label="Video" />
-              <FormControlLabel value="document" control={<Radio />} label="Document" />
+              <FormControlLabel value="document" control={<Radio />} label="Documento" />
             </RadioGroup>
           </FormControl>
 
@@ -227,15 +220,14 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
       </Snackbar>
 
       <div className="space-y-4">
-      {/* ... otros elementos ... */}
-      {uploadStatus && (
-        <div className={`mt-2 p-2 rounded ${
-          uploadStatus.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
-        }`}>
-          {uploadStatus}
-        </div>
-      )}
-    </div>
+        {/* ... otros elementos ... */}
+        {uploadStatus && (
+          <div className={`mt-2 p-2 rounded ${uploadStatus.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+            }`}>
+            {uploadStatus}
+          </div>
+        )}
+      </div>
 
 
 

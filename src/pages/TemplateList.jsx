@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'; // Importación correcta
+
 //componentes
 import { alpha, Card, CardContent, Typography, CardActions, Button, Grid, Box, Menu, MenuItem, Stack, TextField, Paper, styled } from '@mui/material';
 //iconos
@@ -59,23 +61,36 @@ export default function BasicCard() {
   const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
+    const searchParams = new URLSearchParams(location.search); // Usa location.search
+    const token = searchParams.get('token'); // Corregido: usa searchParams en lugar de queryParams
     const appId = searchParams.get('app_id');
     const authCode = searchParams.get('auth_code');
     const appName = searchParams.get('app_name');
-    const appNameFromParams = searchParams.get('app_name');
 
-    if (appId && authCode) {
-      // Use these parameters as needed
-      console.log('App ID:', appId);
-      console.log('Auth Code:', authCode);
-      setAppName(appNameFromParams || '')
+    if (token) {
+      try {
+        const decoded = jwtDecode(token); // Decodifica el token
+        const currentTime = Date.now() / 1000;
 
-      // Example: You might want to store these in state or make an API call
-      fetchTemplates(appId, authCode);
+        if (decoded.exp < currentTime) {
+          console.error('Token expirado');
+          // Redirige al usuario o muestra un mensaje de error
+          return;
+        }
+
+        // Si el token es válido, puedes usar los datos decodificados
+        const { app_id, auth_code, app_name } = decoded;
+        fetchTemplates(app_id, auth_code);
+
+      } catch (error) {
+        console.error('Token inválido', error);
+        // Redirige al usuario o muestra un mensaje de error
+      }
+    } else {
+      console.error('No se encontró token en la URL');
+      // Redirige al usuario o muestra un mensaje de error
     }
   }, [location]);
-  //fetchTemplates();
 
   const fetchTemplates = async (appId, authCode) => {
     try {
