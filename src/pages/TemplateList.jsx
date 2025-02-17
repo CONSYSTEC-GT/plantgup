@@ -208,10 +208,10 @@ export default function BasicCard() {
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Box sx={{ maxWidth: "60%" }}>
             <Typography variant="body1" color="textSecondary">
-              Mira el listado de plantillas que puedes utilizar.
+              Mira el listado de plantillas que puedes utilizar
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              Están aprobadas por WhatsApp para tu aplicación.
+              Están aprobadas por WhatsApp para tu aplicación
             </Typography>
           </Box>
 
