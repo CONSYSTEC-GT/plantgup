@@ -72,27 +72,27 @@ export default function BasicCard() {
 
     if (token) {
       try {
-        const decoded = jwtDecode(token); // Decodifica el token
+        const decoded = jwtDecode(token);
         const currentTime = Date.now() / 1000;
-
+  
         if (decoded.exp < currentTime) {
           console.error('Token expirado');
-          // Redirige al usuario o muestra un mensaje de error
+          navigate('/login-required'); // Redirige si el token ha expirado
           return;
         }
-
-        // Si el token es válido, puedes usar los datos decodificados
-        const { app_id, auth_code, app_name } = decoded;
-        setAppName(app_name);
-        fetchTemplates(app_id, auth_code);
-
+  
+        // Guarda el token en localStorage
+        localStorage.setItem('authToken', token);
       } catch (error) {
         console.error('Token inválido', error);
-        // Redirige al usuario o muestra un mensaje de error
+        navigate('/login-required'); // Redirige si el token es inválido
       }
     } else {
-      console.error('No se encontró token en la URL');
-      // Redirige al usuario o muestra un mensaje de error
+      // Si no hay token en la URL, verifica si hay uno en localStorage
+      const storedToken = localStorage.getItem('authToken');
+      if (!storedToken) {
+        navigate('/login-required'); // Redirige si no hay token
+      }
     }
   }, [location]);
 

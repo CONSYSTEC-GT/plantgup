@@ -25,26 +25,32 @@ const TemplateAproved = () => {
   const navigate = useNavigate(); // Inicializa useNavigate
   
 //FETCH DE LAS PLANTILLAS
-const fetchTemplates = async () => {
+const fetchTemplates = async (appId, authCode) => {
   try {
-    const response = await fetch('https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates', {
+    const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
       method: 'GET',
       headers: {
-        'Authorization': 'sk_2662b472ec0f4eeebd664238d72b61da', // Reemplaza con tu clave de autorización
+        Authorization: authCode,
       },
     });
-
     const data = await response.json();
-
     if (data.status === 'success') {
-      // Filtrar plantillas con status "APPROVED"
-      const approvedTemplates = data.templates.filter(template => template.status === 'FAILED');
-      setTemplates(approvedTemplates);
+      setTemplates(data.templates);
     }
   } catch (error) {
     console.error('Error fetching templates:', error);
   }
 };
+
+// Llama a fetchTemplates cuando el componente se monta
+useEffect(() => {
+  if (appId && authCode) {
+    fetchTemplates(appId, authCode);
+  } else {
+    console.error('No se encontró appId o authCode en el token');
+  }
+}, [appId, authCode]);
+
 //MODIFICAR EL COLOR DEPENDIENDO DEL STATUS DE LAS PLANTILLAS
   const getStatusColor = (status) => {
     switch (status) {
@@ -102,11 +108,7 @@ const fetchTemplates = async () => {
       console.error('Error al eliminar la plantilla:', error);
     }
   };
-  
-  useEffect(() => {
-    fetchTemplates();
-  }, []);
-  
+    
   // Estilo personalizado para el menú
   const StyledMenu = styled((props) => (
     <Menu

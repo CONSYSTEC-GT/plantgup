@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'; // Asegúrate de instalar jwt-decode
 import { useParams } from 'react-router-dom';
 import { alpha, Box, Button, Card, CardActions, CardContent, Menu, MenuItem, styled, Typography } from '@mui/material';
 
@@ -22,23 +23,50 @@ const TemplateAll = () => {
 
   const navigate = useNavigate(); // Inicializa useNavigate
 
-  //FETCH DE LAS PLANTILLAS
-  const fetchTemplates = async () => {
+  // Recupera el token del localStorage
+  const token = localStorage.getItem('authToken');
+
+  // Decodifica el token para obtener appId y authCode
+  let appId, authCode;
+  if (token) {
     try {
-      const response = await fetch('https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates', {
-        method: 'GET', // Método de la solicitud
-        headers: {
-          'Authorization': 'sk_2662b472ec0f4eeebd664238d72b61da', // Reemplaza con tu clave de autorización
-        }
-      });
-      const data = await response.json();
-      if (data.status === 'success') {
-        setTemplates(data.templates);
-      }
+      const decoded = jwtDecode(token);
+      appId = decoded.app_id; // Extrae appId del token
+      authCode = decoded.auth_code; // Extrae authCode del token
     } catch (error) {
-      console.error('Error fetching templates:', error);
+      console.error('Error decodificando el token:', error);
     }
-  };
+  }
+
+  //FETCH DE LAS PLANTILLAS
+const fetchTemplates = async (appId, authCode) => {
+  try {
+    const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+      method: 'GET',
+      headers: {
+        Authorization: authCode,
+      },
+    });
+    const data = await response.json();
+    if (data.status === 'success') {
+      setTemplates(data.templates);
+    }
+  } catch (error) {
+    console.error('Error fetching templates:', error);
+  }
+};
+
+// Llama a fetchTemplates cuando el componente se monta
+useEffect(() => {
+  if (appId && authCode) {
+    fetchTemplates(appId, authCode);
+  } else {
+    console.error('No se encontró appId o authCode en el token');
+  }
+}, [appId, authCode]);
+
+
+
 
   //MODIFICAR EL COLOR DEPENDIENDO DEL STATUS DE LAS PLANTILLAS
   const getStatusColor = (status) => {
@@ -98,9 +126,6 @@ const TemplateAll = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTemplates();
-  }, []);
 
   // Estilo personalizado para el menú
   const StyledMenu = styled((props) => (

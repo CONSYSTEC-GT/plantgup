@@ -298,8 +298,14 @@ const TemplateForm = () => {
 
   //NOMBRE PLANTILLA
   const handleTemplateNameChange = (event) => {
-    setTemplateName(event.target.value);
-    if (e.target.value.trim() === "") {
+    // Reemplazar espacios con guiones bajos
+    const newValue = event.target.value.replace(/\s+/g, '_');
+
+    // Actualizar el estado con el nuevo valor
+    setTemplateName(newValue);
+
+    // Validar si el campo está vacío
+    if (newValue.trim() === "") {
       setTemplateNameError(true);
       setTemplateNameHelperText("Este campo es requerido");
     } else {
