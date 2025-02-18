@@ -151,9 +151,10 @@ export default function BasicCard() {
               Authorization: authCode,
             },
           });
+          setAppName(app_name);
           const data = await response.json();
           if (data.status === 'success') {
-            setTemplates(data.templates);
+            setTemplates(data.templates.slice(0, 4));
             console.log('Plantillas cargadas correctamente:', data.templates);
           } else {
             console.error('Error en la respuesta:', data);
