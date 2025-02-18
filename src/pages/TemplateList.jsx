@@ -55,136 +55,92 @@ const TemplateCard = ({ title, subtitle, description, onEdit, onDelete, whatsapp
 );
 
 export default function BasicCard() {
-
   const navigate = useNavigate();
+  const location = useLocation();
   const { templateId } = useParams();
+
+  // Estados
   const [templates, setTemplates] = useState([]);
   const [appName, setAppName] = useState('');
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [tokenValid, setTokenValid] = useState(true); // Estado para controlar si el token es válido
-  const [loading, setLoading] = useState(true); // Estado de carga
-
-  
-  const location = useLocation();
-
+  const [loading, setLoading] = useState(true);
+  const [tokenValid, setTokenValid] = useState(true);
+  const [appId, setAppId] = useState(null);
+  const [authCode, setAuthCode] = useState(null);
 
   useEffect(() => {
-    console.log('Ejecutando useEffect...');
-
     const searchParams = new URLSearchParams(location.search);
-    const urlAppId = searchParams.get('app_id');
-    const urlAuthCode = searchParams.get('auth_code');
-    const appName = searchParams.get('app_name');
-    const token = searchParams.get('token');
-    const storedToken = localStorage.getItem('authToken');
-
-    console.log('Token de la URL:', token);
-    console.log('Token en localStorage:', storedToken);
-
-    // Declarar appId y authCode en un ámbito superior
-    let appId, authCode;
+    const urlAppName = searchParams.get('app_name');
+    const token = searchParams.get('token') || localStorage.getItem('authToken');
 
     const validateToken = async () => {
-      if (token) {
-        try {
-          const decoded = jwtDecode(token);
-          const currentTime = Date.now() / 1000;
-          console.log('Token decodificado:', decoded);
-
-          if (decoded.exp < currentTime) {
-            console.error('⚠️ Token expirado');
-            setTokenValid(false);
-            navigate('/login-required');
-            return;
-          }
-
-          // Extraer appId y authCode del token decodificado
-          appId = decoded.app_id;
-          authCode = decoded.auth_code;
-          setAppName(decoded.appName || appName);
-
-          console.log('✅ Token válido. Guardándolo en localStorage.');
-          localStorage.setItem('authToken', token);
-        } catch (error) {
-          console.error('⚠️ Token inválido:', error);
-          setTokenValid(false);
-          navigate('/login-required');
-          return;
-        }
-      } else if (storedToken) {
-        // Si no hay token en URL pero sí en localStorage, extraer de localStorage
-        try {
-          const decoded = jwtDecode(storedToken);
-          const currentTime = Date.now() / 1000;
-
-          if (decoded.exp < currentTime) {
-            console.error('⚠️ Token almacenado expirado');
-            localStorage.removeItem('authToken');
-            setTokenValid(false);
-            navigate('/login-required');
-            return;
-          }
-
-          appId = decoded.app_id;
-          authCode = decoded.auth_code;
-          setAppName(decoded.appName || appName);
-        } catch (error) {
-          console.error('⚠️ Token almacenado inválido:', error);
-          localStorage.removeItem('authToken');
-          setTokenValid(false);
-          navigate('/login-required');
-          return;
-        }
-      } else {
+      if (!token) {
         console.error('⚠️ No hay token en la URL ni en localStorage');
         setTokenValid(false);
-        navigate('/login-required');
+        setTimeout(() => navigate('/login-required'), 0);
         return;
       }
 
-      console.log('✅ Token válido, permitiendo acceso.');
-      setTokenValid(true);
+      try {
+        const decoded = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
 
-      // Fetch de las plantillas usando appId y authCode
-      const fetchTemplates = async () => {
-        if (appId && authCode) {
-          try {
-            const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
-              method: 'GET',
-              headers: {
-                Authorization: authCode,
-              },
-            });
-
-            const data = await response.json();
-            if (data.status === 'success') {
-              setTemplates(data.templates.slice(0, 4));
-              console.log('Plantillas cargadas correctamente:', data.templates);
-            } else {
-              console.error('Error en la respuesta:', data);
-            }
-          } catch (error) {
-            console.error('Error fetching templates:', error);
-          }
-        } else {
-          console.error('No se encontró appId o authCode en el token');
+        if (decoded.exp < currentTime) {
+          console.error('⚠️ Token expirado');
+          setTokenValid(false);
+          localStorage.removeItem('authToken');
+          setTimeout(() => navigate('/login-required'), 0);
+          return;
         }
-      };
 
-      await fetchTemplates();
+        // Guardar en estados
+        setAppId(decoded.app_id);
+        setAuthCode(decoded.auth_code);
+        setAppName(decoded.appName || urlAppName);
+
+        localStorage.setItem('authToken', token);
+        console.log('✅ Token válido');
+      } catch (error) {
+        console.error('⚠️ Token inválido:', error);
+        setTokenValid(false);
+        setTimeout(() => navigate('/login-required'), 0);
+        return;
+      }
     };
 
-    validateToken().finally(() => {
-      setLoading(false); // Finaliza el estado de carga
-    });
+    validateToken().finally(() => setLoading(false));
   }, [location.search, navigate]);
 
+  useEffect(() => {
+    if (!appId || !authCode) return;
+
+    const fetchTemplates = async () => {
+      try {
+        const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+          method: 'GET',
+          headers: { Authorization: authCode },
+        });
+
+        const data = await response.json();
+        if (data.status === 'success') {
+          setTemplates(data.templates.slice(0, 4));
+          console.log('✅ Plantillas cargadas:', data.templates);
+        } else {
+          console.error('⚠️ Error en la respuesta:', data);
+        }
+      } catch (error) {
+        console.error('⚠️ Error fetching templates:', error);
+      }
+    };
+
+    fetchTemplates();
+  }, [appId, authCode]);
+
   if (loading) {
-    return <div>Cargando...</div>; // Muestra un mensaje de carga mientras se valida el token
+    return <CircularProgress sx={{ display: 'block', margin: 'auto', mt: 5 }} />;
   }
 
   if (!tokenValid) {
-    return <LoginRequired />; // Redirige al componente de login si el token no es válido
+    return <LoginRequired />;
   }
 
 

@@ -1,10 +1,12 @@
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { useState, useMemo, useEffect } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import { Box } from '@mui/material';
 import AppRoutes from './routes';
 import Sidebar from './components/Sidebar';
-import LoadingSpinner from './utils/LoadingSpinner'; // Asegúrate de crear este componente
+import LoadingSpinner from './utils/LoadingSpinner';
+import LoginRequired from './pages/LoginRequired';
 
 function App() {
   const [themeSettings, setThemeSettings] = useState({
@@ -14,41 +16,52 @@ function App() {
   });
 
   const [isLoading, setIsLoading] = useState(true);
+  const [tokenValid, setTokenValid] = useState(false);
 
   useEffect(() => {
-    // Simula la validación del token
     const validateToken = async () => {
-      // Aquí puedes agregar la lógica para validar el token
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simula una validación de 1 segundo
-      setIsLoading(false);
+      try {
+        const storedToken = localStorage.getItem('authToken');
+
+        if (!storedToken) {
+          console.error('⚠️ No hay token almacenado');
+          setTokenValid(false);
+          return;
+        }
+
+        const decoded = jwtDecode(storedToken);
+        const currentTime = Date.now() / 1000;
+
+        if (decoded.exp < currentTime) {
+          console.error('⚠️ Token expirado');
+          localStorage.removeItem('authToken');
+          setTokenValid(false);
+          return;
+        }
+
+        console.log('✅ Token válido');
+        setTokenValid(true);
+      } catch (error) {
+        console.error('⚠️ Token inválido:', error);
+        localStorage.removeItem('authToken');
+        setTokenValid(false);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     validateToken();
   }, []);
 
-  const theme = useMemo(() => 
+  const theme = useMemo(() =>
     createTheme({
       palette: {
         primary: {
           main: themeSettings.primaryColor,
-          light: themeSettings.primaryColor, 
-          dark: themeSettings.primaryColor,  
-          contrastText: '#fff' 
+          contrastText: '#fff'
         },
         secondary: {
           main: themeSettings.secondaryColor,
-        },
-      },
-      components: {
-        MuiButton: {
-          styleOverrides: {
-            containedPrimary: {
-              backgroundColor: themeSettings.primaryColor,
-              '&:hover': {
-                backgroundColor: themeSettings.primaryColor,
-              },
-            },
-          },
         },
       },
       typography: {
@@ -59,7 +72,11 @@ function App() {
   );
 
   if (isLoading) {
-    return <LoadingSpinner />; // Muestra un spinner de carga mientras se valida el token
+    return <LoadingSpinner />;
+  }
+
+  if (!tokenValid) {
+    return <LoginRequired />;
   }
 
   return (
@@ -67,6 +84,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Box sx={{ display: "flex" }}>
+          <Sidebar />
           <AppRoutes />
         </Box>
       </ThemeProvider>
