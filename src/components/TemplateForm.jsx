@@ -674,7 +674,7 @@ const TemplateForm = () => {
             value={vertical}
             helperText="Defina para qué caso de uso, por ejemplo, actualización de cuenta, OTP, etc, en 2 o 3 palabras"
             onChange={handleVerticalChange}
-            ref={verticalRef}
+            inputRef={verticalRef}
           />
         </Box>
 
@@ -695,7 +695,7 @@ const TemplateForm = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               sx={{ mb: 3, mt: 4 }}
-              ref={messageRef}
+              inputRef={messageRef}
             />
 
             {/* Botón para agregar emojis */}
@@ -911,7 +911,7 @@ const TemplateForm = () => {
             label="Escribe"
             value={example}
             onChange={(e) => setExample(e.target.value)}
-            ref={exampleRef}
+            inputRef={exampleRef}
             sx={{ mb: 3 }}
           />
         </Box>
