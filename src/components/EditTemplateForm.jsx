@@ -28,6 +28,13 @@ const EditTemplateForm = () => {
     useEffect(() => {
       if (templateData) {
         setTemplateName(templateData.elementName || "");
+        setTemplateType(templateData.templateType || "");
+        setLanguageCode(templateData.languageCode || "");
+        setVertical(templateData.vertical || "");
+        setMessage(templateData.containerMeta || "");
+        setHeader(templateData.containerMeta || "");
+        setFooter(templateData.containerMeta || "");
+        setExample(templateData.containerMeta || "");
       }
     }, [templateData]);
 
