@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation  } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Importación correcta
 
@@ -81,7 +81,7 @@ export default function BasicCard() {
     console.log('Token en localStorage:', storedToken);
 
     if (token) {
-      try {s
+      try {
         const decoded = jwtDecode(token);
         const currentTime = Date.now() / 1000;
         console.log('Token decodificado:', decoded);
