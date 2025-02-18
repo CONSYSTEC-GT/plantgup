@@ -21,7 +21,7 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
 const NAVIGATION = [
   {
-    segment: 'TemplateList',
+    segment: 'Dashboard',
     title: 'Dashboard',
     icon: <DashboardIcon />,
   },

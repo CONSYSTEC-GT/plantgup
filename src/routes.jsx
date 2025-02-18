@@ -26,7 +26,7 @@ const AppRoutes = () => {
         {/* Rutas protegidas */}
         <Route element={<Sidebar />}>
           <Route
-            index
+            path="/Dashboard"
             element={
               <ProtectedRoute>
                 <TemplateList />
