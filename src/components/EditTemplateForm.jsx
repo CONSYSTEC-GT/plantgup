@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect , useRef } from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
 import { Alert, Box, Button, Container, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 
 import { Smile } from "react-feather"; // Icono para emojis
@@ -19,6 +20,17 @@ import FileUploadComponent from './FileUploadComponent';
 
 const EditTemplateForm = () => {
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const templateData = location.state?.template || {}; // Datos del template
+
+    // Cargar los datos en el formulario al montar el componente
+    useEffect(() => {
+      if (templateData) {
+        setTemplateName(templateData.elementName || "");
+      }
+    }, [templateData]);
+
   //CAMPOS DEL FORMULARIO PARA EL REQUEST
   const [templateName, setTemplateName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -37,7 +49,7 @@ const EditTemplateForm = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  const [languageCode, setLanguageCode] = useState("");
+  const [languageCode, setLanguageCode] = useState("es"); // Valor predeterminado: español
   const [languageTypeError, setLanguageTypeError] = useState(false);
   const [languageTypeHelperText, setLanguageTypeHelperText] = useState("");
 
@@ -64,6 +76,18 @@ const EditTemplateForm = () => {
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
 
+  const templateNameRef = useRef(null);
+  const templateTypeRef = useRef(null);
+  const languageCodeRef = useRef(null);
+  const verticalRef = useRef(null);
+  const messageRef = useRef(null);
+  const exampleRef = useRef(null);
+  const selectedCategoryRef = useRef(null);
+
+
+
+
+
   // Función para mostrar Snackbar
   const showSnackbar = (message, severity) => {
     setSnackbarMessage(message);
@@ -84,41 +108,55 @@ const EditTemplateForm = () => {
       setTemplateNameError(true);
       setTemplateNameHelperText("Este campo es requerido");
       isValid = false;
+      templateNameRef.current.focus();
+      return isValid; // Salir de la función después del primer error
     }
 
     if (templateType.trim() === "") {
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
       isValid = false;
+      templateTypeRef.current.focus();
+      return isValid;
     }
 
     if (languageCode.trim() === "") {
       setLanguageTypeError(true);
       setLanguageTypeHelperText("Este campo es requerido");
       isValid = false;
+      languageCodeRef.current.focus();
+      return isValid;
     }
 
     if (vertical.trim() === "") {
       setetiquetaPlantillaError(true);
       isValid = false;
+      verticalRef.current.focus();
+      return isValid;
     }
 
     if (message.trim() === "") {
       setcontenidoPlantillaTypeError(true)
       setcontenidoPlantillaTypeHelperText("Este campo es requerido");
       isValid = false;
+      messageRef.current.focus();
+      return isValid;
     }
 
     if (example.trim() === "") {
       setejemploPlantillaError(true)
       setejemploPlantillaHelperText("Este campo es requerido");
       isValid = false;
+      exampleRef.current.focus();
+      return isValid;
     }
 
     if (selectedCategory.trim() === "") {
       setcategoriaPlantillaError(true);
       setcategoriaPlantillaHelperText("Este campo es requerido");
       isValid = false;
+      selectedCategoryRef.current.focus();
+      return isValid;
     }
 
     return isValid;
@@ -528,6 +566,7 @@ const EditTemplateForm = () => {
               value={templateName}
               onChange={handleTemplateNameChange}
               fullWidth
+              inputRef={templateNameRef}
             />
           </FormControl>
         </Box>
@@ -599,7 +638,7 @@ const EditTemplateForm = () => {
           </FormControl>
 
           <FormControl fullWidth>
-            <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select">
+            <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
               <MenuItem value="text">TEXT</MenuItem>
               <MenuItem value="image">IMAGE</MenuItem>
               <MenuItem value="document">DOCUMENT</MenuItem>
@@ -624,6 +663,7 @@ const EditTemplateForm = () => {
               aria-required="true"
               value={languageCode} // Usamos directamente el código de idioma
               onChange={handleLanguageCodeChange}
+              ref={languageCodeRef}
             >
               {Object.entries(languageMap).map(([code, name]) => (
                 <MenuItem key={code} value={code}>
@@ -650,6 +690,7 @@ const EditTemplateForm = () => {
             value={vertical}
             helperText="Defina para qué caso de uso, por ejemplo, actualización de cuenta, OTP, etc, en 2 o 3 palabras"
             onChange={handleVerticalChange}
+            inputRef={verticalRef}
           />
         </Box>
 
@@ -670,6 +711,7 @@ const EditTemplateForm = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               sx={{ mb: 3, mt: 4 }}
+              inputRef={messageRef}
             />
 
             {/* Botón para agregar emojis */}
@@ -885,6 +927,7 @@ const EditTemplateForm = () => {
             label="Escribe"
             value={example}
             onChange={(e) => setExample(e.target.value)}
+            inputRef={exampleRef}
             sx={{ mb: 3 }}
           />
         </Box>

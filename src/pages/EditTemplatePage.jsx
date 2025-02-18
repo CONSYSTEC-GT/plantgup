@@ -38,7 +38,7 @@ const EditTemplatePage = () => {
         </Typography>
       </Box>
 
-      <TemplateForm />
+      <EditTemplateForm />
     </Box>
   );
 };
