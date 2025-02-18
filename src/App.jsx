@@ -2,7 +2,7 @@ import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { useState, useMemo, useEffect } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box } from '@mui/material';
-import jwtDecode from 'jwt-decode'; // Asegúrate de tener esta dependencia instalada
+import { jwtDecode } from 'jwt-decode'; // Importación correcta
 import AppRoutes from './routes';
 import Sidebar from './components/Sidebar';
 import LoadingSpinner from './utils/LoadingSpinner';
