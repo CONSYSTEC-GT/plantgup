@@ -70,11 +70,10 @@ export default function BasicCard() {
   useEffect(() => {
     console.log('Ejecutando useEffect...');
 
+    const searchParams = new URLSearchParams(location.search);
     const appId = searchParams.get('app_id');
     const authCode = searchParams.get('auth_code');
     const appName = searchParams.get('app_name');
-
-    const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get('token'); 
     const storedToken = localStorage.getItem('authToken');
 
@@ -117,6 +116,7 @@ export default function BasicCard() {
   if (!tokenValid) {
     return <LoginRequired />;
   }
+
 
   const getStatusColor = (status) => {
     switch (status) {
