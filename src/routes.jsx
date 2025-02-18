@@ -26,7 +26,7 @@ const AppRoutes = () => {
         {/* Rutas protegidas */}
         <Route element={<Sidebar />}>
           <Route
-            path="/Dashboard"
+            index
             element={
               <ProtectedRoute>
                 <TemplateList />
@@ -34,7 +34,7 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path="/TemplateList"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <TemplateList />
