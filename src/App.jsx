@@ -20,16 +20,39 @@ function App() {
   const [tokenValid, setTokenValid] = useState(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const token = params.get("token");
+    const checkToken = async () => {
+      try {
+        // Primero verificamos si hay un token en la URL
+        const params = new URLSearchParams(location.search);
+        const token = params.get("token");
 
-    if (token) {
-      console.log("Guardando token en localStorage...");
-      localStorage.setItem("token", token);
-      // Opcional: Remover el token de la URL para limpiar la barra de direcciones
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, [location]);
+        if (token) {
+          console.log("Guardando token en localStorage...");
+          localStorage.setItem("token", token);
+          // Remover el token de la URL para limpiar la barra de direcciones
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // Luego verificamos si existe un token en localStorage
+        const savedToken = localStorage.getItem("token");
+        
+        if (savedToken) {
+          // Aquí deberías validar el token con tu backend
+          // Por ahora solo simularemos que es válido
+          setTokenValid(true);
+        }
+        
+        // Completamos la carga independientemente del resultado
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error al verificar el token:", error);
+        setTokenValid(false);
+        setIsLoading(false);
+      }
+    };
+
+    checkToken();
+  }, [location.search]); // Solo se ejecuta cuando cambia la búsqueda en la URL, no toda la location
 
   const theme = useMemo(() =>
     createTheme({
