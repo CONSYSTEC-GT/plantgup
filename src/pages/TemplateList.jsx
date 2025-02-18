@@ -7,6 +7,7 @@ import LoginRequired from './LoginRequired';
 
 //componentes
 import { alpha, Card, CardContent, Typography, CardActions, Button, Grid, Box, Menu, MenuItem, Stack, TextField, Paper, styled } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 //iconos
 import AddIcon from '@mui/icons-material/Add';
 import FindInPageIcon from '@mui/icons-material/FindInPage';
