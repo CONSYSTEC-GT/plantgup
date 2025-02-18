@@ -62,6 +62,7 @@ export default function BasicCard() {
   const [appName, setAppName] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [tokenValid, setTokenValid] = useState(true); // Estado para controlar si el token es válido
+  const [loading, setLoading] = useState(true); // Estado de carga
 
   
   const location = useLocation();
