@@ -71,14 +71,17 @@ export default function BasicCard() {
     console.log('Ejecutando useEffect...');
 
     const searchParams = new URLSearchParams(location.search);
-    const appId = searchParams.get('app_id');
-    const authCode = searchParams.get('auth_code');
+    const urlAppId = searchParams.get('app_id');
+    const urlAuthCode = searchParams.get('auth_code');
     const appName = searchParams.get('app_name');
     const token = searchParams.get('token'); 
     const storedToken = localStorage.getItem('authToken');
 
     console.log('Token de la URL:', token);
     console.log('Token en localStorage:', storedToken);
+    
+    // Variables para guardar appId y authCode
+    let appId, authCode;
 
     if (token) {
       try {
@@ -93,6 +96,10 @@ export default function BasicCard() {
           return;
         }
 
+        // Extraer appId y authCode del token decodificado
+        appId = decoded.app_id;
+        authCode = decoded.auth_code;
+
         console.log('✅ Token válido. Guardándolo en localStorage.');
         localStorage.setItem('authToken', token);
       } catch (error) {
@@ -101,7 +108,30 @@ export default function BasicCard() {
         navigate('/login-required');
         return;
       }
-    } else if (!storedToken) {
+    } else if (storedToken) {
+      // Si no hay token en URL pero sí en localStorage, extraer de localStorage
+      try {
+        const decoded = jwtDecode(storedToken);
+        const currentTime = Date.now() / 1000;
+        
+        if (decoded.exp < currentTime) {
+          console.error('⚠️ Token almacenado expirado');
+          localStorage.removeItem('authToken');
+          setTokenValid(false);
+          navigate('/login-required');
+          return;
+        }
+        
+        appId = decoded.app_id;
+        authCode = decoded.auth_code;
+      } catch (error) {
+        console.error('⚠️ Token almacenado inválido:', error);
+        localStorage.removeItem('authToken');
+        setTokenValid(false);
+        navigate('/login-required');
+        return;
+      }
+    } else {
       console.error('⚠️ No hay token en la URL ni en localStorage');
       setTokenValid(false);
       navigate('/login-required');
@@ -110,6 +140,36 @@ export default function BasicCard() {
 
     console.log('✅ Token válido, permitiendo acceso.');
     setTokenValid(true);
+
+    // Fetch de las plantillas usando appId y authCode
+    const fetchTemplates = async () => {
+      if (appId && authCode) {
+        try {
+          const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+            method: 'GET',
+            headers: {
+              Authorization: authCode,
+            },
+          });
+          const data = await response.json();
+          if (data.status === 'success') {
+            setTemplates(data.templates);
+            console.log('Plantillas cargadas correctamente:', data.templates);
+          } else {
+            console.error('Error en la respuesta:', data);
+          }
+        } catch (error) {
+          console.error('Error fetching templates:', error);
+        }
+      } else {
+        console.error('No se encontró appId o authCode en el token');
+      }
+    };
+
+    // Llamar a fetchTemplates si tenemos appId y authCode
+    if (appId && authCode) {
+      fetchTemplates();
+    }
 
   }, [location.search, navigate]); // Solo se ejecuta cuando cambia la URL
 
