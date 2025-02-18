@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Box } from '@mui/material';
 import AppRoutes from './routes';
 import Sidebar from './components/Sidebar';
-import LoadingSpinner from './components/LoadingSpinner'; // Asegúrate de crear este componente
+import LoadingSpinner from './utils/LoadingSpinner'; // Asegúrate de crear este componente
 
 function App() {
   const [themeSettings, setThemeSettings] = useState({
