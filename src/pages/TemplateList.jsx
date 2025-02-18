@@ -74,105 +74,124 @@ export default function BasicCard() {
     const urlAppId = searchParams.get('app_id');
     const urlAuthCode = searchParams.get('auth_code');
     const appName = searchParams.get('app_name');
-    const token = searchParams.get('token'); 
+    const token = searchParams.get('token');
     const storedToken = localStorage.getItem('authToken');
 
     console.log('Token de la URL:', token);
     console.log('Token en localStorage:', storedToken);
-    
+
     // Variables para guardar appId y authCode
     let appId, authCode;
 
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        const currentTime = Date.now() / 1000;
-        console.log('Token decodificado:', decoded);
+    const validateToken = async () => {
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          const currentTime = Date.now() / 1000;
+          console.log('Token decodificado:', decoded);
 
-        if (decoded.exp < currentTime) {
-          console.error('⚠️ Token expirado');
+          if (decoded.exp < currentTime) {
+            console.error('⚠️ Token expirado');
+            setTokenValid(false);
+            navigate('/login-required');
+            return;
+          }
+
+          // Extraer appId y authCode del token decodificado
+          appId = decoded.app_id;
+          authCode = decoded.auth_code;
+          setAppName(decoded.appName || appName);
+
+          console.log('✅ Token válido. Guardándolo en localStorage.');
+          localStorage.setItem('authToken', token);
+        } catch (error) {
+          console.error('⚠️ Token inválido:', error);
           setTokenValid(false);
           navigate('/login-required');
           return;
         }
+      } else if (storedToken) {
+        // Si no hay token en URL pero sí en localStorage, extraer de localStorage
+        try {
+          const decoded = jwtDecode(storedToken);
+          const currentTime = Date.now() / 1000;
 
-        // Extraer appId y authCode del token decodificado
-        appId = decoded.app_id;
-        authCode = decoded.auth_code;
+          if (decoded.exp < currentTime) {
+            console.error('⚠️ Token almacenado expirado');
+            localStorage.removeItem('authToken');
+            setTokenValid(false);
+            navigate('/login-required');
+            return;
+          }
 
-        console.log('✅ Token válido. Guardándolo en localStorage.');
-        localStorage.setItem('authToken', token);
-      } catch (error) {
-        console.error('⚠️ Token inválido:', error);
-        setTokenValid(false);
-        navigate('/login-required');
-        return;
-      }
-    } else if (storedToken) {
-      // Si no hay token en URL pero sí en localStorage, extraer de localStorage
-      try {
-        const decoded = jwtDecode(storedToken);
-        const currentTime = Date.now() / 1000;
-        
-        if (decoded.exp < currentTime) {
-          console.error('⚠️ Token almacenado expirado');
+          appId = decoded.app_id;
+          authCode = decoded.auth_code;
+          setAppName(decoded.appName || appName);
+        } catch (error) {
+          console.error('⚠️ Token almacenado inválido:', error);
           localStorage.removeItem('authToken');
           setTokenValid(false);
           navigate('/login-required');
           return;
         }
-        
-        appId = decoded.app_id;
-        authCode = decoded.auth_code;
-      } catch (error) {
-        console.error('⚠️ Token almacenado inválido:', error);
-        localStorage.removeItem('authToken');
+      } else {
+        console.error('⚠️ No hay token en la URL ni en localStorage');
         setTokenValid(false);
         navigate('/login-required');
         return;
       }
-    } else {
-      console.error('⚠️ No hay token en la URL ni en localStorage');
-      setTokenValid(false);
-      navigate('/login-required');
-      return;
-    }
 
-    console.log('✅ Token válido, permitiendo acceso.');
-    setTokenValid(true);
+      console.log('✅ Token válido, permitiendo acceso.');
+      setTokenValid(true);
 
-    // Fetch de las plantillas usando appId y authCode
-    const fetchTemplates = async () => {
-      if (appId && authCode) {
-        try {
-          const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
-            method: 'GET',
-            headers: {
-              Authorization: authCode,
-            },
-          });
-          setAppName(app_name);
-          const data = await response.json();
-          if (data.status === 'success') {
-            setTemplates(data.templates.slice(0, 4));
-            console.log('Plantillas cargadas correctamente:', data.templates);
-          } else {
-            console.error('Error en la respuesta:', data);
+      // Fetch de las plantillas usando appId y authCode
+      const fetchTemplates = async () => {
+        if (appId && authCode) {
+          try {
+            const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+              method: 'GET',
+              headers: {
+                Authorization: authCode,
+              },
+            });
+
+            const data = await response.json();
+            if (data.status === 'success') {
+              setTemplates(data.templates.slice(0, 4));
+              console.log('Plantillas cargadas correctamente:', data.templates);
+            } else {
+              console.error('Error en la respuesta:', data);
+            }
+          } catch (error) {
+            console.error('Error fetching templates:', error);
           }
-        } catch (error) {
-          console.error('Error fetching templates:', error);
+        } else {
+          console.error('No se encontró appId o authCode en el token');
         }
-      } else {
-        console.error('No se encontró appId o authCode en el token');
-      }
+      };
+
+      await fetchTemplates();
     };
+
+    validateToken().finally(() => {
+      setLoading(false); // Finaliza el estado de carga
+    });
+  }, [location.search, navigate]);
+
+  if (loading) {
+    return <div>Cargando...</div>; // Muestra un mensaje de carga mientras se valida el token
+  }
+
+  if (!tokenValid) {
+    return <LoginRequired />; // Redirige al componente de login si el token no es válido
+  }
 
     // Llamar a fetchTemplates si tenemos appId y authCode
     if (appId && authCode) {
       fetchTemplates();
     }
 
-  }, [location.search, navigate]); // Solo se ejecuta cuando cambia la URL
+  
 
   if (!tokenValid) {
     return <LoginRequired />;
