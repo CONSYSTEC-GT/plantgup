@@ -1,28 +1,22 @@
 // src/pages/LoginRequired.jsx
 import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Typography } from '@mui/material';
 
 const LoginRequired = () => {
-  const navigate = useNavigate();
-
   return (
     <Box sx={{ textAlign: 'center', mt: 5 }}>
       <Typography variant="h4" gutterBottom>
-        Sesión expirada o no encontrada
-      </Typography>
-      <Typography variant="body1" gutterBottom>
-        Por favor, inicia sesión para continuar.
-      </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => navigate('/login')} // Redirige a la página de inicio de sesión
-      >
-        Iniciar sesión
-      </Button>
-    </Box>
-  );
+        Sesión expirada o no encontrada. Por favor inicie sesión nuevamente.
+      </Typography>  
+      <Typography variant='body1'>
+        No se puede acceder a esta página hasta que se haya iniciado la sesión correctamente.
+      </Typography>  
+       
+       
+    </Box>
+
+);
+
 };
 
 export default LoginRequired;
