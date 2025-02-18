@@ -94,7 +94,7 @@ const fetchTemplates = async (appId, authCode) => {
     });
     const data = await response.json();
     if (data.status === 'success') {
-      setTemplates(data.templates);
+      setTemplates(data.templates.slice(0, 4));
     }
   } catch (error) {
     console.error('Error fetching templates:', error);

@@ -4,6 +4,7 @@ import { alpha, Autocomplete, Box, Button, Card, CardContent, CardActions, Menu,
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { jwtDecode } from 'jwt-decode'; // Asegúrate de instalar jwt-decode
 
 // ICONOS
 import EditIcon from '@mui/icons-material/Edit';
