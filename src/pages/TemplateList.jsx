@@ -74,45 +74,28 @@ export default function BasicCard() {
       try {
         const decoded = jwtDecode(token);
         const currentTime = Date.now() / 1000;
-  
+
         if (decoded.exp < currentTime) {
           console.error('Token expirado');
-          navigate('/login-required'); // Redirige si el token ha expirado
+          setTokenValid(false);
+          navigate('/login-required'); 
           return;
         }
-  
-        // Guarda el token en localStorage
+
+        // ✅ Guarda el token en localStorage si es válido
         localStorage.setItem('authToken', token);
       } catch (error) {
         console.error('Token inválido', error);
-        navigate('/login-required'); // Redirige si el token es inválido
+        setTokenValid(false);
+        navigate('/login-required'); 
       }
-    } else {
-      // Si no hay token en la URL, verifica si hay uno en localStorage
-      const storedToken = localStorage.getItem('authToken');
-      if (!storedToken) {
-        navigate('/login-required'); // Redirige si no hay token
-      }
+    } else if (!storedToken) {
+      // ✅ Si no hay token en la URL ni en localStorage, redirige
+      setTokenValid(false);
+      navigate('/login-required'); 
     }
-  }, [location]);
+  }, [location.search, navigate]); // ✅ location.search como dependencia
 
-  const fetchTemplates = async (appId, authCode) => {
-    try {
-      const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
-        method: 'GET',
-        headers: {
-          'Authorization': authCode,
-        }
-      });
-      const data = await response.json();
-      if (data.status === 'success') {
-        setTemplates(data.templates.slice(0, 4));
-      }
-    } catch (error) {
-      console.error('Error fetching templates:', error);
-    }
-  };
-  // Si el token no es válido, muestra la página de error
   if (!tokenValid) {
     return <LoginRequired />;
   }
