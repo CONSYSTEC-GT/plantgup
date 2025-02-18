@@ -81,7 +81,7 @@ export default function BasicCard() {
     console.log('Token de la URL:', token);
     console.log('Token en localStorage:', storedToken);
 
-    // Variables para guardar appId y authCode
+    // Declarar appId y authCode en un ámbito superior
     let appId, authCode;
 
     const validateToken = async () => {
@@ -185,17 +185,6 @@ export default function BasicCard() {
 
   if (!tokenValid) {
     return <LoginRequired />; // Redirige al componente de login si el token no es válido
-  }
-
-    // Llamar a fetchTemplates si tenemos appId y authCode
-    if (appId && authCode) {
-      fetchTemplates();
-    }
-
-  
-
-  if (!tokenValid) {
-    return <LoginRequired />;
   }
 
 
