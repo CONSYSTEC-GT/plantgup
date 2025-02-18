@@ -37,7 +37,7 @@ const TemplateForm = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  const [languageCode, setLanguageCode] = useState("");
+  const [languageCode, setLanguageCode] = useState("es"); // Valor predeterminado: español
   const [languageTypeError, setLanguageTypeError] = useState(false);
   const [languageTypeHelperText, setLanguageTypeHelperText] = useState("");
 
