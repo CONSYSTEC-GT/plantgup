@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import TemplateList from './pages/TemplateList';
 import CreateTemplatePage from './pages/CreateTemplatePage';
