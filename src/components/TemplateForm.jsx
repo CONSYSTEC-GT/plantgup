@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import React, { useRef } from 'react'
 import { Alert, Box, Button, Container, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 
 import { Smile } from "react-feather"; // Icono para emojis
@@ -64,6 +65,14 @@ const TemplateForm = () => {
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
 
+  const templateNameRef = useRef(null);
+  const templateTypeRef = useRef(null);
+  const languageCodeRef = useRef(null);
+  const verticalRef = useRef(null);
+  const messageRef = useRef(null);
+  const exampleRef = useRef(null);
+  const selectedCategoryRef = useRef(null);
+
   // Función para mostrar Snackbar
   const showSnackbar = (message, severity) => {
     setSnackbarMessage(message);
@@ -84,41 +93,55 @@ const TemplateForm = () => {
       setTemplateNameError(true);
       setTemplateNameHelperText("Este campo es requerido");
       isValid = false;
+      templateNameRef.current.focus();
+      return isValid; // Salir de la función después del primer error
     }
 
     if (templateType.trim() === "") {
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
       isValid = false;
+      templateTypeRef.current.focus();
+      return isValid;
     }
 
     if (languageCode.trim() === "") {
       setLanguageTypeError(true);
       setLanguageTypeHelperText("Este campo es requerido");
       isValid = false;
+      languageCodeRef.current.focus();
+      return isValid;
     }
 
     if (vertical.trim() === "") {
       setetiquetaPlantillaError(true);
       isValid = false;
+      verticalRef.current.focus();
+      return isValid;
     }
 
     if (message.trim() === "") {
       setcontenidoPlantillaTypeError(true)
       setcontenidoPlantillaTypeHelperText("Este campo es requerido");
       isValid = false;
+      messageRef.current.focus();
+      return isValid;
     }
 
     if (example.trim() === "") {
       setejemploPlantillaError(true)
       setejemploPlantillaHelperText("Este campo es requerido");
       isValid = false;
+      exampleRef.current.focus();
+      return isValid;
     }
 
     if (selectedCategory.trim() === "") {
       setcategoriaPlantillaError(true);
       setcategoriaPlantillaHelperText("Este campo es requerido");
       isValid = false;
+      selectedCategoryRef.current.focus();
+      return isValid;
     }
 
     return isValid;
@@ -528,6 +551,7 @@ const TemplateForm = () => {
               value={templateName}
               onChange={handleTemplateNameChange}
               fullWidth
+              inputRef={templateNameRef}
             />
           </FormControl>
         </Box>
@@ -599,7 +623,7 @@ const TemplateForm = () => {
           </FormControl>
 
           <FormControl fullWidth>
-            <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select">
+            <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
               <MenuItem value="text">TEXT</MenuItem>
               <MenuItem value="image">IMAGE</MenuItem>
               <MenuItem value="document">DOCUMENT</MenuItem>
@@ -624,6 +648,7 @@ const TemplateForm = () => {
               aria-required="true"
               value={languageCode} // Usamos directamente el código de idioma
               onChange={handleLanguageCodeChange}
+              ref={languageCodeRef}
             >
               {Object.entries(languageMap).map(([code, name]) => (
                 <MenuItem key={code} value={code}>
@@ -650,6 +675,7 @@ const TemplateForm = () => {
             value={vertical}
             helperText="Defina para qué caso de uso, por ejemplo, actualización de cuenta, OTP, etc, en 2 o 3 palabras"
             onChange={handleVerticalChange}
+            ref={verticalRef}
           />
         </Box>
 
@@ -670,6 +696,7 @@ const TemplateForm = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               sx={{ mb: 3, mt: 4 }}
+              ref={messageRef}
             />
 
             {/* Botón para agregar emojis */}
@@ -885,6 +912,7 @@ const TemplateForm = () => {
             label="Escribe"
             value={example}
             onChange={(e) => setExample(e.target.value)}
+            ref={exampleRef}
             sx={{ mb: 3 }}
           />
         </Box>
