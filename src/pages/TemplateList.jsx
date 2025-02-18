@@ -63,38 +63,56 @@ export default function BasicCard() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [tokenValid, setTokenValid] = useState(true); // Estado para controlar si el token es válido
 
+  
+  const location = useLocation();
+
+
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search); // Usa location.search
-    const token = searchParams.get('token'); // Corregido: usa searchParams en lugar de queryParams
+    console.log('Ejecutando useEffect...');
+
     const appId = searchParams.get('app_id');
     const authCode = searchParams.get('auth_code');
     const appName = searchParams.get('app_name');
+
+    const searchParams = new URLSearchParams(location.search);
+    const token = searchParams.get('token'); 
+    const storedToken = localStorage.getItem('authToken');
+
+    console.log('Token de la URL:', token);
+    console.log('Token en localStorage:', storedToken);
 
     if (token) {
       try {
         const decoded = jwtDecode(token);
         const currentTime = Date.now() / 1000;
+        console.log('Token decodificado:', decoded);
 
         if (decoded.exp < currentTime) {
-          console.error('Token expirado');
+          console.error('⚠️ Token expirado');
           setTokenValid(false);
-          navigate('/login-required'); 
+          navigate('/login-required');
           return;
         }
 
-        // ✅ Guarda el token en localStorage si es válido
+        console.log('✅ Token válido. Guardándolo en localStorage.');
         localStorage.setItem('authToken', token);
       } catch (error) {
-        console.error('Token inválido', error);
+        console.error('⚠️ Token inválido:', error);
         setTokenValid(false);
-        navigate('/login-required'); 
+        navigate('/login-required');
+        return;
       }
     } else if (!storedToken) {
-      // ✅ Si no hay token en la URL ni en localStorage, redirige
+      console.error('⚠️ No hay token en la URL ni en localStorage');
       setTokenValid(false);
-      navigate('/login-required'); 
+      navigate('/login-required');
+      return;
     }
-  }, [location.search, navigate]); // ✅ location.search como dependencia
+
+    console.log('✅ Token válido, permitiendo acceso.');
+    setTokenValid(true);
+
+  }, [location.search, navigate]); // Solo se ejecuta cuando cambia la URL
 
   if (!tokenValid) {
     return <LoginRequired />;
