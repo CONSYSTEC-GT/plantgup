@@ -1,8 +1,6 @@
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { useState, useMemo, useEffect } from 'react';
-import { BrowserRouter, useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
-import { jwtDecode } from 'jwt-decode';
 import { Box } from '@mui/material';
 import AppRoutes from './routes';
 import Sidebar from './components/Sidebar';
@@ -10,7 +8,6 @@ import LoadingSpinner from './utils/LoadingSpinner';
 import LoginRequired from './pages/LoginRequired';
 
 function App() {
-
   const location = useLocation();
 
   const [themeSettings, setThemeSettings] = useState({
@@ -25,7 +22,6 @@ function App() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get("token");
-
 
     if (token) {
       console.log("Guardando token en localStorage...");
@@ -62,15 +58,13 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Box sx={{ display: "flex" }}>
-          <Sidebar />
-          <AppRoutes />
-        </Box>
-      </ThemeProvider>
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ display: "flex" }}>
+        <Sidebar />
+        <AppRoutes />
+      </Box>
+    </ThemeProvider>
   );
 }
 
