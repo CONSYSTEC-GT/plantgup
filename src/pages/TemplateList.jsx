@@ -63,6 +63,7 @@ export default function BasicCard() {
   // Estados
   const [templates, setTemplates] = useState([]);
   const [appName, setAppName] = useState('');
+  const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tokenValid, setTokenValid] = useState(true);
   const [appId, setAppId] = useState(null);
