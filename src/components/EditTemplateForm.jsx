@@ -31,17 +31,39 @@ const EditTemplateForm = () => {
         setTemplateType(templateData.templateType || "");
         setLanguageCode(templateData.languageCode || "");
         setVertical(templateData.vertical || "");
-        setMessage(templateData.containerMeta || "");
-        setHeader(templateData.containerMeta || "");
-        setFooter(templateData.containerMeta || "");
-        setExample(templateData.containerMeta || "");
+    
+        // Parsear containerMeta si existe
+        if (templateData.containerMeta) {
+          try {
+            const meta = JSON.parse(templateData.containerMeta);
+            setMessage(meta.data || "");
+            setHeader(meta.data || "");
+            setFooter(meta.footer || "");
+            setExample(meta.sampleText || "");
+    
+            // Cargar botones si existen en containerMeta
+            if (meta.buttons && Array.isArray(meta.buttons)) {
+              setButtons(
+                meta.buttons.map((button, index) => ({
+                  id: index, // Genera un ID único para la key
+                  title: button.text || "", // Título del botón
+                  type: button.type || "QUICK_REPLY", // Tipo de botón
+                  url: button.url || "", // URL si aplica
+                  phoneNumber: button.phone_number || "", // Número de teléfono si aplica
+                }))
+              );
+            }
+          } catch (error) {
+            console.error("Error al parsear containerMeta:", error);
+          }
+        }
       }
     }, [templateData]);
 
   //CAMPOS DEL FORMULARIO PARA EL REQUEST
   const [templateName, setTemplateName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [templateType, setTemplateType] = useState("text");
+  const [templateType, setTemplateType] = useState("TEXT");
   const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al texto de su plantilla.");
   const [templateNameError, setTemplateNameError] = useState(false);
   const [vertical, setVertical] = useState("");
