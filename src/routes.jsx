@@ -34,7 +34,7 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path="/dashboard"
+            path="/TemplateList"
             element={
               <ProtectedRoute>
                 <TemplateList />

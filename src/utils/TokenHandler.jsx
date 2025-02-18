@@ -13,7 +13,7 @@ const TokenHandler = () => {
       localStorage.setItem('authToken', tokenFromUrl);
 
       // Si el usuario ya estaba en una página específica, lo regresamos ahí
-      const previousPage = location.state?.from?.pathname || '/dashboard';
+      const previousPage = location.state?.from?.pathname || '/TemplateList';
       navigate(previousPage, { replace: true });
     } else {
       const storedToken = localStorage.getItem('authToken');
