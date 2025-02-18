@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import React, { useRef } from 'react'
+import React, { useState, useRef } from 'react';
 import { Alert, Box, Button, Container, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 
 import { Smile } from "react-feather"; // Icono para emojis
