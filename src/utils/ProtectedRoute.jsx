@@ -1,14 +1,14 @@
 // src/components/ProtectedRoute.jsx
 import React from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('authToken'); // Recupera el token del localStorage
+  const location = useLocation();
+  const token = localStorage.getItem('authToken'); // Recupera el token
 
   if (!token) {
-    // Si no hay token, redirige a la página de error o inicio de sesión
-    return <Navigate to="/login-required" replace />;
+    return <Navigate to="/login-required" state={{ from: location }} replace />;
   }
 
   try {
@@ -16,15 +16,14 @@ const ProtectedRoute = ({ children }) => {
     const currentTime = Date.now() / 1000;
 
     if (decoded.exp < currentTime) {
-      // Si el token ha expirado, redirige a la página de error o inicio de sesión
-      return <Navigate to="/login-required" replace />;
+      localStorage.removeItem('authToken'); // Remueve el token expirado
+      return <Navigate to="/login-required" state={{ from: location }} replace />;
     }
 
-    // Si el token es válido, renderiza el componente hijo (la ruta protegida)
     return children;
   } catch (error) {
-    // Si hay un error al decodificar el token, redirige a la página de error o inicio de sesión
-    return <Navigate to="/login-required" replace />;
+    localStorage.removeItem('authToken'); // Si hay error, limpia el token
+    return <Navigate to="/login-required" state={{ from: location }} replace />;
   }
 };
 
