@@ -13,11 +13,13 @@ import Sidebar from './components/Sidebar';
 import ProtectedRoute from './utils/ProtectedRoute';
 import LoginRequired from './pages/LoginRequired';
 import TokenHandler from './utils/TokenHandler'; // Importamos TokenHandler
+import LoadingSpinner from './utils/LoadingSpinner';
 
 const AppRoutes = () => {
   return (
     <>
       <TokenHandler /> {/* Agregamos TokenHandler aquí para que funcione en todas las rutas */}
+      <Suspense fallback={<LoadingSpinner />}>
 
       <Routes>
         {/* Ruta pública para la página de error */}
@@ -107,6 +109,7 @@ const AppRoutes = () => {
           />
         </Route>
       </Routes>
+      </Suspense>
     </>
   );
 };
