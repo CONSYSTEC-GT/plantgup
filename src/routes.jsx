@@ -12,7 +12,7 @@ import ModifyTemplatePage from './pages/ModifyTemplatePage';
 import Sidebar from './components/Sidebar';
 import ProtectedRoute from './utils/ProtectedRoute';
 import LoginRequired from './pages/LoginRequired';
-import TokenHandler from './components/TokenHandler'; // Importamos TokenHandler
+import TokenHandler from './utils/TokenHandler'; // Importamos TokenHandler
 
 const AppRoutes = () => {
   return (

@@ -81,7 +81,7 @@ export default function BasicCard() {
     console.log('Token en localStorage:', storedToken);
 
     if (token) {
-      try {
+      try {s
         const decoded = jwtDecode(token);
         const currentTime = Date.now() / 1000;
         console.log('Token decodificado:', decoded);
