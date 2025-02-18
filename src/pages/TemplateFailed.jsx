@@ -24,7 +24,22 @@ const TemplateAproved = () => {
 
   const navigate = useNavigate(); // Inicializa useNavigate
   
-//FETCH DE LAS PLANTILLAS
+  // Recupera el token del localStorage
+  const token = localStorage.getItem('authToken');
+
+  // Decodifica el token para obtener appId y authCode
+  let appId, authCode;
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      appId = decoded.app_id; // Extrae appId del token
+      authCode = decoded.auth_code; // Extrae authCode del token
+    } catch (error) {
+      console.error('Error decodificando el token:', error);
+    }
+  }
+
+  //FETCH DE LAS PLANTILLAS
 const fetchTemplates = async (appId, authCode) => {
   try {
     const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
@@ -35,7 +50,8 @@ const fetchTemplates = async (appId, authCode) => {
     });
     const data = await response.json();
     if (data.status === 'success') {
-      setTemplates(data.templates);
+      const failedTemplates = data.templates.filter(template => template.status === 'FAILED');
+       setTemplates(failedTemplates);
     }
   } catch (error) {
     console.error('Error fetching templates:', error);

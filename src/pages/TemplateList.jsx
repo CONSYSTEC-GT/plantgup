@@ -66,84 +66,49 @@ export default function BasicCard() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tokenValid, setTokenValid] = useState(true);
-  const [appId, setAppId] = useState(null);
-  const [authCode, setAuthCode] = useState(null);
+  
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const urlAppName = searchParams.get('app_name');
-    const token = searchParams.get('token') || localStorage.getItem('authToken');
+  // Recupera el token del localStorage
+  const token = localStorage.getItem('authToken');
 
-    const validateToken = async () => {
-      if (!token) {
-        console.error('⚠️ No hay token en la URL ni en localStorage');
-        setTokenValid(false);
-        setTimeout(() => navigate('/login-required'), 0);
-        return;
-      }
-
-      try {
-        const decoded = jwtDecode(token);
-        const currentTime = Date.now() / 1000;
-
-        if (decoded.exp < currentTime) {
-          console.error('⚠️ Token expirado');
-          setTokenValid(false);
-          localStorage.removeItem('authToken');
-          setTimeout(() => navigate('/login-required'), 0);
-          return;
-        }
-
-        // Guardar en estados
-        setAppId(decoded.app_id);
-        setAuthCode(decoded.auth_code);
-        setAppName(decoded.appName || urlAppName);
-
-        localStorage.setItem('authToken', token);
-        console.log('✅ Token válido');
-      } catch (error) {
-        console.error('⚠️ Token inválido:', error);
-        setTokenValid(false);
-        setTimeout(() => navigate('/login-required'), 0);
-        return;
-      }
-    };
-
-    validateToken().finally(() => setLoading(false));
-  }, [location.search, navigate]);
-
-  useEffect(() => {
-    if (!appId || !authCode) return;
-
-    const fetchTemplates = async () => {
-      try {
-        const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
-          method: 'GET',
-          headers: { Authorization: authCode },
-        });
-
-        const data = await response.json();
-        if (data.status === 'success') {
-          setTemplates(data.templates.slice(0, 4));
-          console.log('✅ Plantillas cargadas:', data.templates);
-        } else {
-          console.error('⚠️ Error en la respuesta:', data);
-        }
-      } catch (error) {
-        console.error('⚠️ Error fetching templates:', error);
-      }
-    };
-
-    fetchTemplates();
-  }, [appId, authCode]);
-
-  if (loading) {
-    return <CircularProgress sx={{ display: 'block', margin: 'auto', mt: 5 }} />;
+  // Decodifica el token para obtener appId y authCode
+  let appId, authCode;
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      appId = decoded.app_id; // Extrae appId del token
+      authCode = decoded.auth_code; // Extrae authCode del token
+    } catch (error) {
+      console.error('Error decodificando el token:', error);
+    }
   }
 
-  if (!tokenValid) {
-    return <LoginRequired />;
+  //FETCH DE LAS PLANTILLAS
+const fetchTemplates = async (appId, authCode) => {
+  try {
+    const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+      method: 'GET',
+      headers: {
+        Authorization: authCode,
+      },
+    });
+    const data = await response.json();
+    if (data.status === 'success') {
+      setTemplates(data.templates);
+    }
+  } catch (error) {
+    console.error('Error fetching templates:', error);
   }
+};
+
+// Llama a fetchTemplates cuando el componente se monta
+useEffect(() => {
+  if (appId && authCode) {
+    fetchTemplates(appId, authCode);
+  } else {
+    console.error('No se encontró appId o authCode en el token');
+  }
+}, [appId, authCode]);
 
 
   const getStatusColor = (status) => {
