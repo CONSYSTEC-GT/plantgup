@@ -191,17 +191,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
           <Typography variant="body2" color="text.secondary" gutterBottom>
             Seleccione el tipo de media y cargue un archivo.
           </Typography>
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <RadioGroup
-              row
-              value={mediaType}
-              onChange={handleMediaTypeChange}
-            >
-              <FormControlLabel value="image" control={<Radio />} label="Imagen" />
-              <FormControlLabel value="video" control={<Radio />} label="Video" />
-              <FormControlLabel value="document" control={<Radio />} label="Documento" />
-            </RadioGroup>
-          </FormControl>
+
 
           {mediaType && (
             <Box sx={{ mt: 2 }}>

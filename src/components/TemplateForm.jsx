@@ -625,9 +625,9 @@ const TemplateForm = () => {
 
           <FormControl fullWidth>
             <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
-              <MenuItem value="text">TEXT</MenuItem>
-              <MenuItem value="image">IMAGE</MenuItem>
-              <MenuItem value="document">DOCUMENT</MenuItem>
+              <MenuItem value="text">TEXTO</MenuItem>
+              <MenuItem value="image">IMAGEN</MenuItem>
+              <MenuItem value="document">DOCUMENTO</MenuItem>
             </Select>
             <FormHelperText>
               Escoge el tipo de plantilla que se va a crear
