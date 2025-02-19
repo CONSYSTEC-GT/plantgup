@@ -320,6 +320,9 @@ const EditTemplateForm = () => {
       console.log("URL", URL);
     } catch (error) {
       console.error("Error en la solicitud:", error);
+      console.log("Response: ", result);
+      console.log("Plantilla:", templateId);
+      console.log("URL", URL);
       showSnackbar("❌ Error al crear la plantilla", "error");
     }
   };

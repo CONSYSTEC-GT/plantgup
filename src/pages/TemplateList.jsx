@@ -131,7 +131,14 @@ useEffect(() => {
   };
 
   const handleEdit = (template) => {
-    navigate('/modify-template', { state: { template } });
+    // Validar el estado del template
+    if (template.status === "APPROVED" || template.status === "REJECTED" || template.status === "PAUSED") {
+      // Si el estado es válido, navegar a la página de edición
+      navigate('/modify-template', { state: { template } });
+    } else {
+      // Si el estado no es válido, mostrar un mensaje de error
+      alert('No se puede editar el template porque su estado no es "APPROVED", "REJECTED" o "PAUSED".');
+    }
   };
 
   // Función para manejar el clic en eliminar
