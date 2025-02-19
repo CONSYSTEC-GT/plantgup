@@ -87,11 +87,33 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
     //const url = `/gupshup/partner/app/${APP_ID}/upload/media`;
     const url = `https://api.gupshup.io/gupshup/partner/app/{{APP_ID}}/upload/media`;
     //https://partner.gupshup.io/partner/app/{{APP_ID}}/media
-    
+
+    // Debug: Imprimir el request completo
+    console.log('=== Request Config ===', {
+      url: url,
+      method: requestConfig.method,
+      headers: requestConfig.headers,
+      body: formData, // FormData no se imprime directamente, pero puedes inspeccionarlo en la consola
+    });
+
+    // Debug: Imprimir los headers específicos
+    console.log('=== Headers ===', requestConfig.headers);
+
+    // Debug: Imprimir el cuerpo del request (FormData)
+    for (let [key, value] of formData.entries()) {
+      console.log(`FormData Key: ${key}, Value: ${value}`);
+    }
 
     try {
       setUploadStatus('Subiendo archivo...');
       const response = await fetch(url, requestConfig);
+
+      // Debug: Imprimir la respuesta del servidor
+      console.log('=== Response ===', {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -110,7 +132,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
       // Extraer el mediaId del handleId.message
       const mediaId = data.handleId.message;
       setMediaId(mediaId);
-      setUploadStatus('¡Archivo subido exitosamente!');
+      setUploadStatus('¡Archivo subido exitosamente!'); 
 
       // Notificar al componente padre con el mediaId correcto
       if (onUploadSuccess) {

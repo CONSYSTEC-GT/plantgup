@@ -309,7 +309,7 @@ const EditTemplateForm = () => {
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Error response:", errorResponse);
-        showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
+        showSnackbar(`❌ Error al actualizar la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
         return;
       }
   
@@ -323,7 +323,7 @@ const EditTemplateForm = () => {
       console.log("Response: ", result);
       console.log("Plantilla:", templateId);
       console.log("URL", URL);
-      showSnackbar("❌ Error al crear la plantilla", "error");
+      showSnackbar("❌ Error al actualizar la plantilla", "error");
     }
   };
 
