@@ -84,7 +84,10 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
       body: formData,
     };
 
-    const url = `/gupshup/partner/app/${APP_ID}/upload/media`;
+    //const url = `/gupshup/partner/app/${APP_ID}/upload/media`;
+    const url = `https://api.gupshup.io/gupshup/partner/app/{{APP_ID}}/upload/media`;
+    //https://partner.gupshup.io/partner/app/{{APP_ID}}/media
+    
 
     try {
       setUploadStatus('Subiendo archivo...');
