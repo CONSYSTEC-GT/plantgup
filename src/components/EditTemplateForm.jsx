@@ -32,6 +32,8 @@ const EditTemplateForm = () => {
         setTemplateType(templateData.templateType || "");
         setLanguageCode(templateData.languageCode || "");
         setVertical(templateData.vertical || "");
+        setIdTemplate(templateData.id);
+        
     
         // Parsear containerMeta si existe
         if (templateData.containerMeta) {
@@ -74,6 +76,7 @@ const EditTemplateForm = () => {
   const [buttons, setButtons] = useState([]);
   const [example, setExample] = useState("");
   const [exampleMedia, setExampleMedia] = useState("");
+  const [idTemplate, setIdTemplate] = useState("");
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -252,8 +255,10 @@ const EditTemplateForm = () => {
     if (!validateFields()) {
       return; // Detener la ejecución si hay errores
     }
-  
-    const url = "https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates";
+    
+    const appId = "f63360ab-87b0-44da-9790-63a0d524f9dd"; // Reemplázalo con la variable correcta si es dinámica
+    const templateId = idTemplate;
+    const url = `https://partner.gupshup.io/partner/app/${appId}/templates/${templateId}`;
     const headers = {
       Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
       "Content-Type": "application/x-www-form-urlencoded",
@@ -267,21 +272,10 @@ const EditTemplateForm = () => {
     data.append("vertical", vertical);
     data.append("content", message);
   
-    // Agregar header si existe
-    if (header) {
-      data.append("header", header);
-    }
-  
-    // Agregar footer si existe
-    if (footer) {
-      data.append("footer", footer);
-    }
-  
-    // Agregar mediaId si existe
-    if (mediaId) {
-      data.append("exampleMedia", mediaId);
-    }
-  
+    if (header) data.append("header", header);
+    if (footer) data.append("footer", footer);
+    if (mediaId) data.append("mediaId", mediaId);
+
     // Construir el objeto buttons
     const formattedButtons = buttons.map((button) => {
       const buttonData = {
@@ -307,7 +301,7 @@ const EditTemplateForm = () => {
   
     try {
       const response = await fetch(url, {
-        method: "POST",
+        method: "PUT",
         headers: headers,
         body: data,
       });
@@ -320,7 +314,7 @@ const EditTemplateForm = () => {
       }
   
       const result = await response.json();
-      showSnackbar("✅ Plantilla creada exitosamente", "success");
+      showSnackbar("✅ Plantilla actualizada exitosamente", "success");
       console.log("Response: ", result);
     } catch (error) {
       console.error("Error en la solicitud:", error);
