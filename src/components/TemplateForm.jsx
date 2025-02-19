@@ -999,7 +999,9 @@ const TemplateForm = () => {
                   src={imagePreview}
                   alt="Vista previa"
                   style={{ width: "100%", borderRadius: 2 }}
+                  onError={(e) => (e.target.style.display = "none")} // Oculta la imagen si hay un error
                 />
+
               </Box>
             )}
 

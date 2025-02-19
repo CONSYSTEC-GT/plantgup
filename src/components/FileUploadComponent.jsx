@@ -13,7 +13,7 @@ import {
   Alert
 } from '@mui/material';
 
-const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
+const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImagePreview }) => {
   const charLimit = 60;
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
   const APP_ID = 'f63360ab-87b0-44da-9790-63a0d524f9dd';
@@ -26,6 +26,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
   const [mediaId, setMediaId] = useState('');
   const [error, setError] = useState('');
   const [uploadStatus, setUploadStatus] = useState('');
+  const [imagePreview, setImagePreview] = useState(null); // Estado para la vista previa de la imagen
 
   // Manejadores de eventos
   const handleHeaderChange = (event) => {
@@ -37,14 +38,15 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
     setMediaType(event.target.value);
     setSelectedFile(null);
     setMediaId('');
+    setImagePreview(null); // Limpiar la vista previa al cambiar el tipo de medio
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     console.log('Archivo seleccionado:', file);
-  
+
     if (!file) return;
-  
+
     // Verificar el tamaño del archivo
     if (file.size > MAX_FILE_SIZE) {
       setError('El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.');
@@ -52,21 +54,21 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
       setImagePreview(null);
       return;
     }
-  
+
     console.log('Detalles del archivo:', {
       nombre: file.name,
       tipo: file.type,
       tamaño: `${(file.size / 1024 / 1024).toFixed(2)} MB`
     });
-  
+
     setError('');
     setSelectedFile(file);
-  
+
     // Crear una vista previa de la imagen
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result);
-  
+
       // Notificar al componente padre con la vista previa
       if (onImagePreview) {
         onImagePreview(reader.result);
@@ -74,61 +76,40 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
     };
     reader.readAsDataURL(file);
   };
-  
-
-  const handleUploadSuccess = (mediaId) => {
-    setMediaId(mediaId);
-  };
 
   const handleUpload = async () => {
     if (!selectedFile) {
       setError('Por favor, selecciona un archivo.');
       return;
     }
-
+  
+    // Generar vista previa local antes de subir
+    const previewURL = URL.createObjectURL(selectedFile);
+    setImagePreview(previewURL); // Guarda la vista previa en el estado
+  
+    // Enviar la vista previa al componente padre
+    if (onImagePreview) {
+      onImagePreview(previewURL);
+    }
+  
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('file_type', selectedFile.type);
-
+  
     const requestConfig = {
       method: 'POST',
       headers: {
-        Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
+        Authorization: TOKEN,
       },
       body: formData,
     };
-
-    //const url = `/gupshup/partner/app/${APP_ID}/upload/media`;
-    //const url = `https://api.gupshup.io/gupshup/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/upload/media`;
-    const url = 'https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/upload/media';
-
-    // Debug: Imprimir el request completo
-    console.log('=== Request Config ===', {
-      url: url,
-      method: requestConfig.method,
-      headers: requestConfig.headers,
-      body: formData, // FormData no se imprime directamente, pero puedes inspeccionarlo en la consola
-    });
-
-    // Debug: Imprimir los headers específicos
-    console.log('=== Headers ===', requestConfig.headers);
-
-    // Debug: Imprimir el cuerpo del request (FormData)
-    for (let [key, value] of formData.entries()) {
-      console.log(`FormData Key: ${key}, Value: ${value}`);
-    }
-
+  
+    const url = `https://partner.gupshup.io/partner/app/${APP_ID}/upload/media`;
+  
     try {
       setUploadStatus('Subiendo archivo...');
       const response = await fetch(url, requestConfig);
-
-      // Debug: Imprimir la respuesta del servidor
-      console.log('=== Response ===', {
-        status: response.status,
-        statusText: response.statusText,
-        headers: response.headers,
-      });
-
+  
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error en la respuesta:', {
@@ -139,16 +120,16 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
         setUploadStatus('Error al subir el archivo');
         throw new Error(`Error en la respuesta del servidor: ${response.status} ${response.statusText}`);
       }
-
+  
       const data = await response.json();
       console.log('=== Respuesta exitosa ===', data);
-
-      // Extraer el mediaId del handleId.message
+  
+      // Extraer el mediaId
       const mediaId = data.handleId.message;
       setMediaId(mediaId);
-      setUploadStatus('¡Archivo subido exitosamente!'); 
-
-      // Notificar al componente padre con el mediaId correcto
+      setUploadStatus('¡Archivo subido exitosamente!');
+  
+      // Notificar al componente padre con el mediaId
       if (onUploadSuccess) {
         onUploadSuccess(mediaId);
       }
@@ -158,6 +139,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
       setUploadStatus('Error al subir el archivo');
     }
   };
+  
 
   const getAcceptedFileTypes = () => {
     const types = {
@@ -171,10 +153,8 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
 
   return (
     <Box>
-
       {templateType === "text" ? (
         <>
-          
           <TextField
             fullWidth
             label="Header"
@@ -236,6 +216,19 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
                 </Typography>
               )}
 
+              {imagePreview && mediaType === 'image' && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="body2">
+                    Vista previa:
+                  </Typography>
+                  <img
+                    src={imagePreview}
+                    alt="Vista previa"
+                    style={{ maxWidth: '100%', height: 'auto', marginTop: '10px' }}
+                  />
+                </Box>
+              )}
+
               {mediaId && (
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="body2">
@@ -259,17 +252,12 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
       </Snackbar>
 
       <div className="space-y-4">
-        {/* ... otros elementos ... */}
         {uploadStatus && (
-          <div className={`mt-2 p-2 rounded ${uploadStatus.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
-            }`}>
+          <div className={`mt-2 p-2 rounded ${uploadStatus.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
             {uploadStatus}
           </div>
         )}
       </div>
-
-
-
     </Box>
   );
 };
