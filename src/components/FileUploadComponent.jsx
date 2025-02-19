@@ -218,14 +218,6 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
               {imagePreview && mediaType === 'image' && (
                 <Box sx={{ mt: 2 }}>
-                  <Typography variant="body2">
-                    Vista previa:
-                  </Typography>
-                  <img
-                    src={imagePreview}
-                    alt="Vista previa"
-                    style={{ maxWidth: '100%', height: 'auto', marginTop: '10px' }}
-                  />
                 </Box>
               )}
 

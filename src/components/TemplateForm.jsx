@@ -959,6 +959,27 @@ const TemplateForm = () => {
               Vista previa
             </Typography>
 
+                        {/* Vista previa de la imagen */}{imagePreview && (
+              <Box
+              sx={{
+                bgcolor: "#ffffff",
+                p: 1,
+                borderRadius: 2,
+                alignSelf: "flex",
+                maxWidth: "100%",
+                boxShadow: 1,
+              }}
+            >
+              <img
+                src={imagePreview}
+                alt="Vista previa"
+                style={{ width: "100%", borderRadius: 2 }}
+                onError={(e) => (e.target.style.display = "none")} // Oculta la imagen si hay un error
+              />
+
+            </Box>
+          )}
+
             {/* Mensaje de WhatsApp */}
             <Box
               sx={{
@@ -983,27 +1004,8 @@ const TemplateForm = () => {
               </Typography>
             </Box>
 
-            {/* Vista previa de la imagen */}
-            {imagePreview && (
-              <Box
-                sx={{
-                  bgcolor: "#ffffff",
-                  p: 1,
-                  borderRadius: 2,
-                  alignSelf: "flex",
-                  maxWidth: "100%",
-                  boxShadow: 1,
-                }}
-              >
-                <img
-                  src={imagePreview}
-                  alt="Vista previa"
-                  style={{ width: "100%", borderRadius: 2 }}
-                  onError={(e) => (e.target.style.display = "none")} // Oculta la imagen si hay un error
-                />
+            
 
-              </Box>
-            )}
 
             {/* Botones */}
             <Stack spacing={1} sx={{ mt: 0 }}>
