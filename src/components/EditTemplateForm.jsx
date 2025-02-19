@@ -28,6 +28,7 @@ const EditTemplateForm = () => {
     useEffect(() => {
       if (templateData) {
         setTemplateName(templateData.elementName || "");
+        setSelectedCategory(templateData.category || "");
         setTemplateType(templateData.templateType || "");
         setLanguageCode(templateData.languageCode || "");
         setVertical(templateData.vertical || "");
@@ -415,11 +416,13 @@ const EditTemplateForm = () => {
 
   //TIPO PLANTILLA
   const handleTemplateTypeChange = (event) => {
-    setTemplateType(event.target.value);
+    const value = event.target.value; // Extraer el valor correctamente
+    setTemplateType(value);
     setHeader(""); // Resetear el header al cambiar de tipo
     setMediaType("");
     setMediaURL("");
-    if (e.target.value.trim() === "") {
+  
+    if (value.trim() === "") { // Usar la variable "value"
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
     } else {
@@ -427,6 +430,7 @@ const EditTemplateForm = () => {
       setTemplateTypeHelperText("");
     }
   };
+  
 
   const handleHeaderTemplateTypeChange = (event) => {
     setTemplateType(event.target.value);
@@ -668,9 +672,9 @@ const EditTemplateForm = () => {
 
           <FormControl fullWidth>
             <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
-              <MenuItem value="text">TEXT</MenuItem>
-              <MenuItem value="image">IMAGE</MenuItem>
-              <MenuItem value="document">DOCUMENT</MenuItem>
+              <MenuItem value="TEXT">TEXT</MenuItem>
+              <MenuItem value="IMAGE">IMAGE</MenuItem>
+              <MenuItem value="DOCUMENT">DOCUMENT</MenuItem>
             </Select>
             <FormHelperText>
               Escoge el tipo de plantilla que se va a crear

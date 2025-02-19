@@ -62,7 +62,6 @@ export default function BasicCard() {
 
   // Estados
   const [templates, setTemplates] = useState([]);
-  const [appName, setAppName] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tokenValid, setTokenValid] = useState(true);
@@ -72,7 +71,7 @@ export default function BasicCard() {
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
-  let appId, authCode;
+  let appId, authCode, appName;
   if (token) {
     try {
       const decoded = jwtDecode(token);
