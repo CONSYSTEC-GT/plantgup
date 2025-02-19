@@ -959,26 +959,25 @@ const TemplateForm = () => {
               Vista previa
             </Typography>
 
-                        {/* Vista previa de la imagen */}{imagePreview && (
-              <Box
-              sx={{
-                bgcolor: "#ffffff",
-                p: 1,
-                borderRadius: 2,
-                alignSelf: "flex",
-                maxWidth: "100%",
-                boxShadow: 1,
-              }}
-            >
-              <img
-                src={imagePreview}
-                alt="Vista previa"
-                style={{ width: "100%", borderRadius: 2 }}
-                onError={(e) => (e.target.style.display = "none")} // Oculta la imagen si hay un error
-              />
+              {/* Vista previa de la imagen */}{imagePreview && (
+  <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
+  {selectedFile.type.startsWith("image/") && (
+    <img src={imagePreview} alt="Vista previa" style={{ width: "100%", borderRadius: 2 }} />
+  )}
 
-            </Box>
-          )}
+  {selectedFile.type.startsWith("video/") && (
+    <video controls width="100%">
+      <source src={imagePreview} type={selectedFile.type} />
+      Tu navegador no soporta este formato de video.
+    </video>
+  )}
+
+  {selectedFile.type === "application/pdf" && (
+    <iframe src={imagePreview} width="100%" height="500px"></iframe>
+  )}
+</Box>
+)}
+
 
             {/* Mensaje de WhatsApp */}
             <Box
