@@ -77,6 +77,7 @@ export default function BasicCard() {
       const decoded = jwtDecode(token);
       appId = decoded.app_id; // Extrae appId del token
       authCode = decoded.auth_code; // Extrae authCode del token
+      appName = decoded.app_name;
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }

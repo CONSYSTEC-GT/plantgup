@@ -316,6 +316,8 @@ const EditTemplateForm = () => {
       const result = await response.json();
       showSnackbar("✅ Plantilla actualizada exitosamente", "success");
       console.log("Response: ", result);
+      console.log("Plantilla:", templateId);
+      console.log("URL", URL);
     } catch (error) {
       console.error("Error en la solicitud:", error);
       showSnackbar("❌ Error al crear la plantilla", "error");
