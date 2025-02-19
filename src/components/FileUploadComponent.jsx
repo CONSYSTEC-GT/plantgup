@@ -78,15 +78,14 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
     const requestConfig = {
       method: 'POST',
       headers: {
-        'accept': 'application/json',
-        'token': TOKEN
+        Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
       },
       body: formData,
     };
 
     //const url = `/gupshup/partner/app/${APP_ID}/upload/media`;
     //const url = `https://api.gupshup.io/gupshup/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/upload/media`;
-    const url = 'https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/media';
+    const url = 'https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/upload/media';
 
     // Debug: Imprimir el request completo
     console.log('=== Request Config ===', {
