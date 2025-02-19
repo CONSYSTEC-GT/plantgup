@@ -63,6 +63,7 @@ const TemplateForm = () => {
 
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
+  const [uploadStatus, setUploadStatus] = useState('');
 
   const templateNameRef = useRef(null);
   const templateTypeRef = useRef(null);
@@ -768,7 +769,14 @@ const TemplateForm = () => {
                 Encabezado
               </FormLabel>
             </FormControl>
-            <FileUploadComponent templateType={templateType} />
+            
+            <FileUploadComponent
+              templateType={templateType}
+              onUploadSuccess={(mediaId) => {
+              setMediaId(mediaId);
+              setUploadStatus('¡Archivo subido exitosamente!');
+              }}
+            />
           </Box>
         )}
 
