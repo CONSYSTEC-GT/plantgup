@@ -42,24 +42,39 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess }) => {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     console.log('Archivo seleccionado:', file);
-
+  
     if (!file) return;
-
+  
+    // Verificar el tamaño del archivo
     if (file.size > MAX_FILE_SIZE) {
       setError('El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.');
       setSelectedFile(null);
+      setImagePreview(null);
       return;
     }
-
+  
     console.log('Detalles del archivo:', {
       nombre: file.name,
       tipo: file.type,
       tamaño: `${(file.size / 1024 / 1024).toFixed(2)} MB`
     });
-
+  
     setError('');
     setSelectedFile(file);
+  
+    // Crear una vista previa de la imagen
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+  
+      // Notificar al componente padre con la vista previa
+      if (onImagePreview) {
+        onImagePreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
   };
+  
 
   const handleUploadSuccess = (mediaId) => {
     setMediaId(mediaId);

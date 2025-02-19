@@ -64,6 +64,7 @@ const TemplateForm = () => {
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
   const [uploadStatus, setUploadStatus] = useState('');
+  const [imagePreview, setImagePreview] = useState(null);
 
   const templateNameRef = useRef(null);
   const templateTypeRef = useRef(null);
@@ -769,14 +770,14 @@ const TemplateForm = () => {
                 Encabezado
               </FormLabel>
             </FormControl>
-            
+
             <FileUploadComponent
-              templateType={templateType}
-              onUploadSuccess={(mediaId) => {
+            onUploadSuccess={(mediaId) => {
               setMediaId(mediaId);
-              setUploadStatus('¡Archivo subido exitosamente!');
-              }}
-            />
+              setUploadStatus("¡Archivo subido exitosamente!");
+            }}
+            onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
+          />
           </Box>
         )}
 
@@ -940,7 +941,8 @@ const TemplateForm = () => {
       </Box>
       </Grid>
 
-      {/* Preview (30%) */}<Grid item xs={4}>
+      {/* Preview (30%) */}
+      <Grid item xs={4}>
         <Box sx={{ position: "sticky", top: 0, height: "100vh", mt: 2, borderRadius: 2 }}>
           <Box
             sx={{
@@ -957,7 +959,8 @@ const TemplateForm = () => {
               Vista previa
             </Typography>
 
-            {/* Mensaje de WhatsApp */}<Box
+            {/* Mensaje de WhatsApp */}
+            <Box
               sx={{
                 bgcolor: "#ffffff",
                 p: 1,
@@ -980,18 +983,39 @@ const TemplateForm = () => {
               </Typography>
             </Box>
 
-            {/* Botones */}<Stack spacing={1} sx={{ mt: 0 }}> {/* Eliminamos el margen superior (mt) */}
+            {/* Vista previa de la imagen */}
+            {imagePreview && (
+              <Box
+                sx={{
+                  bgcolor: "#ffffff",
+                  p: 1,
+                  borderRadius: 2,
+                  alignSelf: "flex",
+                  maxWidth: "100%",
+                  boxShadow: 1,
+                }}
+              >
+                <img
+                  src={imagePreview}
+                  alt="Vista previa"
+                  style={{ width: "100%", borderRadius: 2 }}
+                />
+              </Box>
+            )}
+
+            {/* Botones */}
+            <Stack spacing={1} sx={{ mt: 0 }}>
               {buttons.map((button) => (
                 <Box
                   key={button.id}
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "flex-start", // Alineamos a la izquierda
-                    gap: 1, // Reducimos el espacio entre elementos
+                    justifyContent: "flex-start",
+                    gap: 1,
                     border: "1px solid #ccc",
                     borderRadius: "20px",
-                    p: 1, // Reducimos el padding
+                    p: 1,
                     backgroundColor: "#ffffff",
                     boxShadow: 1,
                     cursor: "pointer",
@@ -1000,7 +1024,6 @@ const TemplateForm = () => {
                     },
                   }}
                 >
-                  {/* Icono pequeño según el tipo de botón */}
                   {button.type === "QUICK_REPLY" && (
                     <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
                   )}
@@ -1010,8 +1033,6 @@ const TemplateForm = () => {
                   {button.type === "PHONE_NUMBER" && (
                     <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
                   )}
-
-                  {/* Título del botón */}
                   <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
                     {button.title}
                   </Typography>
