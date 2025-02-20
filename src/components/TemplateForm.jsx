@@ -593,6 +593,10 @@ const TemplateForm = () => {
     setMessage(newExample); // Ahora también actualiza message con los valores reemplazados
   }, [message, variableExamples]);
 
+  useEffect(() => {
+    setMessage(example);
+  }, [example]);
+
 
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
