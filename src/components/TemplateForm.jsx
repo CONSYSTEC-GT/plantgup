@@ -594,8 +594,8 @@ const TemplateForm = () => {
   }, [message, variableExamples]);
 
   useEffect(() => {
-    setMessage(example);
-  }, [example]);
+    setExample(previewMessage());
+  }, [message, variableExamples]);
 
 
   return (
