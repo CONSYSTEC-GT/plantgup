@@ -1,11 +1,11 @@
 import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
-import { myFirstFunction } from './my-first-function/resource';
 
-// Define el backend con los recursos principales
-const backend = defineBackend({
+/**
+ * @see https://docs.amplify.aws/react/build-a-backend/ to add storage, functions, and more
+ */
+defineBackend({
   auth,
   data,
-  myFirstFunction,
 });
