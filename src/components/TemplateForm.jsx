@@ -259,7 +259,7 @@ const TemplateForm = () => {
     });
 
     data.append("buttons", JSON.stringify(formattedButtons));
-    data.append("example", example);
+    data.append("example", previewMessage);
     data.append("enableSample", true);
     data.append("allowTemplateCategoryChange", false);
 
@@ -1024,7 +1024,7 @@ const TemplateForm = () => {
         multiline
         rows={4}
         label="Escribe"
-        value={example}
+        value={previewMessage}
         onChange={(e) => setExample(e.target.value)}
         sx={{ mb: 3 }}
       />
