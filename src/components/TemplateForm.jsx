@@ -552,6 +552,15 @@ const TemplateForm = () => {
     messageRef.current?.focus();
   };
 
+  // Función para previsualizar el mensaje con ejemplos aplicados
+  const previewMessage = () => {
+    let previewText = message;
+    Object.entries(variableExamples).forEach(([variable, example]) => {
+      previewText = previewText.replaceAll(variable, example);
+    });
+    return previewText;
+  };
+
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
 
