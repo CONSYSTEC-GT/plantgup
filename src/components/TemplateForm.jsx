@@ -533,11 +533,11 @@ const TemplateForm = () => {
     // Eliminar la variable del texto
     const newMessage = message.replace(variableToDelete, '');
     setMessage(newMessage);
-    
+
     // Eliminar la variable de la lista de variables
     const updatedVariables = variables.filter(v => v !== variableToDelete);
     setVariables(updatedVariables);
-    
+
     messageRef.current?.focus();
   };
 
@@ -715,19 +715,19 @@ const TemplateForm = () => {
           </FormControl>
 
           {/* Campo de texto con soporte para emojis y variables */}
-      <Box sx={{ position: "relative" }}>
-        <TextField
-          fullWidth
-          multiline
-          aria-required="true"
-          error={contenidoPlantillaTypeError}
-          rows={4}
-          label="Escribe"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          sx={{ mb: 3, mt: 4 }}
-          inputRef={messageRef}
-        />
+          <Box sx={{ position: "relative" }}>
+            <TextField
+              fullWidth
+              multiline
+              aria-required="true"
+              error={contenidoPlantillaTypeError}
+              rows={4}
+              label="Escribe"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              sx={{ mb: 3, mt: 4 }}
+              inputRef={messageRef}
+            />
 
             {/* Botón para agregar emojis */}
             <Button
@@ -745,72 +745,70 @@ const TemplateForm = () => {
             )}
 
             {/* Botón para agregar variable y borrar todas */}
-        <Stack direction="row" spacing={2} sx={{ mt: 2, mb: 2 }}>
-          <Button
-            variant="outlined"
-            startIcon={<AddIcon />}
-            onClick={handleAddVariable}
-          >
-            Agregar Variable
-          </Button>
+            <Stack direction="row" spacing={2} sx={{ mt: 2, mb: 2 }}>
+              <Button
+                variant="outlined"
+                startIcon={<AddIcon />}
+                onClick={handleAddVariable}
+              >
+                Agregar Variable
+              </Button>
 
-          {variables.length > 0 && (
-            <Button
-              color="error"
-              variant="outlined"
-              startIcon={<ClearIcon />}
-              onClick={deleteAllVariables}
-            >
-              Borrar todas las variables
-            </Button>
-          )}
-        </Stack>
+              {variables.length > 0 && (
+                <Button
+                  color="error"
+                  variant="outlined"
+                  startIcon={<ClearIcon />}
+                  onClick={deleteAllVariables}
+                >
+                  Borrar todas las variables
+                </Button>
+              )}
+            </Stack>
 
             {/* Variables disponibles como chips con campos de texto para ejemplos */}
-        {variables.length > 0 && (
-          <Stack sx={{ my: 2, gap: 2 }}>
-            <FormLabel sx={{ fontWeight: 'medium' }}>Variables con texto de ejemplo:</FormLabel>
-            {variables.map((variable, index) => (
-              <Box key={index} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-                <Chip
-                  label={variable}
-                  color="primary"
-                  variant="outlined"
-                  onDelete={() => deleteVariable(variable)}
-                  deleteIcon={
-                    <Tooltip title="Borrar variable">
-                      <DeleteIcon />
-                    </Tooltip>
-                  }
-                />
-                <TextField
-                  size="small"
-                  label="Texto de ejemplo"
-                  value={variableExamples[variable] || ''}
-                  onChange={(e) => handleUpdateExample(variable, e.target.value)}
-                  sx={{ flexGrow: 1, maxWidth: '60%' }}
-                />
-              </Box>
-            ))}
-          </Stack>
-        )}
+            {variables.length > 0 && (
+              <Stack sx={{ my: 2, gap: 2 }}>
+                <FormLabel sx={{ fontWeight: 'medium' }}>Variables con texto de ejemplo:</FormLabel>
+                {variables.map((variable, index) => (
+                  <Box key={index} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+                    <Chip
+                      label={variable}
+                      color="primary"
+                      variant="outlined"
+                      onDelete={() => deleteVariable(variable)}
+                      deleteIcon={
+                        <Tooltip title="Borrar variable">
+                          <DeleteIcon />
+                        </Tooltip>
+                      }
+                    />
+                    <TextField
+                      size="small"
+                      label="Texto de ejemplo"
+                      value={variableExamples[variable] || ''}
+                      onChange={(e) => handleUpdateExample(variable, e.target.value)}
+                      sx={{ flexGrow: 1, maxWidth: '60%' }}
+                    />
+                  </Box>
+                ))}
+              </Stack>
+            )}
 
           </Box>
 
-          {/* Lista de variables y valores de muestra */}
-          <Stack spacing={2} sx={{ mt: 2 }}>
-            {variables.map((variable, index) => (
-              <Box key={index} sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                <Typography variant="body1">{variable}</Typography>
-                <TextField
-                  label="Sample Value"
-                  size="small"
-                  sx={{ width: "150px" }}
-                />
+          {/* Vista previa con ejemplos aplicados */}
+          {variables.length > 0 && (
+            <Box sx={{ mt: 4, p: 2, border: '1px dashed #ccc', borderRadius: 1 }}>
+              <FormLabel sx={{ fontWeight: 'medium' }}>Vista previa con ejemplos:</FormLabel>
+              <Box sx={{ mt: 1, whiteSpace: 'pre-wrap', p: 1 }}>
+                {previewMessage()}
               </Box>
-            ))}
-          </Stack>
+            </Box>
+          )}
         </Box>
+
+
 
         {/* Header*/} {templateType === 'TEXT' ? (
           <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
