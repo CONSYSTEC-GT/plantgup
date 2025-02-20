@@ -793,7 +793,7 @@ const TemplateForm = () => {
             {/* Botón para agregar variable y borrar todas */}
             <Stack direction="row" spacing={2} sx={{ mt: 2, mb: 2 }}>
               <Button
-                variant="outlined"
+                variant="contained"
                 startIcon={<AddIcon />}
                 onClick={handleAddVariable}
               >
@@ -803,7 +803,7 @@ const TemplateForm = () => {
               {variables.length > 0 && (
                 <Button
                   color="error"
-                  variant="outlined"
+                  variant="contained"
                   startIcon={<ClearIcon />}
                   onClick={deleteAllVariables}
                 >
@@ -821,7 +821,7 @@ const TemplateForm = () => {
                     <Chip
                       label={variable}
                       color="primary"
-                      variant="outlined"
+                      variant="contained"
                       onDelete={() => deleteVariable(variable)}
                       deleteIcon={
                         <Tooltip title="Borrar variable">
@@ -843,7 +843,7 @@ const TemplateForm = () => {
 
           </Box>
 
-          {/* Vista previa con ejemplos aplicados */}
+          {/* Vista previa con ejemplos aplicados 
           {variables.length > 0 && (
             <Box sx={{ mt: 4, p: 2, border: '1px dashed #ccc', borderRadius: 1 }}>
               <FormLabel sx={{ fontWeight: 'medium' }}>Vista previa con ejemplos:</FormLabel>
@@ -851,7 +851,7 @@ const TemplateForm = () => {
                 {previewMessage()}
               </Box>
             </Box>
-          )}
+          )}*/}
         </Box>
 
 
@@ -965,7 +965,7 @@ const TemplateForm = () => {
               >
                 {/* Campo de texto para el título del botón */}
                 <TextField
-                  label="Button Title"
+                  label="Titulo del botón"
                   value={button.title}
                   onChange={(e) => updateButton(button.id, "title", e.target.value)}
                   fullWidth
@@ -977,9 +977,9 @@ const TemplateForm = () => {
                   onChange={(e) => updateButton(button.id, "type", e.target.value)}
                   sx={{ minWidth: 150 }}
                 >
-                  <MenuItem value="QUICK_REPLY">Quick Reply</MenuItem>
+                  <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
                   <MenuItem value="URL">URL</MenuItem>
-                  <MenuItem value="PHONE_NUMBER">Phone Number</MenuItem>
+                  <MenuItem value="PHONE_NUMBER">Número de teléfono</MenuItem>
                 </Select>
 
                 {/* Campo adicional según el tipo de botón */}
