@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Alert, Box, Button, Container, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
+import { Alert, Box, Button, Chip, Container, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 
 import { Smile } from "react-feather"; // Icono para emojis
 import EmojiPicker from "emoji-picker-react"; // Selector de emojis
@@ -12,6 +12,8 @@ import Delete from '@mui/icons-material/Delete';
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import Link from "@mui/icons-material/Link";
 import Phone from "@mui/icons-material/Phone";
+import ClearIcon from '@mui/icons-material/Clear';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 import FileUploadComponent from './FileUploadComponent';
@@ -147,7 +149,6 @@ const TemplateForm = () => {
 
     return isValid;
   };
-
 
   // CONSTRUYO EL cURL REQUEST
   const buildCurlCommand = () => {
@@ -512,6 +513,7 @@ const TemplateForm = () => {
     setButtons(buttons.filter((button) => button.id !== id));
   };
 
+  // VARIABLES DEL BODY MESSAGE
   const handleAddVariable = () => {
     const newVariable = `{{${variables.length + 1}}}`;
     setMessage((prev) => `${prev} ${newVariable}`);
@@ -521,6 +523,30 @@ const TemplateForm = () => {
   const handleEmojiClick = (emojiObject) => {
     setMessage((prev) => `${prev} ${emojiObject.emoji}`);
     setShowEmojiPicker(false);
+  };
+
+  // Nueva función para borrar una variable específica
+  const deleteVariable = (variableToDelete) => {
+    // Eliminar la variable del texto
+    const newMessage = message.replace(variableToDelete, '');
+    setMessage(newMessage);
+    
+    // Eliminar la variable de la lista de variables
+    const updatedVariables = variables.filter(v => v !== variableToDelete);
+    setVariables(updatedVariables);
+    
+    messageRef.current?.focus();
+  };
+
+  // Nueva función para borrar todas las variables
+  const deleteAllVariables = () => {
+    let newMessage = message;
+    variables.forEach(variable => {
+      newMessage = newMessage.replaceAll(variable, '');
+    });
+    setMessage(newMessage);
+    setVariables([]);
+    messageRef.current?.focus();
   };
 
   return (
@@ -685,20 +711,63 @@ const TemplateForm = () => {
             <FormLabel>*Contenido</FormLabel>
           </FormControl>
 
-          {/* Campo de texto con soporte para emojis y variables */}
-          <Box sx={{ position: "relative" }}>
-            <TextField
-              fullWidth
-              multiline
-              aria-required="true"
-              error={contenidoPlantillaTypeError}
-              rows={4}
-              label="Escribe"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              sx={{ mb: 3, mt: 4 }}
-              inputRef={messageRef}
+           {/* Botón para agregar variable y borrar todas */}
+      <Stack direction="row" spacing={2} sx={{ mt: 2, mb: 2 }}>
+        <Button 
+          variant="outlined" 
+          startIcon={<AddIcon />} 
+          onClick={handleAddVariable}
+        >
+          Agregar Variable
+        </Button>
+        
+        {variables.length > 0 && (
+          <Button 
+            color="error" 
+            variant="outlined" 
+            startIcon={<ClearIcon />} 
+            onClick={deleteAllVariables}
+          >
+            Borrar todas las variables
+          </Button>
+        )}
+      </Stack>
+
+      {/* Variables disponibles como chips */}
+      {variables.length > 0 && (
+        <Stack direction="row" spacing={1} sx={{ my: 2, flexWrap: 'wrap', gap: 1 }}>
+          <FormLabel sx={{ mr: 2, alignSelf: 'center' }}>Variables:</FormLabel>
+          {variables.map((variable, index) => (
+            <Chip
+              key={index}
+              label={`Variable ${index + 1}`}
+              color="primary"
+              variant="outlined"
+              onDelete={() => deleteVariable(variable)}
+              deleteIcon={
+                <Tooltip title="Borrar variable">
+                  <DeleteIcon />
+                </Tooltip>
+              }
             />
+          ))}
+        </Stack>
+      )}
+
+{/* Campo de texto con soporte para emojis y variables */}
+<Box sx={{ position: "relative" }}>
+        <TextField
+          fullWidth
+          multiline
+          aria-required="true"
+          error={contenidoPlantillaTypeError}
+          rows={4}
+          label="Escribe"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          sx={{ mb: 3, mt: 4 }}
+          inputRef={messageRef}
+        />
 
             {/* Botón para agregar emojis */}
             <Button
@@ -738,9 +807,6 @@ const TemplateForm = () => {
               </Box>
             ))}
           </Stack>
-
-
-
         </Box>
 
         {/* Header*/} {templateType === 'TEXT' ? (
