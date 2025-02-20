@@ -561,6 +561,13 @@ const TemplateForm = () => {
     return previewText;
   };
 
+  const handleUpdateExample = (variable, value) => {
+    setVariableExamples(prevExamples => ({
+      ...prevExamples,
+      [variable]: value
+    }));
+  };
+
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
 
