@@ -1,11 +1,11 @@
 import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
+import { mysqlHandler } from './functions/mysql-handler/resource';
 
-/**
- * @see https://docs.amplify.aws/react/build-a-backend/ to add storage, functions, and more
- */
-defineBackend({
+// Define el backend con los recursos principales
+const backend = defineBackend({
   auth,
   data,
+  mysqlHandler,
 });
