@@ -577,7 +577,14 @@ const TemplateForm = () => {
     return generatedExample;
   };
 
-
+  // Función para reemplazar las variables en el mensaje con sus ejemplos
+  const replaceVariables = (text, variables) => {
+    let result = text;
+    Object.keys(variables).forEach(variable => {
+      result = result.replace(new RegExp(variable, 'g'), variables[variable]);
+    });
+    return result;
+  };
 
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
   useEffect(() => {
