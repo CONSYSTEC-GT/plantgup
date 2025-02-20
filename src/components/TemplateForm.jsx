@@ -259,7 +259,7 @@ const TemplateForm = () => {
     });
 
     data.append("buttons", JSON.stringify(formattedButtons));
-    data.append("example", previewMessage);
+    data.append("example", example);
     data.append("enableSample", true);
     data.append("allowTemplateCategoryChange", false);
 
@@ -577,20 +577,15 @@ const TemplateForm = () => {
     return generatedExample;
   };
 
-  // Función para reemplazar las variables en el mensaje con sus ejemplos
-  const replaceVariables = (text, variables) => {
-    let result = text;
-    Object.keys(variables).forEach(variable => {
-      result = result.replace(new RegExp(variable, 'g'), variables[variable]);
-    });
-    return result;
-  };
 
-  // Actualizar el campo "example" cuando cambie el mensaje o los ejemplos de las variables
+
+  // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
   useEffect(() => {
     const newExample = replaceVariables(message, variableExamples);
     setExample(newExample);
+    setMessage(newExample); // Ahora también actualiza message con los valores reemplazados
   }, [message, variableExamples]);
+
 
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
@@ -1014,21 +1009,21 @@ const TemplateForm = () => {
         </Box>
 
         {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-      <FormControl fullWidth>
-        <FormLabel>
-          *Ejemplo
-        </FormLabel>
-      </FormControl>
-      <TextField
-        fullWidth
-        multiline
-        rows={4}
-        label="Escribe"
-        value={previewMessage}
-        onChange={(e) => setExample(e.target.value)}
-        sx={{ mb: 3 }}
-      />
-    </Box>
+          <FormControl fullWidth>
+            <FormLabel>
+              *Ejemplo
+            </FormLabel>
+          </FormControl>
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            label="Escribe"
+            value={example}
+            onChange={(e) => setExample(e.target.value)}
+            sx={{ mb: 3 }}
+          />
+        </Box>
 
         {/*Boton Guardar Plantilla*/}<Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
           <Button
