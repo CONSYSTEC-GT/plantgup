@@ -63,6 +63,8 @@ const TemplateForm = () => {
   //const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [variables, setVariables] = useState([]);
+  // Estado para almacenar ejemplos de variables
+  const [variableExamples, setVariableExamples] = useState({});
 
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
@@ -712,51 +714,8 @@ const TemplateForm = () => {
             <FormLabel>*Contenido</FormLabel>
           </FormControl>
 
-           {/* Botón para agregar variable y borrar todas */}
-      <Stack direction="row" spacing={2} sx={{ mt: 2, mb: 2 }}>
-        <Button 
-          variant="outlined" 
-          startIcon={<AddIcon />} 
-          onClick={handleAddVariable}
-        >
-          Agregar Variable
-        </Button>
-        
-        {variables.length > 0 && (
-          <Button 
-            color="error" 
-            variant="outlined" 
-            startIcon={<ClearIcon />} 
-            onClick={deleteAllVariables}
-          >
-            Borrar todas las variables
-          </Button>
-        )}
-      </Stack>
-
-      {/* Variables disponibles como chips */}
-      {variables.length > 0 && (
-        <Stack direction="row" spacing={1} sx={{ my: 2, flexWrap: 'wrap', gap: 1 }}>
-          <FormLabel sx={{ mr: 2, alignSelf: 'center' }}>Variables:</FormLabel>
-          {variables.map((variable, index) => (
-            <Chip
-              key={index}
-              label={`Variable ${index + 1}`}
-              color="primary"
-              variant="outlined"
-              onDelete={() => deleteVariable(variable)}
-              deleteIcon={
-                <Tooltip title="Borrar variable">
-                  <DeleteIcon />
-                </Tooltip>
-              }
-            />
-          ))}
-        </Stack>
-      )}
-
-{/* Campo de texto con soporte para emojis y variables */}
-<Box sx={{ position: "relative" }}>
+          {/* Campo de texto con soporte para emojis y variables */}
+      <Box sx={{ position: "relative" }}>
         <TextField
           fullWidth
           multiline
@@ -785,14 +744,57 @@ const TemplateForm = () => {
               </Box>
             )}
 
-            {/* Botón para agregar variables */}
-            <Button
-              variant="contained"
-              onClick={handleAddVariable}
+            {/* Botón para agregar variable y borrar todas */}
+        <Stack direction="row" spacing={2} sx={{ mt: 2, mb: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<AddIcon />}
+            onClick={handleAddVariable}
+          >
+            Agregar Variable
+          </Button>
 
+          {variables.length > 0 && (
+            <Button
+              color="error"
+              variant="outlined"
+              startIcon={<ClearIcon />}
+              onClick={deleteAllVariables}
             >
-              + Agregar variable
+              Borrar todas las variables
             </Button>
+          )}
+        </Stack>
+
+            {/* Variables disponibles como chips con campos de texto para ejemplos */}
+        {variables.length > 0 && (
+          <Stack sx={{ my: 2, gap: 2 }}>
+            <FormLabel sx={{ fontWeight: 'medium' }}>Variables con texto de ejemplo:</FormLabel>
+            {variables.map((variable, index) => (
+              <Box key={index} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+                <Chip
+                  label={variable}
+                  color="primary"
+                  variant="outlined"
+                  onDelete={() => deleteVariable(variable)}
+                  deleteIcon={
+                    <Tooltip title="Borrar variable">
+                      <DeleteIcon />
+                    </Tooltip>
+                  }
+                />
+                <TextField
+                  size="small"
+                  label="Texto de ejemplo"
+                  value={variableExamples[variable] || ''}
+                  onChange={(e) => handleUpdateExample(variable, e.target.value)}
+                  sx={{ flexGrow: 1, maxWidth: '60%' }}
+                />
+              </Box>
+            ))}
+          </Stack>
+        )}
+
           </Box>
 
           {/* Lista de variables y valores de muestra */}
@@ -839,6 +841,7 @@ const TemplateForm = () => {
             </FormControl>
 
             <FileUploadComponent
+              templateType={templateType}
               onUploadSuccess={(mediaId) => {
                 setMediaId(mediaId);
                 setUploadStatus("¡Archivo subido exitosamente!");

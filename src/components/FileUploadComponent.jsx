@@ -193,7 +193,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
           </Typography>
 
 
-          {mediaType && (
+          {templateType !== "text" && (
             <Box sx={{ mt: 2 }}>
               <input
                 accept={getAcceptedFileTypes()}
