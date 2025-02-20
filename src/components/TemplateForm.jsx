@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Alert, Box, Button, Chip, Container, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 
 import { Smile } from "react-feather"; // Icono para emojis
@@ -568,6 +568,20 @@ const TemplateForm = () => {
     }));
   };
 
+  // Función para generar el ejemplo combinando el mensaje y los valores de las variables
+  const generateExample = () => {
+    let generatedExample = message;
+    Object.keys(variableExamples).forEach(variable => {
+      generatedExample = generatedExample.replace(new RegExp(variable, 'g'), variableExamples[variable]);
+    });
+    return generatedExample;
+  };
+
+  // Actualizar el campo "example" cuando cambie el mensaje o los ejemplos de las variables
+  useEffect(() => {
+    setExample(generateExample());
+  }, [message, variableExamples]);
+
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
 
@@ -990,24 +1004,21 @@ const TemplateForm = () => {
         </Box>
 
         {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              *Ejemplo
-            </FormLabel>
-          </FormControl>
-          <TextField
-            fullWidth
-            multiline
-            helperText={ejemploPlantillaHelperText}
-            error={ejemploPlantillaError}
-            rows={4}
-            label="Escribe"
-            value={example}
-            onChange={(e) => setExample(e.target.value)}
-            inputRef={exampleRef}
-            sx={{ mb: 3 }}
-          />
-        </Box>
+      <FormControl fullWidth>
+        <FormLabel>
+          *Ejemplo
+        </FormLabel>
+      </FormControl>
+      <TextField
+        fullWidth
+        multiline
+        rows={4}
+        label="Escribe"
+        value={example}
+        onChange={(e) => setExample(e.target.value)}
+        sx={{ mb: 3 }}
+      />
+    </Box>
 
         {/*Boton Guardar Plantilla*/}<Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
           <Button
