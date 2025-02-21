@@ -324,6 +324,7 @@ export default function BasicCard() {
                 >
 
                 </Box>
+                
                 <Typography variant="body2" color="text.secondary">
                   Categoria: {template.category}
                 </Typography>
@@ -337,11 +338,11 @@ export default function BasicCard() {
                   Creado: {template.createdOn}
                 </Typography>
 
-                {/*{template.reason && (
+                {template.reason && (
                   <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
                     Reason: {template.reason}
                   </Typography>
-                )}*/}
+                )}
 
               </CardContent>
 
