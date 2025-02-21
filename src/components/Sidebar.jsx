@@ -67,9 +67,17 @@ const Skeleton = styled('div')(({ theme, height }) => ({
   content: '" "',
 }));
 
-const SidebarContainer = styled('div')(({ theme, selected }) => ({
-  backgroundColor: selected ? theme.palette.primary.main : theme.palette.background.paper,
-  transition: 'background-color 0.3s ease',
+const MenuItem = styled('div')(({ theme, selected }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(1, 2),
+  color: selected ? theme.palette.primary.main : theme.palette.text.primary,
+  '& svg': {
+    color: selected ? theme.palette.primary.main : theme.palette.text.primary,
+  },
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
 }));
 
 export default function Sidebar(props) {
@@ -84,7 +92,20 @@ export default function Sidebar(props) {
 
   return (
     <AppProvider 
-      navigation={NAVIGATION} 
+      navigation={NAVIGATION.map((item) => ({
+        ...item,
+        icon: React.cloneElement(item.icon, {
+          style: {
+            color: isSelected(item.segment) ? theme.palette.primary.main : theme.palette.text.primary,
+          },
+        }),
+        title: (
+          <MenuItem selected={isSelected(item.segment)}>
+            {item.icon}
+            <span style={{ marginLeft: theme.spacing(1) }}>{item.title}</span>
+          </MenuItem>
+        ),
+      }))} 
       theme={theme} 
       branding={{ 
         title: 'TalkMe', 
@@ -99,9 +120,7 @@ export default function Sidebar(props) {
       }}
     >
       <DashboardLayout>
-        <SidebarContainer selected={isSelected('Dashboard')}>
-          <Outlet />
-        </SidebarContainer>
+        <Outlet />
       </DashboardLayout>
     </AppProvider>
   );

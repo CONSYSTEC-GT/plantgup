@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation  } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Importación correcta
 
@@ -65,7 +65,7 @@ export default function BasicCard() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tokenValid, setTokenValid] = useState(true);
-  
+
 
   // Recupera el token del localStorage
   const token = localStorage.getItem('authToken');
@@ -84,31 +84,31 @@ export default function BasicCard() {
   }
 
   //FETCH DE LAS PLANTILLAS
-const fetchTemplates = async (appId, authCode) => {
-  try {
-    const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
-      method: 'GET',
-      headers: {
-        Authorization: authCode,
-      },
-    });
-    const data = await response.json();
-    if (data.status === 'success') {
-      setTemplates(data.templates.slice(0, 4));
+  const fetchTemplates = async (appId, authCode) => {
+    try {
+      const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+        method: 'GET',
+        headers: {
+          Authorization: authCode,
+        },
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+        setTemplates(data.templates.slice(0, 4));
+      }
+    } catch (error) {
+      console.error('Error fetching templates:', error);
     }
-  } catch (error) {
-    console.error('Error fetching templates:', error);
-  }
-};
+  };
 
-// Llama a fetchTemplates cuando el componente se monta
-useEffect(() => {
-  if (appId && authCode) {
-    fetchTemplates(appId, authCode);
-  } else {
-    console.error('No se encontró appId o authCode en el token');
-  }
-}, [appId, authCode]);
+  // Llama a fetchTemplates cuando el componente se monta
+  useEffect(() => {
+    if (appId && authCode) {
+      fetchTemplates(appId, authCode);
+    } else {
+      console.error('No se encontró appId o authCode en el token');
+    }
+  }, [appId, authCode]);
 
 
   const getStatusColor = (status) => {
@@ -292,46 +292,45 @@ useEffect(() => {
                 </Typography>
               </CardContent>
 
-              {/* Botón fijo en la parte inferior izquierda */}
               <CardActions sx={{ padding: 2 }}>
                 <Button
-                    id="manage-button"
-                    aria-controls={anchorEl ? 'manage-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={anchorEl ? 'true' : undefined}
-                    variant="contained"
-                    disableElevation
-                    onClick={(event) => {console.log("Template seleccionado:", template); handleClick(event, template)}}  // Pasamos el template correcto
-                    endIcon={<KeyboardArrowDownIcon />}
-                    sx={{ borderRadius: 2, marginLeft: "auto" }}
-                  >
-                    Administrar
-                  </Button>
+                  id="manage-button"
+                  aria-controls={anchorEl ? 'manage-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={anchorEl ? 'true' : undefined}
+                  variant="contained"
+                  disableElevation
+                  onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
+                  endIcon={<KeyboardArrowDownIcon />}
+                  sx={{ borderRadius: 2, marginLeft: "auto" }}
+                >
+                  Administrar
+                </Button>
 
                 <StyledMenu
-                    id="manage-menu"
-                    MenuListProps={{
-                      'aria-labelledby': 'manage-button',
-                    }}
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
+                  id="manage-menu"
+                  MenuListProps={{
+                    'aria-labelledby': 'manage-button',
+                  }}
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  <MenuItem
+                    onClick={() => handleEdit(selectedTemplate)}
+                    disableRipple
                   >
-                    <MenuItem
-                      onClick={() => handleEdit(selectedTemplate)} // Pasamos el selectedTemplate
-                      disableRipple
-                    >
-                      <EditIcon />
-                      Editar
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleDeleteClick} // No necesitas pasar el template aquí
-                      disableRipple
-                    >
-                      <DeleteIcon />
-                      Eliminar
-                    </MenuItem>
-                  </StyledMenu>
+                    <EditIcon />
+                    Editar
+                  </MenuItem>
+                  <MenuItem
+                    onClick={handleDeleteClick}
+                    disableRipple
+                  >
+                    <DeleteIcon />
+                    Eliminar
+                  </MenuItem>
+                </StyledMenu>
               </CardActions>
             </Card>
           ))}
