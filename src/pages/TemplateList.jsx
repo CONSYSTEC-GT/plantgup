@@ -261,35 +261,88 @@ export default function BasicCard() {
             <Card
               key={template.id}
               sx={{
-                width: 300,
-                backgroundColor: getStatusColor(template.status),
-                borderRadius: 3,
-                boxShadow: 3,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                transition: "transform 0.2s ease-in-out",
-                "&:hover": { transform: "scale(1.02)" },
+                maxWidth: 300,
+                //backgroundColor: getStatusColor(template.status),
+                //borderRadius: 3,
+                border: '1px solid #e0e0e0',
+                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
+                //boxShadow: 3,
+                overflow: 'visible',
+                display: 'flex',
+                flexDirection: 'column',
+                //justifyContent: "space-between",
+                //transition: "transform 0.2s ease-in-out",
+                //"&:hover": { transform: "scale(1.02)" },
               }}
             >
               <CardContent>
-                <Typography variant="h6" fontWeight="bold">
-                  {template.elementName}
-                </Typography>
-                <Typography color="textSecondary">Status: {template.status}</Typography>
-                <Typography variant="body2">Category: {template.category}</Typography>
-                <Typography variant="body2">Type: {template.templateType}</Typography>
-                <Typography variant="body2">{template.data}</Typography>
+                {/* Header */}
+                <Box sx={{ p: 2, pb: 0 }}>
 
-                {template.reason && (
+                  <Typography variant="subtitle1" fontWeight={500} sx={{ mb: 0.5 }}>
+                    {template.elementName}
+                  </Typography>
+
+                  {/* Status badge */}
+                  <Box
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      backgroundColor: '#FEF2F2',
+                      borderRadius: 1,
+                      px: 1,
+                      py: 0.5,
+                      mb: 1
+                    }}
+                  >
+                    <Box
+                      component="span"
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        backgroundColor: '#EF4444',
+                        mr: 0.5
+                      }}
+                    />
+
+                    <Typography variant="caption" sx={{ color: '#EF4444', fontWeight: 500 }}>
+                      Estatus: {template.status}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                {/* Content */}
+                <Box
+                  sx={{
+                    p: 2,
+                    backgroundColor: '#FFFBEB',
+                    mx: 2,
+                    my: 1,
+                    borderRadius: 1
+                  }}
+                >
+
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                  Categoria: {template.category}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Tipo: {template.teplateType}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {template.teplateType}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Creado: {template.createdOn}
+                </Typography>
+
+                {/*{template.reason && (
                   <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
                     Reason: {template.reason}
                   </Typography>
-                )}
+                )}*/}
 
-                <Typography variant="caption" sx={{ mt: 1, display: "block" }}>
-                  Created: {new Date(template.createdOn).toLocaleString()}
-                </Typography>
               </CardContent>
 
               <CardActions sx={{ padding: 2 }}>
@@ -298,11 +351,20 @@ export default function BasicCard() {
                   aria-controls={anchorEl ? 'manage-menu' : undefined}
                   aria-haspopup="true"
                   aria-expanded={anchorEl ? 'true' : undefined}
-                  variant="contained"
+                  variant="outlined"
                   disableElevation
                   onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
                   endIcon={<KeyboardArrowDownIcon />}
-                  sx={{ borderRadius: 2, marginLeft: "auto" }}
+                  sx={{ 
+                    borderRadius: 1,
+                    textTransform: 'none',
+                    color: '#6366F1',
+                    borderColor: '#E0E7FF',
+                    '&:hover': {
+                      borderColor: '#C7D2FE',
+                      backgroundColor: '#F5F5FF'
+                    }
+                  }}
                 >
                   Administrar
                 </Button>

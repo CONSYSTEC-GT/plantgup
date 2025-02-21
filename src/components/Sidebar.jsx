@@ -107,6 +107,7 @@ export default function Sidebar(props) {
 
         return {
           ...item,
+          icon: null,
           title: (
             <MenuItem selected={isSelected(item.segment)}>
               {clonedIcon}
