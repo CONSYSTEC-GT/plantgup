@@ -78,6 +78,7 @@ const TemplateForm = () => {
   const messageRef = useRef(null);
   const exampleRef = useRef(null);
   const selectedCategoryRef = useRef(null);
+  const exampleRefs = useRef({});
 
   // Función para mostrar Snackbar
   const showSnackbar = (message, severity) => {
@@ -94,7 +95,7 @@ const TemplateForm = () => {
 
   const validateFields = () => {
     let isValid = true;
-
+  
     if (templateName.trim() === "") {
       setTemplateNameError(true);
       setTemplateNameHelperText("Este campo es requerido");
@@ -102,7 +103,7 @@ const TemplateForm = () => {
       templateNameRef.current.focus();
       return isValid; // Salir de la función después del primer error
     }
-
+  
     if (templateType.trim() === "") {
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
@@ -110,7 +111,7 @@ const TemplateForm = () => {
       templateTypeRef.current.focus();
       return isValid;
     }
-
+  
     if (languageCode.trim() === "") {
       setLanguageTypeError(true);
       setLanguageTypeHelperText("Este campo es requerido");
@@ -118,14 +119,14 @@ const TemplateForm = () => {
       languageCodeRef.current.focus();
       return isValid;
     }
-
+  
     if (vertical.trim() === "") {
       setetiquetaPlantillaError(true);
       isValid = false;
       verticalRef.current.focus();
       return isValid;
     }
-
+  
     if (message.trim() === "") {
       setcontenidoPlantillaTypeError(true)
       setcontenidoPlantillaTypeHelperText("Este campo es requerido");
@@ -133,7 +134,7 @@ const TemplateForm = () => {
       messageRef.current.focus();
       return isValid;
     }
-
+  
     if (example.trim() === "") {
       setejemploPlantillaError(true)
       setejemploPlantillaHelperText("Este campo es requerido");
@@ -141,7 +142,7 @@ const TemplateForm = () => {
       exampleRef.current.focus();
       return isValid;
     }
-
+  
     if (selectedCategory.trim() === "") {
       setcategoriaPlantillaError(true);
       setcategoriaPlantillaHelperText("Este campo es requerido");
@@ -149,8 +150,24 @@ const TemplateForm = () => {
       selectedCategoryRef.current.focus();
       return isValid;
     }
+  
+  // Validar que todas las variables tengan un texto de ejemplo
+  if (variables.length > 0) {
+    for (const variable of variables) {
+      if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
+        isValid = false;
+        // Colocar el foco en el campo de texto de ejemplo vacío
+        if (exampleRefs.current[variable]) {
+          exampleRefs.current[variable].focus();
+        }
+        // Mostrar un mensaje de error
+        alert(`El texto de ejemplo para la variable "${variable}" es requerido.`);
+        return isValid;
+      }
+    }
+  }
 
-    return isValid;
+  return isValid;
   };
 
   // CONSTRUYO EL cURL REQUEST
@@ -874,6 +891,7 @@ const TemplateForm = () => {
                       value={variableExamples[variable] || ''}
                       onChange={(e) => handleUpdateExample(variable, e.target.value)}
                       sx={{ flexGrow: 1, maxWidth: '60%' }}
+                      inputRef={(el) => (exampleRefs.current[variable] = el)} // Asignar el ref
                     />
                   </Box>
                 ))}
@@ -882,15 +900,6 @@ const TemplateForm = () => {
 
           </Box>
 
-          {/* Vista previa con ejemplos aplicados 
-          {variables.length > 0 && (
-            <Box sx={{ mt: 4, p: 2, border: '1px dashed #ccc', borderRadius: 1 }}>
-              <FormLabel sx={{ fontWeight: 'medium' }}>Vista previa con ejemplos:</FormLabel>
-              <Box sx={{ mt: 1, whiteSpace: 'pre-wrap', p: 1 }}>
-                {previewMessage()}
-              </Box>
-            </Box>
-          )}*/}
         </Box>
 
         {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
@@ -1083,7 +1092,7 @@ const TemplateForm = () => {
               }}
             >
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
-                {message}
+                {example}
               </Typography>
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {footer}
