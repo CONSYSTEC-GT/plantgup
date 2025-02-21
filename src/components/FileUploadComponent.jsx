@@ -38,7 +38,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
     setMediaType(event.target.value);
     setSelectedFile(null);
     setMediaId('');
-    setImagePreview(null); // Limpiar la vista previa al cambiar el tipo de medio
+    // Eliminado: setImagePreview(null); // No limpiar la vista previa aquí
   };
 
   const handleFileChange = (event) => {
@@ -84,30 +84,16 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         setError('Por favor, selecciona un archivo.');
         return;
       }
-      
-      // Generar vista previa local antes de subir (dentro de try/catch)
-      try {
-        const previewURL = URL.createObjectURL(selectedFile);
-        setImagePreview(previewURL);
-        
-        // Enviar la vista previa al componente padre
-        if (onImagePreview) {
-          onImagePreview(previewURL);
-        }
-      } catch (previewError) {
-        console.error('Error al generar vista previa:', previewError);
-        // Continuar con la carga aunque falle la vista previa
-      }
-      
+
       // Verificar nuevamente que selectedFile exista antes de continuar
       if (!selectedFile || typeof selectedFile.type !== 'string') {
         throw new Error('Archivo no válido o tipo de archivo indefinido');
       }
-      
+
       const formData = new FormData();
       formData.append('file', selectedFile);
       formData.append('file_type', selectedFile.type);
-      
+
       const requestConfig = {
         method: 'POST',
         headers: {
@@ -115,12 +101,12 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         },
         body: formData,
       };
-      
+
       const url = `https://partner.gupshup.io/partner/app/${APP_ID}/upload/media`;
-      
+
       setUploadStatus('Subiendo archivo...');
       const response = await fetch(url, requestConfig);
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error en la respuesta:', {
@@ -131,32 +117,31 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         setUploadStatus('Error al subir el archivo');
         throw new Error(`Error en la respuesta del servidor: ${response.status} ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       console.log('=== Respuesta exitosa ===', data);
-      
+
       // Verificar que data y data.handleId existan antes de acceder a message
       if (!data || !data.handleId) {
         throw new Error('Respuesta del servidor incompleta o no válida');
       }
-      
+
       // Extraer el mediaId
       const mediaId = data.handleId.message;
       setMediaId(mediaId);
       setUploadStatus('¡Archivo subido exitosamente!');
-      
+
       // Notificar al componente padre con el mediaId
       if (onUploadSuccess) {
         onUploadSuccess(mediaId);
       }
-      
+
     } catch (error) {
       console.error('=== Error en el upload ===', error);
       setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
       setUploadStatus('Error al subir el archivo');
     }
   };
-  
 
   const getAcceptedFileTypes = () => {
     const types = {
@@ -192,7 +177,6 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
             Seleccione el tipo de media y cargue un archivo.
           </Typography>
 
-
           {templateType !== "text" && (
             <Box sx={{ mt: 2 }}>
               <input
@@ -225,6 +209,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
               {imagePreview && mediaType === 'image' && (
                 <Box sx={{ mt: 2 }}>
+                  <img src={imagePreview} alt="Vista previa" style={{ width: '100%', borderRadius: 2 }} />
                 </Box>
               )}
 

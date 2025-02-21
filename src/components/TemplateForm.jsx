@@ -769,11 +769,13 @@ const TemplateForm = () => {
               </FormLabel>
             </FormControl>
 
+            {/* Componente para subir archivos */}
             <FileUploadComponent
               templateType={templateType}
               onUploadSuccess={(mediaId) => {
-                setMediaId(mediaId);
+                setMediaId(mediaId); // Guarda el mediaId
                 setUploadStatus("¡Archivo subido exitosamente!");
+                // No modifiques imagePreview aquí
               }}
               onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
             />
@@ -1091,6 +1093,8 @@ const TemplateForm = () => {
                 )}
               </Box>
             )}
+            {/* Muestra el estado de la subida */}
+            {uploadStatus && <p>{uploadStatus}</p>}
 
             {/* Mensaje de WhatsApp */}
             <Box
