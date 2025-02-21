@@ -65,6 +65,8 @@ const TemplateForm = () => {
   const [variables, setVariables] = useState([]);
   // Estado para almacenar ejemplos de variables
   const [variableExamples, setVariableExamples] = useState({});
+  const [variableExamplesError, setvariableExamplesError] = useState(false);
+  const [variableExamplesHelperText, setvariableExamplesHelperText] = useState("");
 
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
@@ -95,7 +97,7 @@ const TemplateForm = () => {
 
   const validateFields = () => {
     let isValid = true;
-  
+
     if (templateName.trim() === "") {
       setTemplateNameError(true);
       setTemplateNameHelperText("Este campo es requerido");
@@ -103,7 +105,7 @@ const TemplateForm = () => {
       templateNameRef.current.focus();
       return isValid; // Salir de la función después del primer error
     }
-  
+
     if (templateType.trim() === "") {
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
@@ -111,7 +113,7 @@ const TemplateForm = () => {
       templateTypeRef.current.focus();
       return isValid;
     }
-  
+
     if (languageCode.trim() === "") {
       setLanguageTypeError(true);
       setLanguageTypeHelperText("Este campo es requerido");
@@ -119,14 +121,14 @@ const TemplateForm = () => {
       languageCodeRef.current.focus();
       return isValid;
     }
-  
+
     if (vertical.trim() === "") {
       setetiquetaPlantillaError(true);
       isValid = false;
       verticalRef.current.focus();
       return isValid;
     }
-  
+
     if (message.trim() === "") {
       setcontenidoPlantillaTypeError(true)
       setcontenidoPlantillaTypeHelperText("Este campo es requerido");
@@ -134,7 +136,7 @@ const TemplateForm = () => {
       messageRef.current.focus();
       return isValid;
     }
-  
+
     if (example.trim() === "") {
       setejemploPlantillaError(true)
       setejemploPlantillaHelperText("Este campo es requerido");
@@ -142,7 +144,7 @@ const TemplateForm = () => {
       exampleRef.current.focus();
       return isValid;
     }
-  
+
     if (selectedCategory.trim() === "") {
       setcategoriaPlantillaError(true);
       setcategoriaPlantillaHelperText("Este campo es requerido");
@@ -150,24 +152,26 @@ const TemplateForm = () => {
       selectedCategoryRef.current.focus();
       return isValid;
     }
-  
-  // Validar que todas las variables tengan un texto de ejemplo
-  if (variables.length > 0) {
-    for (const variable of variables) {
-      if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
-        isValid = false;
-        // Colocar el foco en el campo de texto de ejemplo vacío
-        if (exampleRefs.current[variable]) {
-          exampleRefs.current[variable].focus();
+
+    // Validar que todas las variables tengan un texto de ejemplo
+    if (variables.length > 0) {
+      for (const variable of variables) {
+        if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
+          isValid = false;
+          // Colocar el foco en el campo de texto de ejemplo vacío
+          if (exampleRefs.current[variable]) {
+            exampleRefs.current[variable].focus();
+          }
+          // Mostrar un mensaje de error
+          //alert(`El texto de ejemplo para la variable "${variable}" es requerido.`);
+          setvariableExamplesError(true);
+          setvariableExamplesHelperText("Este campo es requerido.")
+          return isValid;
         }
-        // Mostrar un mensaje de error
-        alert(`El texto de ejemplo para la variable "${variable}" es requerido.`);
-        return isValid;
       }
     }
-  }
 
-  return isValid;
+    return isValid;
   };
 
   // CONSTRUYO EL cURL REQUEST
@@ -729,42 +733,42 @@ const TemplateForm = () => {
 
         {/* Header*/} {templateType === 'TEXT' ? (
           <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              Encabezado
-            </FormLabel>
-          </FormControl>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
-          </Typography>
-          <TextField
-            fullWidth
-            label="Header text"
-            value={header}
-            onChange={handleHeaderChange}
-            helperText={`${header.length} / ${charLimit} caracteres`}
-            sx={{ mb: 3 }}
-            error={header.length === charLimit}
-          />
-        </Box>
-      ) : (
-        <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              Encabezado
-            </FormLabel>
-          </FormControl>
+            <FormControl fullWidth>
+              <FormLabel>
+                Encabezado
+              </FormLabel>
+            </FormControl>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
+            </Typography>
+            <TextField
+              fullWidth
+              label="Header text"
+              value={header}
+              onChange={handleHeaderChange}
+              helperText={`${header.length} / ${charLimit} caracteres`}
+              sx={{ mb: 3 }}
+              error={header.length === charLimit}
+            />
+          </Box>
+        ) : (
+          <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+            <FormControl fullWidth>
+              <FormLabel>
+                Encabezado
+              </FormLabel>
+            </FormControl>
 
-          <FileUploadComponent
-            templateType={templateType}
-            onUploadSuccess={(mediaId) => {
-              setMediaId(mediaId);
-              setUploadStatus("¡Archivo subido exitosamente!");
-            }}
-            onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
-          />
-        </Box>
-      )}
+            <FileUploadComponent
+              templateType={templateType}
+              onUploadSuccess={(mediaId) => {
+                setMediaId(mediaId);
+                setUploadStatus("¡Archivo subido exitosamente!");
+              }}
+              onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
+            />
+          </Box>
+        )}
 
         {/*Idioma --data-urlencodeo languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
@@ -892,6 +896,8 @@ const TemplateForm = () => {
                       onChange={(e) => handleUpdateExample(variable, e.target.value)}
                       sx={{ flexGrow: 1, maxWidth: '60%' }}
                       inputRef={(el) => (exampleRefs.current[variable] = el)} // Asignar el ref
+                      error={!!variableErrors[variable]} // Mostrar error si existe
+                      helperText={variableErrors[variable]} // Mostrar mensaje de error
                     />
                   </Box>
                 ))}
