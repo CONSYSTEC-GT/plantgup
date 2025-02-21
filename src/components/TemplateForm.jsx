@@ -710,6 +710,45 @@ const TemplateForm = () => {
           </FormControl>
         </Box>
 
+        {/* Header*/} {templateType === 'TEXT' ? (
+          <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          <FormControl fullWidth>
+            <FormLabel>
+              Encabezado
+            </FormLabel>
+          </FormControl>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
+          </Typography>
+          <TextField
+            fullWidth
+            label="Header text"
+            value={header}
+            onChange={handleHeaderChange}
+            helperText={`${header.length} / ${charLimit} caracteres`}
+            sx={{ mb: 3 }}
+            error={header.length === charLimit}
+          />
+        </Box>
+      ) : (
+        <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          <FormControl fullWidth>
+            <FormLabel>
+              Encabezado
+            </FormLabel>
+          </FormControl>
+
+          <FileUploadComponent
+            templateType={templateType}
+            onUploadSuccess={(mediaId) => {
+              setMediaId(mediaId);
+              setUploadStatus("¡Archivo subido exitosamente!");
+            }}
+            onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
+          />
+        </Box>
+      )}
+
         {/*Idioma --data-urlencodeo languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
             <FormLabel>*Idioma de plantilla</FormLabel>
@@ -854,68 +893,6 @@ const TemplateForm = () => {
           )}*/}
         </Box>
 
-
-
-        {/* Header*/} {templateType === 'TEXT' ? (
-          <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                Encabezado
-              </FormLabel>
-            </FormControl>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
-            </Typography>
-            <TextField
-              fullWidth
-              label="Header text"
-              value={header}
-              onChange={handleHeaderChange}
-              helperText={`${header.length} / ${charLimit} caracteres`}
-              sx={{ mb: 3 }}
-              error={header.length === charLimit}
-            />
-          </Box>
-        ) : (
-          <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                Encabezado
-              </FormLabel>
-            </FormControl>
-
-            <FileUploadComponent
-              templateType={templateType}
-              onUploadSuccess={(mediaId) => {
-                setMediaId(mediaId);
-                setUploadStatus("¡Archivo subido exitosamente!");
-              }}
-              onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
-            />
-          </Box>
-        )}
-
-        {/* SUBIDA DE ARCHIVOSSSS  <FileUploadComponent onUploadSuccess={handleUploadSuccess} />*/}
-
-        {/* Header <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              Encabezado
-            </FormLabel>
-          </FormControl>
-          <TextField
-            fullWidth
-            value={header}
-            onChange={handleHeaderChange}
-            helperText={`${header.length} / ${charLimit} caracteres`}
-            sx={{ mb: 3 }}
-          />
-          <FormHelperText>
-            Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el encabezado.
-          </FormHelperText>
-        </Box>
-        */}
-
         {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
             <FormLabel>
@@ -1019,7 +996,7 @@ const TemplateForm = () => {
           </Typography>
         </Box>
 
-        {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+        {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2, display: "none" }}>
           <FormControl fullWidth>
             <FormLabel>
               *Ejemplo
@@ -1090,8 +1067,6 @@ const TemplateForm = () => {
               </Box>
             )}
 
-
-
             {/* Mensaje de WhatsApp */}
             <Box
               sx={{
@@ -1107,8 +1082,11 @@ const TemplateForm = () => {
                 boxShadow: 1,
               }}
             >
-              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif" }}>
+              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {message}
+              </Typography>
+              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
+                {footer}
               </Typography>
 
               <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
@@ -1116,11 +1094,7 @@ const TemplateForm = () => {
               </Typography>
             </Box>
 
-
-
-
-            {/* Botones */}
-            <Stack spacing={1} sx={{ mt: 0 }}>
+            {/* Botones */}<Stack spacing={1} sx={{ mt: 0 }}>
               {buttons.map((button) => (
                 <Box
                   key={button.id}
