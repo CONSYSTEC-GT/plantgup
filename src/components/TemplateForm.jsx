@@ -153,25 +153,34 @@ const TemplateForm = () => {
       return isValid;
     }
 
-    // Validar que todas las variables tengan un texto de ejemplo
-    if (variables.length > 0) {
-      for (const variable of variables) {
-        if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
-          isValid = false;
-          // Colocar el foco en el campo de texto de ejemplo vacío
-          if (exampleRefs.current[variable]) {
-            exampleRefs.current[variable].focus();
-          }
-          // Mostrar un mensaje de error
-          //alert(`El texto de ejemplo para la variable "${variable}" es requerido.`);
-          setvariableExamplesError(true);
-          setvariableExamplesHelperText("Este campo es requerido.")
-          return isValid;
-        }
-      }
-    }
+// Validar que todas las variables tengan un texto de ejemplo
+if (variables.length > 0) {
+  const newErrors = {}; // Objeto para almacenar los errores
 
+  for (const variable of variables) {
+    if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
+      isValid = false;
+      newErrors[variable] = "Este campo es requerido"; // Asignar mensaje de error
+
+      // Colocar el foco en el campo de texto de ejemplo vacío
+      if (exampleRefs.current[variable]) {
+        exampleRefs.current[variable].focus();
+      }
+    } else {
+      newErrors[variable] = ""; // Sin error
+    }
+  }
+
+  // Actualizar el estado de errores
+  setVariableErrors(newErrors);
+
+  // Si hay errores, detener la validación
+  if (!isValid) {
     return isValid;
+  }
+}
+
+return isValid;
   };
 
   // CONSTRUYO EL cURL REQUEST
