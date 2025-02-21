@@ -1,23 +1,19 @@
+// Sidebar.jsx
 import * as React from 'react';
-import { extendTheme, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { Outlet } from 'react-router-dom';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-
+import { useTheme } from '@mui/material/styles';
 
 //iconos
-import TemplateList from '../pages/TemplateList';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
 import CreateIcon from '@mui/icons-material/Create';
+import DescriptionIcon from '@mui/icons-material/Description';
 import CheckIcon from '@mui/icons-material/Check';
 import SendIcon from '@mui/icons-material/Send';
 import SmsFailedIcon from '@mui/icons-material/SmsFailed';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-
 
 const NAVIGATION = [
   {
@@ -64,37 +60,6 @@ const NAVIGATION = [
   },
 ];
 
-const demoTheme = extendTheme({
-  primaryColor: '#00C3FF',
-  secondaryColor: '#DBDBDB',
-  fontFamily: 'Helvetica',
-  colorSchemes: { light: true, dark: true },
-  colorSchemeSelector: 'class',
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 600,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
-});
-
-function useDemoRouter(initialPath) {
-  const [pathname, setPathname] = React.useState(initialPath);
-
-  const router = React.useMemo(() => {
-    return {
-      pathname,
-      searchParams: new URLSearchParams(),
-      navigate: (path) => setPathname(String(path)),
-    };
-  }, [pathname]);
-
-  return router;
-}
-
 const Skeleton = styled('div')(({ theme, height }) => ({
   backgroundColor: theme.palette.action.hover,
   borderRadius: theme.shape.borderRadius,
@@ -104,15 +69,17 @@ const Skeleton = styled('div')(({ theme, height }) => ({
 
 export default function Sidebar(props) {
   const { window } = props;
+  const theme = useTheme(); // Usar el tema definido en App.jsx
 
   return (
-    <AppProvider navigation={NAVIGATION} theme={demoTheme}  branding={{ title: 'TalkMe', logo: (
+    <AppProvider navigation={NAVIGATION} theme={theme} branding={{ title: 'TalkMe', logo: (
       <img
-        src="https://www.talkme.pro/wp-content/uploads/2019/07/logoidentity.png" // Aquí coloca la URL del logo en la nube
+        src="https://www.talkme.pro/wp-content/uploads/2019/07/logoidentity.png"
         alt="TalkMe Logo"
         style={{ width: 'auto', height: 'auto' }}
       />
     ),
+    titleStyle: { color: theme.palette.primary.main } // Usar el color primario del tema
   }}>
       <DashboardLayout>
         <Outlet />
