@@ -1,4 +1,3 @@
-// Sidebar.jsx
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import { Outlet, useLocation } from 'react-router-dom';
@@ -107,14 +106,13 @@ export default function Sidebar(props) {
 
         return {
           ...item,
-          icon: null,
           title: (
             <MenuItem selected={isSelected(item.segment)}>
               {clonedIcon}
               <span style={{ marginLeft: theme.spacing(1) }}>{item.title}</span>
             </MenuItem>
           ),
-          // No incluimos el ícono en el objeto de navegación, ya que ya lo estamos renderizando en `title`
+          // No incluimos el ícono en el objeto de navegación, ya que ya lo estamos renderizando en title
         };
       })} 
       theme={theme} 
