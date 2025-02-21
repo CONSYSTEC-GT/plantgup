@@ -1,7 +1,7 @@
 // Sidebar.jsx
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useTheme } from '@mui/material/styles';
@@ -67,22 +67,41 @@ const Skeleton = styled('div')(({ theme, height }) => ({
   content: '" "',
 }));
 
+const SidebarContainer = styled('div')(({ theme, selected }) => ({
+  backgroundColor: selected ? theme.palette.primary.main : theme.palette.background.paper,
+  transition: 'background-color 0.3s ease',
+}));
+
 export default function Sidebar(props) {
   const { window } = props;
-  const theme = useTheme(); // Usar el tema definido en App.jsx
+  const theme = useTheme();
+  const location = useLocation();
+
+  // Determina si el menú está seleccionado basado en la ruta actual
+  const isSelected = (segment) => {
+    return location.pathname.includes(segment);
+  };
 
   return (
-    <AppProvider navigation={NAVIGATION} theme={theme} branding={{ title: 'TalkMe', logo: (
-      <img
-        src="https://www.talkme.pro/wp-content/uploads/2019/07/logoidentity.png"
-        alt="TalkMe Logo"
-        style={{ width: 'auto', height: 'auto' }}
-      />
-    ),
-    titleStyle: { color: theme.palette.primary.main } // Usar el color primario del tema
-  }}>
+    <AppProvider 
+      navigation={NAVIGATION} 
+      theme={theme} 
+      branding={{ 
+        title: 'TalkMe', 
+        logo: (
+          <img
+            src="https://www.talkme.pro/wp-content/uploads/2019/07/logoidentity.png"
+            alt="TalkMe Logo"
+            style={{ width: 'auto', height: 'auto' }}
+          />
+        ),
+        titleStyle: { color: theme.palette.primary.main }
+      }}
+    >
       <DashboardLayout>
-        <Outlet />
+        <SidebarContainer selected={isSelected('Dashboard')}>
+          <Outlet />
+        </SidebarContainer>
       </DashboardLayout>
     </AppProvider>
   );

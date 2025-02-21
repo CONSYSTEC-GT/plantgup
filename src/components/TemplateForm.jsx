@@ -949,8 +949,8 @@ const TemplateForm = () => {
             Elija los botones que se agregarán a la plantilla. Puede elegir hasta 10 botones.
           </FormHelperText>
 
-          <Button variant="contained" onClick={addButton} disabled={buttons.length >= maxButtons} sx={{ mt: 3, mb: 3 }}>
-            + Agregar botón
+          <Button variant="contained" startIcon={<AddIcon />} onClick={addButton} disabled={buttons.length >= maxButtons} sx={{ mt: 3, mb: 3 }}>
+            Agregar botón
           </Button>
 
           <Stack spacing={2}>
