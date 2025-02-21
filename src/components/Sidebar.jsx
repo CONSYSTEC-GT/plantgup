@@ -92,20 +92,30 @@ export default function Sidebar(props) {
 
   return (
     <AppProvider 
-      navigation={NAVIGATION.map((item) => ({
-        ...item,
-        icon: React.cloneElement(item.icon, {
+      navigation={NAVIGATION.map((item) => {
+        // Si el elemento no tiene un ícono o no es un elemento de menú, lo devolvemos sin modificar
+        if (item.kind === 'divider' || item.kind === 'header') {
+          return item;
+        }
+
+        // Clonamos el ícono y aplicamos estilos condicionales
+        const clonedIcon = React.cloneElement(item.icon, {
           style: {
             color: isSelected(item.segment) ? theme.palette.primary.main : theme.palette.text.primary,
           },
-        }),
-        title: (
-          <MenuItem selected={isSelected(item.segment)}>
-            {item.icon}
-            <span style={{ marginLeft: theme.spacing(1) }}>{item.title}</span>
-          </MenuItem>
-        ),
-      }))} 
+        });
+
+        return {
+          ...item,
+          icon: clonedIcon,
+          title: (
+            <MenuItem selected={isSelected(item.segment)}>
+              {clonedIcon}
+              <span style={{ marginLeft: theme.spacing(1) }}>{item.title}</span>
+            </MenuItem>
+          ),
+        };
+      })} 
       theme={theme} 
       branding={{ 
         title: 'TalkMe', 
