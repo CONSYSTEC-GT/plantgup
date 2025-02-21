@@ -67,6 +67,7 @@ const TemplateForm = () => {
   const [variableExamples, setVariableExamples] = useState({});
   const [variableExamplesError, setvariableExamplesError] = useState(false);
   const [variableExamplesHelperText, setvariableExamplesHelperText] = useState("");
+  const [variableErrors, setVariableErrors] = useState({});
 
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
@@ -153,34 +154,34 @@ const TemplateForm = () => {
       return isValid;
     }
 
-// Validar que todas las variables tengan un texto de ejemplo
-if (variables.length > 0) {
-  const newErrors = {}; // Objeto para almacenar los errores
+    // Validar que todas las variables tengan un texto de ejemplo
+    if (variables.length > 0) {
+      const newErrors = {}; // Objeto para almacenar los errores
 
-  for (const variable of variables) {
-    if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
-      isValid = false;
-      newErrors[variable] = "Este campo es requerido"; // Asignar mensaje de error
+      for (const variable of variables) {
+        if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
+          isValid = false;
+          newErrors[variable] = "Este campo es requerido"; // Asignar mensaje de error
 
-      // Colocar el foco en el campo de texto de ejemplo vacío
-      if (exampleRefs.current[variable]) {
-        exampleRefs.current[variable].focus();
+          // Colocar el foco en el campo de texto de ejemplo vacío
+          if (exampleRefs.current[variable]) {
+            exampleRefs.current[variable].focus();
+          }
+        } else {
+          newErrors[variable] = ""; // Sin error
+        }
       }
-    } else {
-      newErrors[variable] = ""; // Sin error
+
+      // Actualizar el estado de errores
+      setVariableErrors(newErrors);
+
+      // Si hay errores, detener la validación
+      if (!isValid) {
+        return isValid;
+      }
     }
-  }
 
-  // Actualizar el estado de errores
-  setVariableErrors(newErrors);
-
-  // Si hay errores, detener la validación
-  if (!isValid) {
     return isValid;
-  }
-}
-
-return isValid;
   };
 
   // CONSTRUYO EL cURL REQUEST
