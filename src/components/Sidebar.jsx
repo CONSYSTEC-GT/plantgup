@@ -107,13 +107,13 @@ export default function Sidebar(props) {
 
         return {
           ...item,
-          icon: clonedIcon,
           title: (
             <MenuItem selected={isSelected(item.segment)}>
               {clonedIcon}
               <span style={{ marginLeft: theme.spacing(1) }}>{item.title}</span>
             </MenuItem>
           ),
+          // No incluimos el ícono en el objeto de navegación, ya que ya lo estamos renderizando en `title`
         };
       })} 
       theme={theme} 
