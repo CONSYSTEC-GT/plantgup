@@ -312,6 +312,25 @@ export default function BasicCard() {
                   </Box>
                 </Box>
 
+                <Typography variant="body2" color="text.secondary">
+                  Categoria: {template.category}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Tipo: {template.templateType}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {template.teplateType}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Creado: {new Date(template.createdOn).toLocaleString()}
+                </Typography>
+
+                {template.reason && (
+                  <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
+                    Reason: {template.reason}
+                  </Typography>
+                )}
+
                 {/* Content */}
                 <Box
                   sx={{
@@ -323,26 +342,11 @@ export default function BasicCard() {
                   }}
                 >
 
-                </Box>
-                
-                <Typography variant="body2" color="text.secondary">
-                  Categoria: {template.category}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Tipo: {template.teplateType}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {template.teplateType}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Creado: {template.createdOn}
-                </Typography>
-
-                {template.reason && (
-                  <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
-                    Reason: {template.reason}
+                  <Typography variant="body2" color="text.secondary">
+                    Creado: {template.data}
                   </Typography>
-                )}
+
+                </Box>
 
               </CardContent>
 
@@ -356,7 +360,7 @@ export default function BasicCard() {
                   disableElevation
                   onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
                   endIcon={<KeyboardArrowDownIcon />}
-                  sx={{ 
+                  sx={{
                     borderRadius: 1,
                     textTransform: 'none',
                     color: '#6366F1',
