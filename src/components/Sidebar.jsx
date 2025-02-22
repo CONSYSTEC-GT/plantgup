@@ -5,7 +5,7 @@ import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useTheme } from '@mui/material/styles';
 
-// Iconos
+//iconos
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import CreateIcon from '@mui/icons-material/Create';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -90,7 +90,7 @@ export default function Sidebar(props) {
   };
 
   return (
-    <AppProvider
+    <AppProvider 
       navigation={NAVIGATION.map((item) => {
         // Si el elemento no tiene un ícono o no es un elemento de menú, lo devolvemos sin modificar
         if (item.kind === 'divider' || item.kind === 'header') {
@@ -104,8 +104,7 @@ export default function Sidebar(props) {
           },
         });
 
-        // Creamos un nuevo objeto sin el ícono original
-        const newItem = {
+        return {
           ...item,
           title: (
             <MenuItem selected={isSelected(item.segment)}>
@@ -113,16 +112,12 @@ export default function Sidebar(props) {
               <span style={{ marginLeft: theme.spacing(1) }}>{item.title}</span>
             </MenuItem>
           ),
+          // No incluimos el ícono en el objeto de navegación, ya que ya lo estamos renderizando en title
         };
-
-        // Eliminamos el ícono original para evitar que se renderice dos veces
-        delete newItem.icon;
-
-        return newItem;
-      })}
-      theme={theme}
-      branding={{
-        title: 'TalkMe',
+      })} 
+      theme={theme} 
+      branding={{ 
+        title: 'TalkMe', 
         logo: (
           <img
             src="https://www.talkme.pro/wp-content/uploads/2019/07/logoidentity.png"
@@ -130,7 +125,7 @@ export default function Sidebar(props) {
             style={{ width: 'auto', height: 'auto' }}
           />
         ),
-        titleStyle: { color: theme.palette.primary.main },
+        titleStyle: { color: theme.palette.primary.main }
       }}
     >
       <DashboardLayout>
