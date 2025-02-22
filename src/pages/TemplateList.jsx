@@ -262,24 +262,18 @@ export default function BasicCard() {
               key={template.id}
               sx={{
                 maxWidth: 300,
-                //backgroundColor: getStatusColor(template.status),
-                //borderRadius: 3,
                 border: '1px solid #e0e0e0',
                 boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
-                //boxShadow: 3,
                 overflow: 'visible',
                 display: 'flex',
                 flexDirection: 'column',
-                //justifyContent: "space-between",
-                //transition: "transform 0.2s ease-in-out",
-                //"&:hover": { transform: "scale(1.02)" },
               }}
             >
-              <CardContent>
+              <CardContent sx={{ p: 0 }}> 
                 {/* Header */}
-                <Box sx={{ p: 2, pb: 0 }}>
+                <Box sx={{ p: 0, pb: 0 }}>
 
-                  <Typography variant="subtitle1" fontWeight={500} sx={{ mb: 0.5 }}>
+                  <Typography variant="subtitle1" fontWeight={500} sx={{ mb: 0 }}>
                     {template.elementName}
                   </Typography>
 
@@ -334,16 +328,16 @@ export default function BasicCard() {
                 {/* Content */}
                 <Box
                   sx={{
-                    p: 2,
-                    backgroundColor: '#FFFBEB',
-                    mx: 2,
+                    p: 0,
+                    backgroundColor: '#FEF9F3',
+                    mx: 1,
                     my: 1,
-                    borderRadius: 1
+                    borderRadius: 2
                   }}
                 >
 
                   <Typography variant="body2" color="text.secondary">
-                    Creado: {template.data}
+                    {template.data}
                   </Typography>
 
                 </Box>
