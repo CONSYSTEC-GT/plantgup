@@ -262,6 +262,7 @@ export default function BasicCard() {
               key={template.id}
               sx={{
                 maxWidth: 300,
+                borderRadius: 2,
                 border: '1px solid #e0e0e0',
                 boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
                 overflow: 'visible',
@@ -270,9 +271,9 @@ export default function BasicCard() {
               }}
             >
               <CardContent sx={{ p: 0 }}> 
-                {/* Header */}
-                <Box sx={{ p: 0, pb: 0 }}>
 
+                {/* Header */}
+                <Box sx={{ p: 2, pb: 0 }}>
                   <Typography variant="subtitle1" fontWeight={500} sx={{ mb: 0 }}>
                     {template.elementName}
                   </Typography>
@@ -301,27 +302,47 @@ export default function BasicCard() {
                     />
 
                     <Typography variant="caption" sx={{ color: '#EF4444', fontWeight: 500 }}>
-                      Estatus: {template.status}
+                      {template.status}
                     </Typography>
                   </Box>
-                </Box>
 
-                <Typography variant="body2" color="text.secondary">
-                  Categoria: {template.category}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Tipo: {template.templateType}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {template.teplateType}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Creado: {new Date(template.createdOn).toLocaleString()}
-                </Typography>
+                  <Box
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      backgroundColor: '#F3F4F6',
+                      borderRadius: 1,
+                      px: 1,
+                      py: 0.5,
+                    }}
+                  >
+                    <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                      {template.category}
+                    </Typography>
+                  </Box>
+
+                  {/* Tipo badge */}
+                  <Box
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      backgroundColor: '#F3F4F6',
+                      borderRadius: 1,
+                      px: 1,
+                      py: 0.5,
+                    }}
+                  >
+                    <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                      {template.Type}
+                    </Typography>
+
+                  </Box>
+
+                </Box>
 
                 {template.reason && (
                   <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
-                    Reason: {template.reason}
+                    Razón: {template.reason}
                   </Typography>
                 )}
 
