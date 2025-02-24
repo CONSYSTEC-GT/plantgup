@@ -262,7 +262,7 @@ export default function BasicCard() {
               key={template.id}
               sx={{
                 maxWidth: 300,
-                maxHeight: 480,
+                height: 500, // Fija la altura a 480px
                 borderRadius: 3,
                 border: '1px solid #e0e0e0',
                 boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
@@ -273,14 +273,14 @@ export default function BasicCard() {
             >
               <CardContent sx={{ p: 0 }}>
 
-                {/* Header */}
-                <Box sx={{ p: 2, pb: 0 }}>
+                
+                {/* Header Template Name */}<Box sx={{ p: 2, pb: 0 }}>
                   <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 0 }}>
                     {template.elementName}
                   </Typography>
 
-                  {/* Status badge */}
-                  <Box
+                  
+                  {/* Status badge */}<Box
                     sx={{
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -307,7 +307,7 @@ export default function BasicCard() {
                     </Typography>
                   </Box>
 
-                  <Box
+                  {/* Categoria badge */}<Box
                     sx={{
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -322,8 +322,8 @@ export default function BasicCard() {
                     </Typography>
                   </Box>
 
-                  {/* Tipo badge */}
-                  <Box
+                  
+                  {/* Tipo badge */}<Box
                     sx={{
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -354,7 +354,9 @@ export default function BasicCard() {
                     backgroundColor: '#FEF9F3',
                     mx: 1,
                     my: 1,
-                    borderRadius: 2
+                    borderRadius: 2,
+                    height: 300,
+                    width:298
                   }}
                 >
 
