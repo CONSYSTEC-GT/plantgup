@@ -351,19 +351,28 @@ export default function BasicCard() {
                 <Box
                   sx={{
                     p: 0,
-                    backgroundColor: '#FEF9F3',
+                    backgroundColor: '#FEF9F3', // Fondo amarillo
                     mx: 1,
                     my: 1,
                     borderRadius: 2,
-                    height: 300,
-                    width:298
+                    height: 302,
+                    width: 294,
+                    display: 'flex',
+                    alignItems: 'center', // Centrar verticalmente
+                    justifyContent: 'center', // Centrar horizontalmente
                   }}
                 >
-
-                  <Typography variant="body2" color="text.secondary">
-                    {template.data}
-                  </Typography>
-
+                  <Box
+                    sx={{
+                      backgroundColor: 'white', // Fondo blanco para el contenido
+                      p: 2, // Padding para separar el contenido del borde
+                      borderRadius: 1, // Bordes redondeados
+                    }}
+                  >
+                    <Typography variant="body2" color="text.secondary">
+                      {template.data}
+                    </Typography>
+                  </Box>
                 </Box>
 
               </CardContent>
