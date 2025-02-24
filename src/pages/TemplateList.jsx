@@ -355,11 +355,11 @@ export default function BasicCard() {
                     mx: 1,
                     my: 1,
                     borderRadius: 2,
-                    height: 302,
-                    width: 294,
+                    height: 302, // Altura fija para el fondo amarillo
+                    width: 290,
                     display: 'flex',
-                    alignItems: 'center', // Centrar verticalmente
-                    justifyContent: 'center', // Centrar horizontalmente
+                    flexDirection: 'column', // Ajusta la dirección del contenido a columna
+                    alignItems: 'center', // Centra horizontalmente
                   }}
                 >
                   <Box
@@ -367,6 +367,8 @@ export default function BasicCard() {
                       backgroundColor: 'white', // Fondo blanco para el contenido
                       p: 2, // Padding para separar el contenido del borde
                       borderRadius: 1, // Bordes redondeados
+                      width: '100%', // Ajusta el ancho para que ocupe todo el contenedor
+                      overflowY: 'auto', // Permite desplazamiento vertical si el contenido supera la altura
                     }}
                   >
                     <Typography variant="body2" color="text.secondary">
@@ -374,6 +376,7 @@ export default function BasicCard() {
                     </Typography>
                   </Box>
                 </Box>
+
 
               </CardContent>
 
