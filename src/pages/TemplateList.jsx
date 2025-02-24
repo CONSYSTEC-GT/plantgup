@@ -262,7 +262,8 @@ export default function BasicCard() {
               key={template.id}
               sx={{
                 maxWidth: 300,
-                borderRadius: 2,
+                maxHeight: 480,
+                borderRadius: 3,
                 border: '1px solid #e0e0e0',
                 boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
                 overflow: 'visible',
@@ -270,11 +271,11 @@ export default function BasicCard() {
                 flexDirection: 'column',
               }}
             >
-              <CardContent sx={{ p: 0 }}> 
+              <CardContent sx={{ p: 0 }}>
 
                 {/* Header */}
                 <Box sx={{ p: 2, pb: 0 }}>
-                  <Typography variant="subtitle1" fontWeight={500} sx={{ mb: 0 }}>
+                  <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 0 }}>
                     {template.elementName}
                   </Typography>
 
@@ -333,7 +334,7 @@ export default function BasicCard() {
                     }}
                   >
                     <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
-                      {template.Type}
+                      {template.templateType}
                     </Typography>
 
                   </Box>
@@ -365,7 +366,14 @@ export default function BasicCard() {
 
               </CardContent>
 
-              <CardActions sx={{ padding: 2 }}>
+              <CardActions
+                sx={{
+                  mt: 'auto',           // Empuja el CardActions hacia abajo
+                  justifyContent: 'flex-start', // Alinea contenido a la izquierda
+                  padding: 2,           // Añade padding consistente
+                  position: 'relative', // Necesario para el posicionamiento
+                }}
+              >
                 <Button
                   id="manage-button"
                   aria-controls={anchorEl ? 'manage-menu' : undefined}
@@ -378,7 +386,7 @@ export default function BasicCard() {
                   sx={{
                     borderRadius: 1,
                     textTransform: 'none',
-                    color: '#6366F1',
+                    color: '#00C3FF',
                     borderColor: '#E0E7FF',
                     '&:hover': {
                       borderColor: '#C7D2FE',
