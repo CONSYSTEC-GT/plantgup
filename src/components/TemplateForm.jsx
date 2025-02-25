@@ -1122,7 +1122,7 @@ const TemplateForm = () => {
             variant="contained"
             size="large"
             color="primary"
-            onClick={sendRequest}
+            onClick={iniciarRequest}
             sx={{ mt: 3, mb: 3 }}
           >
             Enviar solicitud
