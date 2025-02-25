@@ -346,9 +346,9 @@ const TemplateForm = () => {
   
     // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
     let ID_PLANTILLA_CATEGORIA;
-    if (selectedCategory === "MARKETING") {
+    if (selectedCategory === "marketing") {
       ID_PLANTILLA_CATEGORIA = 17;
-    } else if (selectedCategory === "UTILITY") {
+    } else if (selectedCategory === "utility") {
       ID_PLANTILLA_CATEGORIA = 18;
     } else {
       console.error("Categoría no válida:", selectedCategory);
