@@ -366,7 +366,8 @@ export default function BasicCard() {
                     sx={{
                       backgroundColor: 'white', // Fondo blanco para el contenido
                       p: 2, // Padding para separar el contenido del borde
-                      borderRadius: 1, // Bordes redondeados
+                      mt: 2,
+                      borderRadius: 4, // Bordes redondeados
                       width: '100%', // Ajusta el ancho para que ocupe todo el contenedor
                       overflowY: 'auto', // Permite desplazamiento vertical si el contenido supera la altura
                     }}

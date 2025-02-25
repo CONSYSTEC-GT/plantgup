@@ -237,6 +237,25 @@ const TemplateForm = () => {
     return curlCommand;
   };
 
+  const iniciarRequest = async () => {
+    try{
+      //aqui hago el request a gupshup
+      const result = await sendRequest();
+
+      if (result && result.status == "success") {
+        // Extraer el valor de `id` del objeto `template`
+      const templateId = result.template.id;
+
+      // Hacer el segundo request, pasando el `id` como parámetro
+      await sendRequest2(templateId);
+    } else {
+      console.error("El primer request no fue exitoso o no tiene el formato esperado.");
+    }
+  } catch (error) {
+    console.error("Ocurrió un error:", error);
+  }
+};
+
   // FUNCION PARA ENVIAR LA SOLICITUD
   const sendRequest = async () => {
     // Validar campos antes de enviar la solicitud
@@ -319,7 +338,65 @@ const TemplateForm = () => {
     }
   };
 
-  //const [variables, setVariables] = useState([{ key: '{{1}}', value: '' }, { key: '{{2}}', value: '' }]);
+  const sendRequest2 = async (templateId) => {
+    const url = "https://dev.talkme.pro/templatesGS/api/plantillas/";
+    const headers = {
+      "Content-Type": "application/json", // Si envías JSON, este header es correcto
+    };
+  
+    // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
+    let ID_PLANTILLA_CATEGORIA;
+    if (selectedCategory === "MARKETING") {
+      ID_PLANTILLA_CATEGORIA = 17;
+    } else if (selectedCategory === "UTILITY") {
+      ID_PLANTILLA_CATEGORIA = 18;
+    } else {
+      console.error("Categoría no válida:", selectedCategory);
+      showSnackbar("❌ Categoría no válida", "error");
+      return null; // Retornar null si la categoría no es válida
+    }
+  
+    // Crear un objeto con los datos (no usar FormData si envías JSON)
+    const data = {
+      ID_PLANTILLA: null,
+      ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA, // Usar el valor convertido
+      ID_BOT_REDES: 721,
+      ID_INTERNO: templateId, 
+      NOMBRE: templateName,
+      MENSAJE: message,
+      TIPO_PLANTILLA: templateType,
+      PANTALLAS: 0,
+      ESTADO: 1,
+      AUTORIZADO: 1,
+      ELIMINADO: 0,
+      SEGUIMIENTO_EDC: 0,
+      CREADO_POR: "javier.colocho",
+    };
+  
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(data), // Convertir el objeto a JSON
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        console.error("Error response:", errorResponse);
+        showSnackbar(`❌ Error en el segundo request: ${errorResponse.message || "Solicitud inválida"}`, "error");
+        return null; // Retornar null en caso de error
+      }
+  
+      const result = await response.json();
+      showSnackbar("✅ Segundo request completado exitosamente", "success");
+      console.log("Response del segundo request: ", result);
+      return result; // Retornar el resultado en caso de éxito
+    } catch (error) {
+      console.error("Error en el segundo request:", error);
+      showSnackbar("❌ Error en el segundo request", "error");
+      return null; // Retornar null en caso de error
+    }
+  };
 
   //MEDIA
   const handleUploadSuccess = (uploadedMediaId) => {
