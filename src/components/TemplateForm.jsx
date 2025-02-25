@@ -346,9 +346,9 @@ const TemplateForm = () => {
   
     // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
     let ID_PLANTILLA_CATEGORIA;
-    if (selectedCategory === "marketing") {
+    if (selectedCategory === "MARKETING") {
       ID_PLANTILLA_CATEGORIA = 17;
-    } else if (selectedCategory === "utility") {
+    } else if (selectedCategory === "UTILITY") {
       ID_PLANTILLA_CATEGORIA = 18;
     } else {
       console.error("Categoría no válida:", selectedCategory);
@@ -372,6 +372,13 @@ const TemplateForm = () => {
       SEGUIMIENTO_EDC: 0,
       CREADO_POR: "javier.colocho",
     };
+  
+    // Imprimir el segundo request
+    console.log("Segundo request enviado:", {
+      url: url,
+      headers: headers,
+      body: data,
+    });
   
     try {
       const response = await fetch(url, {
