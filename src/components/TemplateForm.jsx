@@ -238,23 +238,24 @@ const TemplateForm = () => {
   };
 
   const iniciarRequest = async () => {
-    try{
-      //aqui hago el request a gupshup
+    try {
+      // Hacer el primer request
       const result = await sendRequest();
-
-      if (result && result.status == "success") {
+  
+      // Verificar si el primer request fue exitoso
+      if (result && result.status === "success") {
         // Extraer el valor de `id` del objeto `template`
-      const templateId = result.template.id;
-
-      // Hacer el segundo request, pasando el `id` como parámetro
-      await sendRequest2(templateId);
-    } else {
-      console.error("El primer request no fue exitoso o no tiene el formato esperado.");
+        const templateId = result.template.id;
+  
+        // Hacer el segundo request, pasando el `id` como parámetro
+        await sendRequest2(templateId);
+      } else {
+        console.error("El primer request no fue exitoso o no tiene el formato esperado.");
+      }
+    } catch (error) {
+      console.error("Ocurrió un error:", error);
     }
-  } catch (error) {
-    console.error("Ocurrió un error:", error);
-  }
-};
+  };
 
   // FUNCION PARA ENVIAR LA SOLICITUD
   const sendRequest = async () => {
@@ -262,86 +263,85 @@ const TemplateForm = () => {
     if (!validateFields()) {
       return; // Detener la ejecución si hay errores
     }
-
+  
     const url = "https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates";
     const headers = {
       Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
       "Content-Type": "application/x-www-form-urlencoded",
     };
-
+  
     const data = new URLSearchParams();
     data.append("elementName", templateName);
     data.append("category", selectedCategory.toUpperCase());
-    data.append("languageCode", languageCode); // Usamos directamente languageCode (ya está en el formato correcto)
+    data.append("languageCode", languageCode);
     data.append("templateType", templateType.toUpperCase());
     data.append("vertical", vertical);
     data.append("content", message);
-
-    // Agregar header si existe
+  
     if (header) {
       data.append("header", header);
     }
-
-    // Agregar footer si existe
+  
     if (footer) {
       data.append("footer", footer);
     }
-
-    // Agregar mediaId si existe
+  
     if (mediaId) {
       data.append("exampleMedia", mediaId);
     }
-
-    // Construir el objeto buttons
+  
     const formattedButtons = buttons.map((button) => {
       const buttonData = {
         type: button.type,
         text: button.title,
       };
-
+  
       if (button.type === "URL") {
         buttonData.url = button.url;
       } else if (button.type === "PHONE_NUMBER") {
         buttonData.phone_number = button.phoneNumber;
       }
-
+  
       return buttonData;
     });
-
+  
     data.append("buttons", JSON.stringify(formattedButtons));
     data.append("example", example);
     data.append("enableSample", true);
     data.append("allowTemplateCategoryChange", false);
-
+  
     console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
-
+  
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: headers,
         body: data,
       });
-
+  
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Error response:", errorResponse);
         showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
-        return;
+        return null; // Retornar null en caso de error
       }
-
+  
       const result = await response.json();
       showSnackbar("✅ Plantilla creada exitosamente", "success");
       console.log("Response: ", result);
+      return result; // Retornar el resultado
     } catch (error) {
       console.error("Error en la solicitud:", error);
       showSnackbar("❌ Error al crear la plantilla", "error");
+      return null; // Retornar null en caso de error
     }
   };
 
   const sendRequest2 = async (templateId) => {
     const url = "https://dev.talkme.pro/templatesGS/api/plantillas/";
     const headers = {
-      "Content-Type": "application/json", // Si envías JSON, este header es correcto
+      "Content-Type": "application/json",
+      // Agrega aquí cualquier header de autenticación si es necesario
     };
   
     // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
@@ -356,12 +356,12 @@ const TemplateForm = () => {
       return null; // Retornar null si la categoría no es válida
     }
   
-    // Crear un objeto con los datos (no usar FormData si envías JSON)
+    // Crear un objeto con los datos
     const data = {
       ID_PLANTILLA: null,
-      ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA, // Usar el valor convertido
+      ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
       ID_BOT_REDES: 721,
-      ID_INTERNO: templateId, 
+      ID_INTERNO: templateId,
       NOMBRE: templateName,
       MENSAJE: message,
       TIPO_PLANTILLA: templateType,
@@ -377,7 +377,7 @@ const TemplateForm = () => {
       const response = await fetch(url, {
         method: "POST",
         headers: headers,
-        body: JSON.stringify(data), // Convertir el objeto a JSON
+        body: JSON.stringify(data),
       });
   
       if (!response.ok) {
