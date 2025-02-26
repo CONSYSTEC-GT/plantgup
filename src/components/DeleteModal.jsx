@@ -34,9 +34,29 @@ const DeleteModal = ({ open, onClose, onConfirm, template }) => {
     setOpenSnackbar(false);
   };
 
+  const iniciarRequest = async () => {
+    try {
+      // Hacer el primer request
+      const result = await handleDelete();
+  
+      // Verificar si el primer request fue exitoso
+      if (result && result.status === "success") {
+        // Extraer el valor de `id` del objeto `template`
+        const templateId = result.template.id;
+  
+        // Hacer el segundo request, pasando el `id` como parámetro
+        await handleDelete2(templateId);
+      } else {
+        console.error("El primer request no fue exitoso o no tiene el formato esperado.");
+      }
+    } catch (error) {
+      console.error("Ocurrió un error:", error);
+    }
+  };
+
   const handleDelete = async () => {
     if (!template) return;
-
+  
     try {
       const response = await fetch(
         `https://partner.gupshup.io/partner/app/${appId}/template/${template.elementName}`,
@@ -47,23 +67,64 @@ const DeleteModal = ({ open, onClose, onConfirm, template }) => {
           },
         }
       );
-
+  
       if (response.ok) {
         showSnackbar('✅ Plantilla eliminada exitosamente', 'success');
-        onConfirm(template); // Cierra el modal principal
+        setShowConfirmationModal(true); // Activamos el modal de confirmación
+        return { status: "success", template: { id: template.id } }; // Devuelve el estado y el ID de la plantilla
       } else {
         showSnackbar('❌ Error al eliminar la plantilla', 'error');
+        return { status: "error" }; // Devuelve un estado de error
       }
     } catch (error) {
       console.log('Error en la solicitud:', error);
       showSnackbar('❌ Error al eliminar la plantilla', 'error');
+      return { status: "error" }; // Devuelve un estado de error
     }
   };
 
-  const handleCloseConfirmationModal = () => {
-    setShowConfirmationModal(false);
-    onClose();
+  const handleDelete2 = async (templateId) => {
+    const url = `http://localhost:3004/api/plantillas/${templateId}`; // Usa templateId en la URL
+    const headers = {
+      "Content-Type": "application/json",
+      // Agrega aquí cualquier header de autenticación si es necesario
+    };
+  
+    // Imprimir el segundo request
+    console.log("Segundo request enviado:", {
+      url: url
+    });
+  
+    try {
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: headers // Asegúrate de incluir los headers en la solicitud
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        console.error("Error response:", errorResponse);
+        showSnackbar(`❌ Error en el segundo request: ${errorResponse.message || "Solicitud inválida"}`, "error");
+        return null; // Retornar null en caso de error
+      }
+  
+      const result = await response.json();
+      showSnackbar("✅ Segundo request completado exitosamente", "success");
+      console.log("Response del segundo request: ", result);
+      return result; // Retornar el resultado en caso de éxito
+    } catch (error) {
+      console.error("Error en el segundo request:", error);
+      showSnackbar("❌ Error en el segundo request", "error");
+      return null; // Retornar null en caso de error
+    }
   };
+  
+
+// Modificamos también esta función para manejar apropiadamente el cierre
+const handleCloseConfirmationModal = () => {
+  setShowConfirmationModal(false);
+  onConfirm(template); // Ahora llamamos a onConfirm al cerrar el modal de confirmación
+};
 
   if (!template) return null;
 

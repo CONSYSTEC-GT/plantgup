@@ -65,9 +65,6 @@ useEffect(() => {
   }
 }, [appId, authCode]);
 
-
-
-
   //MODIFICAR EL COLOR DEPENDIENDO DEL STATUS DE LAS PLANTILLAS
   const getStatusColor = (status) => {
     switch (status) {
