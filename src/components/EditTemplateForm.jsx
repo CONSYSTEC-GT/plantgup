@@ -374,12 +374,7 @@ const EditTemplateForm = () => {
       NOMBRE: templateName,
       MENSAJE: message,
       TIPO_PLANTILLA: templateType,
-      PANTALLAS: 0,
-      ESTADO: 1,
-      AUTORIZADO: 1,
-      ELIMINADO: 0,
-      SEGUIMIENTO_EDC: 0,
-      CREADO_POR: "javier.colocho",
+      MODIFICADO_POR: "javier.colocho",
     };
   
     // Imprimir el segundo request
