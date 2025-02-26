@@ -195,7 +195,6 @@ const EditTemplateForm = () => {
     return isValid;
   };
 
-
   // CONSTRUYO EL cURL REQUEST
   const buildCurlCommand = () => {
     const url = "https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates";
@@ -249,7 +248,27 @@ const EditTemplateForm = () => {
     return curlCommand;
   };
 
-  // FUNCION PARA ENVIAR LA SOLICITUD
+  const iniciarRequest = async () => {
+    try {
+      // Hacer el primer request
+      const result = await sendRequest();
+  
+      // Verificar si el primer request fue exitoso
+      if (result && result.status === "success") {
+        // Extraer el valor de `id` del objeto `template`
+        const templateId = result.template.id;
+  
+        // Hacer el segundo request, pasando el `id` como parámetro
+        await sendRequest2(templateId);
+      } else {
+        console.error("El primer request no fue exitoso o no tiene el formato esperado.");
+      }
+    } catch (error) {
+      console.error("Ocurrió un error:", error);
+    }
+  };
+
+  // FUNCION PARA ENVIAR LA SOLICITUD GUPSHUP
   const sendRequest = async () => {
     // Validar campos antes de enviar la solicitud
     if (!validateFields()) {
@@ -324,6 +343,74 @@ const EditTemplateForm = () => {
       console.log("Plantilla:", templateId);
       console.log("URL", URL);
       showSnackbar("❌ Error al actualizar la plantilla", "error");
+    }
+  };
+
+  // FUNCION PARA ENVIAR EL REQUEST A TALKME
+  const sendRequest2 = async (templateId) => {
+    const url = `http://localhost:3004/api/plantillas/${templateId}`;
+    const headers = {
+      "Content-Type": "application/json",
+      // Agrega aquí cualquier header de autenticación si es necesario
+    };
+
+        // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
+        let ID_PLANTILLA_CATEGORIA;
+        if (selectedCategory === "marketing") {
+          ID_PLANTILLA_CATEGORIA = 17;
+        } else if (selectedCategory === "utility") {
+          ID_PLANTILLA_CATEGORIA = 18;
+        } else {
+          console.error("Categoría no válida:", selectedCategory);
+          showSnackbar("❌ Categoría no válida", "error");
+          return null; // Retornar null si la categoría no es válida
+        }
+  
+    // Crear un objeto con los datos
+    const data = { 
+      ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
+      ID_BOT_REDES: 721,
+      ID_INTERNO: templateId,
+      NOMBRE: templateName,
+      MENSAJE: message,
+      TIPO_PLANTILLA: templateType,
+      PANTALLAS: 0,
+      ESTADO: 1,
+      AUTORIZADO: 1,
+      ELIMINADO: 0,
+      SEGUIMIENTO_EDC: 0,
+      CREADO_POR: "javier.colocho",
+    };
+  
+    // Imprimir el segundo request
+    console.log("Segundo request enviado:", {
+      url: url,
+      headers: headers,
+      body: data,
+    });
+  
+    try {
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: headers,
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        console.error("Error response:", errorResponse);
+        showSnackbar(`❌ Error en el segundo request: ${errorResponse.message || "Solicitud inválida"}`, "error");
+        return null; // Retornar null en caso de error
+      }
+  
+      const result = await response.json();
+      showSnackbar("✅ Segundo request completado exitosamente", "success");
+      console.log("Response del segundo request: ", result);
+      return result; // Retornar el resultado en caso de éxito
+    } catch (error) {
+      console.error("Error en el segundo request:", error);
+      showSnackbar("❌ Error en el segundo request", "error");
+      return null; // Retornar null en caso de error
     }
   };
 
@@ -969,7 +1056,7 @@ const EditTemplateForm = () => {
             variant="contained"
             size="large"
             color="primary"
-            onClick={sendRequest}
+            onClick={iniciarRequest}
             sx={{ mt: 3, mb: 3 }}
           >
             Enviar solicitud

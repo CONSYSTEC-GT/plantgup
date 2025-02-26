@@ -84,7 +84,7 @@ const DeleteModal = ({ open, onClose, onConfirm, template }) => {
   };
 
   const handleDelete2 = async (templateId) => {
-    const url = `http://localhost:3004/api/plantillas/${templateId}`; // Usa templateId en la URL
+    const url = `http://localhost:3004/api/plantillas/${templateId}`; 
     const headers = {
       "Content-Type": "application/json",
       // Agrega aquí cualquier header de autenticación si es necesario
