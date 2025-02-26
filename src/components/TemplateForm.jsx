@@ -71,6 +71,7 @@ const TemplateForm = () => {
 
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
+  const [uploadedUrl, setUploadedUrl] = useState('');
   const [uploadStatus, setUploadStatus] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -355,7 +356,7 @@ const TemplateForm = () => {
       showSnackbar("❌ Categoría no válida", "error");
       return null; // Retornar null si la categoría no es válida
     }
-  
+
     // Crear un objeto con los datos
     const data = {
       ID_PLANTILLA: null,
@@ -364,7 +365,9 @@ const TemplateForm = () => {
       ID_INTERNO: templateId,
       NOMBRE: templateName,
       MENSAJE: message,
-      TIPO_PLANTILLA: templateType,
+      TIPO_PLANTILLA: 0,
+      MEDIA: templateType,
+      URL: uploadedUrl,
       PANTALLAS: 0,
       ESTADO: 1,
       AUTORIZADO: 1,
@@ -540,7 +543,6 @@ const TemplateForm = () => {
   };
 
   const [file, setFile] = useState(null);
-  const [uploadedUrl, setUploadedUrl] = useState('');
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -553,54 +555,6 @@ const TemplateForm = () => {
       console.log('Archivo seleccionado:', selectedFile);
     }
   };
-
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      alert('Por favor, selecciona un archivo.');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const base64Content = event.target.result.split(',')[1]; // Obtener solo el contenido en Base64
-
-      const payload = {
-        idEmpresa: 2,
-        idBot: 257,
-        idBotRedes: 721,
-        idUsuario: 48,
-        tipoCarga: 3,
-        nombreArchivo: file.name,
-        contenidoArchivo: base64Content,
-      };
-
-      try {
-        const response = await fetch('https://dev.talkme.pro/WsFTP/api/ftp/upload', {
-          method: 'POST',
-          headers: {
-            'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
-            'Origin': 'https://dev.talkme.pro/',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-          throw new Error('Error al subir el archivo');
-        }
-
-        const data = await response.json();
-        setUploadedUrl(data.url); // Asumiendo que la API devuelve un objeto con una propiedad 'url'
-        alert('Archivo subido con éxito: ' + data.url);
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Error al subir el archivo');
-      }
-    };
-
-    reader.readAsDataURL(file); // Leer el archivo como Data URL (Base64)
-  };
-
 
   //FOOTER PLANTILLA
   const handleFooterChange = (e) => {
@@ -858,6 +812,7 @@ const TemplateForm = () => {
               templateType={templateType}
               onUploadSuccess={(mediaId) => {
                 setMediaId(mediaId); // Guarda el mediaId
+                setUploadedUrl(uploadedUrl);
                 setUploadStatus("¡Archivo subido exitosamente!");
                 // No modifiques imagePreview aquí
               }}
