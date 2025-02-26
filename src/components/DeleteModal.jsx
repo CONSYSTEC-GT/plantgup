@@ -171,7 +171,7 @@ const handleCloseConfirmationModal = () => {
                   variant="contained"
                   color="error"
                   startIcon={<DeleteIcon />}
-                  onClick={handleDelete}
+                  onClick={iniciarRequest}
                 >
                   Eliminar
                 </Button>
