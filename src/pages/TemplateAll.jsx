@@ -39,31 +39,31 @@ const TemplateAll = () => {
   }
 
   //FETCH DE LAS PLANTILLAS
-const fetchTemplates = async (appId, authCode) => {
-  try {
-    const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
-      method: 'GET',
-      headers: {
-        Authorization: authCode,
-      },
-    });
-    const data = await response.json();
-    if (data.status === 'success') {
-      setTemplates(data.templates);
+  const fetchTemplates = async (appId, authCode) => {
+    try {
+      const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+        method: 'GET',
+        headers: {
+          Authorization: authCode,
+        },
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+        setTemplates(data.templates);
+      }
+    } catch (error) {
+      console.error('Error fetching templates:', error);
     }
-  } catch (error) {
-    console.error('Error fetching templates:', error);
-  }
-};
+  };
 
-// Llama a fetchTemplates cuando el componente se monta
-useEffect(() => {
-  if (appId && authCode) {
-    fetchTemplates(appId, authCode);
-  } else {
-    console.error('No se encontró appId o authCode en el token');
-  }
-}, [appId, authCode]);
+  // Llama a fetchTemplates cuando el componente se monta
+  useEffect(() => {
+    if (appId && authCode) {
+      fetchTemplates(appId, authCode);
+    } else {
+      console.error('No se encontró appId o authCode en el token');
+    }
+  }, [appId, authCode]);
 
   //MODIFICAR EL COLOR DEPENDIENDO DEL STATUS DE LAS PLANTILLAS
   const getStatusColor = (status) => {

@@ -65,6 +65,8 @@ export default function BasicCard() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tokenValid, setTokenValid] = useState(true);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
 
   // Recupera el token del localStorage
@@ -141,14 +143,7 @@ export default function BasicCard() {
     }
   };
 
-  // Función para manejar el clic en eliminar
-  const handleDeleteClick = () => {
-    console.log("Template a eliminar:", selectedTemplate); // Verifica el template en el estado
-    setDeleteModalOpen(true); // Abre el modal
-    handleClose(); // Cierra el menú
-  };
-
-  const handleClose = () => {
+ const handleClose = () => {
     setAnchorEl(null);
   };
 
@@ -157,6 +152,36 @@ export default function BasicCard() {
     setAnchorEl(event.currentTarget); // Abre el menú
     setSelectedTemplate(template); // Guarda el template seleccionado en el estado
   };
+
+    // Función para manejar el clic en eliminar
+    const handleDeleteClick = () => {
+      console.log("Template a eliminar:", selectedTemplate); // Verifica el template en el estado
+      setDeleteModalOpen(true); // Abre el modal
+      handleClose(); // Cierra el menú
+    };
+
+    // Función para cancelar la eliminación
+    const handleDeleteCancel = () => {
+      setDeleteModalOpen(false);
+      setSelectedTemplate(null);
+    };
+  
+    // Función para confirmar la eliminación
+    const handleDeleteConfirm = async () => {
+      try {
+        // Aquí iría tu lógica para eliminar la plantilla
+        console.log('Eliminando plantilla:', selectedTemplate);
+  
+        // Cierra el modal y limpia el estado
+        setDeleteModalOpen(false);
+        setSelectedTemplate(null);
+  
+        // Opcional: Recargar la lista de plantillas
+        await fetchTemplates();
+      } catch (error) {
+        console.error('Error al eliminar la plantilla:', error);
+      }
+    };
 
   // Estilo personalizado para el menú
   const StyledMenu = styled((props) => (
@@ -201,6 +226,7 @@ export default function BasicCard() {
 
   return (
     <Box sx={{ marginLeft: 2, marginRight: 2, marginTop: 3 }}>
+
       {/*TITULO PRIMER BLOQUE */}<Paper elevation={3} sx={{ padding: 3, borderRadius: 2 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>
           Plantillas TalkMe
@@ -341,14 +367,13 @@ export default function BasicCard() {
 
                 </Box>
 
-                {template.reason && (
+                {/* Razón rechazo */}{template.reason && (
                   <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
                     Razón: {template.reason}
                   </Typography>
                 )}
 
-                {/* Content */}
-                <Box
+                {/* Content */}<Box
                   sx={{
                     p: 0,
                     backgroundColor: '#FEF9F3', // Fondo amarillo
@@ -356,7 +381,7 @@ export default function BasicCard() {
                     my: 1,
                     borderRadius: 2,
                     height: 302, // Altura fija para el fondo amarillo
-                    width: 288,
+                    width: 286,
                     display: 'flex',
                     flexDirection: 'column', // Ajusta la dirección del contenido a columna
                     alignItems: 'center', // Centra horizontalmente
@@ -377,11 +402,9 @@ export default function BasicCard() {
                     </Typography>
                   </Box>
                 </Box>
-
-
               </CardContent>
 
-              <CardActions
+              {/* Acciones */}<CardActions
                 sx={{
                   mt: 'auto',           // Empuja el CardActions hacia abajo
                   justifyContent: 'flex-start', // Alinea contenido a la izquierda
@@ -441,6 +464,13 @@ export default function BasicCard() {
           ))}
         </Box>
       </Box>
+            {/* Modal de Eliminación */}
+            <DeleteModal
+        open={deleteModalOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        template={selectedTemplate}
+      />
 
     </Box>
   );
