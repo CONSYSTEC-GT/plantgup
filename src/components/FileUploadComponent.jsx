@@ -172,6 +172,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         headers: {
           'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
           'Content-Type': 'application/json',
+          'origin': 'https://dev.talkme.pro/',
         },
         data: payload,
       });
