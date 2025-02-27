@@ -19,6 +19,7 @@
     "@mui/material": "^6.4.1",
     "@toolpad/core": "^0.12.0",
     "aws-amplify": "^6.13.1",
+    "axios": "^1.8.1",
     "emoji-picker-react": "^4.12.0",
     "jwt-decode": "^4.0.0",
     "quill": "^2.0.3",

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
   Box,
   Typography,
@@ -77,90 +78,87 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
     reader.readAsDataURL(file);
   };
 
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      setError('Por favor, selecciona un archivo.');
-      return;
+const handleUpload = async () => {
+  if (!selectedFile) {
+    setError('Por favor, selecciona un archivo.');
+    return;
+  }
+
+  try {
+    // Subir archivo a Gupshup
+    const gupshupFormData = new FormData();
+    gupshupFormData.append('file', selectedFile);
+    gupshupFormData.append('file_type', selectedFile.type);
+
+    const gupshupUrl = `https://partner.gupshup.io/partner/app/${APP_ID}/upload/media`;
+
+    setUploadStatus('Subiendo archivo a Gupshup...');
+    const gupshupResponse = await axios.post(gupshupUrl, gupshupFormData, {
+      headers: {
+        Authorization: TOKEN,
+      },
+    });
+
+    if (gupshupResponse.status !== 200 || !gupshupResponse.data) {
+      console.error('Error en la respuesta de Gupshup:', {
+        status: gupshupResponse.status,
+        statusText: gupshupResponse.statusText,
+        errorDetails: gupshupResponse.data,
+      });
+      throw new Error(`Error en la respuesta de Gupshup: ${gupshupResponse.status}`);
     }
-  
-    try {
-      // Subir archivo a Gupshup
-      const gupshupFormData = new FormData();
-      gupshupFormData.append('file', selectedFile);
-      gupshupFormData.append('file_type', selectedFile.type);
-  
-      const gupshupRequestConfig = {
-        method: 'POST',
-        headers: {
-          Authorization: TOKEN,
-        },
-        body: gupshupFormData,
-      };
-  
-      const gupshupUrl = `https://partner.gupshup.io/partner/app/${APP_ID}/upload/media`;
-  
-      setUploadStatus('Subiendo archivo a Gupshup...');
-      const gupshupResponse = await fetch(gupshupUrl, gupshupRequestConfig);
-  
-      if (!gupshupResponse.ok) {
-        const errorText = await gupshupResponse.text();
-        console.error('Error en la respuesta de Gupshup:', {
-          status: gupshupResponse.status,
-          statusText: gupshupResponse.statusText,
-          errorDetails: errorText,
-        });
-        throw new Error(`Error en la respuesta de Gupshup: ${gupshupResponse.status} ${gupshupResponse.statusText}`);
-      }
-  
-      const gupshupData = await gupshupResponse.json();
-      if (!gupshupData || !gupshupData.handleId) {
-        throw new Error('Respuesta de Gupshup incompleta o no válida');
-      }
-  
-      const mediaId = gupshupData.handleId.message;
-      setMediaId(mediaId);
-  
-      // Subir archivo al servicio propio
-      const base64Content = await convertToBase64(selectedFile);
-      const payload = {
-        idEmpresa: 2,
-        idBot: 257,
-        idBotRedes: 721,
-        idUsuario: 48,
-        tipoCarga: 3,
-        nombreArchivo: selectedFile.name,
-        contenidoArchivo: base64Content.split(',')[1],
-      };
-  
-      setUploadStatus('Subiendo archivo al servicio propio...');
-      const ownServiceResponse = await fetch('https://dev.talkme.pro/WsFTP/api/ftp/upload', {
-        method: 'POST',
+
+    const gupshupData = gupshupResponse.data;
+    if (!gupshupData.handleId) {
+      throw new Error('Respuesta de Gupshup incompleta o no válida');
+    }
+
+    const mediaId = gupshupData.handleId.message;
+    setMediaId(mediaId);
+
+    // Subir archivo al servicio propio
+    const base64Content = await convertToBase64(selectedFile);
+    const payload = {
+      idEmpresa: 2,
+      idBot: 257,
+      idBotRedes: 721,
+      idUsuario: 48,
+      tipoCarga: 3,
+      nombreArchivo: selectedFile.name,
+      contenidoArchivo: base64Content.split(',')[1],
+    };
+
+    setUploadStatus('Subiendo archivo al servicio propio...');
+    const ownServiceResponse = await axios.post(
+      'https://dev.talkme.pro/WsFTP/api/ftp/upload',
+      payload,
+      {
         headers: {
           'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
-      });
-  
-      if (!ownServiceResponse.ok) {
-        throw new Error('Error en la respuesta del servicio propio');
       }
-  
-      const ownServiceData = await ownServiceResponse.json();
-      setUploadedUrl(ownServiceData.url);
-  
-      // Notificar al componente padre con el mediaId y la URL
-      if (onUploadSuccess) {
-        onUploadSuccess(mediaId, ownServiceData.url);
-      }
-  
-      setUploadStatus('¡Archivo subido exitosamente!');
-    } catch (error) {
-      console.error('Error en el upload:', error);
-      setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
-      setUploadStatus('Error al subir el archivo');
+    );
+
+    if (ownServiceResponse.status !== 200 || !ownServiceResponse.data) {
+      throw new Error('Error en la respuesta del servicio propio');
     }
-  };
+
+    const ownServiceData = ownServiceResponse.data;
+    setUploadedUrl(ownServiceData.url);
+
+    // Notificar al componente padre con el mediaId y la URL
+    if (onUploadSuccess) {
+      onUploadSuccess(mediaId, ownServiceData.url);
+    }
+
+    setUploadStatus('¡Archivo subido exitosamente!');
+  } catch (error) {
+    console.error('Error en el upload:', error);
+    setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
+    setUploadStatus('Error al subir el archivo');
+  }
+};
 
   const getAcceptedFileTypes = () => {
     const types = {
