@@ -156,7 +156,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       setUploadStatus('Subiendo archivo al servicio propio...');
   
       const ownServiceResponse = await axios.post(
-        '/WsFTP/api/ftp/upload',
+        'https://dev.talkme.pro/WsFTP/api/ftp/upload',
         payload,
         {
           headers: {
