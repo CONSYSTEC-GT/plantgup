@@ -356,7 +356,7 @@ export default function BasicCard() {
                     my: 1,
                     borderRadius: 2,
                     height: 302, // Altura fija para el fondo amarillo
-                    width: 290,
+                    width: 288,
                     display: 'flex',
                     flexDirection: 'column', // Ajusta la dirección del contenido a columna
                     alignItems: 'center', // Centra horizontalmente
