@@ -18,7 +18,6 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
 
-
 // Componente reutilizable para las tarjetas
 const TemplateCard = ({ title, subtitle, description, onEdit, onDelete, whatsappStyle }) => (
   <Card

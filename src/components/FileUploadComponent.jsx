@@ -105,6 +105,15 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         },
       });
   
+      console.log('Request completo a Gupshup:', {
+        url: gupshupUrl,
+        method: 'POST',
+        headers: {
+          Authorization: TOKEN,
+        },
+        data: gupshupFormData,
+      });
+  
       console.log('Respuesta de Gupshup recibida:', gupshupResponse);
   
       if (gupshupResponse.status !== 200 || !gupshupResponse.data) {
@@ -157,6 +166,16 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         }
       );
   
+      console.log('Request completo al servicio propio:', {
+        url: 'https://dev.talkme.pro/WsFTP/api/ftp/upload',
+        method: 'POST',
+        headers: {
+          'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
+          'Content-Type': 'application/json',
+        },
+        data: payload,
+      });
+  
       console.log('Respuesta del servicio propio recibida:', ownServiceResponse);
   
       if (ownServiceResponse.status !== 200 || !ownServiceResponse.data) {
@@ -182,6 +201,17 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       setUploadStatus('¡Archivo subido exitosamente!');
     } catch (error) {
       console.error('Error en el proceso de subida:', error);
+  
+      // Imprimir el request completo en caso de error
+      if (error.config) {
+        console.error('Request completo que causó el error:', {
+          url: error.config.url,
+          method: error.config.method,
+          headers: error.config.headers,
+          data: error.config.data,
+        });
+      }
+  
       setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
       setUploadStatus('Error al subir el archivo');
     }
@@ -193,7 +223,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       video: 'video/*',
       document: '.pdf,.doc,.docx,.txt'
     };
-    console.log('Tipos de archivo aceptados:', types[mediaType] || '');
+    //console.log('Tipos de archivo aceptados:', types[mediaType] || '');
     return types[mediaType] || '';
   };
 
