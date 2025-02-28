@@ -21,6 +21,7 @@
     "aws-amplify": "^6.13.1",
     "axios": "^1.8.1",
     "emoji-picker-react": "^4.12.0",
+    "jquery": "^3.7.1",
     "jwt-decode": "^4.0.0",
     "quill": "^2.0.3",
     "react": "^18.3.1",

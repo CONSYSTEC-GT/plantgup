@@ -28,6 +28,8 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
   const [error, setError] = useState('');
   const [uploadStatus, setUploadStatus] = useState('');
   const [imagePreview, setImagePreview] = useState(null); // Estado para la vista previa de la imagen
+  const [uploadedUrl, setUploadedUrl] = useState('');
+
 
   // Manejadores de eventos
   const handleHeaderChange = (event) => {
