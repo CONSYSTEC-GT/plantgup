@@ -92,7 +92,7 @@ export default function BasicCard() {
   //FETCH DE LAS PLANTILLAS
   const fetchTemplates = async (appId, authCode) => {
     try {
-      const response = await fetch(`${API_GUPSHUP_URL}/${appId}/templates`, {
+      const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
         method: 'GET',
         headers: {
           Authorization: authCode,
