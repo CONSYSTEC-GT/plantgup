@@ -70,6 +70,7 @@ export default function BasicCard() {
   const [tokenValid, setTokenValid] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const API_GUPSHUP_URL = process.env.API_GUPSHUP;
 
 
   // Recupera el token del localStorage
@@ -91,7 +92,7 @@ export default function BasicCard() {
   //FETCH DE LAS PLANTILLAS
   const fetchTemplates = async (appId, authCode) => {
     try {
-      const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+      const response = await fetch(`${API_GUPSHUP_URL}/${appId}/templates`, {
         method: 'GET',
         headers: {
           Authorization: authCode,
@@ -113,7 +114,7 @@ export default function BasicCard() {
     } else {
       console.error('No se encontró appId o authCode en el token');
     }
-  }, [appId, authCode]);
+  }, [appId, authCode]);     
 
 
   const getStatusColor = (status) => {
@@ -124,6 +125,17 @@ export default function BasicCard() {
         return '#fff3e0';
       default:
         return '#f5f5f5';
+    }
+  };
+
+  const getStatusTextColor = (status) => {
+    switch (status) {
+      case 'REJECTED':
+        return '#d32f2f'; // Rojo oscuro para texto
+      case 'FAILED':
+        return '#e65100'; // Naranja oscuro para texto
+      default:
+        return '#616161'; // Gris oscuro para texto
     }
   };
 
@@ -146,7 +158,7 @@ export default function BasicCard() {
     }
   };
 
- const handleClose = () => {
+  const handleClose = () => {
     setAnchorEl(null);
   };
 
@@ -156,35 +168,35 @@ export default function BasicCard() {
     setSelectedTemplate(template); // Guarda el template seleccionado en el estado
   };
 
-    // Función para manejar el clic en eliminar
-    const handleDeleteClick = () => {
-      console.log("Template a eliminar:", selectedTemplate); // Verifica el template en el estado
-      setDeleteModalOpen(true); // Abre el modal
-      handleClose(); // Cierra el menú
-    };
+  // Función para manejar el clic en eliminar
+  const handleDeleteClick = () => {
+    console.log("Template a eliminar:", selectedTemplate); // Verifica el template en el estado
+    setDeleteModalOpen(true); // Abre el modal
+    handleClose(); // Cierra el menú
+  };
 
-    // Función para cancelar la eliminación
-    const handleDeleteCancel = () => {
+  // Función para cancelar la eliminación
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setSelectedTemplate(null);
+  };
+
+  // Función para confirmar la eliminación
+  const handleDeleteConfirm = async () => {
+    try {
+      // Aquí iría tu lógica para eliminar la plantilla
+      console.log('Eliminando plantilla:', selectedTemplate);
+
+      // Cierra el modal y limpia el estado
       setDeleteModalOpen(false);
       setSelectedTemplate(null);
-    };
-  
-    // Función para confirmar la eliminación
-    const handleDeleteConfirm = async () => {
-      try {
-        // Aquí iría tu lógica para eliminar la plantilla
-        console.log('Eliminando plantilla:', selectedTemplate);
-  
-        // Cierra el modal y limpia el estado
-        setDeleteModalOpen(false);
-        setSelectedTemplate(null);
-  
-        // Opcional: Recargar la lista de plantillas
-        await fetchTemplates();
-      } catch (error) {
-        console.error('Error al eliminar la plantilla:', error);
-      }
-    };
+
+      // Opcional: Recargar la lista de plantillas
+      await fetchTemplates();
+    } catch (error) {
+      console.error('Error al eliminar la plantilla:', error);
+    }
+  };
 
   // Estilo personalizado para el menú
   const StyledMenu = styled((props) => (
@@ -279,7 +291,6 @@ export default function BasicCard() {
         </Button>
       </Box>
 
-
       {/* Lista de tarjetas */}<Box sx={{ p: 3 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>
           Últimas plantillas creadas
@@ -302,18 +313,19 @@ export default function BasicCard() {
             >
               <CardContent sx={{ p: 0 }}>
 
-                
+
                 {/* Header Template Name */}<Box sx={{ p: 2, pb: 0 }}>
                   <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 0 }}>
                     {template.elementName}
                   </Typography>
 
-                  
-                  {/* Status badge */}<Box
+
+                  {/* Status badge */}
+                  <Box
                     sx={{
                       display: 'inline-flex',
                       alignItems: 'center',
-                      backgroundColor: '#FEF2F2',
+                      backgroundColor: getStatusColor(template.status), // Color de fondo dinámico
                       borderRadius: 1,
                       px: 1,
                       py: 0.5,
@@ -326,12 +338,12 @@ export default function BasicCard() {
                         width: 8,
                         height: 8,
                         borderRadius: '50%',
-                        backgroundColor: '#EF4444',
+                        backgroundColor: '#EF4444', // Puedes hacer este color dinámico también si lo deseas
                         mr: 0.5
                       }}
                     />
 
-                    <Typography variant="caption" sx={{ color: '#EF4444', fontWeight: 500 }}>
+                    <Typography variant="caption" sx={{ color: getStatusTextColor(template.status), fontWeight: 500 }}>
                       {template.status}
                     </Typography>
                   </Box>
@@ -351,7 +363,7 @@ export default function BasicCard() {
                     </Typography>
                   </Box>
 
-                  
+
                   {/* Tipo badge */}<Box
                     sx={{
                       display: 'inline-flex',
@@ -467,8 +479,9 @@ export default function BasicCard() {
           ))}
         </Box>
       </Box>
-            {/* Modal de Eliminación */}
-            <DeleteModal
+
+      {/* Modal de Eliminación */}
+      <DeleteModal
         open={deleteModalOpen}
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
