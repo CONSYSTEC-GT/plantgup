@@ -176,8 +176,8 @@ const TemplateAll = () => {
     <Box>
       <Box sx={{ display: 'flex' }}>
         <Box sx={{ flexGrow: 1, p: 3 }}>
-          {/* Título */}
-          <Typography variant="h4" gutterBottom>
+
+          {/* Título */}<Typography variant="h4" gutterBottom>
             Catálogo de Plantillas
           </Typography>
 
@@ -186,66 +186,155 @@ const TemplateAll = () => {
               <Card
                 key={template.id}
                 sx={{
-                  width: 300,
-                  backgroundColor: getStatusColor(template.status),
+                  maxWidth: 300,
+                  height: 500, // Fija la altura a 480px
                   borderRadius: 3,
-                  boxShadow: 3,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  transition: "transform 0.2s ease-in-out",
-                  "&:hover": { transform: "scale(1.02)" },
+                  border: '1px solid #e0e0e0',
+                  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
+                  overflow: 'visible',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    {template.elementName}
-                  </Typography>
-                  <Typography color="textSecondary" gutterBottom>
-                    Status: {template.status}
-                  </Typography>
-                  <Typography variant="body2" gutterBottom>
-                    Category: {template.category}
-                  </Typography>
-                  <Typography variant="body2" gutterBottom>
-                    Type: {template.templateType}
-                  </Typography>
-                  <Typography variant="body2">
-                    {template.data}
-                  </Typography>
-                  {template.reason && (
-                    <Typography
-                      color="error"
-                      variant="caption"
-                      display="block"
-                      sx={{ mt: 1 }}
+                <CardContent sx={{ p: 0 }}>
+
+
+                  {/* Header Template Name */}<Box sx={{ p: 2, pb: 0 }}>
+                    <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 0 }}>
+                      {template.elementName}
+                    </Typography>
+
+
+                    {/* Status badge */}
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        backgroundColor: getStatusColor(template.status), // Color de fondo dinámico
+                        borderRadius: 1,
+                        px: 1,
+                        py: 0.5,
+                        mb: 1
+                      }}
                     >
-                      Reason: {template.reason}
+                      <Box
+                        component="span"
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          backgroundColor: '#EF4444', // Puedes hacer este color dinámico también si lo deseas
+                          mr: 0.5
+                        }}
+                      />
+
+                      <Typography variant="caption" sx={{ color: getStatusTextColor(template.status), fontWeight: 500 }}>
+                        {template.status}
+                      </Typography>
+                    </Box>
+
+                    {/* Categoria badge */}<Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        backgroundColor: '#F3F4F6',
+                        borderRadius: 1,
+                        px: 1,
+                        py: 0.5,
+                      }}
+                    >
+                      <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                        {template.category}
+                      </Typography>
+                    </Box>
+
+
+                    {/* Tipo badge */}<Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        backgroundColor: '#F3F4F6',
+                        borderRadius: 1,
+                        px: 1,
+                        py: 0.5,
+                      }}
+                    >
+                      <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                        {template.templateType}
+                      </Typography>
+
+                    </Box>
+
+                  </Box>
+
+                  {/* Razón rechazo */}{template.reason && (
+                    <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
+                      Razón: {template.reason}
                     </Typography>
                   )}
-                  <Typography
-                    variant="caption"
-                    display="block"
-                    sx={{ mt: 1 }}
+
+                  {/* Content */}<Box
+                    sx={{
+                      p: 0,
+                      backgroundColor: '#FEF9F3', // Fondo amarillo
+                      mx: 1,
+                      my: 1,
+                      borderRadius: 2,
+                      height: 302, // Altura fija para el fondo amarillo
+                      width: 286,
+                      display: 'flex',
+                      flexDirection: 'column', // Ajusta la dirección del contenido a columna
+                      alignItems: 'center', // Centra horizontalmente
+                    }}
                   >
-                    Created: {new Date(template.createdOn).toLocaleString()}
-                  </Typography>
+                    <Box
+                      sx={{
+                        backgroundColor: 'white', // Fondo blanco para el contenido
+                        p: 2, // Padding para separar el contenido del borde
+                        mt: 2,
+                        borderRadius: 4, // Bordes redondeados
+                        width: '100%', // Ajusta el ancho para que ocupe todo el contenedor
+                        overflowY: 'auto', // Permite desplazamiento vertical si el contenido supera la altura
+                      }}
+                    >
+                      <Typography variant="body2" color="text.secondary">
+                        {template.data}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </CardContent>
 
-                <CardActions>
+                {/* Acciones */}<CardActions
+                  sx={{
+                    mt: 'auto',           // Empuja el CardActions hacia abajo
+                    justifyContent: 'flex-start', // Alinea contenido a la izquierda
+                    padding: 2,           // Añade padding consistente
+                    position: 'relative', // Necesario para el posicionamiento
+                  }}
+                >
                   <Button
                     id="manage-button"
                     aria-controls={anchorEl ? 'manage-menu' : undefined}
                     aria-haspopup="true"
                     aria-expanded={anchorEl ? 'true' : undefined}
-                    variant="contained"
+                    variant="outlined"
                     disableElevation
-                    onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}  // Pasamos el template correcto
+                    onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
                     endIcon={<KeyboardArrowDownIcon />}
-                    sx={{ borderRadius: 2, marginLeft: "auto" }}
+                    sx={{
+                      borderRadius: 1,
+                      textTransform: 'none',
+                      color: '#00C3FF',
+                      borderColor: '#E0E7FF',
+                      '&:hover': {
+                        borderColor: '#C7D2FE',
+                        backgroundColor: '#F5F5FF'
+                      }
+                    }}
                   >
                     Administrar
                   </Button>
+
                   <StyledMenu
                     id="manage-menu"
                     MenuListProps={{
@@ -256,14 +345,14 @@ const TemplateAll = () => {
                     onClose={handleClose}
                   >
                     <MenuItem
-                      onClick={() => handleEdit(selectedTemplate)} // Pasamos el selectedTemplate
+                      onClick={() => handleEdit(selectedTemplate)}
                       disableRipple
                     >
                       <EditIcon />
                       Editar
                     </MenuItem>
                     <MenuItem
-                      onClick={handleDeleteClick} // No necesitas pasar el template aquí
+                      onClick={handleDeleteClick}
                       disableRipple
                     >
                       <DeleteIcon />
@@ -271,7 +360,6 @@ const TemplateAll = () => {
                     </MenuItem>
                   </StyledMenu>
                 </CardActions>
-
               </Card>
             ))}
           </Box>
