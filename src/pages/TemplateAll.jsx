@@ -44,12 +44,12 @@ const TemplateAll = () => {
       const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
         method: 'GET',
         headers: {
-          Authorization: authCode, // Asegúrate de que el formato sea correcto
+          Authorization: authCode,
         },
       });
       const data = await response.json();
       if (data.status === 'success') {
-        setTemplates(data.templates.slice(0, 4));
+        setTemplates(data.templates);
       }
     } catch (error) {
       console.error('Error fetching templates:', error);
