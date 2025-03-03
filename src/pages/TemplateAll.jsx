@@ -77,6 +77,17 @@ const TemplateAll = () => {
     }
   };
 
+  const getStatusTextColor = (status) => {
+    switch (status) {
+      case 'REJECTED':
+        return '#d32f2f'; // Rojo oscuro para texto
+      case 'FAILED':
+        return '#e65100'; // Naranja oscuro para texto
+      default:
+        return '#616161'; // Gris oscuro para texto
+    }
+  };
+
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event, template) => {
