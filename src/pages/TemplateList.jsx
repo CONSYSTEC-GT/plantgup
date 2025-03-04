@@ -139,6 +139,17 @@ export default function BasicCard() {
     }
   };
 
+  const getStatusDotColor = (status) => {
+    switch (status) {
+      case 'REJECTED':
+        return '#EF4444'; // Rojo
+      case 'FAILED':
+        return '#FF9900'; // Naranja
+      default:
+        return '#34C759'; // Verde
+    }
+  };
+
   const handleCreateClick = () => {
     navigate('/CreateTemplatePage'); // Navega a la página para crear plantilla
   };
@@ -338,7 +349,7 @@ export default function BasicCard() {
                         width: 8,
                         height: 8,
                         borderRadius: '50%',
-                        backgroundColor: '#EF4444', // Puedes hacer este color dinámico también si lo deseas
+                        backgroundColor: getStatusDotColor(template.status),
                         mr: 0.5
                       }}
                     />

@@ -15,15 +15,15 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import DeleteModal from '../components/DeleteModal';
 
 const TemplateAproved = () => {
-//PARA MANEJAR EL STATUS DE LAS PLANTILLAS | VARIABLES
-const { templateId } = useParams();
-const [templates, setTemplates] = useState([]);
-const [filteredTemplates, setFilteredTemplates] = useState([]);
-const [activeFilter, setActiveFilter] = useState('todas');
-const [selectedTemplate, setSelectedTemplate] = useState(null);
-const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  //PARA MANEJAR EL STATUS DE LAS PLANTILLAS | VARIABLES
+  const { templateId } = useParams();
+  const [templates, setTemplates] = useState([]);
+  const [filteredTemplates, setFilteredTemplates] = useState([]);
+  const [activeFilter, setActiveFilter] = useState('todas');
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-const navigate = useNavigate(); // Inicializa useNavigate
+  const navigate = useNavigate(); // Inicializa useNavigate
 
   // Recupera el token del localStorage
   const token = localStorage.getItem('authToken');
@@ -41,34 +41,34 @@ const navigate = useNavigate(); // Inicializa useNavigate
   }
 
   //FETCH DE LAS PLANTILLAS
-const fetchTemplates = async (appId, authCode) => {
-  try {
-    const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
-      method: 'GET',
-      headers: {
-        Authorization: authCode,
-      },
-    });
-    const data = await response.json();
-    if (data.status === 'success') {
-      const sendTemplates = data.templates.filter(template => template.status === 'PENDING');
-       setTemplates(sendTemplates);
+  const fetchTemplates = async (appId, authCode) => {
+    try {
+      const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+        method: 'GET',
+        headers: {
+          Authorization: authCode,
+        },
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+        const sendTemplates = data.templates.filter(template => template.status === 'PENDING');
+        setTemplates(sendTemplates);
+      }
+    } catch (error) {
+      console.error('Error fetching templates:', error);
     }
-  } catch (error) {
-    console.error('Error fetching templates:', error);
-  }
-};
+  };
 
-// Llama a fetchTemplates cuando el componente se monta
-useEffect(() => {
-  if (appId && authCode) {
-    fetchTemplates(appId, authCode);
-  } else {
-    console.error('No se encontró appId o authCode en el token');
-  }
-}, [appId, authCode]);
+  // Llama a fetchTemplates cuando el componente se monta
+  useEffect(() => {
+    if (appId && authCode) {
+      fetchTemplates(appId, authCode);
+    } else {
+      console.error('No se encontró appId o authCode en el token');
+    }
+  }, [appId, authCode]);
 
-//MODIFICAR EL COLOR DEPENDIENDO DEL STATUS DE LAS PLANTILLAS
+  //MODIFICAR EL COLOR DEPENDIENDO DEL STATUS DE LAS PLANTILLAS
   const getStatusColor = (status) => {
     switch (status) {
       case 'REJECTED':
@@ -80,6 +80,30 @@ useEffect(() => {
     }
   };
 
+  const getStatusTextColor = (status) => {
+    switch (status) {
+      case 'REJECTED':
+        return '#d32f2f'; // Rojo oscuro para texto
+      case 'FAILED':
+        return '#e65100'; // Naranja oscuro para texto
+      default:
+        return '#616161'; // Gris oscuro para texto
+    }
+  };
+
+  const getStatusDotColor = (status) => {
+    switch (status) {
+      case 'REJECTED':
+        return '#EF4444'; // Rojo
+      case 'FAILED':
+        return '#FF9900'; // Naranja
+      default:
+        return '#34C759'; // Verde
+    }
+  };
+
+
+
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event, template) => {
@@ -87,11 +111,11 @@ useEffect(() => {
     setAnchorEl(event.currentTarget); // Abre el menú
     setSelectedTemplate(template); // Guarda el template seleccionado en el estado
   };
-  
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+
   const handleEdit = (template) => {
     // Validar el estado del template
     if (template.status === "APPROVED" || template.status === "REJECTED" || template.status === "PAUSED") {
@@ -102,38 +126,38 @@ useEffect(() => {
       alert('No se puede editar el template porque su estado no es "APPROVED", "REJECTED" o "PAUSED".');
     }
   };
-  
+
   // Función para manejar el clic en eliminar
   const handleDeleteClick = () => {
-  console.log("Template a eliminar:", selectedTemplate); // Verifica el template en el estado
-  setDeleteModalOpen(true); // Abre el modal
-  handleClose(); // Cierra el menú
+    console.log("Template a eliminar:", selectedTemplate); // Verifica el template en el estado
+    setDeleteModalOpen(true); // Abre el modal
+    handleClose(); // Cierra el menú
   };
-  
+
   // Función para cancelar la eliminación
   const handleDeleteCancel = () => {
     setDeleteModalOpen(false);
     setSelectedTemplate(null);
   };
-  
+
   // Función para confirmar la eliminación
   const handleDeleteConfirm = async () => {
     try {
       // Aquí iría tu lógica para eliminar la plantilla
       console.log('Eliminando plantilla:', selectedTemplate);
-      
+
       // Cierra el modal y limpia el estado
       setDeleteModalOpen(false);
       setSelectedTemplate(null);
-      
+
       // Opcional: Recargar la lista de plantillas
       await fetchTemplates();
     } catch (error) {
       console.error('Error al eliminar la plantilla:', error);
     }
   };
-  
- 
+
+
   // Estilo personalizado para el menú
   const StyledMenu = styled((props) => (
     <Menu
@@ -189,65 +213,155 @@ useEffect(() => {
               <Card
                 key={template.id}
                 sx={{
-                  width: 300,
-                  backgroundColor: getStatusColor(template.status),
+                  maxWidth: 300,
+                  height: 500, // Fija la altura a 480px
                   borderRadius: 3,
-                  boxShadow: 3,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  transition: "transform 0.2s ease-in-out",
-                  "&:hover": { transform: "scale(1.02)" },
+                  border: '1px solid #e0e0e0',
+                  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
+                  overflow: 'visible',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    {template.elementName}
-                  </Typography>
-                  <Typography color="textSecondary" gutterBottom>
-                    Status: {template.status}
-                  </Typography>
-                  <Typography variant="body2" gutterBottom>
-                    Category: {template.category}
-                  </Typography>
-                  <Typography variant="body2" gutterBottom>
-                    Type: {template.templateType}
-                  </Typography>
-                  <Typography variant="body2">
-                    {template.data}
-                  </Typography>
-                  {template.reason && (
-                    <Typography
-                      color="error"
-                      variant="caption"
-                      display="block"
-                      sx={{ mt: 1 }}
+                <CardContent sx={{ p: 0 }}>
+
+
+                  {/* Header Template Name */}<Box sx={{ p: 2, pb: 0 }}>
+                    <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 0 }}>
+                      {template.elementName}
+                    </Typography>
+
+
+                    {/* Status badge */}
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        backgroundColor: getStatusColor(template.status), // Color de fondo dinámico
+                        borderRadius: 1,
+                        px: 1,
+                        py: 0.5,
+                        mb: 1
+                      }}
                     >
-                      Reason: {template.reason}
+                      <Box
+                        component="span"
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          backgroundColor: getStatusDotColor(template.status),
+                          mr: 0.5
+                        }}
+                      />
+
+                      <Typography variant="caption" sx={{ color: getStatusTextColor(template.status), fontWeight: 500 }}>
+                        {template.status}
+                      </Typography>
+                    </Box>
+
+                    {/* Categoria badge */}<Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        backgroundColor: '#F3F4F6',
+                        borderRadius: 1,
+                        px: 1,
+                        py: 0.5,
+                      }}
+                    >
+                      <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                        {template.category}
+                      </Typography>
+                    </Box>
+
+
+                    {/* Tipo badge */}<Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        backgroundColor: '#F3F4F6',
+                        borderRadius: 1,
+                        px: 1,
+                        py: 0.5,
+                      }}
+                    >
+                      <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                        {template.templateType}
+                      </Typography>
+
+                    </Box>
+
+                  </Box>
+
+                  {/* Razón rechazo */}{template.reason && (
+                    <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
+                      Razón: {template.reason}
                     </Typography>
                   )}
-                  <Typography
-                    variant="caption"
-                    display="block"
-                    sx={{ mt: 1 }}
+
+                  {/* Content */}<Box
+                    sx={{
+                      p: 0,
+                      backgroundColor: '#FEF9F3', // Fondo amarillo
+                      mx: 1,
+                      my: 1,
+                      borderRadius: 2,
+                      height: 302, // Altura fija para el fondo amarillo
+                      width: 286,
+                      display: 'flex',
+                      flexDirection: 'column', // Ajusta la dirección del contenido a columna
+                      alignItems: 'center', // Centra horizontalmente
+                    }}
                   >
-                    Created: {new Date(template.createdOn).toLocaleString()}
-                  </Typography>
+                    <Box
+                      sx={{
+                        backgroundColor: 'white', // Fondo blanco para el contenido
+                        p: 2, // Padding para separar el contenido del borde
+                        mt: 2,
+                        borderRadius: 4, // Bordes redondeados
+                        width: '100%', // Ajusta el ancho para que ocupe todo el contenedor
+                        overflowY: 'auto', // Permite desplazamiento vertical si el contenido supera la altura
+                      }}
+                    >
+                      <Typography variant="body2" color="text.secondary">
+                        {template.data}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </CardContent>
-                <CardActions>
-                <Button
+
+                {/* Acciones */}<CardActions
+                  sx={{
+                    mt: 'auto',           // Empuja el CardActions hacia abajo
+                    justifyContent: 'flex-start', // Alinea contenido a la izquierda
+                    padding: 2,           // Añade padding consistente
+                    position: 'relative', // Necesario para el posicionamiento
+                  }}
+                >
+                  <Button
                     id="manage-button"
                     aria-controls={anchorEl ? 'manage-menu' : undefined}
                     aria-haspopup="true"
                     aria-expanded={anchorEl ? 'true' : undefined}
-                    variant="contained"
+                    variant="outlined"
                     disableElevation
-                    onClick={(event) => {console.log("Template seleccionado:", template); handleClick(event, template)}}  // Pasamos el template correcto
+                    onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
                     endIcon={<KeyboardArrowDownIcon />}
-                    sx={{ borderRadius: 2, marginLeft: "auto" }}
+                    sx={{
+                      borderRadius: 1,
+                      textTransform: 'none',
+                      color: '#00C3FF',
+                      borderColor: '#E0E7FF',
+                      '&:hover': {
+                        borderColor: '#C7D2FE',
+                        backgroundColor: '#F5F5FF'
+                      }
+                    }}
                   >
                     Administrar
                   </Button>
+
                   <StyledMenu
                     id="manage-menu"
                     MenuListProps={{
@@ -258,14 +372,14 @@ useEffect(() => {
                     onClose={handleClose}
                   >
                     <MenuItem
-                      onClick={() => handleEdit(selectedTemplate)} // Pasamos el selectedTemplate
+                      onClick={() => handleEdit(selectedTemplate)}
                       disableRipple
                     >
                       <EditIcon />
                       Editar
                     </MenuItem>
                     <MenuItem
-                      onClick={handleDeleteClick} // No necesitas pasar el template aquí
+                      onClick={handleDeleteClick}
                       disableRipple
                     >
                       <DeleteIcon />
