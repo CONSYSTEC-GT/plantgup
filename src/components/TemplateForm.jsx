@@ -808,16 +808,15 @@ const TemplateForm = () => {
             </FormControl>
 
             {/* Componente para subir archivos */}
-            <FileUploadComponent
-              templateType={templateType}
-              onUploadSuccess={(mediaId) => {
-                setMediaId(mediaId); // Guarda el mediaId
-                setUploadedUrl(uploadedUrl);
-                setUploadStatus("¡Archivo subido exitosamente!");
-                // No modifiques imagePreview aquí
-              }}
-              onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
-            />
+              <FileUploadComponent
+                templateType={templateType}
+                onUploadSuccess={(mediaId, uploadedUrl) => {
+                  setMediaId(mediaId); // Guarda el mediaId
+                  setUploadedUrl(uploadedUrl); // Guarda la URL
+                  setUploadStatus("¡Archivo subido exitosamente!");
+                }}
+                onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
+              />
           </Box>
         )}
 

@@ -87,26 +87,26 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       console.error('Error: No se ha seleccionado ningún archivo.');
       return;
     }
-  
+
     try {
       console.log('Iniciando proceso de subida de archivo...');
-  
+
       // Subir archivo a Gupshup
       const gupshupFormData = new FormData();
       gupshupFormData.append('file', selectedFile);
       gupshupFormData.append('file_type', selectedFile.type);
-  
+
       const gupshupUrl = `https://partner.gupshup.io/partner/app/${APP_ID}/upload/media`;
-  
+
       console.log('Preparando solicitud a Gupshup...');
       setUploadStatus('Subiendo archivo a Gupshup...');
-  
+
       const gupshupResponse = await axios.post(gupshupUrl, gupshupFormData, {
         headers: {
           Authorization: TOKEN,
         },
       });
-  
+
       console.log('Request completo a Gupshup:', {
         url: gupshupUrl,
         method: 'POST',
@@ -115,9 +115,9 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         },
         data: gupshupFormData,
       });
-  
+
       console.log('Respuesta de Gupshup recibida:', gupshupResponse);
-  
+
       if (gupshupResponse.status !== 200 || !gupshupResponse.data) {
         console.error('Error en la respuesta de Gupshup:', {
           status: gupshupResponse.status,
@@ -126,24 +126,23 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         });
         throw new Error(`Error en la respuesta de Gupshup: ${gupshupResponse.status}`);
       }
-  
+
       const gupshupData = gupshupResponse.data;
       console.log('Datos de Gupshup:', gupshupData);
-  
+
       if (!gupshupData.handleId) {
         console.error('Error: Respuesta de Gupshup incompleta o no válida');
         throw new Error('Respuesta de Gupshup incompleta o no válida');
       }
-  
+
       const mediaId = gupshupData.handleId.message;
       console.log('Media ID obtenido de Gupshup:', mediaId);
-      setMediaId(mediaId);
-  
+
       // Subir archivo al servicio propio
       console.log('Convirtiendo archivo a Base64...');
       const base64Content = await convertToBase64(selectedFile);
       console.log('Archivo convertido a Base64.');
-  
+
       const payload = {
         idEmpresa: 2,
         idBot: 257,
@@ -153,10 +152,10 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         nombreArchivo: selectedFile.name,
         contenidoArchivo: base64Content.split(',')[1],
       };
-  
+
       console.log('Preparando solicitud al servicio propio...');
       setUploadStatus('Subiendo archivo al servicio propio...');
-  
+
       const ownServiceResponse = await axios.post(
         'https://dev.talkme.pro/WsFTP/api/ftp/upload',
         payload,
@@ -167,7 +166,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
           },
         }
       );
-  
+
       console.log('Request completo al servicio propio:', {
         url: 'https://dev.talkme.pro/WsFTP/api/ftp/upload',
         method: 'POST',
@@ -178,9 +177,9 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         },
         data: payload,
       });
-  
+
       console.log('Respuesta del servicio propio recibida:', ownServiceResponse);
-  
+
       if (ownServiceResponse.status !== 200 || !ownServiceResponse.data) {
         console.error('Error en la respuesta del servicio propio:', {
           status: ownServiceResponse.status,
@@ -189,22 +188,21 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         });
         throw new Error('Error en la respuesta del servicio propio');
       }
-  
+
       const ownServiceData = ownServiceResponse.data;
       console.log('Datos del servicio propio:', ownServiceData);
-      setUploadedUrl(ownServiceData.url);
-  
+
       // Notificar al componente padre con el mediaId y la URL
       if (onUploadSuccess) {
         console.log('Notificando al componente padre con el mediaId y la URL...');
-        onUploadSuccess(mediaId, ownServiceData.url);
+        onUploadSuccess(mediaId, ownServiceData.url); // Pasar ambos valores
       }
-  
+
       console.log('Proceso de subida completado exitosamente.');
       setUploadStatus('¡Archivo subido exitosamente!');
     } catch (error) {
       console.error('Error en el proceso de subida:', error);
-  
+
       // Imprimir el request completo en caso de error
       if (error.config) {
         console.error('Request completo que causó el error:', {
@@ -214,7 +212,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
           data: error.config.data,
         });
       }
-  
+
       setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
       setUploadStatus('Error al subir el archivo');
     }
