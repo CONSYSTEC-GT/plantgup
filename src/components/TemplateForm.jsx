@@ -339,7 +339,7 @@ const TemplateForm = () => {
   };
 
   const sendRequest2 = async (templateId) => {
-    const url = "http://localhost:3004/api/plantillas/";
+    const url = "https://dev.talkme.pro/templatesGS/api/plantillas/";
     const headers = {
       "Content-Type": "application/json",
       // Agrega aquí cualquier header de autenticación si es necesario
