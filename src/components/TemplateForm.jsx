@@ -238,25 +238,52 @@ const TemplateForm = () => {
     return curlCommand;
   };
 
-  const iniciarRequest = async () => {
-    try {
-      // Hacer el primer request
-      const result = await sendRequest();
-  
-      // Verificar si el primer request fue exitoso
-      if (result && result.status === "success") {
-        // Extraer el valor de `id` del objeto `template`
-        const templateId = result.template.id;
-  
-        // Hacer el segundo request, pasando el `id` como parámetro
-        await sendRequest2(templateId);
+  // Función para determinar el tipo de archivo basado en la extensión
+const getMediaType = (url) => {
+  // Extraer la extensión del archivo de la URL
+  const extension = url.split('.').pop().toLowerCase();
+
+  // Determinar el tipo de archivo basado en la extensión
+  if (['png', 'jpeg', 'jpg', 'gif'].includes(extension)) {
+    return 'IMAGE';
+  } else if (['mp4', '3gp', 'mov', 'avi'].includes(extension)) {
+    return 'VIDEO';
+  } else if (['txt', 'xls', 'xlsx', 'doc', 'docx', 'ppt', 'pptx', 'pdf'].includes(extension)) {
+    return 'DOCUMENT';
+  } else {
+    return 'UNKNOWN'; // En caso de que la extensión no sea reconocida
+  }
+};
+
+const iniciarRequest = async () => {
+  try {
+    // Hacer el primer request
+    const result = await sendRequest();
+
+    // Verificar si el primer request fue exitoso
+    if (result && result.status === "success") {
+      // Extraer el valor de `id` del objeto `template`
+      const templateId = result.template.id;
+
+      // Hacer el segundo request, pasando el `id` como parámetro
+      const result2 = await sendRequest2(templateId);
+
+      // Verificar si el segundo request fue exitoso y obtener el ID_PLANTILLA
+      if (result2 && result2.ID_PLANTILLA) {
+        const ID_PLANTILLA = result2.ID_PLANTILLA;
+
+        // Hacer el tercer request usando el ID_PLANTILLA
+        await sendRequest3(ID_PLANTILLA);
       } else {
-        console.error("El primer request no fue exitoso o no tiene el formato esperado.");
+        console.error("El segundo request no fue exitoso o no tiene el formato esperado.");
       }
-    } catch (error) {
-      console.error("Ocurrió un error:", error);
+    } else {
+      console.error("El primer request no fue exitoso o no tiene el formato esperado.");
     }
-  };
+  } catch (error) {
+    console.error("Ocurrió un error:", error);
+  }
+};
 
   // FUNCION PARA ENVIAR LA SOLICITUD
   const sendRequest = async () => {
@@ -366,7 +393,7 @@ const TemplateForm = () => {
       NOMBRE: templateName,
       MENSAJE: message,
       TIPO_PLANTILLA: 0,
-      MEDIA: templateType,
+      MEDIA: getMediaType(uploadedUrl),
       URL: uploadedUrl,
       PANTALLAS: 0,
       ESTADO: 1,
@@ -405,6 +432,41 @@ const TemplateForm = () => {
       console.error("Error en el segundo request:", error);
       showSnackbar("❌ Error en el segundo request", "error");
       return null; // Retornar null en caso de error
+    }
+  };
+
+  const sendRequest3 = async (ID_PLANTILLA) => {
+    
+    const tipoDatoId = 1; // ID del tipo de dato (debe ser obtenido dinámicamente)
+  
+    const variablesData = variables.map((variable, index) => ({
+      ID_PLANTILLA: ID_PLANTILLA,
+      ID_PLANTILLA_TIPO_DATO: tipoDatoId,
+      NOMBRE: variable,
+      PLACEHOLDER: variableExamples[variable] || '',
+      ORDEN: index + 1,
+      CREADO_POR: "javier.colocho",
+    }));
+  
+    try {
+      const response = await fetch('http://localhost:3004/api/parametros/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(variablesData),
+      });
+  
+      if (!response.ok) {
+        const errorMessage = await response.text(); // O response.json() si es JSON
+        throw new Error(`Error al guardar las variables: ${errorMessage}`);
+      }
+      
+  
+      const result = await response.json();
+      console.log('Variables guardadas:', result);
+    } catch (error) {
+      console.error('Error:', error);
     }
   };
 
@@ -813,7 +875,7 @@ const TemplateForm = () => {
                 onUploadSuccess={(mediaId, uploadedUrl) => {
                   setMediaId(mediaId); // Guarda el mediaId
                   setUploadedUrl(uploadedUrl); // Guarda la URL
-                  setUploadStatus("¡Archivo subido exitosamente!");
+                  //setUploadStatus("¡Archivo subido exitosamente!");
                 }}
                 onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
               />

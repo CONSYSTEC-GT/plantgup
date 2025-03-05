@@ -199,7 +199,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       }
 
       console.log('Proceso de subida completado exitosamente.');
-      setUploadStatus('¡Archivo subido exitosamente!');
+      //setUploadStatus('¡Archivo subido exitosamente!');
     } catch (error) {
       console.error('Error en el proceso de subida:', error);
 
@@ -214,7 +214,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       }
 
       setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
-      setUploadStatus('Error al subir el archivo');
+      //setUploadStatus('Error al subir el archivo');
     }
   };
 
