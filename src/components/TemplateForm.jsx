@@ -444,7 +444,8 @@ const iniciarRequest = async () => {
         const variableData = {
           ID_PLANTILLA: ID_PLANTILLA,
           ID_PLANTILLA_TIPO_DATO: tipoDatoId,
-          NOMBRE: variables[i],
+          NOMBRE: variableExamples[variables[i]] || '',
+          //NOMBRE: variables[i],
           PLACEHOLDER: variableExamples[variables[i]] || '',
           ORDEN: i + 1,
           CREADO_POR: "javier.colocho",
