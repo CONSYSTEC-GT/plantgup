@@ -251,7 +251,7 @@ const getMediaType = (url) => {
   } else if (['txt', 'xls', 'xlsx', 'doc', 'docx', 'ppt', 'pptx', 'pdf'].includes(extension)) {
     return 'DOCUMENT';
   } else {
-    return 'UNKNOWN'; // En caso de que la extensión no sea reconocida
+    return 'null'; // En caso de que la extensión no sea reconocida
   }
 };
 
