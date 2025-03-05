@@ -436,37 +436,42 @@ const iniciarRequest = async () => {
   };
 
   const sendRequest3 = async (ID_PLANTILLA) => {
-    
-    const tipoDatoId = 1; // ID del tipo de dato (debe ser obtenido dinámicamente)
-  
-    const variablesData = variables.map((variable, index) => ({
-      ID_PLANTILLA: ID_PLANTILLA,
-      ID_PLANTILLA_TIPO_DATO: tipoDatoId,
-      NOMBRE: variable,
-      PLACEHOLDER: variableExamples[variable] || '',
-      ORDEN: index + 1,
-      CREADO_POR: "javier.colocho",
-    }));
+    const tipoDatoId = 1;
   
     try {
-      const response = await fetch('http://localhost:3004/api/parametros/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(variablesData),
-      });
+      const results = [];
+      for (let i = 0; i < variables.length; i++) {
+        const variableData = {
+          ID_PLANTILLA: ID_PLANTILLA,
+          ID_PLANTILLA_TIPO_DATO: tipoDatoId,
+          NOMBRE: variables[i],
+          PLACEHOLDER: variableExamples[variables[i]] || '',
+          ORDEN: i + 1,
+          CREADO_POR: "javier.colocho",
+        };
   
-      if (!response.ok) {
-        const errorMessage = await response.text(); // O response.json() si es JSON
-        throw new Error(`Error al guardar las variables: ${errorMessage}`);
+        const response = await fetch('http://localhost:3004/api/parametros/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(variableData),
+        });
+  
+        if (!response.ok) {
+          const errorMessage = await response.text();
+          throw new Error(`Error al guardar la variable ${variables[i]}: ${errorMessage}`);
+        }
+  
+        const result = await response.json();
+        results.push(result);
       }
-      
   
-      const result = await response.json();
-      console.log('Variables guardadas:', result);
+      console.log('Variables guardadas:', results);
+      return results;
     } catch (error) {
       console.error('Error:', error);
+      throw error;
     }
   };
 
