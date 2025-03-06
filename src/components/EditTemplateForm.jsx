@@ -1,6 +1,7 @@
 import React, { useState, useEffect , useRef } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { Alert, Box, Button, Container, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
+import { jwtDecode } from 'jwt-decode';
 
 import { Smile } from "react-feather"; // Icono para emojis
 import EmojiPicker from "emoji-picker-react"; // Selector de emojis
