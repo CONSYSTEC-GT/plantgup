@@ -223,7 +223,7 @@ const getMediaType = (url) => {
 const iniciarRequest = async () => {
   try {
     // Hacer el primer request
-    const result = await sendRequest();
+    const result = await sendRequest(appId, authCode);
 
     // Verificar si el primer request fue exitoso
     if (result && result.status === "success") {
