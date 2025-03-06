@@ -20,9 +20,22 @@ const DeleteModal = ({ open, onClose, onConfirm, template }) => {
   const [snackbarSeverity, setSnackbarSeverity] = useState('info');
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  const appId = 'f63360ab-87b0-44da-9790-63a0d524f9dd';
-  const authCode = 'sk_2662b472ec0f4eeebd664238d72b61da';
+  // Recupera el token del localStorage
+  const token = localStorage.getItem('authToken');
 
+  // Decodifica el token para obtener appId y authCode
+  let appId, authCode;
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      appId = decoded.app_id; // Extrae appId del token
+      authCode = decoded.auth_code; // Extrae authCode del token
+    } catch (error) {
+      console.error('Error decodificando el token:', error);
+    }
+  }
+
+  
   const showSnackbar = (message, severity) => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);

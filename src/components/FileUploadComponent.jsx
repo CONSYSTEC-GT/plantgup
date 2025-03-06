@@ -15,6 +15,24 @@ import {
 } from '@mui/material';
 
 const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImagePreview }) => {
+
+  // Recupera el token del localStorage
+  const token = localStorage.getItem('authToken');
+
+  // Decodifica el token para obtener appId y authCode
+  let appId, authCode;
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      appId = decoded.app_id; // Extrae appId del token
+      authCode = decoded.auth_code; // Extrae authCode del token
+    } catch (error) {
+      console.error('Error decodificando el token:', error);
+    }
+  }
+
+
+
   const charLimit = 60;
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
   const APP_ID = 'f63360ab-87b0-44da-9790-63a0d524f9dd';
@@ -96,14 +114,14 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       gupshupFormData.append('file', selectedFile);
       gupshupFormData.append('file_type', selectedFile.type);
 
-      const gupshupUrl = `https://partner.gupshup.io/partner/app/${APP_ID}/upload/media`;
+      const gupshupUrl = `https://partner.gupshup.io/partner/app/${appId}/upload/media`;
 
       console.log('Preparando solicitud a Gupshup...');
       setUploadStatus('Subiendo archivo a Gupshup...');
 
       const gupshupResponse = await axios.post(gupshupUrl, gupshupFormData, {
         headers: {
-          Authorization: TOKEN,
+          Authorization: authCode,
         },
       });
 
@@ -111,7 +129,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         url: gupshupUrl,
         method: 'POST',
         headers: {
-          Authorization: TOKEN,
+          Authorization: authCode,
         },
         data: gupshupFormData,
       });

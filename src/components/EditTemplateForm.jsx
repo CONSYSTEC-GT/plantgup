@@ -195,58 +195,7 @@ const EditTemplateForm = () => {
     return isValid;
   };
 
-  // CONSTRUYO EL cURL REQUEST
-  const buildCurlCommand = () => {
-    const url = "https://partner.gupshup.io/partner/app/f63360ab-87b0-44da-9790-63a0d524f9dd/templates";
-    const headers = {
-      Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
-      "Content-Type": "application/x-www-form-urlencoded",
-    };
 
-    const data = {
-      elementName: templateName,
-      category: selectedCategory.toUpperCase(),
-      languageCode: languageCode, // Usamos directamente languageCode (ya está en el formato correcto)
-      templateType: templateType.toUpperCase(),
-      vertical: vertical,
-      content: message,
-      buttons: JSON.stringify(
-        buttons.map((button) => {
-          const buttonData = {
-            type: button.type,
-            text: button.title,
-          };
-
-          if (button.type === "URL") {
-            buttonData.url = button.url;
-          } else if (button.type === "PHONE_NUMBER") {
-            buttonData.phone_number = button.phoneNumber;
-          }
-
-          return buttonData;
-        })
-      ),
-      example: example,
-      exampleMedia: mediaId,
-      enableSample: true,
-      allowTemplateCategoryChange: false,
-    };
-
-    // Solo agregar mediaId si existe
-    if (mediaId) {
-      data.exampleMedia = mediaId;
-    }
-
-    const curlCommand = `curl --location '${url}' \\
-  --header 'Authorization: ${headers.Authorization}' \\
-  --header 'Content-Type: ${headers["Content-Type"]}' \\
-  ${Object.entries(data)
-        .filter(([_, value]) => value !== undefined && value !== '') // Filtrar valores vacíos
-        .map(([key, value]) => `--data-urlencode '${key}=${value}'`)
-        .join(" \\\n")}`;
-
-    return curlCommand;
-  };
 
   const iniciarRequest = async () => {
     try {
@@ -268,18 +217,35 @@ const EditTemplateForm = () => {
     }
   };
 
+  
+
   // FUNCION PARA ENVIAR LA SOLICITUD GUPSHUP
   const sendRequest = async () => {
     // Validar campos antes de enviar la solicitud
     if (!validateFields()) {
       return; // Detener la ejecución si hay errores
     }
+
+    // Recupera el token del localStorage
+  const token = localStorage.getItem('authToken');
+
+  // Decodifica el token para obtener appId y authCode
+  let appId, authCode;
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      appId = decoded.app_id; // Extrae appId del token
+      authCode = decoded.auth_code; // Extrae authCode del token
+    } catch (error) {
+      console.error('Error decodificando el token:', error);
+    }
+  }
     
-    const appId = "f63360ab-87b0-44da-9790-63a0d524f9dd"; // Reemplázalo con la variable correcta si es dinámica
+    
     const templateId = idTemplate;
     const url = `https://partner.gupshup.io/partner/app/${appId}/templates/${templateId}`;
     const headers = {
-      Authorization: "sk_2662b472ec0f4eeebd664238d72b61da",
+      Authorization: authCode,
       "Content-Type": "application/x-www-form-urlencoded",
     };
   
