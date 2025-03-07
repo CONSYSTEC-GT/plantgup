@@ -415,8 +415,8 @@ const iniciarRequest = async () => {
           ORDEN: i + 1,
           CREADO_POR: "javier.colocho",
         };
-  
-        const response = await fetch('http://localhost:3004/api/parametros/', {
+        
+        const response = await fetch('https://dev.talkme.pro/templatesGS/api/parametros/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

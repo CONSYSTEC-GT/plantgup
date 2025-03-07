@@ -114,7 +114,7 @@ export default function BasicCard() {
     } else {
       console.error('No se encontró appId o authCode en el token');
     }
-  }, [appId, authCode]);     
+  }, [appId, authCode]);
 
 
   const getStatusColor = (status) => {
@@ -303,12 +303,13 @@ export default function BasicCard() {
       </Box>
 
       {/* Lista de tarjetas */}<Box sx={{ p: 3 }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
+        {/* TITULO */}<Typography variant="h5" fontWeight="bold" gutterBottom>
           Últimas plantillas creadas
         </Typography>
 
         <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 3, justifyContent: "center" }}>
           {templates.map((template) => (
+
             <Card
               key={template.id}
               sx={{
@@ -325,72 +326,71 @@ export default function BasicCard() {
               <CardContent sx={{ p: 0 }}>
 
 
-                {/* Header Template Name */}<Box sx={{ p: 2, pb: 0 }}>
+                {/* Header Template Name */}
+                <Box sx={{ p: 2, pb: 0 }}>
                   <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 0 }}>
                     {template.elementName}
                   </Typography>
 
-
-                  {/* Status badge */}
-                  <Box
-                    sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      backgroundColor: getStatusColor(template.status), // Color de fondo dinámico
-                      borderRadius: 1,
-                      px: 1,
-                      py: 0.5,
-                      mb: 1
-                    }}
-                  >
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+                    {/* Status badge */}
                     <Box
-                      component="span"
                       sx={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        backgroundColor: getStatusDotColor(template.status),
-                        mr: 0.5
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        backgroundColor: getStatusColor(template.status),
+                        borderRadius: 1,
+                        px: 1,
+                        py: 0.5,
                       }}
-                    />
+                    >
+                      <Box
+                        component="span"
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          backgroundColor: getStatusDotColor(template.status),
+                          mr: 0.5
+                        }}
+                      />
+                      <Typography variant="caption" sx={{ color: getStatusTextColor(template.status), fontWeight: 500 }}>
+                        {template.status}
+                      </Typography>
+                    </Box>
 
-                    <Typography variant="caption" sx={{ color: getStatusTextColor(template.status), fontWeight: 500 }}>
-                      {template.status}
-                    </Typography>
+                    {/* Categoria badge */}
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        backgroundColor: '#F3F4F6',
+                        borderRadius: 1,
+                        px: 1,
+                        py: 0.5,
+                      }}
+                    >
+                      <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                        {template.category}
+                      </Typography>
+                    </Box>
+
+                    {/* Tipo badge */}
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        backgroundColor: '#F3F4F6',
+                        borderRadius: 1,
+                        px: 1,
+                        py: 0.5,
+                      }}
+                    >
+                      <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                        {template.templateType}
+                      </Typography>
+                    </Box>
                   </Box>
-
-                  {/* Categoria badge */}<Box
-                    sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      backgroundColor: '#F3F4F6',
-                      borderRadius: 1,
-                      px: 1,
-                      py: 0.5,
-                    }}
-                  >
-                    <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
-                      {template.category}
-                    </Typography>
-                  </Box>
-
-
-                  {/* Tipo badge */}<Box
-                    sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      backgroundColor: '#F3F4F6',
-                      borderRadius: 1,
-                      px: 1,
-                      py: 0.5,
-                    }}
-                  >
-                    <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
-                      {template.templateType}
-                    </Typography>
-
-                  </Box>
-
                 </Box>
 
                 {/* Razón rechazo */}{template.reason && (
