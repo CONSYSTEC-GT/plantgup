@@ -222,73 +222,81 @@ const TemplateAll = () => {
 
 
                   {/* Header Template Name */}<Box sx={{ p: 2, pb: 0 }}>
-                    <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 0 }}>
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight={700}
+                      sx={{
+                        mb: 0,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2, // muestra máximo 2 líneas
+                        WebkitBoxOrient: 'vertical'
+                      }}
+                    >
                       {template.elementName}
                     </Typography>
 
-
-                    {/* Status badge */}
-                    <Box
-                      sx={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        backgroundColor: getStatusColor(template.status), // Color de fondo dinámico
-                        borderRadius: 1,
-                        px: 1,
-                        py: 0.5,
-                        mb: 1
-                      }}
-                    >
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+                      {/* Status badge */}
                       <Box
-                        component="span"
                         sx={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: '50%',
-                          backgroundColor: getStatusDotColor(template.status),
-                          mr: 0.5
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          backgroundColor: getStatusColor(template.status),
+                          borderRadius: 1,
+                          px: 1,
+                          py: 0.5,
                         }}
-                      />
+                      >
+                        <Box
+                          component="span"
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            backgroundColor: getStatusDotColor(template.status),
+                            mr: 0.5
+                          }}
+                        />
+                        <Typography variant="caption" sx={{ color: getStatusTextColor(template.status), fontWeight: 500 }}>
+                          {template.status}
+                        </Typography>
+                      </Box>
 
-                      <Typography variant="caption" sx={{ color: getStatusTextColor(template.status), fontWeight: 500 }}>
-                        {template.status}
-                      </Typography>
+                      {/* Categoria badge */}
+                      <Box
+                        sx={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          backgroundColor: '#F3F4F6',
+                          borderRadius: 1,
+                          px: 1,
+                          py: 0.5,
+                        }}
+                      >
+                        <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                          {template.category}
+                        </Typography>
+                      </Box>
+
+                      {/* Tipo badge */}
+                      <Box
+                        sx={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          backgroundColor: '#F3F4F6',
+                          borderRadius: 1,
+                          px: 1,
+                          py: 0.5,
+                        }}
+                      >
+                        <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                          {template.templateType}
+                        </Typography>
+                      </Box>
                     </Box>
-
-                    {/* Categoria badge */}<Box
-                      sx={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        backgroundColor: '#F3F4F6',
-                        borderRadius: 1,
-                        px: 1,
-                        py: 0.5,
-                      }}
-                    >
-                      <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
-                        {template.category}
-                      </Typography>
-                    </Box>
-
-
-                    {/* Tipo badge */}<Box
-                      sx={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        backgroundColor: '#F3F4F6',
-                        borderRadius: 1,
-                        px: 1,
-                        py: 0.5,
-                      }}
-                    >
-                      <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
-                        {template.templateType}
-                      </Typography>
-
-                    </Box>
-
                   </Box>
-
                   {/* Razón rechazo */}{template.reason && (
                     <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
                       Razón: {template.reason}

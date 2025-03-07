@@ -326,8 +326,8 @@ export default function BasicCard() {
               <CardContent sx={{ p: 0 }}>
 
 
-                {/* Header Template Name */}
-                <Box sx={{ p: 2, pb: 0 }}>
+                
+                {/* Header Template Name */}<Box sx={{ p: 2, pb: 0 }}>
                   <Typography
                     variant="subtitle1"
                     fontWeight={700}

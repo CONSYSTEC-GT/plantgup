@@ -228,7 +228,18 @@ const TemplateAproved = () => {
 
                   {/* Header Template Name */}
                   <Box sx={{ p: 2, pb: 0 }}>
-                    <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 0 }}>
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight={700}
+                      sx={{
+                        mb: 0,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2, // muestra máximo 2 líneas
+                        WebkitBoxOrient: 'vertical'
+                      }}
+                    >
                       {template.elementName}
                     </Typography>
 
