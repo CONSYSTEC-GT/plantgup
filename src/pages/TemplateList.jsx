@@ -416,6 +416,7 @@ export default function BasicCard() {
                   sx={{
                     p: 0,
                     backgroundColor: '#FEF9F3', // Fondo amarillo
+                    p: 2, // Aumentar padding para dar más espacio alrededor de la caja blanca
                     mx: 1,
                     my: 1,
                     borderRadius: 2,
