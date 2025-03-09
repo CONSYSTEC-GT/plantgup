@@ -316,6 +316,8 @@ export default function BasicCard() {
                 maxWidth: 300,
                 height: 500, // Fija la altura a 480px
                 borderRadius: 3,
+                mt: 3, // Aumenta la separación superior
+                mx: 2, // Agrega margen a los lados
                 border: '1px solid #e0e0e0',
                 boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
                 overflow: 'visible',
