@@ -331,7 +331,7 @@ const iniciarRequest = async () => {
   };
 
   const sendRequest2 = async (templateId) => {
-    const url = "https://dev.talkme.pro/templatesGS/api/plantillas/";
+    const url = "https://certificacion.talkme.pro/templatesGS/api/plantillas/";
     const headers = {
       "Content-Type": "application/json",
       // Agrega aquí cualquier header de autenticación si es necesario
@@ -416,7 +416,7 @@ const iniciarRequest = async () => {
           CREADO_POR: "javier.colocho",
         };
         
-        const response = await fetch('https://dev.talkme.pro/templatesGS/api/parametros/', {
+        const response = await fetch('https://certificacion.talkme.pro/templatesGS/api/parametros/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -315,7 +315,7 @@ const EditTemplateForm = () => {
 
   // FUNCION PARA ENVIAR EL REQUEST A TALKME
   const sendRequest2 = async (templateId) => {
-    const url = `https://dev.talkme.pro/templatesGS/api/plantillas/${templateId}`;
+    const url = `https://certificacion.talkme.pro/templatesGS/api/plantillas/${templateId}`;
     const headers = {
       "Content-Type": "application/json",
       // Agrega aquí cualquier header de autenticación si es necesario
