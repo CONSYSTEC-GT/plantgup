@@ -237,8 +237,8 @@ const EditTemplateForm = () => {
       const decoded = jwtDecode(token);
       appId = decoded.app_id; // Extrae appId del token
       authCode = decoded.auth_code; // Extrae authCode del token
-      idUsuarioTalkMe = decoded.idUsuario;
-      idNombreUsuarioTalkMe = decoded.nombreUsuario;
+      idUsuarioTalkMe = decoded.id_usuario;
+      idNombreUsuarioTalkMe = decoded.nombre_usuario;
       empresaTalkMe = decoded.empresa;
     } catch (error) {
       console.error('Error decodificando el token:', error);

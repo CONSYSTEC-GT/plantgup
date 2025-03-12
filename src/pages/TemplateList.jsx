@@ -84,8 +84,8 @@ export default function BasicCard() {
       appId = decoded.app_id; // Extrae appId del token
       authCode = decoded.auth_code; // Extrae authCode del token
       appName = decoded.app_name; // Extrae el nombre de la aplicación
-      idUsuarioTalkMe = decoded.idUsuario;
-      idNombreUsuarioTalkMe = decoded.nombreUsuario;
+      idUsuarioTalkMe = decoded.id_usuario;  // Cambiado de idUsuario a id_usuario
+      idNombreUsuarioTalkMe = decoded.nombre_usuario;  // Cambiado de nombreUsuario a nombre_usuario
       empresaTalkMe = decoded.empresa;
     } catch (error) {
       console.error('Error decodificando el token:', error);
