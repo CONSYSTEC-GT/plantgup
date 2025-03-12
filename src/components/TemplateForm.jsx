@@ -367,7 +367,7 @@ const iniciarRequest = async () => {
       NOMBRE: templateName,
       MENSAJE: message,
       TIPO_PLANTILLA: 0,
-      MEDIA: getMediaType(uploadedUrl),
+      MEDIA: getMediaType(uploadedUrl).toLowerCase(),
       URL: uploadedUrl,
       PANTALLAS: 0,
       ESTADO: 1,
