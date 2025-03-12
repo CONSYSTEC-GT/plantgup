@@ -234,7 +234,7 @@ const iniciarRequest = async () => {
       const templateId = result.template.id;
 
       // Hacer el segundo request, pasando el `id` como parámetro
-      const result2 = await sendRequest2(templateId);
+      const result2 = await sendRequest2(templateId, idNombreUsuarioTalkMe || "Sistema.TalkMe");
 
       // Verificar si el segundo request fue exitoso y obtener el ID_PLANTILLA
       if (result2 && result2.ID_PLANTILLA) {
@@ -333,7 +333,7 @@ const iniciarRequest = async () => {
     }
   };
 
-  const sendRequest2 = async (templateId) => {
+  const sendRequest2 = async (templateId, idNombreUsuario) => {
     const url = "https://certificacion.talkme.pro/templatesGS/api/plantillas/";
     const headers = {
       "Content-Type": "application/json",
@@ -368,7 +368,7 @@ const iniciarRequest = async () => {
       AUTORIZADO: 1,
       ELIMINADO: 0,
       SEGUIMIENTO_EDC: 0,
-      CREADO_POR: idNombreUsuarioTalkMe,
+      CREADO_POR: idNombreUsuario,
     };
   
     // Imprimir el segundo request
