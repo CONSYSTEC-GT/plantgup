@@ -60,7 +60,7 @@ const FileUploadComponent = ({ templateType = 'media' }) => {
       const payload = {
         idEmpresa: 2,
         idBot: 257,
-        idBotRedes: 721,
+        idBotRedes: 149,
         idUsuario: 48,
         tipoCarga: 3,
         nombreArchivo: selectedFile.name,

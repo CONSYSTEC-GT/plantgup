@@ -83,7 +83,10 @@ export default function BasicCard() {
       const decoded = jwtDecode(token);
       appId = decoded.app_id; // Extrae appId del token
       authCode = decoded.auth_code; // Extrae authCode del token
-      appName = decoded.app_name;
+      appName = decoded.app_name; // Extrae el nombre de la aplicación
+      idUsuarioTalkMe = decoded.idUsuario;
+      idNombreUsuarioTalkMe = decoded.nombreUsuario;
+      empresaTalkMe = decoded.empresa;
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }

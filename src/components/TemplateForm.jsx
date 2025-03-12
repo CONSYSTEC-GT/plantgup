@@ -215,6 +215,9 @@ const getMediaType = (url) => {
       const decoded = jwtDecode(token);
       appId = decoded.app_id; // Extrae appId del token
       authCode = decoded.auth_code; // Extrae authCode del token
+      idUsuarioTalkMe = decoded.idUsuario;
+      idNombreUsuarioTalkMe = decoded.nombreUsuario;
+      empresaTalkMe = decoded.empresa;
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
@@ -340,9 +343,9 @@ const iniciarRequest = async () => {
     // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
     let ID_PLANTILLA_CATEGORIA;
     if (selectedCategory === "marketing") {
-      ID_PLANTILLA_CATEGORIA = 17;
+      ID_PLANTILLA_CATEGORIA = 13;
     } else if (selectedCategory === "utility") {
-      ID_PLANTILLA_CATEGORIA = 18;
+      ID_PLANTILLA_CATEGORIA = 14;
     } else {
       console.error("Categoría no válida:", selectedCategory);
       showSnackbar("❌ Categoría no válida", "error");
@@ -353,7 +356,7 @@ const iniciarRequest = async () => {
     const data = {
       ID_PLANTILLA: null,
       ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
-      ID_BOT_REDES: 721,
+      ID_BOT_REDES: 149,
       ID_INTERNO: templateId,
       NOMBRE: templateName,
       MENSAJE: message,
@@ -365,7 +368,7 @@ const iniciarRequest = async () => {
       AUTORIZADO: 1,
       ELIMINADO: 0,
       SEGUIMIENTO_EDC: 0,
-      CREADO_POR: "javier.colocho",
+      CREADO_POR: idNombreUsuarioTalkMe,
     };
   
     // Imprimir el segundo request
@@ -413,7 +416,7 @@ const iniciarRequest = async () => {
           //NOMBRE: variables[i],
           PLACEHOLDER: variableExamples[variables[i]] || '',
           ORDEN: i + 1,
-          CREADO_POR: "javier.colocho",
+          CREADO_POR: "Sistema.TalkMe",
         };
         
         const response = await fetch('https://certificacion.talkme.pro/templatesGS/api/parametros/', {

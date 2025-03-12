@@ -237,6 +237,8 @@ const EditTemplateForm = () => {
       const decoded = jwtDecode(token);
       appId = decoded.app_id; // Extrae appId del token
       authCode = decoded.auth_code; // Extrae authCode del token
+      idNombreUsuarioTalkMe = decoded.nombreUsuario;
+      empresaTalkMe = decoded.empresa;
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
@@ -324,9 +326,9 @@ const EditTemplateForm = () => {
         // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
         let ID_PLANTILLA_CATEGORIA;
         if (selectedCategory === "marketing") {
-          ID_PLANTILLA_CATEGORIA = 17;
+          ID_PLANTILLA_CATEGORIA = 13;
         } else if (selectedCategory === "utility") {
-          ID_PLANTILLA_CATEGORIA = 18;
+          ID_PLANTILLA_CATEGORIA = 14;
         } else {
           console.error("Categoría no válida:", selectedCategory);
           showSnackbar("❌ Categoría no válida", "error");
@@ -336,12 +338,12 @@ const EditTemplateForm = () => {
     // Crear un objeto con los datos
     const data = { 
       ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
-      ID_BOT_REDES: 721,
+      ID_BOT_REDES: 149,
       ID_INTERNO: templateId,
       NOMBRE: templateName,
       MENSAJE: message,
       TIPO_PLANTILLA: templateType,
-      MODIFICADO_POR: "javier.colocho",
+      MODIFICADO_POR: idNombreUsuarioTalkMe,
     };
   
     // Imprimir el segundo request
@@ -543,7 +545,7 @@ const EditTemplateForm = () => {
       const payload = {
         idEmpresa: 2,
         idBot: 257,
-        idBotRedes: 721,
+        idBotRedes: 149,
         idUsuario: 48,
         tipoCarga: 3,
         nombreArchivo: file.name,
@@ -551,11 +553,11 @@ const EditTemplateForm = () => {
       };
 
       try {
-        const response = await fetch('https://dev.talkme.pro/WsFTP/api/ftp/upload', {
+        const response = await fetch('https://certificacion.talkme.pro/WsFTP/api/ftp/upload', {
           method: 'POST',
           headers: {
             'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
-            'Origin': 'https://dev.talkme.pro/',
+            'Origin': 'https://certificacion.talkme.pro/',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(payload),
