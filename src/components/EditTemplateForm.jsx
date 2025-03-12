@@ -231,12 +231,13 @@ const EditTemplateForm = () => {
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
-  let appId, authCode;
+  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
   if (token) {
     try {
       const decoded = jwtDecode(token);
       appId = decoded.app_id; // Extrae appId del token
       authCode = decoded.auth_code; // Extrae authCode del token
+      idUsuarioTalkMe = decoded.idUsuario;
       idNombreUsuarioTalkMe = decoded.nombreUsuario;
       empresaTalkMe = decoded.empresa;
     } catch (error) {
