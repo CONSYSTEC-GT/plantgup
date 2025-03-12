@@ -218,6 +218,12 @@ const getMediaType = (url) => {
       idUsuarioTalkMe = decoded.idUsuario;
       idNombreUsuarioTalkMe = decoded.nombreUsuario;
       empresaTalkMe = decoded.empresa;
+      console.log('appId:', appId);
+      console.log('authCode:', authCode);
+      console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
+      console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
+      console.log('empresaTalkMe:', empresaTalkMe);
+    
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
@@ -333,7 +339,7 @@ const iniciarRequest = async () => {
     }
   };
 
-  const sendRequest2 = async (templateId, idNombreUsuario) => {
+  const sendRequest2 = async (templateId, idNombreUsuarioTalkMe) => {
     const url = "https://certificacion.talkme.pro/templatesGS/api/plantillas/";
     const headers = {
       "Content-Type": "application/json",
@@ -368,7 +374,7 @@ const iniciarRequest = async () => {
       AUTORIZADO: 1,
       ELIMINADO: 0,
       SEGUIMIENTO_EDC: 0,
-      CREADO_POR: idNombreUsuario,
+      CREADO_POR: idNombreUsuarioTalkMe,
     };
   
     // Imprimir el segundo request
