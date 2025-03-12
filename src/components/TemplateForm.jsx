@@ -278,7 +278,7 @@ const iniciarRequest = async () => {
       data.append("header", header);
     }
   
-    if (footer) {
+    if (footer) { 
       data.append("footer", footer);
     }
   
