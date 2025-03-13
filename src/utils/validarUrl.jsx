@@ -24,8 +24,8 @@ export const isValidURL = (url) => {
     }
   };
   
-  // Función de validación y actualización para integrar en tu código
-  export const updateButtonWithValidation = (buttonId, field, value) => {
+  // Modificada para recibir las funciones de actualización como parámetros
+  export const updateButtonWithValidation = (buttonId, field, value, setButtons, setValidationErrors) => {
     if (field === "url") {
       const isValid = isValidURL(value);
       

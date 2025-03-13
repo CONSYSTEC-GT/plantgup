@@ -617,6 +617,7 @@ const iniciarRequest = async () => {
       ]);
     }
   };
+  
   const updateButton = (id, key, value) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
@@ -624,6 +625,7 @@ const iniciarRequest = async () => {
       )
     );
   };
+  
   const removeButton = (id) => {
     setButtons(buttons.filter((button) => button.id !== id));
   };
@@ -1078,7 +1080,13 @@ const iniciarRequest = async () => {
                   <TextField
                     label="URL"
                     value={button.url || ''}
-                    onChange={(e) => updateButtonWithValidation(button.id, "url", e.target.value)}
+                    onChange={(e) => updateButtonWithValidation(
+                      button.id,
+                      "url",
+                      e.target.value,
+                      setButtons,
+                      setValidationErrors
+                    )}
                     fullWidth
                     error={validationErrors[button.id] !== undefined}
                     helperText={validationErrors[button.id]}
