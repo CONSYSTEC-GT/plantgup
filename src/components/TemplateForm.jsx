@@ -677,6 +677,7 @@ const iniciarRequest = async () => {
       previewFooter = previewFooter.replaceAll(variable, example);
       previewText = previewText.replaceAll(variable, example);
     });
+  }
 
   const handleUpdateExample = (variable, value) => {
     setVariableExamples(prevExamples => ({
