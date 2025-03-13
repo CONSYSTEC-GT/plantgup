@@ -20,7 +20,8 @@ import Phone from '@mui/icons-material/Phone';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
-import parseTemplateContent from '../utils/parseTemplateContent';
+import { parseTemplateContent } from "../utils/templateParser"; // Asegúrate de que la ruta sea la correcta
+
 
 // Componente reutilizable para las tarjetas
 const TemplateCard = ({ title, subtitle, description, onEdit, onDelete, whatsappStyle }) => (
