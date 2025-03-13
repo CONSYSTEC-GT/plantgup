@@ -669,12 +669,14 @@ const iniciarRequest = async () => {
 
   // Función para previsualizar el mensaje con ejemplos aplicados
   const previewMessage = () => {
+    let previewHeader = header;
+    let previewFooter = footer;
     let previewText = message;
     Object.entries(variableExamples).forEach(([variable, example]) => {
+      previewHeader = previewHeader.replaceAll(variable, example);
+      previewFooter = previewFooter.replaceAll(variable, example);
       previewText = previewText.replaceAll(variable, example);
     });
-    return previewText;
-  };
 
   const handleUpdateExample = (variable, value) => {
     setVariableExamples(prevExamples => ({
@@ -1219,7 +1221,12 @@ const iniciarRequest = async () => {
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {header}
               </Typography>
-
+              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
+                {example}
+              </Typography>
+              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
+                {footer}
+              </Typography>
 
               <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
                 {new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: true })}
