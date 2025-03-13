@@ -1175,8 +1175,6 @@ const iniciarRequest = async () => {
               Vista previa
             </Typography>
 
-
-
             {/* Vista previa de la imagen */}
             {imagePreview && (
               <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
@@ -1199,11 +1197,6 @@ const iniciarRequest = async () => {
             {/* Muestra el estado de la subida */}
             {uploadStatus && <p>{uploadStatus}</p>}
 
-            
-              
-
-            
-
             {/* Mensaje de WhatsApp */}
             <Box
               sx={{
@@ -1219,12 +1212,7 @@ const iniciarRequest = async () => {
                 boxShadow: 1,
               }}
             >
-              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
-                {header}
-              </Typography>
-              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
-                {example}
-              </Typography>
+
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {footer}
               </Typography>
