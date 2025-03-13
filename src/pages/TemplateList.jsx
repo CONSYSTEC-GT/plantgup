@@ -14,9 +14,9 @@ import FindInPageIcon from '@mui/icons-material/FindInPage';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import ArrowForward from '@mui/icons-material';
-import Link from '@mui/icons-material';
-import Phone from '@mui/icons-material';
+import ArrowForward from '@mui/icons-material/ArrowForward';
+import Link from '@mui/icons-material/Link';
+import Phone from '@mui/icons-material/Phone';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
