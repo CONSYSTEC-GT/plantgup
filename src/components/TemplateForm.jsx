@@ -595,8 +595,10 @@ const iniciarRequest = async () => {
     }
   };
 
-  const handleHeaderChange = (event) => {
-    setHeader(event.target.value);
+  const handleHeaderChange = (e) => {
+    if (e.target.value.length <= charLimit){
+      setHeader(e.target.value)
+    }
   };
 
   //FOOTER PLANTILLA
@@ -1212,6 +1214,13 @@ const iniciarRequest = async () => {
                 boxShadow: 1,
               }}
             >
+              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
+                {header}
+              </Typography>
+
+              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
+                {message}
+              </Typography>
 
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {footer}
