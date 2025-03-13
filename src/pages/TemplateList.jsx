@@ -16,10 +16,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowForward from '@mui/icons-material';
 import Link from '@mui/icons-material';
-import Phonefrom from '@mui/icons-material';
+import Phone from '@mui/icons-material';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
+import parseTemplateContent from '../utils/parseTemplateContent';
 
 // Componente reutilizable para las tarjetas
 const TemplateCard = ({ title, subtitle, description, onEdit, onDelete, whatsappStyle }) => (
