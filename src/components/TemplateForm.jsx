@@ -19,6 +19,9 @@ import AddIcon from '@mui/icons-material/Add';
 
 
 import FileUploadComponent from './FileUploadComponent';
+import { updateButtonWithValidation } from '../utils/validarUrl';
+import { isValidURL } from '../utils/validarUrl';
+import { updateButtonWithValidation } from '../utils/validarUrl';
 
 
 const TemplateForm = () => {
@@ -34,6 +37,7 @@ const TemplateForm = () => {
   const [header, setHeader] = useState("");
   const [footer, setFooter] = useState("");
   const [buttons, setButtons] = useState([]);
+  const [validationErrors, setValidationErrors] = useState({});
   const [example, setExample] = useState("");
   const [exampleMedia, setExampleMedia] = useState("");
 
@@ -1029,7 +1033,13 @@ const iniciarRequest = async () => {
             Elija los botones que se agregarán a la plantilla. Puede elegir hasta 10 botones.
           </FormHelperText>
 
-          <Button variant="contained" startIcon={<AddIcon />} onClick={addButton} disabled={buttons.length >= maxButtons} sx={{ mt: 3, mb: 3 }}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={addButton}
+            disabled={buttons.length >= maxButtons || Object.keys(validationErrors).length > 0}
+            sx={{ mt: 3, mb: 3 }}
+          >
             Agregar botón
           </Button>
 
@@ -1070,9 +1080,11 @@ const iniciarRequest = async () => {
                 {button.type === "URL" && (
                   <TextField
                     label="URL"
-                    value={button.url}
-                    onChange={(e) => updateButton(button.id, "url", e.target.value)}
+                    value={button.url || ''}
+                    onChange={(e) => updateButtonWithValidation(button.id, "url", e.target.value)}
                     fullWidth
+                    error={validationErrors[button.id] !== undefined}
+                    helperText={validationErrors[button.id]}
                   />
                 )}
 
