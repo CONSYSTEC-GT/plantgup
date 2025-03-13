@@ -40,8 +40,8 @@ const EditTemplateForm = () => {
         if (templateData.containerMeta) {
           try {
             const meta = JSON.parse(templateData.containerMeta);
-            setMessage(meta.data || "");
-            setHeader(meta.data || "");
+            setMessage(meta.data || ""); 
+            setHeader(meta.header || "");
             setFooter(meta.footer || "");
             setExample(meta.sampleText || "");
     

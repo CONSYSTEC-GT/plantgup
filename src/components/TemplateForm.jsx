@@ -187,8 +187,6 @@ const TemplateForm = () => {
     return isValid;
   };
 
-
-
   // Función para determinar el tipo de archivo basado en la extensión
 const getMediaType = (url) => {
   // Extraer la extensión del archivo de la URL
@@ -1195,6 +1193,12 @@ const iniciarRequest = async () => {
             {/* Muestra el estado de la subida */}
             {uploadStatus && <p>{uploadStatus}</p>}
 
+            
+              
+
+            
+
+            {/* Mensaje de WhatsApp */}
             <Box
               sx={{
                 bgcolor: "#ffffff",
@@ -1212,24 +1216,6 @@ const iniciarRequest = async () => {
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {header}
               </Typography>
-
-            </Box>
-
-            {/* Mensaje de WhatsApp */}
-            <Box
-              sx={{
-                bgcolor: "#ffffff",
-                p: 1,
-                borderRadius: 2,
-                alignSelf: "flex",
-                maxWidth: "100%",
-                minHeight: "40px",
-                display: "flex",
-                flexDirection: "column",
-                gap: 0.5,
-                boxShadow: 1,
-              }}
-            >
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {example}
               </Typography>
