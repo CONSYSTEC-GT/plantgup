@@ -1163,6 +1163,8 @@ const iniciarRequest = async () => {
               Vista previa
             </Typography>
 
+
+
             {/* Vista previa de la imagen */}
             {imagePreview && (
               <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
@@ -1184,6 +1186,26 @@ const iniciarRequest = async () => {
             )}
             {/* Muestra el estado de la subida */}
             {uploadStatus && <p>{uploadStatus}</p>}
+
+            <Box
+              sx={{
+                bgcolor: "#ffffff",
+                p: 1,
+                borderRadius: 2,
+                alignSelf: "flex",
+                maxWidth: "100%",
+                minHeight: "40px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 0.5,
+                boxShadow: 1,
+              }}
+            >
+              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
+                {header}
+              </Typography>
+
+            </Box>
 
             {/* Mensaje de WhatsApp */}
             <Box
