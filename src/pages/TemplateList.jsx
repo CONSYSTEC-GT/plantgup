@@ -14,6 +14,9 @@ import FindInPageIcon from '@mui/icons-material/FindInPage';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ArrowForward from '@mui/icons-material';
+import Link from '@mui/icons-material';
+import Phonefrom from '@mui/icons-material';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
@@ -329,10 +332,8 @@ export default function BasicCard() {
               }}
             >
               <CardContent sx={{ p: 0 }}>
-
-
-                
-                {/* Header Template Name */}<Box sx={{ p: 2, pb: 0 }}>
+                {/* Header Template Name */}
+                <Box sx={{ p: 2, pb: 0 }}>
                   <Typography
                     variant="subtitle1"
                     fontWeight={700}
@@ -409,15 +410,16 @@ export default function BasicCard() {
                   </Box>
                 </Box>
 
-                {/* Razón rechazo */}{template.reason && (
+                {/* Razón rechazo */}
+                {template.reason && (
                   <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
                     Razón: {template.reason}
                   </Typography>
                 )}
 
-                {/* Content */}<Box
+                {/* Content */}
+                <Box
                   sx={{
-                    p: 0,
                     backgroundColor: '#FEF9F3', // Fondo amarillo
                     p: 2, // Aumentar padding para dar más espacio alrededor de la caja blanca
                     mx: 1,
@@ -438,11 +440,52 @@ export default function BasicCard() {
                       borderRadius: 4, // Bordes redondeados
                       width: '100%', // Ajusta el ancho para que ocupe todo el contenedor
                       overflowY: 'auto', // Permite desplazamiento vertical si el contenido supera la altura
+                      display: 'flex',
+                      flexDirection: 'column',
+                      flex: 1
                     }}
                   >
                     <Typography variant="body2" color="text.secondary">
-                      {template.data}
+                      {/* Render text content, replacing variables with placeholders */}
+                      {parseTemplateContent(template.data).text}
                     </Typography>
+
+                    {/* Botones */}
+                    <Stack spacing={1} sx={{ mt: 2 }}>
+                      {parseTemplateContent(template.data).buttons.map((button, index) => (
+                        <Box
+                          key={index}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "flex-start",
+                            gap: 1,
+                            border: "1px solid #ccc",
+                            borderRadius: "20px",
+                            p: 1,
+                            backgroundColor: "#ffffff",
+                            boxShadow: 1,
+                            cursor: "pointer",
+                            "&:hover": {
+                              backgroundColor: "#f5f5f5",
+                            },
+                          }}
+                        >
+                          {button.type === "QUICK_REPLY" && (
+                            <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
+                          )}
+                          {button.type === "URL" && (
+                            <Link sx={{ fontSize: "16px", color: "#075e54" }} />
+                          )}
+                          {button.type === "PHONE_NUMBER" && (
+                            <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
+                          )}
+                          <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
+                            {button.title}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Stack>
                   </Box>
                 </Box>
               </CardContent>
