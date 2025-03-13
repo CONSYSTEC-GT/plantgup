@@ -19,7 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 
 import FileUploadComponent from './FileUploadComponent';
-import { updateButtonWithValidation } from '../utils/validarUrl';
+import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
 
 const TemplateForm = () => {
 
