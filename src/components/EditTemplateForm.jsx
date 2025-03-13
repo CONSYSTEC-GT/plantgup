@@ -502,9 +502,7 @@ const EditTemplateForm = () => {
   const MAX_IMG_SIZE = 5 * 1024 * 1024; // 5 MB en bytes
   const [error, setError] = useState(''); // Estado para manejar errores
 
-  const handleHeaderChange = (event) => {
-    setHeader(event.target.value);
-  };
+
 
   const handleMediaTypeChange = (event) => {
     setMediaType(event.target.value);
@@ -580,6 +578,10 @@ const EditTemplateForm = () => {
     reader.readAsDataURL(file); // Leer el archivo como Data URL (Base64)
   };
 
+  //HEADER PLANTILLA
+  const handleHeaderChange = (event) => {
+    setHeader(event.target.value);
+  };
 
   //FOOTER PLANTILLA
   const handleFooterChange = (e) => {
@@ -587,6 +589,7 @@ const EditTemplateForm = () => {
       setFooter(e.target.value);
     }
   };
+
   const charLimit = 60;
   const maxButtons = 10;
 

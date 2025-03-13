@@ -567,9 +567,7 @@ const iniciarRequest = async () => {
   const MAX_IMG_SIZE = 5 * 1024 * 1024; // 5 MB en bytes
   const [error, setError] = useState(''); // Estado para manejar errores
 
-  const handleHeaderChange = (event) => {
-    setHeader(event.target.value);
-  };
+
 
   const handleMediaTypeChange = (event) => {
     setMediaType(event.target.value);
@@ -597,12 +595,17 @@ const iniciarRequest = async () => {
     }
   };
 
+  const handleHeaderChange = (event) => {
+    setHeader(event.target.value);
+  };
+
   //FOOTER PLANTILLA
   const handleFooterChange = (e) => {
     if (e.target.value.length <= charLimit) {
       setFooter(e.target.value);
     }
   };
+  
   const charLimit = 60;
   const maxButtons = 10;
 
@@ -1216,12 +1219,7 @@ const iniciarRequest = async () => {
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {header}
               </Typography>
-              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
-                {example}
-              </Typography>
-              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
-                {footer}
-              </Typography>
+
 
               <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
                 {new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: true })}
