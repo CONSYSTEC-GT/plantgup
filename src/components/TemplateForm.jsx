@@ -1177,27 +1177,51 @@ const iniciarRequest = async () => {
               Vista previa
             </Typography>
 
-            {/* Vista previa de la imagen */}
-            {imagePreview && (
-              <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
-                {imagePreview.includes("image") && (
-                  <img src={imagePreview} alt="Vista previa" style={{ width: "100%", borderRadius: 2 }} />
-                )}
+            {templateType === 'TEXT' ? (
+    // Vista previa para encabezado de texto
+    <Box sx={{ bgcolor: "#ffffff", p: 2, borderRadius: 2, boxShadow: 1 }}>
+      <Typography 
+        variant="body1" 
+        color="text.primary" 
+        sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}
+      >
+        {header || 'No hay texto de encabezado'}
+      </Typography>
+    </Box>
+  ) : (
+    // Vista previa para encabezado de imagen/media
+    imagePreview ? (
+      <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
+        {imagePreview.includes("image") && (
+          <img src={imagePreview} alt="Vista previa" style={{ width: "100%", borderRadius: 2 }} />
+        )}
 
-                {imagePreview.includes("video") && (
-                  <video controls width="100%">
-                    <source src={imagePreview} />
-                    Tu navegador no soporta este formato de video.
-                  </video>
-                )}
+        {imagePreview.includes("video") && (
+          <video controls width="100%">
+            <source src={imagePreview} />
+            Tu navegador no soporta este formato de video.
+          </video>
+        )}
 
-                {imagePreview.includes("pdf") && (
-                  <iframe src={imagePreview} width="100%" height="500px"></iframe>
-                )}
-              </Box>
-            )}
-            {/* Muestra el estado de la subida */}
-            {uploadStatus && <p>{uploadStatus}</p>}
+        {imagePreview.includes("pdf") && (
+          <iframe src={imagePreview} width="100%" height="500px"></iframe>
+        )}
+      </Box>
+    ) : (
+      <Box sx={{ bgcolor: "#ffffff", p: 2, borderRadius: 2, boxShadow: 1, textAlign: "center" }}>
+        <Typography variant="body2" color="text.secondary">
+          No hay archivo seleccionado
+        </Typography>
+      </Box>
+    )
+  )}
+  
+  {/* Muestra el estado de la subida */}
+  {uploadStatus && (
+    <Typography variant="caption" color={uploadStatus.includes("exitosamente") ? "success.main" : "text.secondary"} sx={{ mt: 1, display: "block" }}>
+      {uploadStatus}
+    </Typography>
+  )}
 
             {/* Mensaje de WhatsApp */}
             <Box
@@ -1214,9 +1238,6 @@ const iniciarRequest = async () => {
                 boxShadow: 1,
               }}
             >
-              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
-                {header}
-              </Typography>
 
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {message}
