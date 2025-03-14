@@ -1191,23 +1191,20 @@ const iniciarRequest = async () => {
             {/* Vista previa de la imagen */}
             {imagePreview && (
               <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
-                {typeof imagePreview === "string" && imagePreview.startsWith("data:image") && (
-                  <img src={imagePreview} alt="Vista previa" style={{ width: "100%", borderRadius: 2 }}
-                   />
-                )}
-                {console.log (imagePreview)}
-
-
-                {imagePreview.includes("video") && (
+                {typeof imagePreview === "string" && imagePreview.startsWith("data:image") ? (
+                  <img
+                    src={imagePreview}
+                    alt="Vista previa"
+                    style={{ width: "100%", borderRadius: 2, display: "block" }}
+                  />
+                ) : imagePreview.includes("video") ? (
                   <video controls width="100%">
                     <source src={imagePreview} />
                     Tu navegador no soporta este formato de video.
                   </video>
-                )}
-
-                {imagePreview.includes("pdf") && (
+                ) : imagePreview.includes("pdf") ? (
                   <iframe src={imagePreview} width="100%" height="500px"></iframe>
-                )}
+                ) : null}
               </Box>
             )}
             {/* Muestra el estado de la subida */}
