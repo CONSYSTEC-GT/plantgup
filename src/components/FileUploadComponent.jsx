@@ -15,7 +15,7 @@ import {
   Alert
 } from '@mui/material';
 
-const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImagePreview }) => {
+const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImagePreview, onHeaderChange }) => {
 
   // Recupera el token del localStorage
   const token = localStorage.getItem('authToken');
@@ -54,8 +54,12 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
 
   // Manejadores de eventos
-  const handleHeaderChange = (event) => {
-    setHeader(event.target.value);
+  const handleHeaderChange = (e) => {
+    const newHeader = e.target.value;
+    setHeader(newHeader);
+    
+    // Añade esta línea para notificar al componente padre
+    if (onHeaderChange) onHeaderChange(newHeader);
   };
 
   const handleMediaTypeChange = (event) => {

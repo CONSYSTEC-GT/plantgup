@@ -839,8 +839,7 @@ const iniciarRequest = async () => {
           </FormControl>
         </Box>
 
-        {/* Header*/} {templateType === 'TEXT' ? (
-          
+        {/* Header*/} {templateType === 'TEXT' ? ( 
           <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <FormControl fullWidth>
               <FormLabel>
@@ -877,6 +876,7 @@ const iniciarRequest = async () => {
                   //setUploadStatus("¡Archivo subido exitosamente!");
                 }}
                 onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
+                onHeaderChange={(newHeader) => setHeader(newHeader)} // Nueva prop
               />
           </Box>
         )}
