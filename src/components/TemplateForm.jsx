@@ -1192,8 +1192,10 @@ const iniciarRequest = async () => {
             {imagePreview && (
               <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
                 {typeof imagePreview === "string" && imagePreview.startsWith("data:image") && (
-                  <img src={imagePreview} alt="Vista previa" style={{ width: "100%", borderRadius: 2 }} />
+                  <img src={imagePreview} alt="Vista previa" style={{ width: "100%", borderRadius: 2 }}
+                   />
                 )}
+                {console.log (imagePreview)}
 
 
                 {imagePreview.includes("video") && (
