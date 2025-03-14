@@ -1227,7 +1227,7 @@ const iniciarRequest = async () => {
             >
 
               <Typography variant="body1" color="text.primary">
-                {header || "Sin encabezado"}
+                {header}
               </Typography>
 
 

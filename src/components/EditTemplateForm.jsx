@@ -396,7 +396,7 @@ const EditTemplateForm = () => {
   const categories = [
     {
       id: 'MARKETING',
-      title: 'MARKETING',
+      title: 'Marketing',
       description: 'Envía ofertas promocionales, ofertas de productos y más para aumentar la conciencia y el compromiso.',
       icon: <EmailOutlinedIcon />,
     },
