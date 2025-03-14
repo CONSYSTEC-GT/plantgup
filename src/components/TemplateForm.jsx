@@ -188,23 +188,23 @@ const TemplateForm = () => {
   };
 
   // Función para determinar el tipo de archivo basado en la extensión
-  const getMediaType = (url) => {
-    // Extraer la extensión del archivo de la URL
-    const extension = url.split('.').pop().toLowerCase();
+const getMediaType = (url) => {
+  // Extraer la extensión del archivo de la URL
+  const extension = url.split('.').pop().toLowerCase();
 
-    // Determinar el tipo de archivo basado en la extensión
-    if (['png', 'jpeg', 'jpg', 'gif'].includes(extension)) {
-      return 'IMAGE';
-    } else if (['mp4', '3gp', 'mov', 'avi'].includes(extension)) {
-      return 'VIDEO';
-    } else if (['txt', 'xls', 'xlsx', 'doc', 'docx', 'ppt', 'pptx', 'pdf'].includes(extension)) {
-      return 'DOCUMENT';
-    } else {
-      return 'null'; // En caso de que la extensión no sea reconocida
-    }
-  };
+  // Determinar el tipo de archivo basado en la extensión
+  if (['png', 'jpeg', 'jpg', 'gif'].includes(extension)) {
+    return 'IMAGE';
+  } else if (['mp4', '3gp', 'mov', 'avi'].includes(extension)) {
+    return 'VIDEO';
+  } else if (['txt', 'xls', 'xlsx', 'doc', 'docx', 'ppt', 'pptx', 'pdf'].includes(extension)) {
+    return 'DOCUMENT';
+  } else {
+    return 'null'; // En caso de que la extensión no sea reconocida
+  }
+};
 
-  // Recupera el token del localStorage
+// Recupera el token del localStorage
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
@@ -222,41 +222,41 @@ const TemplateForm = () => {
       console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
       console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
       console.log('empresaTalkMe:', empresaTalkMe);
-
+    
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
   }
 
-  const iniciarRequest = async () => {
-    try {
-      // Hacer el primer request
-      const result = await sendRequest(appId, authCode);
+const iniciarRequest = async () => {
+  try {
+    // Hacer el primer request
+    const result = await sendRequest(appId, authCode);
 
-      // Verificar si el primer request fue exitoso
-      if (result && result.status === "success") {
-        // Extraer el valor de `id` del objeto `template`
-        const templateId = result.template.id;
+    // Verificar si el primer request fue exitoso
+    if (result && result.status === "success") {
+      // Extraer el valor de `id` del objeto `template`
+      const templateId = result.template.id;
 
-        // Hacer el segundo request, pasando el `id` como parámetro
-        const result2 = await sendRequest2(templateId, idNombreUsuarioTalkMe || "Sistema.TalkMe");
+      // Hacer el segundo request, pasando el `id` como parámetro
+      const result2 = await sendRequest2(templateId, idNombreUsuarioTalkMe || "Sistema.TalkMe");
 
-        // Verificar si el segundo request fue exitoso y obtener el ID_PLANTILLA
-        if (result2 && result2.ID_PLANTILLA) {
-          const ID_PLANTILLA = result2.ID_PLANTILLA;
+      // Verificar si el segundo request fue exitoso y obtener el ID_PLANTILLA
+      if (result2 && result2.ID_PLANTILLA) {
+        const ID_PLANTILLA = result2.ID_PLANTILLA;
 
-          // Hacer el tercer request usando el ID_PLANTILLA
-          await sendRequest3(ID_PLANTILLA);
-        } else {
-          console.error("El segundo request no fue exitoso o no tiene el formato esperado.");
-        }
+        // Hacer el tercer request usando el ID_PLANTILLA
+        await sendRequest3(ID_PLANTILLA);
       } else {
-        console.error("El primer request no fue exitoso o no tiene el formato esperado.");
+        console.error("El segundo request no fue exitoso o no tiene el formato esperado.");
       }
-    } catch (error) {
-      console.error("Ocurrió un error:", error);
+    } else {
+      console.error("El primer request no fue exitoso o no tiene el formato esperado.");
     }
-  };
+  } catch (error) {
+    console.error("Ocurrió un error:", error);
+  }
+};
 
   // FUNCION PARA ENVIAR LA SOLICITUD
   const sendRequest = async (appId, authCode) => {
@@ -264,13 +264,13 @@ const TemplateForm = () => {
     if (!validateFields()) {
       return; // Detener la ejecución si hay errores
     }
-
+  
     const url = `https://partner.gupshup.io/partner/app/${appId}/templates`;
     const headers = {
       Authorization: authCode,
       "Content-Type": "application/x-www-form-urlencoded",
     };
-
+  
     const data = new URLSearchParams();
     data.append("elementName", templateName);
     data.append("category", selectedCategory.toUpperCase());
@@ -278,55 +278,55 @@ const TemplateForm = () => {
     data.append("templateType", templateType.toUpperCase());
     data.append("vertical", vertical);
     data.append("content", message);
-
+  
     if (header) {
       data.append("header", header);
     }
-
-    if (footer) {
+  
+    if (footer) { 
       data.append("footer", footer);
     }
-
+  
     if (mediaId) {
       data.append("exampleMedia", mediaId);
     }
-
+  
     const formattedButtons = buttons.map((button) => {
       const buttonData = {
         type: button.type,
         text: button.title,
       };
-
+  
       if (button.type === "URL") {
         buttonData.url = button.url;
       } else if (button.type === "PHONE_NUMBER") {
         buttonData.phone_number = button.phoneNumber;
       }
-
+  
       return buttonData;
     });
-
+  
     data.append("buttons", JSON.stringify(formattedButtons));
     data.append("example", example);
     data.append("enableSample", true);
     data.append("allowTemplateCategoryChange", false);
-
+  
     console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
-
+  
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: headers,
         body: data,
       });
-
+  
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Error response:", errorResponse);
         showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
         return null; // Retornar null en caso de error
       }
-
+  
       const result = await response.json();
       showSnackbar("✅ Plantilla creada exitosamente", "success");
       console.log("Response: ", result);
@@ -344,7 +344,7 @@ const TemplateForm = () => {
       "Content-Type": "application/json",
       // Agrega aquí cualquier header de autenticación si es necesario
     };
-
+  
     // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
     let ID_PLANTILLA_CATEGORIA;
     if (selectedCategory === "marketing") {
@@ -375,28 +375,28 @@ const TemplateForm = () => {
       SEGUIMIENTO_EDC: 0,
       CREADO_POR: idNombreUsuarioTalkMe,
     };
-
+  
     // Imprimir el segundo request
     console.log("Segundo request enviado:", {
       url: url,
       headers: headers,
       body: data,
     });
-
+  
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(data),
       });
-
+  
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Error response:", errorResponse);
         showSnackbar(`❌ Error en el segundo request: ${errorResponse.message || "Solicitud inválida"}`, "error");
         return null; // Retornar null en caso de error
       }
-
+  
       const result = await response.json();
       showSnackbar("✅ Segundo request completado exitosamente", "success");
       console.log("Response del segundo request: ", result);
@@ -410,7 +410,7 @@ const TemplateForm = () => {
 
   const sendRequest3 = async (ID_PLANTILLA) => {
     const tipoDatoId = 1;
-
+  
     try {
       const results = [];
       for (let i = 0; i < variables.length; i++) {
@@ -423,7 +423,7 @@ const TemplateForm = () => {
           ORDEN: i + 1,
           CREADO_POR: "Sistema.TalkMe",
         };
-
+        
         const response = await fetch('https://certificacion.talkme.pro/templatesGS/api/parametros/', {
           method: 'POST',
           headers: {
@@ -431,16 +431,16 @@ const TemplateForm = () => {
           },
           body: JSON.stringify(variableData),
         });
-
+  
         if (!response.ok) {
           const errorMessage = await response.text();
           throw new Error(`Error al guardar la variable ${variables[i]}: ${errorMessage}`);
         }
-
+  
         const result = await response.json();
         results.push(result);
       }
-
+  
       console.log('Variables guardadas:', results);
       return results;
     } catch (error) {
@@ -596,7 +596,7 @@ const TemplateForm = () => {
   };
 
   const handleHeaderChange = (e) => {
-    if (e.target.value.length <= charLimit) {
+    if (e.target.value.length <= charLimit){
       setHeader(e.target.value)
     }
   };
@@ -607,7 +607,7 @@ const TemplateForm = () => {
       setFooter(e.target.value);
     }
   };
-
+  
   const charLimit = 60;
   const maxButtons = 10;
 
@@ -620,7 +620,7 @@ const TemplateForm = () => {
       ]);
     }
   };
-
+  
   const updateButton = (id, key, value) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
@@ -628,7 +628,7 @@ const TemplateForm = () => {
       )
     );
   };
-
+  
   const removeButton = (id) => {
     setButtons(buttons.filter((button) => button.id !== id));
   };
@@ -859,15 +859,15 @@ const TemplateForm = () => {
             </FormControl>
 
             {/* Componente para subir archivos */}
-            <FileUploadComponent
-              templateType={templateType}
-              onUploadSuccess={(mediaId, uploadedUrl) => {
-                setMediaId(mediaId); // Guarda el mediaId
-                setUploadedUrl(uploadedUrl); // Guarda la URL
-                //setUploadStatus("¡Archivo subido exitosamente!");
-              }}
-              onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
-            />
+              <FileUploadComponent
+                templateType={templateType}
+                onUploadSuccess={(mediaId, uploadedUrl) => {
+                  setMediaId(mediaId); // Guarda el mediaId
+                  setUploadedUrl(uploadedUrl); // Guarda la URL
+                  //setUploadStatus("¡Archivo subido exitosamente!");
+                }}
+                onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
+              />
           </Box>
         )}
 
@@ -1177,56 +1177,27 @@ const TemplateForm = () => {
               Vista previa
             </Typography>
 
-            {/* Vista previa del encabezado (texto o imagen) */}
-            <Box sx={{ mt: 3, bgcolor: "#f9f9f9", p: 2, borderRadius: 2, border: "1px solid #eee" }}>
-              <Typography variant="subtitle2" gutterBottom>Vista previa del encabezado:</Typography>
+            {/* Vista previa de la imagen */}
+            {imagePreview && (
+              <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
+                {imagePreview.includes("image") && (
+                  <img src={imagePreview} alt="Vista previa" style={{ width: "100%", borderRadius: 2 }} />
+                )}
 
-              {templateType === 'TEXT' ? (
-                // Vista previa para encabezado de texto
-                <Box sx={{ bgcolor: "#ffffff", p: 2, borderRadius: 2, boxShadow: 1 }}>
-                  <Typography
-                    variant="body1"
-                    color="text.primary"
-                    sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}
-                  >
-                    {header || 'No hay texto de encabezado'}
-                  </Typography>
-                </Box>
-              ) : (
-                // Vista previa para encabezado de imagen/media
-                imagePreview ? (
-                  <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
-                    {imagePreview.includes("image") && (
-                      <img src={imagePreview} alt="Vista previa" style={{ width: "100%", borderRadius: 2 }} />
-                    )}
+                {imagePreview.includes("video") && (
+                  <video controls width="100%">
+                    <source src={imagePreview} />
+                    Tu navegador no soporta este formato de video.
+                  </video>
+                )}
 
-                    {imagePreview.includes("video") && (
-                      <video controls width="100%">
-                        <source src={imagePreview} />
-                        Tu navegador no soporta este formato de video.
-                      </video>
-                    )}
-
-                    {imagePreview.includes("pdf") && (
-                      <iframe src={imagePreview} width="100%" height="500px"></iframe>
-                    )}
-                  </Box>
-                ) : (
-                  <Box sx={{ bgcolor: "#ffffff", p: 2, borderRadius: 2, boxShadow: 1, textAlign: "center" }}>
-                    <Typography variant="body2" color="text.secondary">
-                      No hay archivo seleccionado
-                    </Typography>
-                  </Box>
-                )
-              )}
-
-              {/* Muestra el estado de la subida */}
-              {uploadStatus && (
-                <Typography variant="caption" color={uploadStatus.includes("exitosamente") ? "success.main" : "text.secondary"} sx={{ mt: 1, display: "block" }}>
-                  {uploadStatus}
-                </Typography>
-              )}
-            </Box>
+                {imagePreview.includes("pdf") && (
+                  <iframe src={imagePreview} width="100%" height="500px"></iframe>
+                )}
+              </Box>
+            )}
+            {/* Muestra el estado de la subida */}
+            {uploadStatus && <p>{uploadStatus}</p>}
 
             {/* Mensaje de WhatsApp */}
             <Box
@@ -1243,6 +1214,11 @@ const TemplateForm = () => {
                 boxShadow: 1,
               }}
             >
+
+              <Typography variant="body1" color="text.primary">
+                {header || "Sin encabezado"}
+              </Typography>
+
 
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {message}
