@@ -110,6 +110,9 @@ const EditTemplateForm = () => {
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
 
+  const [uploadStatus, setUploadStatus] = useState('');
+  const [imagePreview, setImagePreview] = useState(null);
+
   const templateNameRef = useRef(null);
   const templateTypeRef = useRef(null);
   const languageCodeRef = useRef(null);
