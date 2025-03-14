@@ -461,7 +461,7 @@ const iniciarRequest = async () => {
   const categories = [
     {
       id: 'MARKETING',
-      title: 'MARKETING',
+      title: 'Marketing',
       description: 'Envía ofertas promocionales, ofertas de productos y más para aumentar la conciencia y el compromiso.',
       icon: <EmailOutlinedIcon />,
     },
@@ -1191,9 +1191,10 @@ const iniciarRequest = async () => {
             {/* Vista previa de la imagen */}
             {imagePreview && (
               <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
-                {imagePreview.includes("image") && (
+                {typeof imagePreview === "string" && imagePreview.startsWith("data:image") && (
                   <img src={imagePreview} alt="Vista previa" style={{ width: "100%", borderRadius: 2 }} />
                 )}
+
 
                 {imagePreview.includes("video") && (
                   <video controls width="100%">

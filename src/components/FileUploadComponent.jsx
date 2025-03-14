@@ -106,7 +106,6 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
     reader.readAsDataURL(file);
   };
 
-
   const handleUpload = async () => {
     if (!selectedFile) {
       setError('Por favor, selecciona un archivo.');
@@ -246,9 +245,9 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
   const getAcceptedFileTypes = () => {
     const types = {
-      image: 'image/*',
-      video: 'video/*',
-      document: '.pdf,.doc,.docx,.txt'
+      image: '.jpeg, .png',
+      video: '.mp4, .3gp',
+      document: '.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt'
     };
     //console.log('Tipos de archivo aceptados:', types[mediaType] || '');
     return types[mediaType] || '';
