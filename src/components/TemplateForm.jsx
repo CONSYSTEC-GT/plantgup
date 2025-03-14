@@ -535,11 +535,18 @@ const iniciarRequest = async () => {
 
   //TIPO PLANTILLA
   const handleTemplateTypeChange = (event) => {
-    setTemplateType(event.target.value);
-    setHeader(""); // Resetear el header al cambiar de tipo
+    const newType = event.target.value;
+    setTemplateType(newType);
+  
+    // Solo limpiar header si el nuevo tipo NO es "TEXT"
+    if (newType !== "TEXT") {
+      setHeader("");
+    }
+  
     setMediaType("");
     setMediaURL("");
-    if (e.target.value.trim() === "") {
+  
+    if (newType.trim() === "") {
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
     } else {
@@ -547,6 +554,7 @@ const iniciarRequest = async () => {
       setTemplateTypeHelperText("");
     }
   };
+  
 
   const handleHeaderTemplateTypeChange = (event) => {
     setTemplateType(event.target.value);
@@ -599,6 +607,7 @@ const iniciarRequest = async () => {
     if (e.target.value.length <= charLimit){
       setHeader(e.target.value)
     }
+    console.log("Nuevo valor de header:", event.target.value);
   };
 
   //FOOTER PLANTILLA
@@ -831,6 +840,7 @@ const iniciarRequest = async () => {
         </Box>
 
         {/* Header*/} {templateType === 'TEXT' ? (
+          
           <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <FormControl fullWidth>
               <FormLabel>
@@ -870,6 +880,7 @@ const iniciarRequest = async () => {
               />
           </Box>
         )}
+        
 
         {/*Idioma --data-urlencodeo languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
