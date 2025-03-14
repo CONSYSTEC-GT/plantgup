@@ -1,4 +1,4 @@
-import React, { useState, useEffect , useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { Alert, Box, Button, Container, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
@@ -25,44 +25,44 @@ const EditTemplateForm = () => {
   const navigate = useNavigate();
   const templateData = location.state?.template || {}; // Datos del template
 
-    // Cargar los datos en el formulario al montar el componente
-    useEffect(() => {
-      if (templateData) {
-        setTemplateName(templateData.elementName || "");
-        setSelectedCategory(templateData.category || "");
-        setTemplateType(templateData.templateType || "");
-        setLanguageCode(templateData.languageCode || "");
-        setVertical(templateData.vertical || "");
-        setIdTemplate(templateData.id);
-        
-    
-        // Parsear containerMeta si existe
-        if (templateData.containerMeta) {
-          try {
-            const meta = JSON.parse(templateData.containerMeta);
-            setMessage(meta.data || ""); 
-            setHeader(meta.header || "");
-            setFooter(meta.footer || "");
-            setExample(meta.sampleText || "");
-    
-            // Cargar botones si existen en containerMeta
-            if (meta.buttons && Array.isArray(meta.buttons)) {
-              setButtons(
-                meta.buttons.map((button, index) => ({
-                  id: index, // Genera un ID único para la key
-                  title: button.text || "", // Título del botón
-                  type: button.type || "QUICK_REPLY", // Tipo de botón
-                  url: button.url || "", // URL si aplica
-                  phoneNumber: button.phone_number || "", // Número de teléfono si aplica
-                }))
-              );
-            }
-          } catch (error) {
-            console.error("Error al parsear containerMeta:", error);
+  // Cargar los datos en el formulario al montar el componente
+  useEffect(() => {
+    if (templateData) {
+      setTemplateName(templateData.elementName || "");
+      setSelectedCategory(templateData.category || "");
+      setTemplateType(templateData.templateType || "");
+      setLanguageCode(templateData.languageCode || "");
+      setVertical(templateData.vertical || "");
+      setIdTemplate(templateData.id);
+
+
+      // Parsear containerMeta si existe
+      if (templateData.containerMeta) {
+        try {
+          const meta = JSON.parse(templateData.containerMeta);
+          setMessage(meta.data || "");
+          setHeader(meta.header || "");
+          setFooter(meta.footer || "");
+          setExample(meta.sampleText || "");
+
+          // Cargar botones si existen en containerMeta
+          if (meta.buttons && Array.isArray(meta.buttons)) {
+            setButtons(
+              meta.buttons.map((button, index) => ({
+                id: index, // Genera un ID único para la key
+                title: button.text || "", // Título del botón
+                type: button.type || "QUICK_REPLY", // Tipo de botón
+                url: button.url || "", // URL si aplica
+                phoneNumber: button.phone_number || "", // Número de teléfono si aplica
+              }))
+            );
           }
+        } catch (error) {
+          console.error("Error al parsear containerMeta:", error);
         }
       }
-    }, [templateData]);
+    }
+  }, [templateData]);
 
   //CAMPOS DEL FORMULARIO PARA EL REQUEST
   const [templateName, setTemplateName] = useState("");
@@ -202,12 +202,12 @@ const EditTemplateForm = () => {
     try {
       // Hacer el primer request
       const result = await sendRequest();
-  
+
       // Verificar si el primer request fue exitoso
       if (result && result.status === "success") {
         // Extraer el valor de `id` del objeto `template`
         const templateId = result.template.id;
-  
+
         // Hacer el segundo request, pasando el `id` como parámetro
         await sendRequest2(templateId);
       } else {
@@ -218,7 +218,7 @@ const EditTemplateForm = () => {
     }
   };
 
-  
+
 
   // FUNCION PARA ENVIAR LA SOLICITUD GUPSHUP
   const sendRequest = async () => {
@@ -228,31 +228,31 @@ const EditTemplateForm = () => {
     }
 
     // Recupera el token del localStorage
-  const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('authToken');
 
-  // Decodifica el token para obtener appId y authCode
-  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
-  if (token) {
-    try {
-      const decoded = jwtDecode(token);
-      appId = decoded.app_id; // Extrae appId del token
-      authCode = decoded.auth_code; // Extrae authCode del token
-      idUsuarioTalkMe = decoded.id_usuario;
-      idNombreUsuarioTalkMe = decoded.nombre_usuario;
-      empresaTalkMe = decoded.empresa;
-    } catch (error) {
-      console.error('Error decodificando el token:', error);
+    // Decodifica el token para obtener appId y authCode
+    let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        appId = decoded.app_id; // Extrae appId del token
+        authCode = decoded.auth_code; // Extrae authCode del token
+        idUsuarioTalkMe = decoded.id_usuario;
+        idNombreUsuarioTalkMe = decoded.nombre_usuario;
+        empresaTalkMe = decoded.empresa;
+      } catch (error) {
+        console.error('Error decodificando el token:', error);
+      }
     }
-  }
-    
-    
+
+
     const templateId = idTemplate;
     const url = `https://partner.gupshup.io/partner/app/${appId}/templates/${templateId}`;
     const headers = {
       Authorization: authCode,
       "Content-Type": "application/x-www-form-urlencoded",
     };
-  
+
     const data = new URLSearchParams();
     data.append("elementName", templateName);
     data.append("category", selectedCategory.toUpperCase());
@@ -260,7 +260,7 @@ const EditTemplateForm = () => {
     data.append("templateType", templateType.toUpperCase());
     data.append("vertical", vertical);
     data.append("content", message);
-  
+
     if (header) data.append("header", header);
     if (footer) data.append("footer", footer);
     if (mediaId) data.append("mediaId", mediaId);
@@ -271,37 +271,37 @@ const EditTemplateForm = () => {
         type: button.type,
         text: button.title,
       };
-  
+
       if (button.type === "URL") {
         buttonData.url = button.url;
       } else if (button.type === "PHONE_NUMBER") {
         buttonData.phone_number = button.phoneNumber;
       }
-  
+
       return buttonData;
     });
-  
+
     data.append("buttons", JSON.stringify(formattedButtons));
     data.append("example", example);
     data.append("enableSample", true);
     data.append("allowTemplateCategoryChange", false);
-  
+
     console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
-  
+
     try {
       const response = await fetch(url, {
         method: "PUT",
         headers: headers,
         body: data,
       });
-  
+
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Error response:", errorResponse);
         showSnackbar(`❌ Error al actualizar la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
         return;
       }
-  
+
       const result = await response.json();
       showSnackbar("✅ Plantilla actualizada exitosamente", "success");
       console.log("Response: ", result);
@@ -324,20 +324,20 @@ const EditTemplateForm = () => {
       // Agrega aquí cualquier header de autenticación si es necesario
     };
 
-        // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
-        let ID_PLANTILLA_CATEGORIA;
-        if (selectedCategory === "marketing") {
-          ID_PLANTILLA_CATEGORIA = 13;
-        } else if (selectedCategory === "utility") {
-          ID_PLANTILLA_CATEGORIA = 14;
-        } else {
-          console.error("Categoría no válida:", selectedCategory);
-          showSnackbar("❌ Categoría no válida", "error");
-          return null; // Retornar null si la categoría no es válida
-        }
-  
+    // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
+    let ID_PLANTILLA_CATEGORIA;
+    if (selectedCategory === "MARKETING") {
+      ID_PLANTILLA_CATEGORIA = 13;
+    } else if (selectedCategory === "UTILITY") {
+      ID_PLANTILLA_CATEGORIA = 14;
+    } else {
+      console.error("Categoría no válida:", selectedCategory);
+      showSnackbar("❌ Categoría no válida", "error");
+      return null; // Retornar null si la categoría no es válida
+    }
+
     // Crear un objeto con los datos
-    const data = { 
+    const data = {
       ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
       ID_BOT_REDES: 149,
       ID_INTERNO: templateId,
@@ -346,28 +346,28 @@ const EditTemplateForm = () => {
       TIPO_PLANTILLA: templateType,
       MODIFICADO_POR: idNombreUsuarioTalkMe,
     };
-  
+
     // Imprimir el segundo request
     console.log("Segundo request enviado:", {
       url: url,
       headers: headers,
       body: data,
     });
-  
+
     try {
       const response = await fetch(url, {
         method: "PUT",
         headers: headers,
         body: JSON.stringify(data),
       });
-  
+
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Error response:", errorResponse);
         showSnackbar(`❌ Error en el segundo request: ${errorResponse.message || "Solicitud inválida"}`, "error");
         return null; // Retornar null en caso de error
       }
-  
+
       const result = await response.json();
       showSnackbar("✅ Segundo request completado exitosamente", "success");
       console.log("Response del segundo request: ", result);
@@ -392,8 +392,8 @@ const EditTemplateForm = () => {
   // CATEGORIAS
   const categories = [
     {
-      id: 'marketing',
-      title: 'Marketing',
+      id: 'MARKETING',
+      title: 'MARKETING',
       description: 'Envía ofertas promocionales, ofertas de productos y más para aumentar la conciencia y el compromiso.',
       icon: <EmailOutlinedIcon />,
     },
@@ -472,7 +472,7 @@ const EditTemplateForm = () => {
     setHeader(""); // Resetear el header al cambiar de tipo
     setMediaType("");
     setMediaURL("");
-  
+
     if (value.trim() === "") { // Usar la variable "value"
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
@@ -481,7 +481,7 @@ const EditTemplateForm = () => {
       setTemplateTypeHelperText("");
     }
   };
-  
+
 
   const handleHeaderTemplateTypeChange = (event) => {
     setTemplateType(event.target.value);
@@ -871,30 +871,20 @@ const EditTemplateForm = () => {
                 Encabezado
               </FormLabel>
             </FormControl>
-            <FileUploadComponent templateType={templateType} />
+
+            {/* Componente para subir archivos */}
+            <FileUploadComponent
+              templateType={templateType}
+              onUploadSuccess={(mediaId, uploadedUrl) => {
+                setMediaId(mediaId); // Guarda el mediaId
+                setUploadedUrl(uploadedUrl); // Guarda la URL
+                //setUploadStatus("¡Archivo subido exitosamente!");
+              }}
+              onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
+              onHeaderChange={(newHeader) => setHeader(newHeader)} // Nueva prop
+            />
           </Box>
         )}
-
-        {/* SUBIDA DE ARCHIVOSSSS  <FileUploadComponent onUploadSuccess={handleUploadSuccess} />*/}
-
-        {/* Header <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              Encabezado
-            </FormLabel>
-          </FormControl>
-          <TextField
-            fullWidth
-            value={header}
-            onChange={handleHeaderChange}
-            helperText={`${header.length} / ${charLimit} caracteres`}
-            sx={{ mb: 3 }}
-          />
-          <FormHelperText>
-            Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el encabezado.
-          </FormHelperText>
-        </Box>
-        */}
 
         {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
@@ -1035,7 +1025,8 @@ const EditTemplateForm = () => {
       </Box>
       </Grid>
 
-      {/* Preview (30%) */}<Grid item xs={4}>
+      {/* Preview (30%) */}
+      <Grid item xs={4}>
         <Box sx={{ position: "sticky", top: 0, height: "100vh", mt: 2, borderRadius: 2 }}>
           <Box
             sx={{
@@ -1052,7 +1043,30 @@ const EditTemplateForm = () => {
               Vista previa
             </Typography>
 
-            {/* Mensaje de WhatsApp */}<Box
+            {/* Vista previa de la imagen */}
+            {imagePreview && (
+              <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
+                {imagePreview.includes("image") && (
+                  <img src={imagePreview} alt="Vista previa" style={{ width: "100%", borderRadius: 2 }} />
+                )}
+
+                {imagePreview.includes("video") && (
+                  <video controls width="100%">
+                    <source src={imagePreview} />
+                    Tu navegador no soporta este formato de video.
+                  </video>
+                )}
+
+                {imagePreview.includes("pdf") && (
+                  <iframe src={imagePreview} width="100%" height="500px"></iframe>
+                )}
+              </Box>
+            )}
+            {/* Muestra el estado de la subida */}
+            {uploadStatus && <p>{uploadStatus}</p>}
+
+            {/* Mensaje de WhatsApp */}
+            <Box
               sx={{
                 bgcolor: "#ffffff",
                 p: 1,
@@ -1066,8 +1080,25 @@ const EditTemplateForm = () => {
                 boxShadow: 1,
               }}
             >
-              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif" }}>
+
+              <Typography variant="body1" color="text.primary">
+                {header || "Sin encabezado"}
+              </Typography>
+
+
+              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {message}
+              </Typography>
+
+              <Typography
+                variant="body1"
+                color="text.secondary" // Cambia a un color gris más claro
+                sx={{
+                  fontFamily: "Helvetica Neue, Arial, sans-serif",
+                  whiteSpace: "pre-line"
+                }}
+              >
+                {footer}
               </Typography>
 
               <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
@@ -1075,18 +1106,18 @@ const EditTemplateForm = () => {
               </Typography>
             </Box>
 
-            {/* Botones */}<Stack spacing={1} sx={{ mt: 0 }}> {/* Eliminamos el margen superior (mt) */}
+            {/* Botones */}<Stack spacing={1} sx={{ mt: 0 }}>
               {buttons.map((button) => (
                 <Box
                   key={button.id}
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "flex-start", // Alineamos a la izquierda
-                    gap: 1, // Reducimos el espacio entre elementos
+                    justifyContent: "flex-start",
+                    gap: 1,
                     border: "1px solid #ccc",
                     borderRadius: "20px",
-                    p: 1, // Reducimos el padding
+                    p: 1,
                     backgroundColor: "#ffffff",
                     boxShadow: 1,
                     cursor: "pointer",
@@ -1095,7 +1126,6 @@ const EditTemplateForm = () => {
                     },
                   }}
                 >
-                  {/* Icono pequeño según el tipo de botón */}
                   {button.type === "QUICK_REPLY" && (
                     <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
                   )}
@@ -1105,8 +1135,6 @@ const EditTemplateForm = () => {
                   {button.type === "PHONE_NUMBER" && (
                     <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
                   )}
-
-                  {/* Título del botón */}
                   <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
                     {button.title}
                   </Typography>

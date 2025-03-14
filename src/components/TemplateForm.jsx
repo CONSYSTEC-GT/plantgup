@@ -347,9 +347,9 @@ const iniciarRequest = async () => {
   
     // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
     let ID_PLANTILLA_CATEGORIA;
-    if (selectedCategory === "marketing") {
+    if (selectedCategory === "MARKETING") {
       ID_PLANTILLA_CATEGORIA = 13;
-    } else if (selectedCategory === "utility") {
+    } else if (selectedCategory === "UTILITY") {
       ID_PLANTILLA_CATEGORIA = 14;
     } else {
       console.error("Categoría no válida:", selectedCategory);
@@ -460,8 +460,8 @@ const iniciarRequest = async () => {
   // CATEGORIAS
   const categories = [
     {
-      id: 'marketing',
-      title: 'Marketing',
+      id: 'MARKETING',
+      title: 'MARKETING',
       description: 'Envía ofertas promocionales, ofertas de productos y más para aumentar la conciencia y el compromiso.',
       icon: <EmailOutlinedIcon />,
     },
@@ -1235,7 +1235,14 @@ const iniciarRequest = async () => {
                 {message}
               </Typography>
 
-              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
+              <Typography
+                variant="body1"
+                color="text.secondary" // Cambia a un color gris más claro
+                sx={{
+                  fontFamily: "Helvetica Neue, Arial, sans-serif",
+                  whiteSpace: "pre-line"
+                }}
+              >
                 {footer}
               </Typography>
 
