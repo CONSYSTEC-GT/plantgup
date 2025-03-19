@@ -1,8 +1,6 @@
-// Functions for interacting with the Gupshup API
 
-/**
- * Sends a request to create a template in Gupshup
- */
+import { showSnackbar } from "../utils/Snackbar";
+
 export const createTemplateGupshup = async (appId, authCode, templateData, validateFn) => {
     // Validar campos antes de enviar la solicitud
     if (validateFn && !validateFn()) {

@@ -65,3 +65,19 @@ export const isValidURL = (url) => {
       );
     }
   };
+
+  export const getMediaType = (url) => {
+    // Extraer la extensión del archivo de la URL
+    const extension = url.split('.').pop().toLowerCase();
+  
+    // Determinar el tipo de archivo basado en la extensión
+    if (['png', 'jpeg', 'jpg', 'gif'].includes(extension)) {
+      return 'IMAGE';
+    } else if (['mp4', '3gp', 'mov', 'avi'].includes(extension)) {
+      return 'VIDEO';
+    } else if (['txt', 'xls', 'xlsx', 'doc', 'docx', 'ppt', 'pptx', 'pdf'].includes(extension)) {
+      return 'DOCUMENT';
+    } else {
+      return 'null'; // En caso de que la extensión no sea reconocida
+    }
+  };

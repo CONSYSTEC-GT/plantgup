@@ -1,9 +1,9 @@
-// Functions for interacting with the TalkMe templates API
 
-import { getMediaType, showSnackbar } from '../utils/helpers';
+import { showSnackbar } from '../utils/Snackbar';
+import { getMediaType } from '../utils/validarUrl';
 
 /**
- * Saves template parameters to TalkMe backend
+ * Guardo la información de los parametros de la plantilla
  */
 const saveTemplateParams = async (ID_PLANTILLA, variables, variableExamples) => {
   const tipoDatoId = 1;
@@ -48,7 +48,7 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableExamples) => 
 };
 
 /**
- * Saves template information to TalkMe backend
+ * Guardo la información de la plantilla
  */
 export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableExamples = {}) => {
   const { templateName, selectedCategory, message, uploadedUrl } = templateData;
@@ -58,7 +58,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     "Content-Type": "application/json",
   };
 
-  // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
+  
   let ID_PLANTILLA_CATEGORIA;
   if (selectedCategory === "MARKETING") {
     ID_PLANTILLA_CATEGORIA = 13;
