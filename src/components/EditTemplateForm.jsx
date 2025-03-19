@@ -632,7 +632,7 @@ const EditTemplateForm = () => {
 
       {/* Notificaciones */}<Snackbar
         open={openSnackbar}
-        autoHideDuration={4000}
+        autoHideDuration={10000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >

@@ -1,8 +1,21 @@
-# React + Vite
+📌 Proyecto: Aplicación de Administrador de Plantillas
+Bienvenido a la aplicación de plantillas desarrollada para CONSYSTEC. Este proyecto está diseñado para optimizar la gestión y el uso de plantillas dentro de la organización, facilitando su administración y acceso.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🚀 Tecnologías Utilizadas
+Frontend: React + Vite + MUI
+Backend: Node.js + Express
+Base de Datos: MySQL
+Estilo y UI: Material-UI (MUI)
 
-Currently, two official plugins are available:
+✨ Funcionalidades
+✅ Gestión de plantillas (crear, editar, eliminar)
+✅ Interfaz amigable y responsive
+✅ Acceso basado en plataforma principal no accesible
+✅ Integración con API REST
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+👨‍💻 Desarrollador
+Proyecto desarrollado por Javier Colocho como parte del equipo de CONSYSTEC.
+
+📜 Licencia y Derechos de Autor
+© 2025 CONSYSTEC. Todos los derechos reservados.
+Este software es propiedad de CONSYSTEC y su uso está restringido a la empresa y sus colaboradores autorizados.

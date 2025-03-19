@@ -20,6 +20,8 @@ import AddIcon from '@mui/icons-material/Add';
 
 import FileUploadComponent from './FileUploadComponent';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
+import { createTemplateGupshup } from '../api/gupshupApi';
+import { saveTemplateToTalkMe } from '../api/templatesGSApi';
 
 const TemplateForm = () => {
 
@@ -228,7 +230,7 @@ const getMediaType = (url) => {
     }
   }
 
-const iniciarRequest = async () => {
+/* const iniciarRequest = async () => {
   try {
     // Hacer el primer request
     const result = await sendRequest(appId, authCode);
@@ -256,10 +258,10 @@ const iniciarRequest = async () => {
   } catch (error) {
     console.error("Ocurrió un error:", error);
   }
-};
+}; */
 
-  // FUNCION PARA ENVIAR LA SOLICITUD
-  const sendRequest = async (appId, authCode) => {
+  // REQUEST PARA GUPSHUP
+  /* const sendRequest = async (appId, authCode) => {
     // Validar campos antes de enviar la solicitud
     if (!validateFields()) {
       return; // Detener la ejecución si hay errores
@@ -336,9 +338,10 @@ const iniciarRequest = async () => {
       showSnackbar("❌ Error al crear la plantilla", "error");
       return null; // Retornar null en caso de error
     }
-  };
+  }; */
 
-  const sendRequest2 = async (templateId, idNombreUsuarioTalkMe) => {
+  //REQUEST PARA ENCABEZADO TALKME
+  /* const sendRequest2 = async (templateId, idNombreUsuarioTalkMe) => {
     const url = "https://certificacion.talkme.pro/templatesGS/api/plantillas/";
     const headers = {
       "Content-Type": "application/json",
@@ -406,9 +409,10 @@ const iniciarRequest = async () => {
       showSnackbar("❌ Error en el segundo request", "error");
       return null; // Retornar null en caso de error
     }
-  };
+  }; */
 
-  const sendRequest3 = async (ID_PLANTILLA) => {
+  //REQUEST PARA PARAMETROS DE VARIAB
+  /* const sendRequest3 = async (ID_PLANTILLA) => {
     const tipoDatoId = 1;
   
     try {
@@ -446,6 +450,54 @@ const iniciarRequest = async () => {
     } catch (error) {
       console.error('Error:', error);
       throw error;
+    }
+  }; */
+
+  const iniciarRequest = async () => {
+    try {
+      // Hacer el primer request a GupShup API
+      const result = await createTemplateGupshup(
+        appId, 
+        authCode, 
+        {
+          templateName,
+          selectedCategory,
+          languageCode,
+          templateType,
+          vertical,
+          message,
+          header,
+          footer,
+          mediaId,
+          buttons,
+          example
+        },
+        validateFields
+      );
+
+      // Verificar si el primer request fue exitoso
+      if (result && result.status === "success") {
+        // Extraer el valor de `id` del objeto `template`
+        const templateId = result.template.id;
+
+        // Hacer el segundo request a TalkMe API
+        const result2 = await saveTemplateToTalkMe(
+          templateId, 
+          {
+            templateName,
+            selectedCategory,
+            message,
+            uploadedUrl
+          }, 
+          idNombreUsuarioTalkMe || "Sistema.TalkMe"
+        );
+
+        // El tercer request se maneja dentro de saveTemplateToTalkMe
+      } else {
+        console.error("El primer request no fue exitoso o no tiene el formato esperado.");
+      }
+    } catch (error) {
+      console.error("Ocurrió un error:", error);
     }
   };
 
@@ -732,7 +784,7 @@ const iniciarRequest = async () => {
 
       {/* Notificaciones */}<Snackbar
         open={openSnackbar}
-        autoHideDuration={4000}
+        autoHideDuration={10000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
