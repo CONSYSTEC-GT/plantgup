@@ -807,7 +807,7 @@ const getMediaType = (url) => {
   };
 
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
-  useEffect(() => {
+/*   useEffect(() => {
     const newExample = replaceVariables(message, variableExamples);
     setExample(newExample);
     setMessage(newExample); // Ahora también actualiza message con los valores reemplazados
@@ -815,6 +815,12 @@ const getMediaType = (url) => {
 
   useEffect(() => {
     setExample(previewMessage());
+  }, [message, variableExamples]); */
+
+  // Actualizar el campo "example" cuando cambie el mensaje o las variables
+  useEffect(() => {
+    const newExample = replaceVariables(message, variableExamples);
+    setExample(newExample);
   }, [message, variableExamples]);
 
 
