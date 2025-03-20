@@ -130,4 +130,4 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   }
 };
 
-export { saveTemplateToTalkMe };
+export { saveTemplateParams };
