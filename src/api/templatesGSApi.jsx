@@ -82,7 +82,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     NOMBRE: templateName,
     MENSAJE: message,
     TIPO_PLANTILLA: 0,
-    MEDIA: getMediaType(uploadedUrl).toLowerCase(),
+    MEDIA: getMediaType(uploadedUrl),
     URL: uploadedUrl,
     PANTALLAS: 0,
     ESTADO: 1,

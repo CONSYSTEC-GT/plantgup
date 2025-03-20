@@ -68,6 +68,11 @@ export const isValidURL = (url) => {
 
   export const getMediaType = (url) => {
     // Extraer la extensión del archivo de la URL
+
+    if (!url || typeof url !== 'string') {
+      return 'null';  // o devolver algún valor predeterminado
+    }
+    
     const extension = url.split('.').pop().toLowerCase();
   
     // Determinar el tipo de archivo basado en la extensión
