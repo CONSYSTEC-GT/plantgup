@@ -57,6 +57,11 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
 
   // Obtengo la URL desde las variables de entorno
   const API_URL = import.meta.env.API_TALKME;
+
+  if (!API_URL) {
+    throw new Error("API_TALKME no está definida en las variables de entorno");
+  }
+
   const url = `${API_URL}/plantillas/`;
   const headers = {
     "Content-Type": "application/json",
