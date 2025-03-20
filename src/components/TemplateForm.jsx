@@ -1228,7 +1228,7 @@ const getMediaType = (url) => {
           </Typography>
         </Box>
 
-        {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2, display: "none" }}>
+        {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
             <FormLabel>
               *Ejemplo
