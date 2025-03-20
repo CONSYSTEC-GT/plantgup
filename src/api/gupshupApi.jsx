@@ -75,20 +75,40 @@ export const createTemplateGupshup = async (appId, authCode, templateData, valid
         headers: headers,
         body: data,
       });
-  
+    
+      console.log("Status code:", response.status);
+      console.log("Response headers:", Object.fromEntries([...response.headers.entries()]));
+    
       if (!response.ok) {
-        const errorResponse = await response.json();
-        console.error("Error response:", errorResponse);
+        // Primero obtener el texto de la respuesta
+        const errorText = await response.text();
+        
+        let errorResponse;
+        try {
+          // Intentar parsearlo como JSON
+          errorResponse = JSON.parse(errorText);
+          console.error("Error response (JSON):", errorResponse);
+        } catch (e) {
+          // Si no es JSON, usar el texto crudo
+          errorResponse = { message: "Error no JSON", raw: errorText };
+          console.error("Error response (texto):", errorText);
+        }
+        
         showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
         return null; // Retornar null en caso de error
       }
-  
+    
       const result = await response.json();
       showSnackbar("✅ Plantilla creada exitosamente", "success");
       console.log("Response: ", result);
       return result; // Retornar el resultado
     } catch (error) {
       console.error("Error en la solicitud:", error);
+      console.error("Error detallado:", {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
       showSnackbar("❌ Error al crear la plantilla", "error");
       return null; // Retornar null en caso de error
     }

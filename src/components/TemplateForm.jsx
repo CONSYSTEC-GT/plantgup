@@ -495,6 +495,7 @@ const getMediaType = (url) => {
         // El tercer request se maneja dentro de saveTemplateToTalkMe
       } else {
         console.error("El primer request no fue exitoso o no tiene el formato esperado.");
+        console.error("Resultado del primer request:", result);
       }
     } catch (error) {
       console.error("Ocurrió un error:", error);
