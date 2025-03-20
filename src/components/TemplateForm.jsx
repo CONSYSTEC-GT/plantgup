@@ -108,7 +108,7 @@ const TemplateForm = () => {
       setTemplateNameError(true);
       setTemplateNameHelperText("Este campo es requerido");
       isValid = false;
-      templateNameRef.current.focus();
+      if (templateNameRef.current) templateNameRef.current.focus();
       return isValid; // Salir de la función después del primer error
     }
 
@@ -116,7 +116,7 @@ const TemplateForm = () => {
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
       isValid = false;
-      templateTypeRef.current.focus();
+      if (templateTypeRef.current) templateTypeRef.current.focus();
       return isValid;
     }
 
@@ -124,14 +124,14 @@ const TemplateForm = () => {
       setLanguageTypeError(true);
       setLanguageTypeHelperText("Este campo es requerido");
       isValid = false;
-      languageCodeRef.current.focus();
+      if(languageCodeRef.current) languageCodeRef.current.focus();
       return isValid;
     }
 
     if (!vertical || vertical.trim() === "") {
       setetiquetaPlantillaError(true);
       isValid = false;
-      verticalRef.current.focus();
+      if(verticalRef.current) verticalRef.current.focus();
       return isValid;
     }
 
@@ -139,7 +139,7 @@ const TemplateForm = () => {
       setcontenidoPlantillaTypeError(true)
       setcontenidoPlantillaTypeHelperText("Este campo es requerido");
       isValid = false;
-      messageRef.current.focus();
+      if(messageRef.current) messageRef.current.focus();
       return isValid;
     }
 
@@ -147,7 +147,7 @@ const TemplateForm = () => {
       setejemploPlantillaError(true)
       setejemploPlantillaHelperText("Este campo es requerido");
       isValid = false;
-      exampleRef.current.focus();
+      if(exampleRef.current) exampleRef.current.focus();
       return isValid;
     }
 
@@ -155,7 +155,7 @@ const TemplateForm = () => {
       setcategoriaPlantillaError(true);
       setcategoriaPlantillaHelperText("Este campo es requerido");
       isValid = false;
-      selectedCategoryRef.current.focus();
+      if(selectedCategoryRef.current) selectedCategoryRef.current.focus();
       return isValid;
     }
 
