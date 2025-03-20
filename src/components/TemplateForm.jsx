@@ -104,67 +104,99 @@ const TemplateForm = () => {
   const validateFields = () => {
     let isValid = true;
 
+    console.log("Iniciando validación de campos...");
+
     if (!templateName || templateName.trim() === "") {
+      console.log("Error: templateName está vacío o no es válido.");
       setTemplateNameError(true);
       setTemplateNameHelperText("Este campo es requerido");
       isValid = false;
       if (templateNameRef.current) templateNameRef.current.focus();
+      console.log("Estado de isValid después de validar templateName:", isValid);
       return isValid; // Salir de la función después del primer error
+    } else {
+      console.log("templateName es válido.");
     }
 
     if (!templateType || templateType.trim() === "") {
+      console.log("Error: templateType está vacío o no es válido.");
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
       isValid = false;
       if (templateTypeRef.current) templateTypeRef.current.focus();
+      console.log("Estado de isValid después de validar templateType:", isValid);
       return isValid;
+    } else {
+      console.log("templateType es válido.");
     }
 
     if (!languageCode || languageCode.trim() === "") {
+      console.log("Error: languageCode está vacío o no es válido.");
       setLanguageTypeError(true);
       setLanguageTypeHelperText("Este campo es requerido");
       isValid = false;
-      if(languageCodeRef.current) languageCodeRef.current.focus();
+      if (languageCodeRef.current) languageCodeRef.current.focus();
+      console.log("Estado de isValid después de validar languageCode:", isValid);
       return isValid;
+    } else {
+      console.log("languageCode es válido.");
     }
 
     if (!vertical || vertical.trim() === "") {
+      console.log("Error: vertical está vacío o no es válido.");
       setetiquetaPlantillaError(true);
       isValid = false;
-      if(verticalRef.current) verticalRef.current.focus();
+      if (verticalRef.current) verticalRef.current.focus();
+      console.log("Estado de isValid después de validar vertical:", isValid);
       return isValid;
+    } else {
+      console.log("vertical es válido.");
     }
 
     if (!message || message.trim() === "") {
-      setcontenidoPlantillaTypeError(true)
+      console.log("Error: message está vacío o no es válido.");
+      setcontenidoPlantillaTypeError(true);
       setcontenidoPlantillaTypeHelperText("Este campo es requerido");
       isValid = false;
-      if(messageRef.current) messageRef.current.focus();
+      if (messageRef.current) messageRef.current.focus();
+      console.log("Estado de isValid después de validar message:", isValid);
       return isValid;
+    } else {
+      console.log("message es válido.");
     }
 
     if (!example || example.trim() === "") {
-      setejemploPlantillaError(true)
+      console.log("Error: example está vacío o no es válido.");
+      setejemploPlantillaError(true);
       setejemploPlantillaHelperText("Este campo es requerido");
       isValid = false;
-      if(exampleRef.current) exampleRef.current.focus();
+      if (exampleRef.current) exampleRef.current.focus();
+      console.log("Estado de isValid después de validar example:", isValid);
       return isValid;
+    } else {
+      console.log("example es válido.");
     }
 
     if (!selectedCategory || selectedCategory.trim() === "") {
+      console.log("Error: selectedCategory está vacío o no es válido.");
       setcategoriaPlantillaError(true);
       setcategoriaPlantillaHelperText("Este campo es requerido");
       isValid = false;
-      if(selectedCategoryRef.current) selectedCategoryRef.current.focus();
+      if (selectedCategoryRef.current) selectedCategoryRef.current.focus();
+      console.log("Estado de isValid después de validar selectedCategory:", isValid);
       return isValid;
+    } else {
+      console.log("selectedCategory es válido.");
     }
 
     // Validar que todas las variables tengan un texto de ejemplo
     if (variables.length > 0) {
+      console.log("Validando variables...");
       const newErrors = {}; // Objeto para almacenar los errores
 
       for (const variable of variables) {
         if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
+          console.log(`Error: La variable ${variable} no tiene un ejemplo válido.`);
           isValid = false;
           newErrors[variable] = "Este campo es requerido"; // Asignar mensaje de error
 
@@ -173,6 +205,7 @@ const TemplateForm = () => {
             exampleRefs.current[variable].focus();
           }
         } else {
+          console.log(`La variable ${variable} es válida.`);
           newErrors[variable] = ""; // Sin error
         }
       }
@@ -182,12 +215,18 @@ const TemplateForm = () => {
 
       // Si hay errores, detener la validación
       if (!isValid) {
+        console.log("Errores encontrados en las variables. isValid:", isValid);
         return isValid;
+      } else {
+        console.log("Todas las variables son válidas.");
       }
+    } else {
+      console.log("No hay variables para validar.");
     }
 
+    console.log("Validación completada. isValid:", isValid);
     return isValid;
-  };
+};
 
   // Función para determinar el tipo de archivo basado en la extensión
 const getMediaType = (url) => {
