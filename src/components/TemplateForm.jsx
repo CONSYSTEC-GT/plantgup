@@ -165,6 +165,18 @@ const TemplateForm = () => {
         console.log("message es válido.");
     }
 
+    if (!example || example.trim() === "") {
+        console.log("Error: example está vacío o no es válido.");
+        setejemploPlantillaError(true);
+        setejemploPlantillaHelperText("Este campo es requerido");
+        isValid = false;
+        if (exampleRef.current) exampleRef.current.focus();
+        console.log("Estado de isValid después de validar example:", isValid);
+        // No retornar aquí, continuar con la validación de otros campos
+    } else {
+        console.log("example es válido.");
+    }
+
     if (!selectedCategory || selectedCategory.trim() === "") {
         console.log("Error: selectedCategory está vacío o no es válido.");
         setcategoriaPlantillaError(true);
