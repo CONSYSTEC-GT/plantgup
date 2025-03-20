@@ -80,22 +80,17 @@ export const createTemplateGupshup = async (appId, authCode, templateData, valid
       console.log("Response headers:", Object.fromEntries([...response.headers.entries()]));
     
       if (!response.ok) {
-        // Primero obtener el texto de la respuesta
         const errorText = await response.text();
-        
         let errorResponse;
         try {
-          // Intentar parsearlo como JSON
           errorResponse = JSON.parse(errorText);
           console.error("Error response (JSON):", errorResponse);
         } catch (e) {
-          // Si no es JSON, usar el texto crudo
           errorResponse = { message: "Error no JSON", raw: errorText };
           console.error("Error response (texto):", errorText);
         }
-        
         showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
-        return null; // Retornar null en caso de error
+        throw new Error(errorResponse.message || "Error al crear la plantilla");
       }
     
       const result = await response.json();
