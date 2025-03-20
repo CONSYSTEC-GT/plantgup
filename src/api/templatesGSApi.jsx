@@ -19,8 +19,10 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableExamples) => 
         ORDEN: i + 1,
         CREADO_POR: "Sistema.TalkMe",
       };
-      
-      const response = await fetch('https://certificacion.talkme.pro/templatesGS/api/parametros/', {
+
+      // Obtengo la URL desde las variables de entorno
+      const API_URL = import.meta.env.API_TALKME;
+      const response = await fetch(`${API_URL}/parametros/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,13 +54,14 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableExamples) => 
  */
 export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableExamples = {}) => {
   const { templateName, selectedCategory, message, uploadedUrl } = templateData;
-  
-  const url = "https://certificacion.talkme.pro/templatesGS/api/plantillas/";
+
+  // Obtengo la URL desde las variables de entorno
+  const API_URL = import.meta.env.API_TALKME;
+  const url = `${API_URL}/plantillas/`;
   const headers = {
     "Content-Type": "application/json",
   };
 
-  
   let ID_PLANTILLA_CATEGORIA;
   if (selectedCategory === "MARKETING") {
     ID_PLANTILLA_CATEGORIA = 13;
@@ -113,12 +116,12 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     const result = await response.json();
     showSnackbar("✅ Segundo request completado exitosamente", "success");
     console.log("Response del segundo request: ", result);
-    
+
     // Si tenemos variables, hacer el tercer request
     if (result && result.ID_PLANTILLA && variables && variables.length > 0) {
       await saveTemplateParams(result.ID_PLANTILLA, variables, variableExamples);
     }
-    
+
     return result; // Retornar el resultado en caso de éxito
   } catch (error) {
     console.error("Error en el segundo request:", error);
@@ -127,5 +130,4 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   }
 };
 
-// Exportar ambas funciones
-export { saveTemplateParams };
+export { saveTemplateToTalkMe };
