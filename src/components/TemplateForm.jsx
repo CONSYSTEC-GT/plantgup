@@ -104,7 +104,7 @@ const TemplateForm = () => {
   const validateFields = () => {
     let isValid = true;
 
-    if (templateName.trim() === "") {
+    if (!templateName || templateName.trim() === "") {
       setTemplateNameError(true);
       setTemplateNameHelperText("Este campo es requerido");
       isValid = false;
@@ -112,7 +112,7 @@ const TemplateForm = () => {
       return isValid; // Salir de la función después del primer error
     }
 
-    if (templateType.trim() === "") {
+    if (!templateType || templateType.trim() === "") {
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
       isValid = false;
@@ -120,7 +120,7 @@ const TemplateForm = () => {
       return isValid;
     }
 
-    if (languageCode.trim() === "") {
+    if (!languageCode || languageCode.trim() === "") {
       setLanguageTypeError(true);
       setLanguageTypeHelperText("Este campo es requerido");
       isValid = false;
@@ -128,14 +128,14 @@ const TemplateForm = () => {
       return isValid;
     }
 
-    if (vertical.trim() === "") {
+    if (!vertical || vertical.trim() === "") {
       setetiquetaPlantillaError(true);
       isValid = false;
       verticalRef.current.focus();
       return isValid;
     }
 
-    if (message.trim() === "") {
+    if (!message || message.trim() === "") {
       setcontenidoPlantillaTypeError(true)
       setcontenidoPlantillaTypeHelperText("Este campo es requerido");
       isValid = false;
@@ -143,7 +143,7 @@ const TemplateForm = () => {
       return isValid;
     }
 
-    if (example.trim() === "") {
+    if (!example || example.trim() === "") {
       setejemploPlantillaError(true)
       setejemploPlantillaHelperText("Este campo es requerido");
       isValid = false;
@@ -151,7 +151,7 @@ const TemplateForm = () => {
       return isValid;
     }
 
-    if (selectedCategory.trim() === "") {
+    if (!selectedCategory || selectedCategory.trim() === "") {
       setcategoriaPlantillaError(true);
       setcategoriaPlantillaHelperText("Este campo es requerido");
       isValid = false;
