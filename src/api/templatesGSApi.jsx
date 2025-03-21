@@ -5,7 +5,7 @@ import { getMediaType } from '../utils/validarUrl';
 /**
  * Guardo la información de los parametros de la plantilla
  */
-const saveTemplateParams = async (ID_PLANTILLA, variables, variableExamples) => {
+const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions) => {
   const tipoDatoId = 1;
 
   try {
@@ -14,8 +14,8 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableExamples) => 
       const variableData = {
         ID_PLANTILLA: ID_PLANTILLA,
         ID_PLANTILLA_TIPO_DATO: tipoDatoId,
-        NOMBRE: variableExamples[variables[i]] || '',
-        PLACEHOLDER: variableExamples[variables[i]] || '',
+        NOMBRE: variableDescriptions[variables[i]] || '',
+        PLACEHOLDER: variableDescriptions[variables[i]] || '',
         ORDEN: i + 1,
         CREADO_POR: "Sistema.TalkMe",
       };
@@ -79,7 +79,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     NOMBRE: templateName,
     MENSAJE: message,
     TIPO_PLANTILLA: 0,
-    MEDIA: getMediaType(uploadedUrl),
+    MEDIA: getMediaType(uploadedUrl) ?? null,
     URL: uploadedUrl,
     PANTALLAS: 0,
     ESTADO: 1,

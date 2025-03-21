@@ -275,229 +275,6 @@ const TemplateForm = () => {
     }
   }
 
-  /* const iniciarRequest = async () => {
-    try {
-      // Hacer el primer request
-      const result = await sendRequest(appId, authCode);
-  
-      // Verificar si el primer request fue exitoso
-      if (result && result.status === "success") {
-        // Extraer el valor de `id` del objeto `template`
-        const templateId = result.template.id;
-  
-        // Hacer el segundo request, pasando el `id` como parámetro
-        const result2 = await sendRequest2(templateId, idNombreUsuarioTalkMe || "Sistema.TalkMe");
-  
-        // Verificar si el segundo request fue exitoso y obtener el ID_PLANTILLA
-        if (result2 && result2.ID_PLANTILLA) {
-          const ID_PLANTILLA = result2.ID_PLANTILLA;
-  
-          // Hacer el tercer request usando el ID_PLANTILLA
-          await sendRequest3(ID_PLANTILLA);
-        } else {
-          console.error("El segundo request no fue exitoso o no tiene el formato esperado.");
-        }
-      } else {
-        console.error("El primer request no fue exitoso o no tiene el formato esperado.");
-      }
-    } catch (error) {
-      console.error("Ocurrió un error:", error);
-    }
-  }; */
-
-  // REQUEST PARA GUPSHUP
-  /* const sendRequest = async (appId, authCode) => {
-    // Validar campos antes de enviar la solicitud
-    if (!validateFields()) {
-      return; // Detener la ejecución si hay errores
-    }
-  
-    const url = `https://partner.gupshup.io/partner/app/${appId}/templates`;
-    const headers = {
-      Authorization: authCode,
-      "Content-Type": "application/x-www-form-urlencoded",
-    };
-  
-    const data = new URLSearchParams();
-    data.append("elementName", templateName);
-    data.append("category", selectedCategory.toUpperCase());
-    data.append("languageCode", languageCode);
-    data.append("templateType", templateType.toUpperCase());
-    data.append("vertical", vertical);
-    data.append("content", message);
-  
-    if (header) {
-      data.append("header", header);
-    }
-  
-    if (footer) { 
-      data.append("footer", footer);
-    }
-  
-    if (mediaId) {
-      data.append("exampleMedia", mediaId);
-    }
-  
-    const formattedButtons = buttons.map((button) => {
-      const buttonData = {
-        type: button.type,
-        text: button.title,
-      };
-  
-      if (button.type === "URL") {
-        buttonData.url = button.url;
-      } else if (button.type === "PHONE_NUMBER") {
-        buttonData.phone_number = button.phoneNumber;
-      }
-  
-      return buttonData;
-    });
-  
-    data.append("buttons", JSON.stringify(formattedButtons));
-    data.append("example", example);
-    data.append("enableSample", true);
-    data.append("allowTemplateCategoryChange", false);
-  
-    console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
-  
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: headers,
-        body: data,
-      });
-  
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        console.error("Error response:", errorResponse);
-        showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
-        return null; // Retornar null en caso de error
-      }
-  
-      const result = await response.json();
-      showSnackbar("✅ Plantilla creada exitosamente", "success");
-      console.log("Response: ", result);
-      return result; // Retornar el resultado
-    } catch (error) {
-      console.error("Error en la solicitud:", error);
-      showSnackbar("❌ Error al crear la plantilla", "error");
-      return null; // Retornar null en caso de error
-    }
-  }; */
-
-  //REQUEST PARA ENCABEZADO TALKME
-  /* const sendRequest2 = async (templateId, idNombreUsuarioTalkMe) => {
-    const url = "https://certificacion.talkme.pro/templatesGS/api/plantillas/";
-    const headers = {
-      "Content-Type": "application/json",
-      // Agrega aquí cualquier header de autenticación si es necesario
-    };
-  
-    // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
-    let ID_PLANTILLA_CATEGORIA;
-    if (selectedCategory === "MARKETING") {
-      ID_PLANTILLA_CATEGORIA = 13;
-    } else if (selectedCategory === "UTILITY") {
-      ID_PLANTILLA_CATEGORIA = 14;
-    } else {
-      console.error("Categoría no válida:", selectedCategory);
-      showSnackbar("❌ Categoría no válida", "error");
-      return null; // Retornar null si la categoría no es válida
-    }
-
-    // Crear un objeto con los datos
-    const data = {
-      ID_PLANTILLA: null,
-      ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
-      ID_BOT_REDES: 149,
-      ID_INTERNO: templateId,
-      NOMBRE: templateName,
-      MENSAJE: message,
-      TIPO_PLANTILLA: 0,
-      MEDIA: getMediaType(uploadedUrl).toLowerCase(),
-      URL: uploadedUrl,
-      PANTALLAS: 0,
-      ESTADO: 1,
-      AUTORIZADO: 1,
-      ELIMINADO: 0,
-      SEGUIMIENTO_EDC: 0,
-      CREADO_POR: idNombreUsuarioTalkMe,
-    };
-  
-    // Imprimir el segundo request
-    console.log("Segundo request enviado:", {
-      url: url,
-      headers: headers,
-      body: data,
-    });
-  
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify(data),
-      });
-  
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        console.error("Error response:", errorResponse);
-        showSnackbar(`❌ Error en el segundo request: ${errorResponse.message || "Solicitud inválida"}`, "error");
-        return null; // Retornar null en caso de error
-      }
-  
-      const result = await response.json();
-      showSnackbar("✅ Segundo request completado exitosamente", "success");
-      console.log("Response del segundo request: ", result);
-      return result; // Retornar el resultado en caso de éxito
-    } catch (error) {
-      console.error("Error en el segundo request:", error);
-      showSnackbar("❌ Error en el segundo request", "error");
-      return null; // Retornar null en caso de error
-    }
-  }; */
-
-  //REQUEST PARA PARAMETROS DE VARIAB
-  /* const sendRequest3 = async (ID_PLANTILLA) => {
-    const tipoDatoId = 1;
-  
-    try {
-      const results = [];
-      for (let i = 0; i < variables.length; i++) {
-        const variableData = {
-          ID_PLANTILLA: ID_PLANTILLA,
-          ID_PLANTILLA_TIPO_DATO: tipoDatoId,
-          NOMBRE: variableExamples[variables[i]] || '',
-          //NOMBRE: variables[i],
-          PLACEHOLDER: variableExamples[variables[i]] || '',
-          ORDEN: i + 1,
-          CREADO_POR: "Sistema.TalkMe",
-        };
-        
-        const response = await fetch('https://certificacion.talkme.pro/templatesGS/api/parametros/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(variableData),
-        });
-  
-        if (!response.ok) {
-          const errorMessage = await response.text();
-          throw new Error(`Error al guardar la variable ${variables[i]}: ${errorMessage}`);
-        }
-  
-        const result = await response.json();
-        results.push(result);
-      }
-  
-      console.log('Variables guardadas:', results);
-      return results;
-    } catch (error) {
-      console.error('Error:', error);
-      throw error;
-    }
-  }; */
-
   const iniciarRequest = async () => {
     try {
       // Hacer el primer request a GupShup API
@@ -791,6 +568,13 @@ const TemplateForm = () => {
   const handleUpdateExample = (variable, value) => {
     setVariableExamples(prevExamples => ({
       ...prevExamples,
+      [variable]: value
+    }));
+  };
+
+  const handleUpdateDescriptions = (variable, value) => {
+    setVariableDescriptions(prevDescriptions => ({
+      ...prevDescriptions,
       [variable]: value
     }));
   };
@@ -1182,12 +966,8 @@ const TemplateForm = () => {
                         size="small"
                         label="Descripción"
                         placeholder="¿Para qué sirve esta variable?"
-                        value={variableDescriptions?.[variable] || ''}
-                        onChange={(e) => {
-                          const newDescriptions = { ...(variableDescriptions || {}) };
-                          newDescriptions[variable] = e.target.value;
-                          setVariableDescriptions(newDescriptions);
-                        }}
+                        value={variableDescriptions[variable] || ''}
+                        onChange={(e) => handleUpdateDescriptions(variable, e.target.value)}
                         sx={{ flexGrow: 1 }}
                       />
 
