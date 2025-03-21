@@ -592,18 +592,17 @@ const TemplateForm = () => {
   };
 
   // Función para reemplazar las variables en el mensaje con sus ejemplos
-  const replaceVariables = (text, variables) => {
-    let result = text;
+  const replaceVariables = () => {
+    let generatedExample = message;
     console.log("Texto antes de reemplazar:", text);
   
-    Object.keys(variables).forEach(variable => {
-      const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // 🔥 Búsqueda exacta de {{variable}}
-      console.log(`Reemplazando: {{${variable}}} por ${variables[variable]}`);
-      result = result.replace(regex, variables[variable]);
+    Object.keys(variableExamples).forEach(variable => {
+      generatedExample = generatedExample.replace(new RegExp(variable, 'g'), variableExamples[variable]);
+
     });
   
-    console.log("Texto después de reemplazar:", result);
-    return result;
+    console.log("Texto después de reemplazar:", generatedExample);
+    return generatedExample;
   };
   
   
