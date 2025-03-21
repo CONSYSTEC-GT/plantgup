@@ -567,11 +567,13 @@ const TemplateForm = () => {
   }
 
   const handleUpdateExample = (variable, value) => {
-    setVariableExamples(prevExamples => ({
-      ...prevExamples,
-      [variable]: value
-    }));
+    setVariableExamples(prevExamples => {
+      const updatedExamples = { ...prevExamples, [variable]: value };
+      console.log("Ejemplo actualizado:", updatedExamples);
+      return updatedExamples;
+    });
   };
+  
 
   const handleUpdateDescriptions = (variable, value) => {
     setVariableDescriptions(prevDescriptions => ({
@@ -592,19 +594,32 @@ const TemplateForm = () => {
   // Función para reemplazar las variables en el mensaje con sus ejemplos
   const replaceVariables = (text, variables) => {
     let result = text;
+    console.log("Texto antes de reemplazar:", text);
+  
     Object.keys(variables).forEach(variable => {
-      const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // Buscar {{variable}}
-      result = result.replace(new RegExp(`{{\\s*${variable}\\s*}}`, 'g'), variables[variable]);
+      const regex = new RegExp(`{{\\s*${variable}\\s*}}`, 'g');
+      console.log(`Reemplazando: {{${variable}}} por ${variables[variable]}`);
+      result = result.replace(regex, variables[variable]);
     });
+  
+    console.log("Texto después de reemplazar:", result);
     return result;
   };
   
+  
 
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
-     useEffect(() => {
-      const newExample = replaceVariables(message, variableExamples);
-      setExample(newExample);
-    }, [message, variableExamples]);
+  useEffect(() => {
+    console.log("Mensaje original:", message);
+    console.log("Variables y ejemplos:", variableExamples);
+
+    const newExample = replaceVariables(message, variableExamples);
+
+    console.log("Mensaje después de reemplazo:", newExample);
+
+    setExample(newExample);
+  }, [message, variableExamples]);
+
 
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
