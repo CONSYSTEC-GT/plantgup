@@ -67,11 +67,18 @@ const TemplateForm = () => {
   //const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [variables, setVariables] = useState([]);
+
   // Estado para almacenar ejemplos de variables
   const [variableExamples, setVariableExamples] = useState({});
   const [variableExamplesError, setvariableExamplesError] = useState(false);
   const [variableExamplesHelperText, setvariableExamplesHelperText] = useState("");
   const [variableErrors, setVariableErrors] = useState({});
+
+  // Estado para almacenar descripciones de variables
+  const [variableDescriptions, setVariableDescriptions] = useState({});
+  const [variableDescriptionsError, setvariableDescriptionsError] = useState(false);
+  const [variableDescriptionsHelperText, setvariableDescriptionsHelperText] = useState("");
+  
 
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
