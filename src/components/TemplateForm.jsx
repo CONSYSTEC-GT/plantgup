@@ -78,7 +78,7 @@ const TemplateForm = () => {
   const [variableDescriptions, setVariableDescriptions] = useState({});
   const [variableDescriptionsError, setvariableDescriptionsError] = useState(false);
   const [variableDescriptionsHelperText, setvariableDescriptionsHelperText] = useState("");
-  
+
 
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
@@ -611,9 +611,24 @@ const TemplateForm = () => {
   }, [message, variableExamples]);*/
 
   // Actualizar el campo "example" cuando cambie el mensaje o las variables
-  useEffect(() => {
+  /*useEffect(() => {
     const newExample = replaceVariables(message, variableExamples);
     setExample(newExample);
+  }, [message, variableExamples]); */
+
+  // Add this useEffect to update the example message whenever the message or variable examples change
+  useEffect(() => {
+    let tempExampleMessage = message;
+
+    // Replace all variables with their examples
+    Object.keys(variableExamples).forEach(variable => {
+      const example = variableExamples[variable] || '';
+      // Replace all occurrences of the variable with its example
+      const regex = new RegExp(`\\{${variable}\\}`, 'g');
+      tempExampleMessage = tempExampleMessage.replace(regex, example);
+    });
+
+    setExampleMessage(tempExampleMessage);
   }, [message, variableExamples]);
 
 
@@ -771,7 +786,6 @@ const TemplateForm = () => {
           </Box>
         )}
 
-
         {/*Idioma --data-urlencodeo languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
             <FormLabel>*Idioma de plantilla</FormLabel>
@@ -826,7 +840,7 @@ const TemplateForm = () => {
             border: "1px solid #ddd",
             borderRadius: 2,
             boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-            
+
           }}
         >
           <FormControl fullWidth>
