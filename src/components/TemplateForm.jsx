@@ -597,7 +597,7 @@ const TemplateForm = () => {
     console.log("Texto antes de reemplazar:", text);
   
     Object.keys(variables).forEach(variable => {
-      const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // <- 🔥 Cambio aquí
+      const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // 🔥 Búsqueda exacta de {{variable}}
       console.log(`Reemplazando: {{${variable}}} por ${variables[variable]}`);
       result = result.replace(regex, variables[variable]);
     });
@@ -605,6 +605,7 @@ const TemplateForm = () => {
     console.log("Texto después de reemplazar:", result);
     return result;
   };
+  
   
   
   
