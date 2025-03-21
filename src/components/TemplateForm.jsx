@@ -311,7 +311,9 @@ const TemplateForm = () => {
             message,
             uploadedUrl
           },
-          idNombreUsuarioTalkMe || "Sistema.TalkMe"
+          idNombreUsuarioTalkMe || "Sistema.TalkMe",
+          variables,
+          variableDescriptions
         );
 
         // El tercer request se maneja dentro de saveTemplateToTalkMe

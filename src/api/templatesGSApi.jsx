@@ -51,7 +51,7 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions)
 /**
  * Guardo la información de la plantilla
  */
-export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableExamples = {}) => {
+export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}) => {
   const { templateName, selectedCategory, message, uploadedUrl } = templateData;
 
   const url = 'https://dev.talkme.pro/templatesGS/api/plantillas/';
@@ -116,7 +116,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
 
     // Si tenemos variables, hacer el tercer request
     if (result && result.ID_PLANTILLA && variables && variables.length > 0) {
-      await saveTemplateParams(result.ID_PLANTILLA, variables, variableExamples);
+      await saveTemplateParams(result.ID_PLANTILLA, variables, variableDescriptions);
     }
 
     return result; // Retornar el resultado en caso de éxito
