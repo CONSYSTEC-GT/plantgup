@@ -594,7 +594,7 @@ const TemplateForm = () => {
     let result = text;
     Object.keys(variables).forEach(variable => {
       const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // Buscar {{variable}}
-      result = result.replace(regex, variables[variable]);
+      result = result.replace(new RegExp(`{{\\s*${variable}\\s*}}`, 'g'), variables[variable]);
     });
     return result;
   };
