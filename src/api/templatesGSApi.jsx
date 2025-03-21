@@ -20,9 +20,8 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableExamples) => 
         CREADO_POR: "Sistema.TalkMe",
       };
 
-      // Obtengo la URL desde las variables de entorno
-      const API_URL = import.meta.env.API_TALKME;
-      const response = await fetch(`${API_URL}/parametros/`, {
+
+      const response = await fetch('https://dev.talkme.pro/templatesGS/api/parametros/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,14 +54,7 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableExamples) => 
 export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableExamples = {}) => {
   const { templateName, selectedCategory, message, uploadedUrl } = templateData;
 
-  // Obtengo la URL desde las variables de entorno
-  const API_URL = import.meta.env.API_TALKME;
-
-  if (!API_URL) {
-    throw new Error("API_TALKME no está definida en las variables de entorno");
-  }
-
-  const url = `${API_URL}/plantillas/`;
+  const url = 'https://dev.talkme.pro/templatesGS/api/plantillas/';
   const headers = {
     "Content-Type": "application/json",
   };

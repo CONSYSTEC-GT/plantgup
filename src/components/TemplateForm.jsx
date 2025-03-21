@@ -107,144 +107,144 @@ const TemplateForm = () => {
     console.log("Iniciando validación de campos...");
 
     if (!templateName || templateName.trim() === "") {
-        console.log("Error: templateName está vacío o no es válido.");
-        setTemplateNameError(true);
-        setTemplateNameHelperText("Este campo es requerido");
-        isValid = false;
-        if (templateNameRef.current) templateNameRef.current.focus();
-        console.log("Estado de isValid después de validar templateName:", isValid);
-        // No retornar aquí, continuar con la validación de otros campos
+      console.log("Error: templateName está vacío o no es válido.");
+      setTemplateNameError(true);
+      setTemplateNameHelperText("Este campo es requerido");
+      isValid = false;
+      if (templateNameRef.current) templateNameRef.current.focus();
+      console.log("Estado de isValid después de validar templateName:", isValid);
+      // No retornar aquí, continuar con la validación de otros campos
     } else {
-        console.log("templateName es válido.");
+      console.log("templateName es válido.");
     }
 
     if (!templateType || templateType.trim() === "") {
-        console.log("Error: templateType está vacío o no es válido.");
-        setTemplateTypeError(true);
-        setTemplateTypeHelperText("Este campo es requerido");
-        isValid = false;
-        if (templateTypeRef.current) templateTypeRef.current.focus();
-        console.log("Estado de isValid después de validar templateType:", isValid);
-        // No retornar aquí, continuar con la validación de otros campos
+      console.log("Error: templateType está vacío o no es válido.");
+      setTemplateTypeError(true);
+      setTemplateTypeHelperText("Este campo es requerido");
+      isValid = false;
+      if (templateTypeRef.current) templateTypeRef.current.focus();
+      console.log("Estado de isValid después de validar templateType:", isValid);
+      // No retornar aquí, continuar con la validación de otros campos
     } else {
-        console.log("templateType es válido.");
+      console.log("templateType es válido.");
     }
 
     if (!languageCode || languageCode.trim() === "") {
-        console.log("Error: languageCode está vacío o no es válido.");
-        setLanguageTypeError(true);
-        setLanguageTypeHelperText("Este campo es requerido");
-        isValid = false;
-        if (languageCodeRef.current) languageCodeRef.current.focus();
-        console.log("Estado de isValid después de validar languageCode:", isValid);
-        // No retornar aquí, continuar con la validación de otros campos
+      console.log("Error: languageCode está vacío o no es válido.");
+      setLanguageTypeError(true);
+      setLanguageTypeHelperText("Este campo es requerido");
+      isValid = false;
+      if (languageCodeRef.current) languageCodeRef.current.focus();
+      console.log("Estado de isValid después de validar languageCode:", isValid);
+      // No retornar aquí, continuar con la validación de otros campos
     } else {
-        console.log("languageCode es válido.");
+      console.log("languageCode es válido.");
     }
 
     if (!vertical || vertical.trim() === "") {
-        console.log("Error: vertical está vacío o no es válido.");
-        setetiquetaPlantillaError(true);
-        isValid = false;
-        if (verticalRef.current) verticalRef.current.focus();
-        console.log("Estado de isValid después de validar vertical:", isValid);
-        // No retornar aquí, continuar con la validación de otros campos
+      console.log("Error: vertical está vacío o no es válido.");
+      setetiquetaPlantillaError(true);
+      isValid = false;
+      if (verticalRef.current) verticalRef.current.focus();
+      console.log("Estado de isValid después de validar vertical:", isValid);
+      // No retornar aquí, continuar con la validación de otros campos
     } else {
-        console.log("vertical es válido.");
+      console.log("vertical es válido.");
     }
 
     if (!message || message.trim() === "") {
-        console.log("Error: message está vacío o no es válido.");
-        setcontenidoPlantillaTypeError(true);
-        setcontenidoPlantillaTypeHelperText("Este campo es requerido");
-        isValid = false;
-        if (messageRef.current) messageRef.current.focus();
-        console.log("Estado de isValid después de validar message:", isValid);
-        // No retornar aquí, continuar con la validación de otros campos
+      console.log("Error: message está vacío o no es válido.");
+      setcontenidoPlantillaTypeError(true);
+      setcontenidoPlantillaTypeHelperText("Este campo es requerido");
+      isValid = false;
+      if (messageRef.current) messageRef.current.focus();
+      console.log("Estado de isValid después de validar message:", isValid);
+      // No retornar aquí, continuar con la validación de otros campos
     } else {
-        console.log("message es válido.");
+      console.log("message es válido.");
     }
 
     if (!example || example.trim() === "") {
-        console.log("Error: example está vacío o no es válido.");
-        setejemploPlantillaError(true);
-        setejemploPlantillaHelperText("Este campo es requerido");
-        isValid = false;
-        if (exampleRef.current) exampleRef.current.focus();
-        console.log("Estado de isValid después de validar example:", isValid);
-        // No retornar aquí, continuar con la validación de otros campos
+      console.log("Error: example está vacío o no es válido.");
+      setejemploPlantillaError(true);
+      setejemploPlantillaHelperText("Este campo es requerido");
+      isValid = false;
+      if (exampleRef.current) exampleRef.current.focus();
+      console.log("Estado de isValid después de validar example:", isValid);
+      // No retornar aquí, continuar con la validación de otros campos
     } else {
-        console.log("example es válido.");
+      console.log("example es válido.");
     }
 
     if (!selectedCategory || selectedCategory.trim() === "") {
-        console.log("Error: selectedCategory está vacío o no es válido.");
-        setcategoriaPlantillaError(true);
-        setcategoriaPlantillaHelperText("Este campo es requerido");
-        isValid = false;
-        if (selectedCategoryRef.current) selectedCategoryRef.current.focus();
-        console.log("Estado de isValid después de validar selectedCategory:", isValid);
-        // No retornar aquí, continuar con la validación de otros campos
+      console.log("Error: selectedCategory está vacío o no es válido.");
+      setcategoriaPlantillaError(true);
+      setcategoriaPlantillaHelperText("Este campo es requerido");
+      isValid = false;
+      if (selectedCategoryRef.current) selectedCategoryRef.current.focus();
+      console.log("Estado de isValid después de validar selectedCategory:", isValid);
+      // No retornar aquí, continuar con la validación de otros campos
     } else {
-        console.log("selectedCategory es válido.");
+      console.log("selectedCategory es válido.");
     }
 
     // Validar que todas las variables tengan un texto de ejemplo
     if (variables.length > 0) {
-        console.log("Validando variables...");
-        const newErrors = {}; // Objeto para almacenar los errores
+      console.log("Validando variables...");
+      const newErrors = {}; // Objeto para almacenar los errores
 
-        for (const variable of variables) {
-            if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
-                console.log(`Error: La variable ${variable} no tiene un ejemplo válido.`);
-                isValid = false;
-                newErrors[variable] = "Este campo es requerido"; // Asignar mensaje de error
+      for (const variable of variables) {
+        if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
+          console.log(`Error: La variable ${variable} no tiene un ejemplo válido.`);
+          isValid = false;
+          newErrors[variable] = "Este campo es requerido"; // Asignar mensaje de error
 
-                // Colocar el foco en el campo de texto de ejemplo vacío
-                if (exampleRefs.current[variable]) {
-                    exampleRefs.current[variable].focus();
-                }
-            } else {
-                console.log(`La variable ${variable} es válida.`);
-                newErrors[variable] = ""; // Sin error
-            }
-        }
-
-        // Actualizar el estado de errores
-        setVariableErrors(newErrors);
-
-        // Si hay errores, no retornar aquí, continuar con el flujo
-        if (!isValid) {
-            console.log("Errores encontrados en las variables. isValid:", isValid);
+          // Colocar el foco en el campo de texto de ejemplo vacío
+          if (exampleRefs.current[variable]) {
+            exampleRefs.current[variable].focus();
+          }
         } else {
-            console.log("Todas las variables son válidas.");
+          console.log(`La variable ${variable} es válida.`);
+          newErrors[variable] = ""; // Sin error
         }
+      }
+
+      // Actualizar el estado de errores
+      setVariableErrors(newErrors);
+
+      // Si hay errores, no retornar aquí, continuar con el flujo
+      if (!isValid) {
+        console.log("Errores encontrados en las variables. isValid:", isValid);
+      } else {
+        console.log("Todas las variables son válidas.");
+      }
     } else {
-        console.log("No hay variables para validar.");
+      console.log("No hay variables para validar.");
     }
 
     console.log("Validación completada. isValid:", isValid);
     return isValid; // Retornar el valor final de isValid
-};
+  };
 
   // Función para determinar el tipo de archivo basado en la extensión
-const getMediaType = (url) => {
-  // Extraer la extensión del archivo de la URL
-  const extension = url.split('.').pop().toLowerCase();
+  const getMediaType = (url) => {
+    // Extraer la extensión del archivo de la URL
+    const extension = url.split('.').pop().toLowerCase();
 
-  // Determinar el tipo de archivo basado en la extensión
-  if (['png', 'jpeg', 'jpg', 'gif'].includes(extension)) {
-    return 'IMAGE';
-  } else if (['mp4', '3gp', 'mov', 'avi'].includes(extension)) {
-    return 'VIDEO';
-  } else if (['txt', 'xls', 'xlsx', 'doc', 'docx', 'ppt', 'pptx', 'pdf'].includes(extension)) {
-    return 'DOCUMENT';
-  } else {
-    return 'null'; // En caso de que la extensión no sea reconocida
-  }
-};
+    // Determinar el tipo de archivo basado en la extensión
+    if (['png', 'jpeg', 'jpg', 'gif'].includes(extension)) {
+      return 'IMAGE';
+    } else if (['mp4', '3gp', 'mov', 'avi'].includes(extension)) {
+      return 'VIDEO';
+    } else if (['txt', 'xls', 'xlsx', 'doc', 'docx', 'ppt', 'pptx', 'pdf'].includes(extension)) {
+      return 'DOCUMENT';
+    } else {
+      return 'null'; // En caso de que la extensión no sea reconocida
+    }
+  };
 
-// Recupera el token del localStorage
+  // Recupera el token del localStorage
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
@@ -262,41 +262,41 @@ const getMediaType = (url) => {
       console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
       console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
       console.log('empresaTalkMe:', empresaTalkMe);
-    
+
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
   }
 
-/* const iniciarRequest = async () => {
-  try {
-    // Hacer el primer request
-    const result = await sendRequest(appId, authCode);
-
-    // Verificar si el primer request fue exitoso
-    if (result && result.status === "success") {
-      // Extraer el valor de `id` del objeto `template`
-      const templateId = result.template.id;
-
-      // Hacer el segundo request, pasando el `id` como parámetro
-      const result2 = await sendRequest2(templateId, idNombreUsuarioTalkMe || "Sistema.TalkMe");
-
-      // Verificar si el segundo request fue exitoso y obtener el ID_PLANTILLA
-      if (result2 && result2.ID_PLANTILLA) {
-        const ID_PLANTILLA = result2.ID_PLANTILLA;
-
-        // Hacer el tercer request usando el ID_PLANTILLA
-        await sendRequest3(ID_PLANTILLA);
+  /* const iniciarRequest = async () => {
+    try {
+      // Hacer el primer request
+      const result = await sendRequest(appId, authCode);
+  
+      // Verificar si el primer request fue exitoso
+      if (result && result.status === "success") {
+        // Extraer el valor de `id` del objeto `template`
+        const templateId = result.template.id;
+  
+        // Hacer el segundo request, pasando el `id` como parámetro
+        const result2 = await sendRequest2(templateId, idNombreUsuarioTalkMe || "Sistema.TalkMe");
+  
+        // Verificar si el segundo request fue exitoso y obtener el ID_PLANTILLA
+        if (result2 && result2.ID_PLANTILLA) {
+          const ID_PLANTILLA = result2.ID_PLANTILLA;
+  
+          // Hacer el tercer request usando el ID_PLANTILLA
+          await sendRequest3(ID_PLANTILLA);
+        } else {
+          console.error("El segundo request no fue exitoso o no tiene el formato esperado.");
+        }
       } else {
-        console.error("El segundo request no fue exitoso o no tiene el formato esperado.");
+        console.error("El primer request no fue exitoso o no tiene el formato esperado.");
       }
-    } else {
-      console.error("El primer request no fue exitoso o no tiene el formato esperado.");
+    } catch (error) {
+      console.error("Ocurrió un error:", error);
     }
-  } catch (error) {
-    console.error("Ocurrió un error:", error);
-  }
-}; */
+  }; */
 
   // REQUEST PARA GUPSHUP
   /* const sendRequest = async (appId, authCode) => {
@@ -495,8 +495,8 @@ const getMediaType = (url) => {
     try {
       // Hacer el primer request a GupShup API
       const result = await createTemplateGupshup(
-        appId, 
-        authCode, 
+        appId,
+        authCode,
         {
           templateName,
           selectedCategory,
@@ -520,13 +520,13 @@ const getMediaType = (url) => {
 
         // Hacer el segundo request a TalkMe API
         const result2 = await saveTemplateToTalkMe(
-          templateId, 
+          templateId,
           {
             templateName,
             selectedCategory,
             message,
             uploadedUrl
-          }, 
+          },
           idNombreUsuarioTalkMe || "Sistema.TalkMe"
         );
 
@@ -628,15 +628,15 @@ const getMediaType = (url) => {
   const handleTemplateTypeChange = (event) => {
     const newType = event.target.value;
     setTemplateType(newType);
-  
+
     // Solo limpiar header si el nuevo tipo NO es "TEXT"
     if (newType !== "TEXT") {
       setHeader("");
     }
-  
+
     setMediaType("");
     setMediaURL("");
-  
+
     if (newType.trim() === "") {
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
@@ -645,7 +645,7 @@ const getMediaType = (url) => {
       setTemplateTypeHelperText("");
     }
   };
-  
+
 
   const handleHeaderTemplateTypeChange = (event) => {
     setTemplateType(event.target.value);
@@ -695,7 +695,7 @@ const getMediaType = (url) => {
   };
 
   const handleHeaderChange = (e) => {
-    if (e.target.value.length <= charLimit){
+    if (e.target.value.length <= charLimit) {
       setHeader(e.target.value)
     }
     console.log("Nuevo valor de header:", event.target.value);
@@ -707,7 +707,7 @@ const getMediaType = (url) => {
       setFooter(e.target.value);
     }
   };
-  
+
   const charLimit = 60;
   const maxButtons = 10;
 
@@ -720,7 +720,7 @@ const getMediaType = (url) => {
       ]);
     }
   };
-  
+
   const updateButton = (id, key, value) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
@@ -728,7 +728,7 @@ const getMediaType = (url) => {
       )
     );
   };
-  
+
   const removeButton = (id) => {
     setButtons(buttons.filter((button) => button.id !== id));
   };
@@ -807,15 +807,15 @@ const getMediaType = (url) => {
   };
 
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
-/*   useEffect(() => {
-    const newExample = replaceVariables(message, variableExamples);
-    setExample(newExample);
-    setMessage(newExample); // Ahora también actualiza message con los valores reemplazados
-  }, [message, variableExamples]);
+  /*   useEffect(() => {
+      const newExample = replaceVariables(message, variableExamples);
+      setExample(newExample);
+      setMessage(newExample); // Ahora también actualiza message con los valores reemplazados
+    }, [message, variableExamples]);*/
 
   useEffect(() => {
     setExample(previewMessage());
-  }, [message, variableExamples]); */
+  }, [message, variableExamples]);
 
   // Actualizar el campo "example" cuando cambie el mensaje o las variables
   useEffect(() => {
@@ -936,7 +936,7 @@ const getMediaType = (url) => {
           </FormControl>
         </Box>
 
-        {/* Header*/} {templateType === 'TEXT' ? ( 
+        {/* Header*/} {templateType === 'TEXT' ? (
           <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <FormControl fullWidth>
               <FormLabel>
@@ -965,19 +965,19 @@ const getMediaType = (url) => {
             </FormControl>
 
             {/* Componente para subir archivos */}
-              <FileUploadComponent
-                templateType={templateType}
-                onUploadSuccess={(mediaId, uploadedUrl) => {
-                  setMediaId(mediaId); // Guarda el mediaId
-                  setUploadedUrl(uploadedUrl); // Guarda la URL
-                  //setUploadStatus("¡Archivo subido exitosamente!");
-                }}
-                onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
-                onHeaderChange={(newHeader) => setHeader(newHeader)} // Nueva prop
-              />
+            <FileUploadComponent
+              templateType={templateType}
+              onUploadSuccess={(mediaId, uploadedUrl) => {
+                setMediaId(mediaId); // Guarda el mediaId
+                setUploadedUrl(uploadedUrl); // Guarda la URL
+                //setUploadStatus("¡Archivo subido exitosamente!");
+              }}
+              onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
+              onHeaderChange={(newHeader) => setHeader(newHeader)} // Nueva prop
+            />
           </Box>
         )}
-        
+
 
         {/*Idioma --data-urlencodeo languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
@@ -1024,9 +1024,22 @@ const getMediaType = (url) => {
           />
         </Box>
 
-        {/* BodyMessage --data-urlencode content */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+        {/* BodyMessage --data-urlencode content */}
+        <Box
+          sx={{
+            width: "100%",
+            marginTop: 2,
+            p: 4,
+            border: "1px solid #e0e0e0",
+            borderRadius: 2,
+            boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+            backgroundColor: "#fafafa"
+          }}
+        >
           <FormControl fullWidth>
-            <FormLabel>*Contenido</FormLabel>
+            <FormLabel sx={{ fontSize: "1.1rem", fontWeight: "500", color: "#333" }}>
+              *Contenido
+            </FormLabel>
           </FormControl>
 
           {/* Campo de texto con soporte para emojis y variables */}
@@ -1038,33 +1051,51 @@ const getMediaType = (url) => {
               error={contenidoPlantillaTypeError}
               rows={4}
               label="Escribe"
+              placeholder="Ingresa el contenido de tu mensaje aquí..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              sx={{ mb: 3, mt: 4 }}
+              sx={{
+                mb: 3,
+                mt: 4,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 1.5,
+                  "&:hover fieldset": {
+                    borderColor: "primary.main",
+                  }
+                }
+              }}
               inputRef={messageRef}
             />
 
-            {/* Botón para agregar emojis */}
-            <Button
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-
+            {/* Botones de emojis y acciones en una barra de herramientas mejor diseñada */}
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                mb: 2,
+                p: 1,
+                borderRadius: 1,
+                backgroundColor: "rgba(0,0,0,0.02)"
+              }}
             >
-              <Smile size={20} />
-            </Button>
+              <Tooltip title="Agregar emojis">
+                <IconButton
+                  color="primary"
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  sx={{ borderRadius: 1 }}
+                >
+                  <Smile size={20} />
+                </IconButton>
+              </Tooltip>
 
-            {/* Selector de emojis */}
-            {showEmojiPicker && (
-              <Box>
-                <EmojiPicker onEmojiClick={handleEmojiClick} />
-              </Box>
-            )}
+              <Divider orientation="vertical" flexItem />
 
-            {/* Botón para agregar variable y borrar todas */}
-            <Stack direction="row" spacing={2} sx={{ mt: 2, mb: 2 }}>
               <Button
                 variant="contained"
+                size="small"
                 startIcon={<AddIcon />}
                 onClick={handleAddVariable}
+                sx={{ borderRadius: 1 }}
               >
                 Agregar Variable
               </Button>
@@ -1072,49 +1103,103 @@ const getMediaType = (url) => {
               {variables.length > 0 && (
                 <Button
                   color="error"
-                  variant="contained"
+                  variant="outlined"
+                  size="small"
                   startIcon={<ClearIcon />}
                   onClick={deleteAllVariables}
+                  sx={{ ml: "auto", borderRadius: 1 }}
                 >
-                  Borrar todas las variables
+                  Borrar todas
                 </Button>
               )}
             </Stack>
 
-            {/* Variables disponibles como chips con campos de texto para ejemplos */}
+            {/* Selector de emojis */}
+            {showEmojiPicker && (
+              <Paper
+                elevation={3}
+                sx={{
+                  position: "absolute",
+                  zIndex: 1000,
+                  mt: 1
+                }}
+              >
+                <EmojiPicker onEmojiClick={handleEmojiClick} />
+              </Paper>
+            )}
+
+            {/* Variables disponibles como chips con campos de texto para ejemplos y descripción */}
             {variables.length > 0 && (
-              <Stack sx={{ my: 2, gap: 2 }}>
-                <FormLabel sx={{ fontWeight: 'medium' }}>Variables con texto de ejemplo:</FormLabel>
+              <Paper
+                sx={{
+                  my: 2,
+                  p: 2,
+                  borderRadius: 2,
+                  border: "1px dashed #bdbdbd",
+                  backgroundColor: "#f5f5f5"
+                }}
+              >
+                <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 2 }}>
+                  Variables con texto de ejemplo:
+                </Typography>
+
                 {variables.map((variable, index) => (
-                  <Box key={index} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+                  <Box
+                    key={index}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: 2,
+                      mb: 2,
+                      p: 1.5,
+                      backgroundColor: "#fff",
+                      borderRadius: 1,
+                      border: "1px solid #e0e0e0"
+                    }}
+                  >
                     <Chip
                       label={variable}
                       color="primary"
-                      variant="contained"
-                      onDelete={() => deleteVariable(variable)}
+                      sx={{ fontWeight: "500" }}
                       deleteIcon={
                         <Tooltip title="Borrar variable">
                           <DeleteIcon />
                         </Tooltip>
                       }
+                      onDelete={() => deleteVariable(variable)}
                     />
-                    <TextField
-                      size="small"
-                      label="Texto de ejemplo"
-                      value={variableExamples[variable] || ''}
-                      onChange={(e) => handleUpdateExample(variable, e.target.value)}
-                      sx={{ flexGrow: 1, maxWidth: '60%' }}
-                      inputRef={(el) => (exampleRefs.current[variable] = el)} // Asignar el ref
-                      error={!!variableErrors[variable]} // Mostrar error si existe
-                      helperText={variableErrors[variable]} // Mostrar mensaje de error
-                    />
+
+                    <Stack sx={{ flexGrow: 1, gap: 1 }}>
+                      <TextField
+                        size="small"
+                        label="Texto de ejemplo"
+                        value={variableExamples[variable] || ''}
+                        onChange={(e) => handleUpdateExample(variable, e.target.value)}
+                        sx={{ flexGrow: 1 }}
+                        inputRef={(el) => (exampleRefs.current[variable] = el)}
+                        error={!!variableErrors[variable]}
+                        helperText={variableErrors[variable]}
+                      />
+
+                      <TextField
+                        size="small"
+                        label="Descripción"
+                        placeholder="¿Para qué sirve esta variable?"
+                        value={variableDescriptions?.[variable] || ''}
+                        onChange={(e) => {
+                          const newDescriptions = { ...(variableDescriptions || {}) };
+                          newDescriptions[variable] = e.target.value;
+                          setVariableDescriptions(newDescriptions);
+                        }}
+                        sx={{ flexGrow: 1 }}
+                      />
+                    </Stack>
                   </Box>
                 ))}
-              </Stack>
+              </Paper>
             )}
-
           </Box>
-
         </Box>
 
         {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
