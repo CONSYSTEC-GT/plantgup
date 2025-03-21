@@ -578,7 +578,7 @@ const TemplateForm = () => {
   const handleUpdateDescriptions = (variable, value) => {
     setVariableDescriptions(prevDescriptions => ({
       ...prevDescriptions,
-      [variable]: value
+      [variable.replace(/^\{\{|\}\}$/g, '')]: value
     }));
   };
 
