@@ -606,9 +606,9 @@ const TemplateForm = () => {
       setMessage(newExample); // Ahora también actualiza message con los valores reemplazados
     }, [message, variableExamples]);*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     setExample(previewMessage());
-  }, [message, variableExamples]);
+  }, [message, variableExamples]);*/
 
   // Actualizar el campo "example" cuando cambie el mensaje o las variables
   useEffect(() => {
@@ -823,10 +823,10 @@ const TemplateForm = () => {
             width: "100%",
             marginTop: 2,
             p: 4,
-            border: "1px solid #e0e0e0",
+            border: "1px solid #ddd",
             borderRadius: 2,
             boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-            backgroundColor: "#fafafa"
+            
           }}
         >
           <FormControl fullWidth>
@@ -928,8 +928,7 @@ const TemplateForm = () => {
                   my: 2,
                   p: 2,
                   borderRadius: 2,
-                  border: "1px dashed #bdbdbd",
-                  backgroundColor: "#f5f5f5"
+                  border: "1px solid #ddd",
                 }}
               >
                 <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 2 }}>
@@ -1204,7 +1203,7 @@ const TemplateForm = () => {
 
 
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
-                {message}
+                {example}
               </Typography>
 
               <Typography
