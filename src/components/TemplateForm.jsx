@@ -1147,7 +1147,7 @@ const TemplateForm = () => {
                 }}
               >
                 <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 2 }}>
-                  Variables con texto de ejemplo:
+                  Agrega una descripción y un ejemplo a tu variable:
                 </Typography>
 
                 {variables.map((variable, index) => (
@@ -1180,17 +1180,6 @@ const TemplateForm = () => {
                     <Stack sx={{ flexGrow: 1, gap: 1 }}>
                       <TextField
                         size="small"
-                        label="Texto de ejemplo"
-                        value={variableExamples[variable] || ''}
-                        onChange={(e) => handleUpdateExample(variable, e.target.value)}
-                        sx={{ flexGrow: 1 }}
-                        inputRef={(el) => (exampleRefs.current[variable] = el)}
-                        error={!!variableErrors[variable]}
-                        helperText={variableErrors[variable]}
-                      />
-
-                      <TextField
-                        size="small"
                         label="Descripción"
                         placeholder="¿Para qué sirve esta variable?"
                         value={variableDescriptions?.[variable] || ''}
@@ -1201,6 +1190,18 @@ const TemplateForm = () => {
                         }}
                         sx={{ flexGrow: 1 }}
                       />
+
+                      <TextField
+                        size="small"
+                        label="Texto de ejemplo"
+                        value={variableExamples[variable] || ''}
+                        onChange={(e) => handleUpdateExample(variable, e.target.value)}
+                        sx={{ flexGrow: 1 }}
+                        inputRef={(el) => (exampleRefs.current[variable] = el)}
+                        error={!!variableErrors[variable]}
+                        helperText={variableErrors[variable]}
+                      />
+
                     </Stack>
                   </Box>
                 ))}
@@ -1326,7 +1327,7 @@ const TemplateForm = () => {
           </Typography>
         </Box>
 
-        {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+        {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2, display: 'none' }}>
           <FormControl fullWidth>
             <FormLabel>
               *Ejemplo
