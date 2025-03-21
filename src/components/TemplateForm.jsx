@@ -79,9 +79,6 @@ const TemplateForm = () => {
   const [variableDescriptionsError, setvariableDescriptionsError] = useState(false);
   const [variableDescriptionsHelperText, setvariableDescriptionsHelperText] = useState("");
 
-  const [exampleMessage, setExampleMessage] = useState('');
-
-
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
   const [uploadedUrl, setUploadedUrl] = useState('');
@@ -602,11 +599,11 @@ const TemplateForm = () => {
   };
 
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
-  /*   useEffect(() => {
+     useEffect(() => {
       const newExample = replaceVariables(message, variableExamples);
       setExample(newExample);
       setMessage(newExample); // Ahora también actualiza message con los valores reemplazados
-    }, [message, variableExamples]);*/
+    }, [message, variableExamples]);
 
   /*useEffect(() => {
     setExample(previewMessage());
