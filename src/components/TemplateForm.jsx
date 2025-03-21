@@ -615,7 +615,7 @@ const TemplateForm = () => {
     setExample(newExample);
   }, [message, variableExamples]); */
 
-  // Add this useEffect to update the example message whenever the message or variable examples change
+/*   // Add this useEffect to update the example message whenever the message or variable examples change
   useEffect(() => {
     let tempExampleMessage = message;
 
@@ -629,7 +629,7 @@ const TemplateForm = () => {
 
     setExampleMessage(tempExampleMessage);
   }, [message, variableExamples]);
-
+ */
 
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
