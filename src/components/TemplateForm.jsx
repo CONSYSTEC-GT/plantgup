@@ -602,34 +602,7 @@ const TemplateForm = () => {
      useEffect(() => {
       const newExample = replaceVariables(message, variableExamples);
       setExample(newExample);
-      setMessage(newExample); // Ahora también actualiza message con los valores reemplazados
     }, [message, variableExamples]);
-
-  /*useEffect(() => {
-    setExample(previewMessage());
-  }, [message, variableExamples]);*/
-
-  // Actualizar el campo "example" cuando cambie el mensaje o las variables
-  /*useEffect(() => {
-    const newExample = replaceVariables(message, variableExamples);
-    setExample(newExample);
-  }, [message, variableExamples]); */
-
-/*   // Add this useEffect to update the example message whenever the message or variable examples change
-  useEffect(() => {
-    let tempExampleMessage = message;
-
-    // Replace all variables with their examples
-    Object.keys(variableExamples).forEach(variable => {
-      const example = variableExamples[variable] || '';
-      // Replace all occurrences of the variable with its example
-      const regex = new RegExp(`\\{${variable}\\}`, 'g');
-      tempExampleMessage = tempExampleMessage.replace(regex, example);
-    });
-
-    setExampleMessage(tempExampleMessage);
-  }, [message, variableExamples]);
- */
 
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
