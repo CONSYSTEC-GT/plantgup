@@ -79,6 +79,8 @@ const TemplateForm = () => {
   const [variableDescriptionsError, setvariableDescriptionsError] = useState(false);
   const [variableDescriptionsHelperText, setvariableDescriptionsHelperText] = useState("");
 
+  const [exampleMessage, setExampleMessage] = useState('');
+
 
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
