@@ -574,11 +574,10 @@ const TemplateForm = () => {
     });
   };
   
-
   const handleUpdateDescriptions = (variable, value) => {
     setVariableDescriptions(prevDescriptions => ({
       ...prevDescriptions,
-      [variable.replace(/^\{\{|\}\}$/g, '')]: value
+      [variable]: value
     }));
   };
 
@@ -592,17 +591,18 @@ const TemplateForm = () => {
   };
 
   // Función para reemplazar las variables en el mensaje con sus ejemplos
-  const replaceVariables = () => {
-    let generatedExample = message;
-    console.log("Texto antes de reemplazar:", generatedExample);
+  const replaceVariables = (text, variables) => {
+    let result = text;
+    console.log("Texto antes de reemplazar:", text);
   
-    Object.keys(variableExamples).forEach(variable => {
-      generatedExample = generatedExample.replace(new RegExp(variable, 'g'), variableExamples[variable]);
-
+    Object.keys(variables).forEach(variable => {
+      const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // 🔥 Búsqueda exacta de {{variable}}
+      console.log(`Reemplazando: {{${variable}}} por ${variables[variable]}`);
+      result = result.replace(regex, variables[variable]);
     });
   
-    console.log("Texto después de reemplazar:", generatedExample);
-    return generatedExample;
+    console.log("Texto después de reemplazar:", result);
+    return result;
   };
   
   
