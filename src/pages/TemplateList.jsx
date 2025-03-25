@@ -306,7 +306,13 @@ export default function BasicCard() {
       </Box>
 
       
-      {/* Lista de tarjetas */}<Box sx={{ p: 3 }}>
+      {/* Lista de tarjetas */}<Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        mb: 2, // margen inferior para separar del contenido siguiente
+        p: 3
+      }}>
         {/* TITULO */}<Typography variant="h5" fontWeight="bold" gutterBottom>
           Últimas plantillas creadas
         </Typography>
