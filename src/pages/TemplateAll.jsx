@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Asegúrate de instalar jwt-decode
 import { useParams } from 'react-router-dom';
-import { alpha, Box, Button, Card, CardActions, CardContent, Menu, MenuItem, styled, Typography } from '@mui/material';
+import { alpha, Box, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem, styled, Typography } from '@mui/material';
 
 // ICONOS
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ErrorIcon from '@mui/icons-material/Error';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
@@ -199,6 +201,14 @@ const TemplateAll = () => {
       },
     },
   }));
+
+    const [openReasonDialog, setOpenReasonDialog] = React.useState(false);
+    const [selectedReason, setSelectedReason] = React.useState('');
+  
+    const handleOpenReasonDialog = (reason) => {
+      setSelectedReason(reason);
+      setOpenReasonDialog(true);
+    };
 
   return (
     <Box>

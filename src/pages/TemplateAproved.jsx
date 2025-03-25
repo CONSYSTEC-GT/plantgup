@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { alpha, Autocomplete, Box, Button, Card, CardContent, CardActions, Menu, MenuItem, Stack, TextField, Typography, styled } from '@mui/material';
+import { alpha, Autocomplete, Box, Button, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem, Stack, TextField, Typography, styled } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
@@ -10,6 +10,8 @@ import { jwtDecode } from 'jwt-decode'; // Asegúrate de instalar jwt-decode
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ErrorIcon from '@mui/icons-material/Error';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
@@ -206,6 +208,14 @@ const TemplateAproved = () => {
       },
     },
   }));
+
+  const [openReasonDialog, setOpenReasonDialog] = React.useState(false);
+  const [selectedReason, setSelectedReason] = React.useState('');
+
+  const handleOpenReasonDialog = (reason) => {
+    setSelectedReason(reason);
+    setOpenReasonDialog(true);
+  };
 
   return (
     <Box>
