@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { alpha, Autocomplete, Box, Button, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem, TextField, Typography, styled } from '@mui/material';
+import { alpha, Autocomplete, Box, Button, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem, TextField, Typography, Stack, styled } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
