@@ -515,19 +515,33 @@ export default function BasicCard() {
                 >
                   <Box
                     sx={{
-                      backgroundColor: 'white', // Fondo blanco para el contenido
-                      p: 2, // Padding para separar el contenido del borde
-                      mt: 2,
-                      borderRadius: 4, // Bordes redondeados
-                      width: '100%', // Ajusta el ancho para que ocupe todo el contenedor
+                      backgroundColor: 'white',
+                      p: 1,
+                      mt: 1,
+                      borderRadius: 4,
+                      width: '100%',
                       display: 'flex',
                       flexDirection: 'column',
-                      flexGrow: 1, // Ocupa todo el espacio disponible
-                      overflowY: 'auto' // Scroll si el contenido es muy largo
+                      flexGrow: 1,
+                      overflowY: 'auto',
+                      // Added dynamic styling based on content
+                      ...(parseTemplateContent(template.data).text && {
+                        minHeight: 'auto', // Allow height to adapt to content
+                        height: 'fit-content', // Fit to content
+                      })
                     }}
                   >
-                    <Typography variant="body2" color="text.secondary">
-                      {/* Render text content, replacing variables with placeholders */}
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        // Optional: add some responsive text sizing
+                        fontSize: {
+                          xs: '0.875rem',  // smaller on extra small screens
+                          sm: '1rem',       // default size
+                        }
+                      }}
+                    >
                       {parseTemplateContent(template.data).text}
                     </Typography>
 
