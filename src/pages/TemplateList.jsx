@@ -520,7 +520,7 @@ export default function BasicCard() {
                       p: 1,
                       mt: 1,
                       borderRadius: 4,
-                      width: 280, // Ancho fijo
+                      width: 284, // Ancho fijo
                       maxWidth: '100%', // Ensure it doesn't overflow the parent
                       display: 'inline-flex', // Use inline-flex to wrap content
                       flexDirection: 'column',
