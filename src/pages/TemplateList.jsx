@@ -17,6 +17,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowForward from '@mui/icons-material/ArrowForward';
 import Link from '@mui/icons-material/Link';
 import Phone from '@mui/icons-material/Phone';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ErrorIcon from '@mui/icons-material/Error';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
@@ -259,6 +261,14 @@ export default function BasicCard() {
     },
   }));
 
+  const [openReasonDialog, setOpenReasonDialog] = React.useState(false);
+  const [selectedReason, setSelectedReason] = React.useState('');
+
+  const handleOpenReasonDialog = (reason) => {
+    setSelectedReason(reason);
+    setOpenReasonDialog(true);
+  };
+
   return (
     <Box sx={{ marginLeft: 2, marginRight: 2, marginTop: 3 }}>
 
@@ -433,10 +443,58 @@ export default function BasicCard() {
                 </Box>
 
                 {/* Razón rechazo */}
+                {/* Razón rechazo */}
                 {template.reason && (
-                  <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
-                    Razón: {template.reason}
-                  </Typography>
+                  <React.Fragment>
+                    <Button
+                      color="error"
+                      variant="outlined"
+                      size="small"
+                      onClick={() => handleOpenReasonDialog(template.reason)}
+                      startIcon={<ErrorOutlineIcon />}
+                      sx={{
+                        mt: 1,
+                        textTransform: 'none',
+                        fontSize: '0.75rem',
+                        py: 0.5,
+                        px: 1
+                      }}
+                    >
+                      Razón de rechazo
+                    </Button>
+
+                    <Dialog
+                      open={openReasonDialog}
+                      onClose={() => setOpenReasonDialog(false)}
+                      maxWidth="sm"
+                      fullWidth
+                    >
+                      <DialogTitle sx={{
+                        bgcolor: 'error.light',
+                        color: 'error.contrastText',
+                        py: 1,
+                        px: 2
+                      }}>
+                        <Box display="flex" alignItems="center">
+                          <ErrorIcon sx={{ mr: 1 }} />
+                          <Typography variant="subtitle1">Razón de rechazo</Typography>
+                        </Box>
+                      </DialogTitle>
+                      <DialogContent sx={{ py: 3, px: 2 }}>
+                        <Typography>{selectedReason}</Typography>
+                      </DialogContent>
+                      <DialogActions sx={{ px: 2, py: 1 }}>
+                        <Button
+                          onClick={() => setOpenReasonDialog(false)}
+                          variant="contained"
+                          color="primary"
+                          sx={{ borderRadius: 1 }}
+                        >
+                          Entendido
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+                  </React.Fragment>
                 )}
 
                 {/* Content */}
