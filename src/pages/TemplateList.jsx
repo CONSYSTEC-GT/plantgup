@@ -458,7 +458,7 @@ export default function BasicCard() {
                         borderRadius: 1,
                         py: 0.5,
                         px: 1,
-                        ml: 1
+                        ml: 2
                       }}
                     >
                       Razón de rechazo
@@ -574,7 +574,7 @@ export default function BasicCard() {
               {/* Acciones */}<CardActions
                 sx={{
                   mt: 'auto',           // Empuja el CardActions hacia abajo
-                  justifyContent: 'flex-start', // Alinea contenido a la izquierda
+                  justifyContent: 'flex-end', // Alinea contenido a la izquierda
                   padding: 2,           // Añade padding consistente
                   position: 'relative', // Necesario para el posicionamiento
                 }}
@@ -588,15 +588,10 @@ export default function BasicCard() {
                   disableElevation
                   onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
                   endIcon={<KeyboardArrowDownIcon />}
+                  color="primary"
                   sx={{
                     borderRadius: 1,
                     textTransform: 'none',
-                    color: '#00C3FF',
-                    borderColor: '#E0E7FF',
-                    '&:hover': {
-                      borderColor: '#C7D2FE',
-                      backgroundColor: '#F5F5FF'
-                    }
                   }}
                 >
                   Administrar
