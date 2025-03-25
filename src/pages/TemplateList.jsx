@@ -6,7 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import LoginRequired from './LoginRequired';
 
 //componentes
-import { alpha, Card, CardContent, Typography, CardActions, Button, Grid, Box, Menu, MenuItem, Stack, TextField, Paper, styled } from '@mui/material';
+import { alpha, Card, CardContent, Typography, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Grid, Box, Menu, MenuItem, Stack, TextField, Paper, styled } from '@mui/material';
 import { CircularProgress } from '@mui/material';
 //iconos
 import AddIcon from '@mui/icons-material/Add';
