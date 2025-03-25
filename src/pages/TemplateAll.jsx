@@ -72,6 +72,8 @@ const TemplateAll = () => {
         return '#ffebee';
       case 'FAILED':
         return '#fff3e0';
+      case 'APPROVED':
+        return '#C8E6C9';
       default:
         return '#f5f5f5';
     }
@@ -83,6 +85,8 @@ const TemplateAll = () => {
         return '#d32f2f'; // Rojo oscuro para texto
       case 'FAILED':
         return '#e65100'; // Naranja oscuro para texto
+      case 'APPROVED':
+        return '#1B5E20';
       default:
         return '#616161'; // Gris oscuro para texto
     }
@@ -94,8 +98,10 @@ const TemplateAll = () => {
         return '#EF4444'; // Rojo
       case 'FAILED':
         return '#FF9900'; // Naranja
-      default:
+      case 'APPROVED':
         return '#34C759'; // Verde
+      default:
+        return '#000000';
     }
   };
 
@@ -203,8 +209,15 @@ const TemplateAll = () => {
             Catálogo de Plantillas
           </Typography>
 
-          <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 3, justifyContent: "center" }}>
+          {/* Grid de tarjetas */}
+          <Box sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+            gap: 3,
+            justifyItems: "center" // Esto centrará las tarjetas en sus celdas de grid
+          }}>
             {templates.map((template) => (
+
               <Card
                 key={template.id}
                 sx={{
@@ -221,9 +234,8 @@ const TemplateAll = () => {
                 }}
               >
                 <CardContent sx={{ p: 0 }}>
-
-
-                  {/* Header Template Name */}<Box sx={{ p: 2, pb: 0 }}>
+                  {/* Header Template Name */}
+                  <Box sx={{ p: 2, pb: 0 }}>
                     <Typography
                       variant="subtitle1"
                       fontWeight={700}
@@ -299,40 +311,139 @@ const TemplateAll = () => {
                       </Box>
                     </Box>
                   </Box>
-                  {/* Razón rechazo */}{template.reason && (
-                    <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
-                      Razón: {template.reason}
-                    </Typography>
+
+                  {/* Razón rechazo */}
+                  {template.reason && (
+                    <React.Fragment>
+                      <Button
+                        color="error"
+                        variant="outlined"
+                        size="small"
+                        onClick={() => handleOpenReasonDialog(template.reason)}
+                        startIcon={<ErrorOutlineIcon />}
+                        sx={{
+                          mt: 1,
+                          textTransform: 'none',
+                          fontSize: '0.75rem',
+                          borderRadius: 1,
+                          py: 0.5,
+                          px: 1,
+                          ml: 2
+                        }}
+                      >
+                        Razón de rechazo
+                      </Button>
+
+                      <Dialog
+                        open={openReasonDialog}
+                        onClose={() => setOpenReasonDialog(false)}
+                        maxWidth="sm"
+                        fullWidth
+                      >
+                        <DialogTitle sx={{
+                          bgcolor: 'error.light',
+                          color: 'error.contrastText',
+                          py: 1,
+                          px: 2
+                        }}>
+                          <Box display="flex" alignItems="center">
+                            <ErrorIcon sx={{ mr: 1 }} />
+                            <Typography variant="subtitle1">Razón de rechazo</Typography>
+                          </Box>
+                        </DialogTitle>
+                        <DialogContent sx={{ py: 3, px: 2 }}>
+                          <Typography>{selectedReason}</Typography>
+                        </DialogContent>
+                        <DialogActions sx={{ px: 2, py: 1 }}>
+                          <Button
+                            onClick={() => setOpenReasonDialog(false)}
+                            variant="contained"
+                            color="primary"
+                            sx={{ borderRadius: 1 }}
+                          >
+                            Entendido
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </React.Fragment>
                   )}
 
-                  {/* Content */}<Box
+                  {/* Content */}
+                  <Box
                     sx={{
-                      p: 0,
                       backgroundColor: '#FEF9F3', // Fondo amarillo
-                      p: 2,
+                      p: 2, // Aumentar padding para dar más espacio alrededor de la caja blanca
                       mx: 1,
                       my: 1,
                       borderRadius: 2,
-                      height: 302, // Altura fija para el fondo amarillo
+                      minHeight: 302, // Altura mínima en lugar de fija AMARILLA
                       width: 286,
                       display: 'flex',
                       flexDirection: 'column', // Ajusta la dirección del contenido a columna
                       alignItems: 'center', // Centra horizontalmente
+                      justifyContent: 'flex-start', // Align content to the top
                     }}
                   >
                     <Box
                       sx={{
-                        backgroundColor: 'white', // Fondo blanco para el contenido
-                        p: 2, // Padding para separar el contenido del borde
-                        mt: 2,
-                        borderRadius: 4, // Bordes redondeados
-                        width: '100%', // Ajusta el ancho para que ocupe todo el contenedor
-                        overflowY: 'auto', // Permite desplazamiento vertical si el contenido supera la altura
+                        backgroundColor: 'white',
+                        p: 1,
+                        mt: 1,
+                        borderRadius: 4,
+                        width: 284, // Ancho fijo
+                        maxWidth: '100%', // Ensure it doesn't overflow the parent
+                        display: 'inline-flex', // Use inline-flex to wrap content
+                        flexDirection: 'column',
+                        alignSelf: 'center', // Center the white box horizontally
                       }}
                     >
-                      <Typography variant="body2" color="text.secondary">
-                        {template.data}
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          width: 'fit-content', // Ensure typography width fits content
+                          whiteSpace: 'normal', // Allow text to wrap
+                        }}
+                      >
+                        {parseTemplateContent(template.data).text}
                       </Typography>
+
+                      {/* Botones */}
+                      <Stack spacing={1} sx={{ mt: 2 }}>
+                        {parseTemplateContent(template.data).buttons.map((button, index) => (
+                          <Box
+                            key={index}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "flex-start",
+                              gap: 1,
+                              border: "1px solid #ccc",
+                              borderRadius: "20px",
+                              p: 1,
+                              backgroundColor: "#ffffff",
+                              boxShadow: 1,
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: "#f5f5f5",
+                              },
+                            }}
+                          >
+                            {button.type === "QUICK_REPLY" && (
+                              <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
+                            )}
+                            {button.type === "URL" && (
+                              <Link sx={{ fontSize: "16px", color: "#075e54" }} />
+                            )}
+                            {button.type === "PHONE_NUMBER" && (
+                              <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
+                            )}
+                            <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
+                              {button.title}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Stack>
                     </Box>
                   </Box>
                 </CardContent>
@@ -340,7 +451,7 @@ const TemplateAll = () => {
                 {/* Acciones */}<CardActions
                   sx={{
                     mt: 'auto',           // Empuja el CardActions hacia abajo
-                    justifyContent: 'flex-start', // Alinea contenido a la izquierda
+                    justifyContent: 'flex-end', // Alinea contenido a la izquierda
                     padding: 2,           // Añade padding consistente
                     position: 'relative', // Necesario para el posicionamiento
                   }}
@@ -350,19 +461,14 @@ const TemplateAll = () => {
                     aria-controls={anchorEl ? 'manage-menu' : undefined}
                     aria-haspopup="true"
                     aria-expanded={anchorEl ? 'true' : undefined}
-                    variant="outlined"
+                    variant="contained"
                     disableElevation
                     onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
                     endIcon={<KeyboardArrowDownIcon />}
+                    color="primary"
                     sx={{
                       borderRadius: 1,
                       textTransform: 'none',
-                      color: '#00C3FF',
-                      borderColor: '#E0E7FF',
-                      '&:hover': {
-                        borderColor: '#C7D2FE',
-                        backgroundColor: '#F5F5FF'
-                      }
                     }}
                   >
                     Administrar

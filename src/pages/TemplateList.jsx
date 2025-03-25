@@ -135,7 +135,7 @@ export default function BasicCard() {
       case 'FAILED':
         return '#fff3e0';
       case 'APPROVED':
-        return '#d9ead3';
+        return '#C8E6C9';
       default:
         return '#f5f5f5';
     }
@@ -148,7 +148,7 @@ export default function BasicCard() {
       case 'FAILED':
         return '#e65100'; // Naranja oscuro para texto
       case 'APPROVED':
-        return '#34C759';
+        return '#1B5E20';
       default:
         return '#616161'; // Gris oscuro para texto
     }
