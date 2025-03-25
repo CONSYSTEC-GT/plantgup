@@ -305,16 +305,14 @@ export default function BasicCard() {
         </Box>
       </Box>
 
-      {/*BOTON VER PLANTILLAS*/}<Box display="flex" justifyContent="flex-end" sx={{ marginTop: 2, marginRight: 2 }}>
-        <Button color="primary" variant="contained" size="large" onClick={handleVerTemplates} endIcon={<FindInPageIcon />} sx={{ borderRadius: 2 }}>
-          Ver Todas
-        </Button>
-      </Box>
-
+      
       {/* Lista de tarjetas */}<Box sx={{ p: 3 }}>
         {/* TITULO */}<Typography variant="h5" fontWeight="bold" gutterBottom>
           Últimas plantillas creadas
         </Typography>
+        <Button color="primary" variant="contained" size="large" onClick={handleVerTemplates} endIcon={<FindInPageIcon />} sx={{ borderRadius: 2 }}>
+          Ver Todas
+        </Button>
 
         <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 3, justifyContent: "center" }}>
           {templates.map((template) => (
