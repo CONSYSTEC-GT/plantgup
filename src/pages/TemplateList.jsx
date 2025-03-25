@@ -134,6 +134,8 @@ export default function BasicCard() {
         return '#ffebee';
       case 'FAILED':
         return '#fff3e0';
+      case 'APPROVED':
+        return '#d9ead3';
       default:
         return '#f5f5f5';
     }
@@ -145,6 +147,8 @@ export default function BasicCard() {
         return '#d32f2f'; // Rojo oscuro para texto
       case 'FAILED':
         return '#e65100'; // Naranja oscuro para texto
+      case 'APPROVED':
+        return '#34C759';
       default:
         return '#616161'; // Gris oscuro para texto
     }
@@ -156,8 +160,10 @@ export default function BasicCard() {
         return '#EF4444'; // Rojo
       case 'FAILED':
         return '#FF9900'; // Naranja
-      default:
+      case 'APPROVED':
         return '#34C759'; // Verde
+      default:
+        return '#000000';
     }
   };
 
