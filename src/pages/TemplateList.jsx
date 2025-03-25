@@ -455,8 +455,10 @@ export default function BasicCard() {
                         mt: 1,
                         textTransform: 'none',
                         fontSize: '0.75rem',
+                        borderRadius: 1,
                         py: 0.5,
-                        px: 16
+                        px: 1,
+                        ml: 1
                       }}
                     >
                       Razón de rechazo
@@ -582,7 +584,7 @@ export default function BasicCard() {
                   aria-controls={anchorEl ? 'manage-menu' : undefined}
                   aria-haspopup="true"
                   aria-expanded={anchorEl ? 'true' : undefined}
-                  variant="outlined"
+                  variant="contained"
                   disableElevation
                   onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
                   endIcon={<KeyboardArrowDownIcon />}
