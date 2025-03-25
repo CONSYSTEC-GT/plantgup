@@ -13,6 +13,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
+import { parseTemplateContent } from "../utils/parseTemplateContent";
 
 const TemplateAll = () => {
   //PARA MANEJAR EL STATUS DE LAS PLANTILLAS | VARIABLES
