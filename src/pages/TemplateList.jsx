@@ -443,7 +443,6 @@ export default function BasicCard() {
                 </Box>
 
                 {/* Razón rechazo */}
-                {/* Razón rechazo */}
                 {template.reason && (
                   <React.Fragment>
                     <Button
@@ -457,7 +456,7 @@ export default function BasicCard() {
                         textTransform: 'none',
                         fontSize: '0.75rem',
                         py: 0.5,
-                        px: 1
+                        px: 16
                       }}
                     >
                       Razón de rechazo
