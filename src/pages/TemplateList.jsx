@@ -506,7 +506,7 @@ export default function BasicCard() {
                     mx: 1,
                     my: 1,
                     borderRadius: 2,
-                    height: 302, // Altura fija para el fondo amarillo
+                    minHeight: 302, // Altura mínima en lugar de fija AMARILLA
                     width: 286,
                     display: 'flex',
                     flexDirection: 'column', // Ajusta la dirección del contenido a columna
@@ -520,10 +520,10 @@ export default function BasicCard() {
                       mt: 2,
                       borderRadius: 4, // Bordes redondeados
                       width: '100%', // Ajusta el ancho para que ocupe todo el contenedor
-                      overflowY: 'auto', // Permite desplazamiento vertical si el contenido supera la altura
                       display: 'flex',
                       flexDirection: 'column',
-                      flex: 1
+                      flexGrow: 1, // Ocupa todo el espacio disponible
+                      overflowY: 'auto' // Scroll si el contenido es muy largo
                     }}
                   >
                     <Typography variant="body2" color="text.secondary">
