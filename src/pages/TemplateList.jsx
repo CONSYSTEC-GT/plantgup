@@ -511,6 +511,7 @@ export default function BasicCard() {
                     display: 'flex',
                     flexDirection: 'column', // Ajusta la dirección del contenido a columna
                     alignItems: 'center', // Centra horizontalmente
+                    justifyContent: 'flex-start', // Align content to the top
                   }}
                 >
                   <Box
@@ -519,27 +520,19 @@ export default function BasicCard() {
                       p: 1,
                       mt: 1,
                       borderRadius: 4,
-                      width: '100%',
-                      display: 'flex',
+                      width: 'fit-content', // Make width fit the content
+                      maxWidth: '100%', // Ensure it doesn't overflow the parent
+                      display: 'inline-flex', // Use inline-flex to wrap content
                       flexDirection: 'column',
-                      flexGrow: 1,
-                      overflowY: 'auto',
-                      // Added dynamic styling based on content
-                      ...(parseTemplateContent(template.data).text && {
-                        minHeight: 'auto', // Allow height to adapt to content
-                        height: 'fit-content', // Fit to content
-                      })
+                      alignSelf: 'center', // Center the white box horizontally
                     }}
                   >
                     <Typography
                       variant="body2"
                       color="text.secondary"
                       sx={{
-                        // Optional: add some responsive text sizing
-                        fontSize: {
-                          xs: '0.875rem',  // smaller on extra small screens
-                          sm: '1rem',       // default size
-                        }
+                        width: 'fit-content', // Ensure typography width fits content
+                        whiteSpace: 'normal', // Allow text to wrap
                       }}
                     >
                       {parseTemplateContent(template.data).text}
