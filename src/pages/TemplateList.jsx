@@ -20,7 +20,7 @@ import Phone from '@mui/icons-material/Phone';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
-import { parseTemplateContent } from "../utils/parseTemplateContent"; 
+import { parseTemplateContent } from "../utils/parseTemplateContent";
 
 
 
@@ -305,22 +305,37 @@ export default function BasicCard() {
         </Box>
       </Box>
 
-      
-      {/* Lista de tarjetas */}<Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        mb: 2, // margen inferior para separar del contenido siguiente
-        p: 3
-      }}>
-        {/* TITULO */}<Typography variant="h5" fontWeight="bold" gutterBottom>
-          Últimas plantillas creadas
-        </Typography>
-        <Button color="primary" variant="contained" size="large" onClick={handleVerTemplates} endIcon={<FindInPageIcon />} sx={{ borderRadius: 2 }}>
-          Ver Todas
-        </Button>
 
-        <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 3, justifyContent: "center" }}>
+      {/* Lista de tarjetas */}<Box sx={{ p: 3 }}>
+        {/* Encabezado con título y botón */}
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          mb: 3
+        }}>
+          <Typography variant="h5" fontWeight="bold">
+            Últimas plantillas creadas
+          </Typography>
+          <Button
+            color="primary"
+            variant="contained"
+            size="large"
+            onClick={handleVerTemplates}
+            endIcon={<FindInPageIcon />}
+            sx={{ borderRadius: 2 }}
+          >
+            Ver Todas
+          </Button>
+        </Box>
+
+        {/* Grid de tarjetas */}
+        <Box sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          gap: 3,
+          justifyItems: "center" // Esto centrará las tarjetas en sus celdas de grid
+        }}>
           {templates.map((template) => (
 
             <Card
