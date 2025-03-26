@@ -2,6 +2,8 @@ import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import TemplateList from './pages/TemplateList';
 import CreateTemplatePage from './pages/CreateTemplatePage';
+import CreateTemplateCatalog from './pages/CreateTemplateCatalog';
+import CreateTemplateCarousel from './pages/CreateTemplateCarousel';
 import EditTemplatePage from './pages/EditTemplatePage';
 import TemplateAll from './pages/TemplateAll';
 import TemplateAproved from './pages/TemplateAproved';
@@ -47,6 +49,22 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute>
                 <CreateTemplatePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/CreateTemplateCatalog"
+            element={
+              <ProtectedRoute>
+                <CreateTemplateCatalog />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/CreateTemplateCarousel"
+            element={
+              <ProtectedRoute>
+                <CreateTemplateCarousel />
               </ProtectedRoute>
             }
           />
