@@ -21,6 +21,9 @@ import Link from '@mui/icons-material/Link';
 import Phone from '@mui/icons-material/Phone';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ErrorIcon from '@mui/icons-material/Error';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import CategoryIcon from '@mui/icons-material/Category';
+import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
@@ -323,60 +326,73 @@ export default function BasicCard() {
           </Box>
 
           <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+      >
+        <Button 
+          color="primary" 
+          variant="contained" 
+          size="large" 
+          onClick={handleCrearPlantilla} 
+          endIcon={<AddIcon />} 
+          sx={{ 
+            borderRadius: 2,
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-2px)'
+            }
+          }}
+        >
+          Crear plantilla
+        </Button>
+      </motion.div>
+      <Menu
+        anchorEl={anchorEl2} 
+        open={open2} 
+        onClose={handleClose2}
+        TransitionComponent={Fade}
+      >
+        {[
+          { 
+            text: 'Texto Imagén y Documento', 
+            onClick: crearPlantillaTradicional,
+            icon: <InsertDriveFileIcon fontSize="small" />
+          },
+          { 
+            text: 'Catalogo', 
+            onClick: crearPlantillaCatalogo,
+            icon: <AutoAwesomeMosaicIcon fontSize="small" />
+          },
+          { 
+            text: 'Producto', 
+            onClick: crearPlantillaProducto,
+            icon: <CategoryIcon fontSize="small" />
+          }
+        ].map((item, index) => (
+          <MenuItem 
+            key={item.text}
+            onClick={item.onClick}
+            component={motion.div}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ 
+              delay: index * 0.1, 
+              type: "spring", 
+              stiffness: 300 
+            }}
+            sx={{
+              '&:hover': {
+                transform: 'scale(1.02)',
+                transition: 'all 0.2s ease'
+              }
+            }}
           >
-            <Button
-              color="primary"
-              variant="contained"
-              size="large"
-              onClick={handleCrearPlantilla}
-              endIcon={<AddIcon />}
-              sx={{
-                borderRadius: 2,
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-2px)'
-                }
-              }}
-            >
-              Crear plantilla
-            </Button>
-          </motion.div>
-          <Menu
-            anchorEl={anchorEl2}
-            open={open2}
-            onClose={handleClose2}
-            TransitionComponent={Fade}
-          >
-            {[
-              { text: 'Texto Imagén y Documento', onClick: crearPlantillaTradicional },
-              { text: 'Catalogo', onClick: crearPlantillaCatalogo },
-              { text: 'Producto', onClick: crearPlantillaProducto }
-            ].map((item, index) => (
-              <MenuItem
-                key={item.text}
-                onClick={item.onClick}
-                component={motion.div}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{
-                  delay: index * 0.1,
-                  type: "spring",
-                  stiffness: 300
-                }}
-                sx={{
-                  '&:hover': {
-                    transform: 'scale(1.02)',
-                    transition: 'all 0.2s ease'
-                  }
-                }}
-              >
-                {item.text}
-              </MenuItem>
-            ))}
-          </Menu>
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText>{item.text}</ListItemText>
+          </MenuItem>
+        ))}
+      </Menu>
         </Box>
       </Paper>
 
