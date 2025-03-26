@@ -429,6 +429,11 @@ export default function BasicCard() {
           <Typography variant="h5" fontWeight="bold">
             Últimas plantillas creadas
           </Typography>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
           <Button
             color="primary"
             variant="contained"
@@ -439,6 +444,7 @@ export default function BasicCard() {
           >
             Ver Todas
           </Button>
+          </motion.div>
         </Box>
 
         {/* Grid de tarjetas */}
@@ -725,7 +731,7 @@ export default function BasicCard() {
                   {[
                     {
                       text: 'Editar',
-                      onClick: handleEdit(selectedTemplate),
+                      onClick: () => handleEdit(selectedTemplate),
                       icon: <EditIcon fontSize="small" />
                     },
                     {
