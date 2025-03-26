@@ -326,73 +326,73 @@ export default function BasicCard() {
           </Box>
 
           <motion.div
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-      >
-        <Button 
-          color="primary" 
-          variant="contained" 
-          size="large" 
-          onClick={handleCrearPlantilla} 
-          endIcon={<AddIcon />} 
-          sx={{ 
-            borderRadius: 2,
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              transform: 'translateY(-2px)'
-            }
-          }}
-        >
-          Crear plantilla
-        </Button>
-      </motion.div>
-      <Menu
-        anchorEl={anchorEl2} 
-        open={open2} 
-        onClose={handleClose2}
-        TransitionComponent={Fade}
-      >
-        {[
-          { 
-            text: 'Texto Imagén y Documento', 
-            onClick: crearPlantillaTradicional,
-            icon: <InsertDriveFileIcon fontSize="small" />
-          },
-          { 
-            text: 'Catalogo', 
-            onClick: crearPlantillaCatalogo,
-            icon: <AutoAwesomeMosaicIcon fontSize="small" />
-          },
-          { 
-            text: 'Producto', 
-            onClick: crearPlantillaProducto,
-            icon: <CategoryIcon fontSize="small" />
-          }
-        ].map((item, index) => (
-          <MenuItem 
-            key={item.text}
-            onClick={item.onClick}
-            component={motion.div}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ 
-              delay: index * 0.1, 
-              type: "spring", 
-              stiffness: 300 
-            }}
-            sx={{
-              '&:hover': {
-                transform: 'scale(1.02)',
-                transition: 'all 0.2s ease'
-              }
-            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText>{item.text}</ListItemText>
-          </MenuItem>
-        ))}
-      </Menu>
+            <Button
+              color="primary"
+              variant="contained"
+              size="large"
+              onClick={handleCrearPlantilla}
+              endIcon={<AddIcon />}
+              sx={{
+                borderRadius: 2,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-2px)'
+                }
+              }}
+            >
+              Crear plantilla
+            </Button>
+          </motion.div>
+          <Menu
+            anchorEl={anchorEl2}
+            open={open2}
+            onClose={handleClose2}
+            TransitionComponent={Fade}
+          >
+            {[
+              {
+                text: 'Texto, Imagén y Documento',
+                onClick: crearPlantillaTradicional,
+                icon: <InsertDriveFileIcon fontSize="small" />
+              },
+              {
+                text: 'Catalogo',
+                onClick: crearPlantillaCatalogo,
+                icon: <AutoAwesomeMosaicIcon fontSize="small" />
+              },
+              {
+                text: 'Producto',
+                onClick: crearPlantillaProducto,
+                icon: <CategoryIcon fontSize="small" />
+              }
+            ].map((item, index) => (
+              <MenuItem
+                key={item.text}
+                onClick={item.onClick}
+                component={motion.div}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  delay: index * 0.1,
+                  type: "spring",
+                  stiffness: 300
+                }}
+                sx={{
+                  '&:hover': {
+                    transform: 'scale(1.02)',
+                    transition: 'all 0.2s ease'
+                  }
+                }}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText>{item.text}</ListItemText>
+              </MenuItem>
+            ))}
+          </Menu>
         </Box>
       </Paper>
 
@@ -688,23 +688,29 @@ export default function BasicCard() {
                   position: 'relative', // Necesario para el posicionamiento
                 }}
               >
-                <Button
-                  id="manage-button"
-                  aria-controls={anchorEl ? 'manage-menu' : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={anchorEl ? 'true' : undefined}
-                  variant="contained"
-                  disableElevation
-                  onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
-                  endIcon={<KeyboardArrowDownIcon />}
-                  color="primary"
-                  sx={{
-                    borderRadius: 1,
-                    textTransform: 'none',
-                  }}
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
-                  Administrar
-                </Button>
+                  <Button
+                    id="manage-button"
+                    aria-controls={anchorEl ? 'manage-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={anchorEl ? 'true' : undefined}
+                    variant="contained"
+                    disableElevation
+                    onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
+                    endIcon={<KeyboardArrowDownIcon />}
+                    color="primary"
+                    sx={{
+                      borderRadius: 1,
+                      textTransform: 'none',
+                    }}
+                  >
+                    Administrar
+                  </Button>
+                </motion.div>
 
                 <StyledMenu
                   id="manage-menu"
@@ -714,6 +720,7 @@ export default function BasicCard() {
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
+                  TransitionComponent={Fade}
                 >
                   <MenuItem
                     onClick={() => handleEdit(selectedTemplate)}
