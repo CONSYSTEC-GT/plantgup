@@ -7,9 +7,14 @@ import Sidebar from '../components/Sidebar';
 import { jwtDecode } from 'jwt-decode'; // Asegúrate de instalar jwt-decode
 
 // ICONOS
+import AddIcon from '@mui/icons-material/Add';
+import FindInPageIcon from '@mui/icons-material/FindInPage';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ArrowForward from '@mui/icons-material/ArrowForward';
+import Link from '@mui/icons-material/Link';
+import Phone from '@mui/icons-material/Phone';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ErrorIcon from '@mui/icons-material/Error';
 
