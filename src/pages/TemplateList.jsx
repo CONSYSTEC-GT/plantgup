@@ -6,10 +6,10 @@ import { motion } from 'framer-motion';
 
 import LoginRequired from './LoginRequired';
 
-
 //componentes
 import { alpha, Card, CardContent, Typography, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fade, Button, ListItemIcon, ListItemText, Grid, Box, Menu, MenuItem, Stack, TextField, Paper, styled } from '@mui/material';
 import { CircularProgress } from '@mui/material';
+
 //iconos
 import AddIcon from '@mui/icons-material/Add';
 import FindInPageIcon from '@mui/icons-material/FindInPage';
@@ -28,8 +28,6 @@ import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
 import { parseTemplateContent } from "../utils/parseTemplateContent";
-
-
 
 // Componente reutilizable para las tarjetas
 const TemplateCard = ({ title, subtitle, description, onEdit, onDelete, whatsappStyle }) => (
@@ -231,47 +229,6 @@ export default function BasicCard() {
     }
   };
 
-  // Estilo personalizado para el menú
-  const StyledMenu = styled((props) => (
-    <Menu
-      elevation={0}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'right',
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      {...props}
-    />
-  ))(({ theme }) => ({
-    '& .MuiPaper-root': {
-      borderRadius: 6,
-      marginTop: theme.spacing(1),
-      minWidth: 180,
-      color: 'rgb(55, 65, 81)',
-      boxShadow:
-        'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-      '& .MuiMenu-list': {
-        padding: '4px 0',
-      },
-      '& .MuiMenuItem-root': {
-        '& .MuiSvgIcon-root': {
-          fontSize: 18,
-          color: theme.palette.text.secondary,
-          marginRight: theme.spacing(1.5),
-        },
-        '&:active': {
-          backgroundColor: alpha(
-            theme.palette.primary.main,
-            theme.palette.action.selectedOpacity,
-          ),
-        },
-      },
-    },
-  }));
-
   const [openReasonDialog, setOpenReasonDialog] = React.useState(false);
   const [selectedReason, setSelectedReason] = React.useState('');
 
@@ -279,7 +236,6 @@ export default function BasicCard() {
     setSelectedReason(reason);
     setOpenReasonDialog(true);
   };
-
 
   const [anchorEl2, setAnchorEl2] = useState(null);
   const open2 = Boolean(anchorEl2);
