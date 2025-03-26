@@ -256,7 +256,7 @@ export default function BasicCard() {
 
   const crearPlantillaCatalogo = () => {
     handleClose2(); // Cierra el menú antes de navegar
-    navigate("/CreateCatalogTemplate"); // Redirige a otra plantilla
+    navigate("/CreateTemplateCatalog"); // Redirige a otra plantilla
   };
 
   const crearPlantillaCarrusel = () => {
