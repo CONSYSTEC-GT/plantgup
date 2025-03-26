@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import { motion } from 'framer-motion';
 
 import LoginRequired from './LoginRequired';
 
+
 //componentes
-import { alpha, Card, CardContent, Typography, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Grid, Box, Menu, MenuItem, Stack, TextField, Paper, styled } from '@mui/material';
+import { alpha, Card, CardContent, Typography, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fade, Button, Grid, Box, Menu, MenuItem, Stack, TextField, Paper, styled } from '@mui/material';
 import { CircularProgress } from '@mui/material';
 //iconos
 import AddIcon from '@mui/icons-material/Add';
@@ -320,13 +322,60 @@ export default function BasicCard() {
             </Typography>
           </Box>
 
-          <Button color="primary" variant="contained" size="large" onClick={handleCrearPlantilla} endIcon={<AddIcon />} sx={{ borderRadius: 2 }}>
-            Crear plantilla
-          </Button>
-          <Menu anchorEl={anchorEl2} open={open2} onClose={handleClose2}>
-            <MenuItem onClick={crearPlantillaTradicional}>Texto Imagén y Documento</MenuItem>
-            <MenuItem onClick={crearPlantillaCatalogo}>Catalogo</MenuItem>
-            <MenuItem onClick={crearPlantillaProducto}>Producto</MenuItem>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            <Button
+              color="primary"
+              variant="contained"
+              size="large"
+              onClick={handleCrearPlantilla}
+              endIcon={<AddIcon />}
+              sx={{
+                borderRadius: 2,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-2px)'
+                }
+              }}
+            >
+              Crear plantilla
+            </Button>
+          </motion.div>
+          <Menu
+            anchorEl={anchorEl2}
+            open={open2}
+            onClose={handleClose2}
+            TransitionComponent={Fade}
+          >
+            {[
+              { text: 'Texto Imagén y Documento', onClick: crearPlantillaTradicional },
+              { text: 'Catalogo', onClick: crearPlantillaCatalogo },
+              { text: 'Producto', onClick: crearPlantillaProducto }
+            ].map((item, index) => (
+              <MenuItem
+                key={item.text}
+                onClick={item.onClick}
+                component={motion.div}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  delay: index * 0.1,
+                  type: "spring",
+                  stiffness: 300
+                }}
+                sx={{
+                  '&:hover': {
+                    transform: 'scale(1.02)',
+                    transition: 'all 0.2s ease'
+                  }
+                }}
+              >
+                {item.text}
+              </MenuItem>
+            ))}
           </Menu>
         </Box>
       </Paper>
