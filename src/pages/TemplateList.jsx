@@ -712,7 +712,7 @@ export default function BasicCard() {
                   </Button>
                 </motion.div>
 
-                <StyledMenu
+                <Menu
                   id="manage-menu"
                   MenuListProps={{
                     'aria-labelledby': 'manage-button',
@@ -722,21 +722,44 @@ export default function BasicCard() {
                   onClose={handleClose}
                   TransitionComponent={Fade}
                 >
-                  <MenuItem
-                    onClick={() => handleEdit(selectedTemplate)}
-                    disableRipple
-                  >
-                    <EditIcon />
-                    Editar
-                  </MenuItem>
-                  <MenuItem
-                    onClick={handleDeleteClick}
-                    disableRipple
-                  >
-                    <DeleteIcon />
-                    Eliminar
-                  </MenuItem>
-                </StyledMenu>
+                  {[
+                    {
+                      text: 'Editar',
+                      onClick: handleEdit(selectedTemplate),
+                      icon: <EditIcon fontSize="small" />
+                    },
+                    {
+                      text: 'Eliminar',
+                      onClick: handleDeleteClick,
+                      icon: <DeleteIcon fontSize="small" />
+                    }
+                  ].map((item, index) => (
+                    <MenuItem
+                      key={item.text}
+                      onClick={item.onClick}
+                      component={motion.div}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        delay: index * 0.1,
+                        type: "spring",
+                        stiffness: 300
+                      }}
+                      sx={{
+                        '&:hover': {
+                          transform: 'scale(1.02)',
+                          transition: 'all 0.2s ease'
+                        }
+                      }}
+                    >
+                      <ListItemIcon>{item.icon}</ListItemIcon>
+                      <ListItemText>{item.text}</ListItemText>
+                    </MenuItem>
+                  ))}
+
+
+
+                </Menu>
               </CardActions>
             </Card>
           ))}
