@@ -24,6 +24,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CategoryIcon from '@mui/icons-material/Category';
 import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
+import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
@@ -258,9 +259,9 @@ export default function BasicCard() {
     navigate("/CreateCatalogTemplate"); // Redirige a otra plantilla
   };
 
-  const crearPlantillaProducto = () => {
+  const crearPlantillaCarrusel = () => {
     handleClose2(); // Cierra el menú antes de navegar
-    navigate("/CreateCatalogTemplate"); // Redirige a otra plantilla
+    navigate("/CreateCarouselTemplate"); // Redirige a otra plantilla
   };
 
   return (
@@ -321,9 +322,9 @@ export default function BasicCard() {
                 icon: <AutoAwesomeMosaicIcon fontSize="small" />
               },
               {
-                text: 'Producto',
-                onClick: crearPlantillaProducto,
-                icon: <CategoryIcon fontSize="small" />
+                text: 'Carrusel',
+                onClick: crearPlantillaCarrusel,
+                icon: <ViewCarouselIcon fontSize="small" />
               }
             ].map((item, index) => (
               <MenuItem
