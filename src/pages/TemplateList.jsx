@@ -275,6 +275,33 @@ export default function BasicCard() {
     setOpenReasonDialog(true);
   };
 
+
+  const [anchorEl2, setAnchorEl2] = useState(null);
+  const open2 = Boolean(anchorEl2);
+
+  const handleClose2 = () => {
+    setAnchorEl2(null); // Cierra el menú
+  };
+
+  const handleCrearPlantilla = (event) => {
+    setAnchorEl2(event.currentTarget); // Abre el menú
+  };
+
+  const crearPlantillaTradicional = () => {
+    handleClose2(); // Cierra el menú antes de navegar
+    navigate("/CreateTemplatePage"); // Redirige a otra plantilla
+  };
+
+  const crearPlantillaCatalogo = () => {
+    handleClose2(); // Cierra el menú antes de navegar
+    navigate("/CreateCatalogTemplate"); // Redirige a otra plantilla
+  };
+
+  const crearPlantillaProducto = () => {
+    handleClose2(); // Cierra el menú antes de navegar
+    navigate("/CreateCatalogTemplate"); // Redirige a otra plantilla
+  };
+
   return (
     <Box sx={{ marginLeft: 2, marginRight: 2, marginTop: 3 }}>
 
@@ -293,9 +320,14 @@ export default function BasicCard() {
             </Typography>
           </Box>
 
-          <Button color="primary" variant="contained" size="large" onClick={handleCreateClick} endIcon={<AddIcon />} sx={{ borderRadius: 2 }}>
+          <Button color="primary" variant="contained" size="large" onClick={handleCrearPlantilla} endIcon={<AddIcon />} sx={{ borderRadius: 2 }}>
             Crear plantilla
           </Button>
+          <Menu anchorEl={anchorEl2} open={open2} onClose={handleClose2}>
+            <MenuItem onClick={crearPlantillaTradicional}>Texto Imagén y Documento</MenuItem>
+            <MenuItem onClick={crearPlantillaCatalogo}>Catalogo</MenuItem>
+            <MenuItem onClick={crearPlantillaProducto}>Producto</MenuItem>
+          </Menu>
         </Box>
       </Paper>
 
@@ -320,7 +352,6 @@ export default function BasicCard() {
           />
         </Box>
       </Box>
-
 
       {/* Lista de tarjetas */}<Box sx={{ p: 3 }}>
         {/* Encabezado con título y botón */}
