@@ -723,7 +723,14 @@ const TemplateForm = () => {
           </FormControl>
 
           <FormControl fullWidth>
-            <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} disabled={true} label="Select" ref={templateTypeRef}>
+            <Select
+              labelId="template-type-label"
+              id="template-type"
+              value="catalog" // Asigna directamente el valor "catalog" aquí
+              disabled={true}
+              label="Select"
+              ref={templateTypeRef}
+            >
               <MenuItem value="catalog">CATALOGO</MenuItem>
             </Select>
             <FormHelperText>
@@ -731,6 +738,7 @@ const TemplateForm = () => {
             </FormHelperText>
           </FormControl>
         </Box>
+
 
         {/*Idioma --data-urlencodeo languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
@@ -1001,28 +1009,6 @@ const TemplateForm = () => {
               Vista previa
             </Typography>
 
-            {/* Vista previa de la imagen */}
-            {imagePreview && (
-              <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
-                {typeof imagePreview === "string" && imagePreview.startsWith("data:image") ? (
-                  <img
-                    src={imagePreview}
-                    alt="Vista previa"
-                    style={{ width: "100%", borderRadius: 2, display: "block" }}
-                  />
-                ) : imagePreview.includes("video") ? (
-                  <video controls width="100%">
-                    <source src={imagePreview} />
-                    Tu navegador no soporta este formato de video.
-                  </video>
-                ) : imagePreview.includes("pdf") ? (
-                  <iframe src={imagePreview} width="100%" height="500px"></iframe>
-                ) : null}
-              </Box>
-            )}
-            {/* Muestra el estado de la subida */}
-            {uploadStatus && <p>{uploadStatus}</p>}
-
             {/* Mensaje de WhatsApp */}
             <Box
               sx={{
@@ -1038,25 +1024,8 @@ const TemplateForm = () => {
                 boxShadow: 1,
               }}
             >
-
-              <Typography variant="body1" color="text.primary">
-                {header}
-              </Typography>
-
-
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {example}
-              </Typography>
-
-              <Typography
-                variant="body1"
-                color="text.secondary" // Cambia a un color gris más claro
-                sx={{
-                  fontFamily: "Helvetica Neue, Arial, sans-serif",
-                  whiteSpace: "pre-line"
-                }}
-              >
-                {footer}
               </Typography>
 
               <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
@@ -1064,40 +1033,30 @@ const TemplateForm = () => {
               </Typography>
             </Box>
 
-            {/* Botones */}<Stack spacing={1} sx={{ mt: 0 }}>
-              {buttons.map((button) => (
-                <Box
-                  key={button.id}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    gap: 1,
-                    border: "1px solid #ccc",
-                    borderRadius: "20px",
-                    p: 1,
-                    backgroundColor: "#ffffff",
-                    boxShadow: 1,
-                    cursor: "pointer",
-                    "&:hover": {
-                      backgroundColor: "#f5f5f5",
-                    },
-                  }}
-                >
-                  {button.type === "QUICK_REPLY" && (
-                    <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
-                  )}
-                  {button.type === "URL" && (
-                    <Link sx={{ fontSize: "16px", color: "#075e54" }} />
-                  )}
-                  {button.type === "PHONE_NUMBER" && (
-                    <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
-                  )}
-                  <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
-                    {button.title}
-                  </Typography>
-                </Box>
-              ))}
+            {/* Botones */}{/* Botón de Quick Reply "CATÁLOGO" */}
+            <Stack spacing={1} sx={{ mt: 0 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  gap: 1,
+                  border: "1px solid #ccc",
+                  borderRadius: "20px",
+                  p: 1,
+                  backgroundColor: "#ffffff",
+                  boxShadow: 1,
+                  cursor: "pointer",
+                  "&:hover": {
+                    backgroundColor: "#f5f5f5",
+                  },
+                }}
+              >
+                <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
+                <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
+                  CATÁLOGO
+                </Typography>
+              </Box>
             </Stack>
           </Box>
         </Box>
