@@ -649,8 +649,7 @@ const TemplateFormCarousel = () => {
     setOpenCardDialog(false);
     // Reset card and upload states
     setCurrentCard({
-      title: '',
-      description: '',
+      mensaje: '',
       buttons: []
     });
     setMediaId(null);
@@ -659,11 +658,10 @@ const TemplateFormCarousel = () => {
   };
 
   const handleSaveCard = () => {
-    if (currentCard.title && currentCard.description) {
+    if (currentCard.title && currentCard.mensaje) {
       const newCard = {
         id: Date.now().toString(),
-        title: currentCard.title,
-        description: currentCard.description,
+        mensaje: currentCard.mensaje,
         mediaId: mediaId,
         imageUrl: uploadedUrl,
         imagePreview: imagePreview,
@@ -944,7 +942,7 @@ const TemplateFormCarousel = () => {
                 )}
 
                 {/* Contenido */}<TextField
-                  label="Contenido"
+                  label="Mensaje"
                   value={currentCard.description}
                   onChange={(e) => setCurrentCard({
                     ...currentCard,
