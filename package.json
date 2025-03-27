@@ -30,7 +30,8 @@
     "react-feather": "^2.0.10",
     "react-mui-sidebar": "^1.5.9",
     "react-quill": "^2.0.0",
-    "react-router-dom": "^7.1.1"
+    "react-router-dom": "^7.1.1",
+    "swiper": "^11.2.6"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.14.1",

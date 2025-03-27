@@ -5,6 +5,13 @@ import { jwtDecode } from 'jwt-decode';
 import { Smile } from "react-feather"; // Icono para emojis
 import EmojiPicker from "emoji-picker-react"; // Selector de emojis
 
+// Import Swiper styles
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
@@ -572,7 +579,7 @@ const TemplateFormCarousel = () => {
       return updatedExamples;
     });
   };
-  
+
   const handleUpdateDescriptions = (variable, value) => {
     setVariableDescriptions(prevDescriptions => ({
       ...prevDescriptions,
@@ -593,20 +600,16 @@ const TemplateFormCarousel = () => {
   const replaceVariables = (text, variables) => {
     let result = text;
     console.log("Texto antes de reemplazar:", text);
-  
+
     Object.keys(variables).forEach(variable => {
       const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // 🔥 Búsqueda exacta de {{variable}}
       console.log(`Reemplazando: {{${variable}}} por ${variables[variable]}`);
       result = result.replace(regex, variables[variable]);
     });
-  
+
     console.log("Texto después de reemplazar:", result);
     return result;
   };
-  
-  
-  
-  
 
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
   useEffect(() => {
@@ -619,6 +622,83 @@ const TemplateFormCarousel = () => {
 
     setExample(newExample);
   }, [message, variableExamples]);
+
+  //PARA LAS TARJETAS DEL CARRUSEL
+  // Initialize with a default first card
+  const [cards, setCards] = useState([
+    {
+      id: 'initial-card',
+      title: 'Bienvenido',
+      description: 'Esta es tu primera tarjeta. Puedes modificarla o agregar más.',
+      buttons: []
+    }
+  ]);
+
+  const [openCardDialog, setOpenCardDialog] = useState(false);
+  const [currentCard, setCurrentCard] = useState({
+    title: '',
+    description: '',
+    buttons: []
+  });
+
+  const handleAddCard = () => {
+    setOpenCardDialog(true);
+  };
+
+  const handleCloseCardDialog = () => {
+    setOpenCardDialog(false);
+    // Reset card and upload states
+    setCurrentCard({
+      title: '',
+      description: '',
+      buttons: []
+    });
+    setMediaId(null);
+    setUploadedUrl(null);
+    setImagePreview(null);
+  };
+
+  const handleSaveCard = () => {
+    if (currentCard.title && currentCard.description) {
+      const newCard = {
+        id: Date.now().toString(),
+        title: currentCard.title,
+        description: currentCard.description,
+        mediaId: mediaId,
+        imageUrl: uploadedUrl,
+        imagePreview: imagePreview,
+        buttons: currentCard.buttons
+      };
+      setCards([...cards, newCard]);
+      handleCloseCardDialog();
+    }
+  };
+
+  const handleAddButton = () => {
+    const newButton = {
+      id: Date.now().toString(),
+      title: '',
+      type: 'QUICK_REPLY',
+      value: ''
+    };
+    setCurrentCard({
+      ...currentCard,
+      buttons: [...(currentCard.buttons || []), newButton]
+    });
+  };
+
+  const handleRemoveCard = (cardId) => {
+    // Prevent removing the initial card
+    if (cardId === 'initial-card') return;
+    setCards(cards.filter(card => card.id !== cardId));
+  };
+
+  const updateButtonCard = (buttonId, field, value) => {
+    const updatedButtons = (currentCard.buttons || []).map(button =>
+      button.id === buttonId ? { ...button, [field]: value } : button
+    );
+    setCurrentCard({ ...currentCard, buttons: updatedButtons });
+  };
 
 
   return (
@@ -778,179 +858,169 @@ const TemplateFormCarousel = () => {
           />
         </Box>
 
-        {/* BodyMessage --data-urlencode content */}
-        <Box
-          sx={{
-            width: "100%",
-            marginTop: 2,
-            p: 4,
-            border: "1px solid #ddd",
-            borderRadius: 2,
-            boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+        {/* BodyMessage --data-urlencode content */}<Box sx={{ width: '100%', maxWidth: 600, margin: 'auto' }}>
+          <Button
+            startIcon={<AddIcon />}
+            variant="contained"
+            onClick={handleAddCard}
+            sx={{ mb: 2 }}
+          >
+            Agregar Tarjeta
+          </Button>
 
-          }}
-        >
-          <FormControl fullWidth>
-            <FormLabel sx={{ fontSize: "1.1rem", fontWeight: "500", color: "#333" }}>
-              *Contenido
-            </FormLabel>
-          </FormControl>
-
-          {/* Campo de texto con soporte para emojis y variables */}
-          <Box sx={{ position: "relative" }}>
-            <TextField
-              fullWidth
-              multiline
-              aria-required="true"
-              error={contenidoPlantillaTypeError}
-              rows={4}
-              label="Escribe"
-              placeholder="Ingresa el contenido de tu mensaje aquí..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              sx={{
-                mb: 3,
-                mt: 4,
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 1.5,
-                  "&:hover fieldset": {
-                    borderColor: "primary.main",
-                  }
-                }
-              }}
-              inputRef={messageRef}
-            />
-
-            {/* Botones de emojis y acciones en una barra de herramientas mejor diseñada */}
-            <Stack
-              direction="row"
-              spacing={1}
-              sx={{
-                mb: 2,
-                p: 1,
-                borderRadius: 1,
-                backgroundColor: "rgba(0,0,0,0.02)"
-              }}
-            >
-              <Tooltip title="Agregar emojis">
-                <IconButton
-                  color="primary"
-                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                  sx={{ borderRadius: 1 }}
-                >
-                  <Smile size={20} />
-                </IconButton>
-              </Tooltip>
-
-              <Divider orientation="vertical" flexItem />
-
-              <Button
-                variant="contained"
-                size="small"
-                startIcon={<AddIcon />}
-                onClick={handleAddVariable}
-                sx={{ borderRadius: 1 }}
-              >
-                Agregar Variable
-              </Button>
-
-              {variables.length > 0 && (
-                <Button
-                  color="error"
-                  variant="outlined"
-                  size="small"
-                  startIcon={<ClearIcon />}
-                  onClick={deleteAllVariables}
-                  sx={{ ml: "auto", borderRadius: 1 }}
-                >
-                  Borrar todas
-                </Button>
-              )}
-            </Stack>
-
-            {/* Selector de emojis */}
-            {showEmojiPicker && (
-              <Paper
-                elevation={3}
-                sx={{
-                  position: "absolute",
-                  zIndex: 1000,
-                  mt: 1
-                }}
-              >
-                <EmojiPicker onEmojiClick={handleEmojiClick} />
-              </Paper>
-            )}
-
-            {/* Variables disponibles como chips con campos de texto para ejemplos y descripción */}
-            {variables.length > 0 && (
-              <Paper
-                sx={{
-                  my: 2,
-                  p: 2,
-                  borderRadius: 2,
-                  border: "1px solid #ddd",
-                }}
-              >
-                <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 2 }}>
-                  Agrega una descripción y un ejemplo a tu variable:
-                </Typography>
-
-                {variables.map((variable, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      gap: 2,
-                      mb: 2,
-                      p: 1.5,
-                      backgroundColor: "#fff",
-                      borderRadius: 1,
-                      border: "1px solid #e0e0e0"
-                    }}
-                  >
-                    <Chip
-                      label={variable}
-                      color="primary"
-                      sx={{ fontWeight: "500" }}
-                      deleteIcon={
-                        <Tooltip title="Borrar variable">
-                          <DeleteIcon />
-                        </Tooltip>
-                      }
-                      onDelete={() => deleteVariable(variable)}
+          <Swiper
+            modules={[Navigation, Pagination]}
+            spaceBetween={10}
+            slidesPerView={1}
+            navigation
+            pagination={{ clickable: true }}
+          >
+            {cards.map((card) => (
+              <SwiperSlide key={card.id}>
+                <Card sx={{ maxWidth: 345, margin: 'auto' }}>
+                  {(card.imageUrl || card.imagePreview) && (
+                    <CardMedia
+                      component="img"
+                      height="194"
+                      image={card.imageUrl || card.imagePreview}
+                      alt={card.title}
                     />
-
-                    <Stack sx={{ flexGrow: 1, gap: 1 }}>
-                      <TextField
+                  )}
+                  <CardContent>
+                    <Typography variant="h5" component="div">
+                      {card.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {card.description}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    {card.buttons.map((button) => (
+                      <Button
+                        key={button.id}
                         size="small"
-                        label="Descripción"
-                        placeholder="¿Para qué sirve esta variable?"
-                        value={variableDescriptions[variable] || ''}
-                        onChange={(e) => handleUpdateDescriptions(variable, e.target.value)}
-                        sx={{ flexGrow: 1 }}
-                      />
+                        variant="outlined"
+                      >
+                        {button.title}
+                      </Button>
+                    ))}
+                    {card.id !== 'initial-card' && (
+                      <IconButton
+                        color="error"
+                        onClick={() => handleRemoveCard(card.id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
+                  </CardActions>
+                </Card>
+              </SwiperSlide>
+            ))}
+          </Swiper>
 
+          <Dialog open={openCardDialog} onClose={handleCloseCardDialog} maxWidth="sm" fullWidth>
+            <DialogTitle>Agregar Nueva Tarjeta</DialogTitle>
+            <DialogContent>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+                {/* File Upload Component */}
+                <FileUploadComponent
+                  templateType="carousel"
+                  onUploadSuccess={(mediaId, uploadedUrl) => {
+                    setMediaId(mediaId);
+                    setUploadedUrl(uploadedUrl);
+                  }}
+                  onImagePreview={(preview) => setImagePreview(preview)}
+                />
+
+                {/* Image Preview */}
+                {(uploadedUrl || imagePreview) && (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    <img
+                      src={uploadedUrl || imagePreview}
+                      alt="Preview"
+                      style={{ maxWidth: '100%', maxHeight: 200 }}
+                    />
+                  </Box>
+                )}
+
+                <TextField
+                  label="Título"
+                  value={currentCard.title}
+                  onChange={(e) => setCurrentCard({
+                    ...currentCard,
+                    title: e.target.value
+                  })}
+                  fullWidth
+                />
+                <TextField
+                  label="Descripción"
+                  value={currentCard.description}
+                  onChange={(e) => setCurrentCard({
+                    ...currentCard,
+                    description: e.target.value
+                  })}
+                  multiline
+                  rows={3}
+                  fullWidth
+                />
+
+                {/* Buttons Section */}
+                <Button
+                  startIcon={<AddIcon />}
+                  onClick={handleAddButton}
+                  variant="outlined"
+                >
+                  Agregar Botón
+                </Button>
+
+                {currentCard.buttons?.map((button) => (
+                  <Box key={button.id} sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <TextField
+                      label="Título del Botón"
+                      value={button.title}
+                      onChange={(e) => updateButtonCard(button.id, 'title', e.target.value)}
+                      fullWidth
+                    />
+                    <FormControl fullWidth>
+                      <InputLabel>Tipo de Botón</InputLabel>
+                      <Select
+                        value={button.type}
+                        label="Tipo de Botón"
+                        onChange={(e) => updateButtonCard(button.id, 'type', e.target.value)}
+                      >
+                        <MenuItem value="QUICK_REPLY">Respuesta Rápida</MenuItem>
+                        <MenuItem value="URL">URL</MenuItem>
+                        <MenuItem value="PHONE_NUMBER">Número de Teléfono</MenuItem>
+                      </Select>
+                    </FormControl>
+                    {(button.type === 'URL' || button.type === 'PHONE_NUMBER') && (
                       <TextField
-                        size="small"
-                        label="Texto de ejemplo"
-                        value={variableExamples[variable] || ''}
-                        onChange={(e) => handleUpdateExample(variable, e.target.value)}
-                        sx={{ flexGrow: 1 }}
-                        inputRef={(el) => (exampleRefs.current[variable] = el)}
-                        error={!!variableErrors[variable]}
-                        helperText={variableErrors[variable]}
+                        label={button.type === 'URL' ? 'URL' : 'Número de Teléfono'}
+                        value={button.value || ''}
+                        onChange={(e) => updateButtonCard(button.id, 'value', e.target.value)}
+                        fullWidth
                       />
-
-                    </Stack>
+                    )}
                   </Box>
                 ))}
-              </Paper>
-            )}
-          </Box>
+              </Box>
+            </DialogContent>
+            <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
+              <Button onClick={handleCloseCardDialog} color="secondary">
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleSaveCard}
+                variant="contained"
+                color="primary"
+              >
+                Guardar Tarjeta
+              </Button>
+            </Box>
+          </Dialog>
         </Box>
+
+
 
         {/*Boton Guardar Plantilla*/}<Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
           <Button
