@@ -171,7 +171,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       const payload = {
         idEmpresa: empresaTalkMe,
         idBot: 54,
-        idBotRedes: 149,
+        idBotRedes: 721,
         idUsuario: idUsuarioTalkMe,
         tipoCarga: 3,
         nombreArchivo: selectedFile.name,
