@@ -858,7 +858,7 @@ const TemplateFormCarousel = () => {
           />
         </Box>
 
-        {/* BodyMessage --data-urlencode content */}<Box sx={{ width: '100%', maxWidth: 600, margin: 'auto' }}>
+        {/* BodyMessage --data-urlencode content */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <Button
             startIcon={<AddIcon />}
             variant="contained"
