@@ -20,7 +20,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 import FileUploadComponent from './FileUploadComponent';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
-import { createTemplateGupshup } from '../api/gupshupApi';
+import { createTemplateCatalogGupshup } from '../api/gupshupApi';
 import { saveTemplateToTalkMe } from '../api/templatesGSApi';
 
 const TemplateForm = () => {
@@ -277,7 +277,7 @@ const TemplateForm = () => {
   const iniciarRequest = async () => {
     try {
       // Hacer el primer request a GupShup API
-      const result = await createTemplateGupshup(
+      const result = await createTemplateCatalogGupshup(
         appId,
         authCode,
         {
@@ -287,10 +287,6 @@ const TemplateForm = () => {
           templateType,
           vertical,
           message,
-          header,
-          footer,
-          mediaId,
-          buttons,
           example
         },
         validateFields
