@@ -859,10 +859,11 @@ const TemplateFormCarousel = () => {
         </Box>
 
         {/* BodyMessage --data-urlencode content */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <Button
+          {/* Agregar tarjeta */}<Button
             startIcon={<AddIcon />}
             variant="contained"
             onClick={handleAddCard}
+            size='large'
             sx={{ mb: 2 }}
           >
             Agregar Tarjeta
@@ -922,8 +923,7 @@ const TemplateFormCarousel = () => {
             <DialogTitle>Agregar Nueva Tarjeta</DialogTitle>
             <DialogContent>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-                {/* File Upload Component */}
-                <FileUploadComponent
+                {/* File Upload Component */}<FileUploadComponent
                   templateType="carousel"
                   onUploadSuccess={(mediaId, uploadedUrl) => {
                     setMediaId(mediaId);
@@ -943,17 +943,8 @@ const TemplateFormCarousel = () => {
                   </Box>
                 )}
 
-                <TextField
-                  label="Título"
-                  value={currentCard.title}
-                  onChange={(e) => setCurrentCard({
-                    ...currentCard,
-                    title: e.target.value
-                  })}
-                  fullWidth
-                />
-                <TextField
-                  label="Descripción"
+                {/* Contenido */}<TextField
+                  label="Contenido"
                   value={currentCard.description}
                   onChange={(e) => setCurrentCard({
                     ...currentCard,
@@ -964,8 +955,7 @@ const TemplateFormCarousel = () => {
                   fullWidth
                 />
 
-                {/* Buttons Section */}
-                <Button
+                {/* Buttons Section */}<Button
                   startIcon={<AddIcon />}
                   onClick={handleAddButton}
                   variant="outlined"
@@ -1006,7 +996,7 @@ const TemplateFormCarousel = () => {
               </Box>
             </DialogContent>
             <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
-              <Button onClick={handleCloseCardDialog} color="secondary">
+              <Button onClick={handleCloseCardDialog} variant="contained" color="secondary">
                 Cancelar
               </Button>
               <Button
