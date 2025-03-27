@@ -733,48 +733,6 @@ const TemplateFormCarousel = () => {
           </FormControl>
         </Box>
 
-        {/* Header*/} {templateType === 'TEXT' ? (
-          <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                Encabezado
-              </FormLabel>
-            </FormControl>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
-            </Typography>
-            <TextField
-              fullWidth
-              label="Header text"
-              value={header}
-              onChange={handleHeaderChange}
-              helperText={`${header.length} / ${charLimit} caracteres`}
-              sx={{ mb: 3 }}
-              error={header.length === charLimit}
-            />
-          </Box>
-        ) : (
-          <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                Encabezado
-              </FormLabel>
-            </FormControl>
-
-            {/* Componente para subir archivos */}
-            <FileUploadComponent
-              templateType={templateType}
-              onUploadSuccess={(mediaId, uploadedUrl) => {
-                setMediaId(mediaId); // Guarda el mediaId
-                setUploadedUrl(uploadedUrl); // Guarda la URL
-                //setUploadStatus("¡Archivo subido exitosamente!");
-              }}
-              onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
-              onHeaderChange={(newHeader) => setHeader(newHeader)} // Nueva prop
-            />
-          </Box>
-        )}
-
         {/*Idioma --data-urlencodeo languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
             <FormLabel>*Idioma de plantilla</FormLabel>
@@ -994,140 +952,6 @@ const TemplateFormCarousel = () => {
           </Box>
         </Box>
 
-        {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              Pie de página
-            </FormLabel>
-          </FormControl>
-          <TextField
-            fullWidth
-            value={footer}
-            onChange={handleFooterChange}
-            helperText={`${footer.length} / ${charLimit} caracteres`}
-            sx={{ mb: 3 }}
-          />
-          <FormHelperText>
-            Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el encabezado.
-          </FormHelperText>
-        </Box>
-
-        {/* Botones --data-urlencode 'buttons*/}<Box sx={{ width: "100%", marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              Botones
-            </FormLabel>
-          </FormControl>
-
-          <FormHelperText>
-            Elija los botones que se agregarán a la plantilla. Puede elegir hasta 10 botones.
-          </FormHelperText>
-
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={addButton}
-            disabled={buttons.length >= maxButtons || Object.keys(validationErrors).length > 0}
-            sx={{ mt: 3, mb: 3 }}
-          >
-            Agregar botón
-          </Button>
-
-          <Stack spacing={2}>
-            {buttons.map((button, index) => (
-              <Box
-                key={button.id}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 2,
-                  border: "1px solid #ccc",
-                  borderRadius: 2,
-                  p: 2,
-                  backgroundColor: "#f9f9f9",
-                }}
-              >
-                {/* Campo de texto para el título del botón */}
-                <TextField
-                  label="Titulo del botón"
-                  value={button.title}
-                  onChange={(e) => updateButton(button.id, "title", e.target.value)}
-                  fullWidth
-                />
-
-                {/* Selector de tipo de botón */}
-                <Select
-                  value={button.type}
-                  onChange={(e) => updateButton(button.id, "type", e.target.value)}
-                  sx={{ minWidth: 150 }}
-                >
-                  <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
-                  <MenuItem value="URL">URL</MenuItem>
-                  <MenuItem value="PHONE_NUMBER">Número de teléfono</MenuItem>
-                </Select>
-
-                {/* Campo adicional según el tipo de botón */}
-                {button.type === "URL" && (
-                  <TextField
-                    label="URL"
-                    value={button.url || ''}
-                    onChange={(e) => updateButtonWithValidation(
-                      button.id,
-                      "url",
-                      e.target.value,
-                      setButtons,
-                      setValidationErrors
-                    )}
-                    fullWidth
-                    error={validationErrors[button.id] !== undefined}
-                    helperText={validationErrors[button.id]}
-                  />
-                )}
-
-                {button.type === "PHONE_NUMBER" && (
-                  <TextField
-                    label="Phone Number"
-                    value={button.phoneNumber}
-                    onChange={(e) => updateButton(button.id, "phoneNumber", e.target.value)}
-                    fullWidth
-                  />
-                )}
-
-                {/* Icono según el tipo de botón */}
-                {button.type === "QUICK_REPLY" && <ArrowForward />}
-                {button.type === "URL" && <Link />}
-                {button.type === "PHONE_NUMBER" && <Phone />}
-
-                {/* Botón para eliminar */}
-                <IconButton color="error" onClick={() => removeButton(button.id)}>
-                  <Delete />
-                </IconButton>
-              </Box>
-            ))}
-          </Stack>
-
-          <Typography variant="body2" color={buttons.length >= maxButtons ? "error" : "text.secondary"} sx={{ mt: 2 }}>
-            {buttons.length} / {maxButtons} botones agregados
-          </Typography>
-        </Box>
-
-        {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2, display: 'none' }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              *Ejemplo
-            </FormLabel>
-          </FormControl>
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            label="Escribe"
-            value={example}
-            onChange={(e) => setExample(e.target.value)}
-            sx={{ mb: 3 }}
-          />
-        </Box>
-
         {/*Boton Guardar Plantilla*/}<Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
           <Button
             variant="contained"
@@ -1139,7 +963,6 @@ const TemplateFormCarousel = () => {
             Enviar solicitud
           </Button>
         </Box>
-
 
       </Box>
       </Grid>
@@ -1200,24 +1023,8 @@ const TemplateFormCarousel = () => {
               }}
             >
 
-              <Typography variant="body1" color="text.primary">
-                {header}
-              </Typography>
-
-
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {example}
-              </Typography>
-
-              <Typography
-                variant="body1"
-                color="text.secondary" // Cambia a un color gris más claro
-                sx={{
-                  fontFamily: "Helvetica Neue, Arial, sans-serif",
-                  whiteSpace: "pre-line"
-                }}
-              >
-                {footer}
               </Typography>
 
               <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
@@ -1225,41 +1032,6 @@ const TemplateFormCarousel = () => {
               </Typography>
             </Box>
 
-            {/* Botones */}<Stack spacing={1} sx={{ mt: 0 }}>
-              {buttons.map((button) => (
-                <Box
-                  key={button.id}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    gap: 1,
-                    border: "1px solid #ccc",
-                    borderRadius: "20px",
-                    p: 1,
-                    backgroundColor: "#ffffff",
-                    boxShadow: 1,
-                    cursor: "pointer",
-                    "&:hover": {
-                      backgroundColor: "#f5f5f5",
-                    },
-                  }}
-                >
-                  {button.type === "QUICK_REPLY" && (
-                    <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
-                  )}
-                  {button.type === "URL" && (
-                    <Link sx={{ fontSize: "16px", color: "#075e54" }} />
-                  )}
-                  {button.type === "PHONE_NUMBER" && (
-                    <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
-                  )}
-                  <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
-                    {button.title}
-                  </Typography>
-                </Box>
-              ))}
-            </Stack>
           </Box>
         </Box>
       </Grid>
