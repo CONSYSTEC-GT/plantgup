@@ -658,7 +658,7 @@ const TemplateFormCarousel = () => {
   };
 
   const handleSaveCard = () => {
-    if (currentCard.title && currentCard.mensaje) {
+    if (currentCard.mensaje) {
       const newCard = {
         id: Date.now().toString(),
         mensaje: currentCard.mensaje,
