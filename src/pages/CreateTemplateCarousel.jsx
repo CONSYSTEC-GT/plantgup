@@ -2,7 +2,7 @@ import React from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Tooltip, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import TemplateFormCatalog from '../components/TemplateFormCatalog';
+import TemplateFormCarousel from '../components/TemplateFormCarousel';
 
 const CreateTemplateCarousel = () => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const CreateTemplateCarousel = () => {
   return (
     <Box sx={{ padding: 3 }}>
       {/*Titulo*/}<Typography variant="h4" component="h1" gutterBottom>
-        Crear Plantilla Cátalogo
+        Crear Plantilla Carrusel
       </Typography>
 
       {/*Boton Regresar*/}<Tooltip title="Volver al Dashboard">
@@ -38,7 +38,7 @@ const CreateTemplateCarousel = () => {
         </Typography>
       </Box>
 
-      <TemplateFormCatalog />
+      <TemplateFormCarousel />
     </Box>
   );
 };

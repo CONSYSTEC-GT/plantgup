@@ -261,7 +261,7 @@ export default function BasicCard() {
 
   const crearPlantillaCarrusel = () => {
     handleClose2(); // Cierra el menú antes de navegar
-    navigate("/CreateCarouselTemplate"); // Redirige a otra plantilla
+    navigate("/CreateTemplateCarousel"); // Redirige a otra plantilla
   };
 
   return (
