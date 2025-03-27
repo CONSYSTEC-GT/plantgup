@@ -138,35 +138,6 @@ export const createTemplateGupshup = async (appId, authCode, templateData, valid
     data.append("templateType", templateType.toUpperCase());
     data.append("vertical", vertical);
     data.append("content", message);
-  
-    if (header) {
-      data.append("header", header);
-    }
-  
-    if (footer) { 
-      data.append("footer", footer);
-    }
-  
-    if (mediaId) {
-      data.append("exampleMedia", mediaId);
-    }
-  
-    const formattedButtons = buttons.map((button) => {
-      const buttonData = {
-        type: button.type,
-        text: button.title,
-      };
-  
-      if (button.type === "URL") {
-        buttonData.url = button.url;
-      } else if (button.type === "PHONE_NUMBER") {
-        buttonData.phone_number = button.phoneNumber;
-      }
-  
-      return buttonData;
-    });
-  
-    data.append("buttons", JSON.stringify(formattedButtons));
     data.append("example", example);
     data.append("enableSample", true);
     data.append("allowTemplateCategoryChange", false);
