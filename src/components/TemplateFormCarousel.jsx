@@ -625,11 +625,19 @@ const TemplateFormCarousel = () => {
 
   //PARA LAS TARJETAS DEL CARRUSEL
   // Initialize with a default first card
-  const [cards, setCards] = useState();
+  const [cards, setCards] = useState([
+    {
+      id: 'initial-card',
+      title: 'Bienvenido',
+      description: 'Esta es tu primera tarjeta. Puedes modificarla o agregar más.',
+      buttons: []
+    }
+  ]);
 
   const [openCardDialog, setOpenCardDialog] = useState(false);
   const [currentCard, setCurrentCard] = useState({
-    mensaje: '',
+    title: '',
+    description: '',
     buttons: []
   });
 
