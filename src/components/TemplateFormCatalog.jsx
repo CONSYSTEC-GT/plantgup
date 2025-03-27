@@ -573,7 +573,7 @@ const TemplateForm = () => {
       return updatedExamples;
     });
   };
-  
+
   const handleUpdateDescriptions = (variable, value) => {
     setVariableDescriptions(prevDescriptions => ({
       ...prevDescriptions,
@@ -594,20 +594,20 @@ const TemplateForm = () => {
   const replaceVariables = (text, variables) => {
     let result = text;
     console.log("Texto antes de reemplazar:", text);
-  
+
     Object.keys(variables).forEach(variable => {
       const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // 🔥 Búsqueda exacta de {{variable}}
       console.log(`Reemplazando: {{${variable}}} por ${variables[variable]}`);
       result = result.replace(regex, variables[variable]);
     });
-  
+
     console.log("Texto después de reemplazar:", result);
     return result;
   };
-  
-  
-  
-  
+
+
+
+
 
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
   useEffect(() => {
@@ -623,7 +623,7 @@ const TemplateForm = () => {
 
 
   return (
-    <Grid2 container spacing={2} sx={{ height: '100vh' }}>
+    <Grid container spacing={2} sx={{ height: '100vh' }}>
 
       {/* Notificaciones */}<Snackbar
         open={openSnackbar}
@@ -636,7 +636,7 @@ const TemplateForm = () => {
         </Alert>
       </Snackbar>
 
-      {/* Formulario (70%) */}<Grid2 item xs={8}><Box sx={{ height: '100%', overflowY: 'auto', pr: 2 }}>
+      {/* Formulario (70%) */}<Grid item xs={8}><Box sx={{ height: '100%', overflowY: 'auto', pr: 2 }}>
 
         {/* Template Name */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
@@ -981,10 +981,10 @@ const TemplateForm = () => {
         </Box>
 
       </Box>
-      </Grid2>
+      </Grid>
 
       {/* Preview (30%) */}
-      <Grid2 item xs={4}>
+      <Grid item xs={4}>
         <Box sx={{ position: "sticky", top: 0, height: "100vh", mt: 2, borderRadius: 2 }}>
           <Box
             sx={{
@@ -1101,8 +1101,8 @@ const TemplateForm = () => {
             </Stack>
           </Box>
         </Box>
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   );
 };
 

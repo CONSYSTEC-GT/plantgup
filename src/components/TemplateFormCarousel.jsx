@@ -17,7 +17,6 @@ import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
-
 import FileUploadComponent from './FileUploadComponent';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
 import { createTemplateGupshup } from '../api/gupshupApi';
