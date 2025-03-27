@@ -625,19 +625,11 @@ const TemplateFormCarousel = () => {
 
   //PARA LAS TARJETAS DEL CARRUSEL
   // Initialize with a default first card
-  const [cards, setCards] = useState([
-    {
-      id: 'initial-card',
-      title: 'Bienvenido',
-      description: 'Esta es tu primera tarjeta. Puedes modificarla o agregar más.',
-      buttons: []
-    }
-  ]);
+  const [cards, setCards] = useState();
 
   const [openCardDialog, setOpenCardDialog] = useState(false);
   const [currentCard, setCurrentCard] = useState({
-    title: '',
-    description: '',
+    mensaje: '',
     buttons: []
   });
 
@@ -856,7 +848,7 @@ const TemplateFormCarousel = () => {
           />
         </Box>
 
-        {/* BodyMessage --data-urlencode content */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+        {/* Carrusel --data-urlencode content */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           {/* Agregar tarjeta */}<Button
             startIcon={<AddIcon />}
             variant="contained"
