@@ -625,52 +625,45 @@ const TemplateFormCarousel = () => {
 
   //PARA LAS TARJETAS DEL CARRUSEL
   // Initialize with a default first card
-  const [cards, setCards] = useState([
-    {
-      id: 'initial-card',
-      title: 'Bienvenido',
-      description: 'Esta es tu primera tarjeta. Puedes modificarla o agregar más.',
-      buttons: []
-    }
-  ]);
+  const [cards, setCards] = useState([]); // Sin tarjeta inicial
 
-  const [openCardDialog, setOpenCardDialog] = useState(false);
-  const [currentCard, setCurrentCard] = useState({
-    title: '',
-    description: '',
+const [openCardDialog, setOpenCardDialog] = useState(false);
+const [currentCard, setCurrentCard] = useState({
+  mensaje: '',
+  buttons: []
+});
+
+const handleAddCard = () => {
+  setOpenCardDialog(true);
+};
+
+const handleCloseCardDialog = () => {
+  setOpenCardDialog(false);
+  // Reset de los valores
+  setCurrentCard({
+    mensaje: '',
     buttons: []
   });
+  setMediaId(null);
+  setUploadedUrl(null);
+  setImagePreview(null);
+};
 
-  const handleAddCard = () => {
-    setOpenCardDialog(true);
-  };
+const handleSaveCard = () => {
+  if (currentCard.mensaje.trim()) { // Validar que mensaje no esté vacío
+    const newCard = {
+      id: Date.now().toString(),
+      mensaje: currentCard.mensaje,
+      mediaId: mediaId,
+      imageUrl: uploadedUrl,
+      imagePreview: imagePreview,
+      buttons: currentCard.buttons
+    };
+    setCards(prevCards => [...prevCards, newCard]); // Usar función segura para actualizar el estado
+    handleCloseCardDialog();
+  }
+};
 
-  const handleCloseCardDialog = () => {
-    setOpenCardDialog(false);
-    // Reset card and upload states
-    setCurrentCard({
-      mensaje: '',
-      buttons: []
-    });
-    setMediaId(null);
-    setUploadedUrl(null);
-    setImagePreview(null);
-  };
-
-  const handleSaveCard = () => {
-    if (currentCard.mensaje) {
-      const newCard = {
-        id: Date.now().toString(),
-        mensaje: currentCard.mensaje,
-        mediaId: mediaId,
-        imageUrl: uploadedUrl,
-        imagePreview: imagePreview,
-        buttons: currentCard.buttons
-      };
-      setCards([...cards, newCard]);
-      handleCloseCardDialog();
-    }
-  };
 
   const handleAddButton = () => {
     const newButton = {
