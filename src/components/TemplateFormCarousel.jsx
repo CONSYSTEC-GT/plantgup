@@ -849,13 +849,8 @@ const handleSaveCard = () => {
           />
         </Box>
 
-<<<<<<< HEAD
         {/* Carrusel --data-urlencode content */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           {/* Agregar tarjeta */}<Button
-=======
-        {/* BodyMessage --data-urlencode content */}<Box sx={{ width: '100%', maxWidth: 600, margin: 'auto' }}>
-          <Button
->>>>>>> parent of 013bdb5 (Update TemplateFormCarousel.jsx)
             startIcon={<AddIcon />}
             variant="contained"
             onClick={handleAddCard}
