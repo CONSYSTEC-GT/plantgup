@@ -624,46 +624,59 @@ const TemplateFormCarousel = () => {
   }, [message, variableExamples]);
 
   //PARA LAS TARJETAS DEL CARRUSEL
-  // Initialize with a default first card
-  const [cards, setCards] = useState([]); // Sin tarjeta inicial
+  const [cards, setCards] = useState([
+    {
+      id: 'initial-card',
+      title: 'Bienvenido',
+      description: 'Esta es tu primera tarjeta. Puedes modificarla o agregar más.',
+      buttons: []
+    }
+  ]);
 
-const [openCardDialog, setOpenCardDialog] = useState(false);
-const [currentCard, setCurrentCard] = useState({
-  mensaje: '',
-  buttons: []
-});
-
-const handleAddCard = () => {
-  setOpenCardDialog(true);
-};
-
-const handleCloseCardDialog = () => {
-  setOpenCardDialog(false);
-  // Reset de los valores
-  setCurrentCard({
-    mensaje: '',
+  const [openCardDialog, setOpenCardDialog] = useState(false);
+  const [currentCard, setCurrentCard] = useState({
+    title: '',
+    description: '',
     buttons: []
   });
-  setMediaId(null);
-  setUploadedUrl(null);
-  setImagePreview(null);
-};
 
-const handleSaveCard = () => {
-  if (currentCard.mensaje.trim()) { // Validar que mensaje no esté vacío
-    const newCard = {
-      id: Date.now().toString(),
-      mensaje: currentCard.mensaje,
-      mediaId: mediaId,
-      imageUrl: uploadedUrl,
-      imagePreview: imagePreview,
-      buttons: currentCard.buttons
-    };
-    setCards(prevCards => [...prevCards, newCard]); // Usar función segura para actualizar el estado
-    handleCloseCardDialog();
-  }
-};
+  // Image upload state
+  const [mediaId, setMediaId] = useState(null);
+  const [uploadedUrl, setUploadedUrl] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
+  const handleAddCard = () => {
+    setOpenCardDialog(true);
+  };
+
+  const handleCloseCardDialog = () => {
+    setOpenCardDialog(false);
+    // Reset card and upload states
+    setCurrentCard({
+      title: '',
+      description: '',
+      buttons: []
+    });
+    setMediaId(null);
+    setUploadedUrl(null);
+    setImagePreview(null);
+  };
+
+  const handleSaveCard = () => {
+    if (currentCard.title && currentCard.description) {
+      const newCard = {
+        id: Date.now().toString(),
+        title: currentCard.title,
+        description: currentCard.description,
+        mediaId: mediaId,
+        imageUrl: uploadedUrl,
+        imagePreview: imagePreview,
+        buttons: currentCard.buttons
+      };
+      setCards([...cards, newCard]);
+      handleCloseCardDialog();
+    }
+  };
 
   const handleAddButton = () => {
     const newButton = {
@@ -684,8 +697,8 @@ const handleSaveCard = () => {
     setCards(cards.filter(card => card.id !== cardId));
   };
 
-  const updateButtonCard = (buttonId, field, value) => {
-    const updatedButtons = (currentCard.buttons || []).map(button =>
+  const updateButton = (buttonId, field, value) => {
+    const updatedButtons = (currentCard.buttons || []).map(button => 
       button.id === buttonId ? { ...button, [field]: value } : button
     );
     setCurrentCard({ ...currentCard, buttons: updatedButtons });
