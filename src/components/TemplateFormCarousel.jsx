@@ -624,17 +624,8 @@ const TemplateFormCarousel = () => {
   }, [message, variableExamples]);
 
   //PARA LAS TARJETAS DEL CARRUSEL
-  // Para guardar en localStorage
-  useEffect(() => {
-    localStorage.setItem('savedCards', JSON.stringify(cards));
-  }, [cards]);
-
-  // Y al inicializar el estado:
-  const [cards, setCards] = useState(() => {
-    const saved = localStorage.getItem('savedCards');
-    return saved ? JSON.parse(saved) : [];
-  });
-
+  // Initialize with a default first card
+  const [cards, setCards] = useState([]); // Sin tarjeta inicial
 
 const [openCardDialog, setOpenCardDialog] = useState(false);
 const [currentCard, setCurrentCard] = useState({
@@ -658,25 +649,20 @@ const handleCloseCardDialog = () => {
   setImagePreview(null);
 };
 
-  const handleSaveCard = () => {
-    console.log('Intentando guardar:', currentCard);
-    if (!currentCard.mensaje?.trim()) {
-      console.error('Mensaje vacío');
-      return;
-    }
-
+const handleSaveCard = () => {
+  if (currentCard.mensaje.trim()) { // Validar que mensaje no esté vacío
     const newCard = {
       id: Date.now().toString(),
-      ...currentCard,
-      mediaId,
+      mensaje: currentCard.mensaje,
+      mediaId: mediaId,
       imageUrl: uploadedUrl,
-      imagePreview
+      imagePreview: imagePreview,
+      buttons: currentCard.buttons
     };
-
-    console.log('Nueva tarjeta:', newCard);
-    setCards(prevCards => [...prevCards, newCard]);
+    setCards(prevCards => [...prevCards, newCard]); // Usar función segura para actualizar el estado
     handleCloseCardDialog();
-  };
+  }
+};
 
 
   const handleAddButton = () => {
