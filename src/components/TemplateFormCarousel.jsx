@@ -693,7 +693,7 @@ const TemplateFormCarousel = () => {
   };
 
   const updateButtonCard = (buttonId, field, value) => {
-    const updatedButtons = (currentCard.buttons || []).map(button => 
+    const updatedButtons = (currentCard.buttons || []).map(button =>
       button.id === buttonId ? { ...button, [field]: value } : button
     );
     setCurrentCard({ ...currentCard, buttons: updatedButtons });
@@ -922,7 +922,8 @@ const TemplateFormCarousel = () => {
             <DialogTitle>Agregar Nueva Tarjeta</DialogTitle>
             <DialogContent>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-                {/* File Upload Component */}<FileUploadComponent
+                {/* File Upload Component */}
+                <FileUploadComponent
                   templateType="carousel"
                   onUploadSuccess={(mediaId, uploadedUrl) => {
                     setMediaId(mediaId);
@@ -942,8 +943,17 @@ const TemplateFormCarousel = () => {
                   </Box>
                 )}
 
-                {/* Contenido */}<TextField
-                  label="Mensaje"
+                <TextField
+                  label="Título"
+                  value={currentCard.title}
+                  onChange={(e) => setCurrentCard({
+                    ...currentCard,
+                    title: e.target.value
+                  })}
+                  fullWidth
+                />
+                <TextField
+                  label="Descripción"
                   value={currentCard.description}
                   onChange={(e) => setCurrentCard({
                     ...currentCard,
@@ -954,7 +964,8 @@ const TemplateFormCarousel = () => {
                   fullWidth
                 />
 
-                {/* Buttons Section */}<Button
+                {/* Buttons Section */}
+                <Button
                   startIcon={<AddIcon />}
                   onClick={handleAddButton}
                   variant="outlined"
@@ -967,7 +978,7 @@ const TemplateFormCarousel = () => {
                     <TextField
                       label="Título del Botón"
                       value={button.title}
-                      onChange={(e) => updateButtonCard(button.id, 'title', e.target.value)}
+                      onChange={(e) => updateButton(button.id, 'title', e.target.value)}
                       fullWidth
                     />
                     <FormControl fullWidth>
@@ -975,7 +986,7 @@ const TemplateFormCarousel = () => {
                       <Select
                         value={button.type}
                         label="Tipo de Botón"
-                        onChange={(e) => updateButtonCard(button.id, 'type', e.target.value)}
+                        onChange={(e) => updateButton(button.id, 'type', e.target.value)}
                       >
                         <MenuItem value="QUICK_REPLY">Respuesta Rápida</MenuItem>
                         <MenuItem value="URL">URL</MenuItem>
@@ -986,7 +997,7 @@ const TemplateFormCarousel = () => {
                       <TextField
                         label={button.type === 'URL' ? 'URL' : 'Número de Teléfono'}
                         value={button.value || ''}
-                        onChange={(e) => updateButtonCard(button.id, 'value', e.target.value)}
+                        onChange={(e) => updateButton(button.id, 'value', e.target.value)}
                         fullWidth
                       />
                     )}
@@ -995,7 +1006,7 @@ const TemplateFormCarousel = () => {
               </Box>
             </DialogContent>
             <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
-              <Button onClick={handleCloseCardDialog} variant="contained" color="secondary">
+              <Button onClick={handleCloseCardDialog} color="secondary">
                 Cancelar
               </Button>
               <Button
