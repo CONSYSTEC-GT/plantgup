@@ -640,11 +640,6 @@ const TemplateFormCarousel = () => {
     buttons: []
   });
 
-  // Image upload state
-  const [mediaId, setMediaId] = useState(null);
-  const [uploadedUrl, setUploadedUrl] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-
   const handleAddCard = () => {
     setOpenCardDialog(true);
   };
@@ -697,7 +692,7 @@ const TemplateFormCarousel = () => {
     setCards(cards.filter(card => card.id !== cardId));
   };
 
-  const updateButton = (buttonId, field, value) => {
+  const updateButtonCard = (buttonId, field, value) => {
     const updatedButtons = (currentCard.buttons || []).map(button => 
       button.id === buttonId ? { ...button, [field]: value } : button
     );
