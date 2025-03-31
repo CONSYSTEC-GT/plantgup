@@ -1006,7 +1006,7 @@ const TemplateFormCarousel = () => {
               </Box>
             </DialogContent>
             <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
-              <Button onClick={handleCloseCardDialog} color="secondary">
+              <Button onClick={handleCloseCardDialog} variant="contained" color="secondary">
                 Cancelar
               </Button>
               <Button
