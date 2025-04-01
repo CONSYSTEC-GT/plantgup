@@ -624,69 +624,73 @@ const TemplateFormCarousel = () => {
   }, [message, variableExamples]);
 
   //PARA LAS TARJETAS DEL CARRUSEL
-// PARA LAS TARJETAS DEL CARRUSEL
-const [cards, setCards] = useState([]); // Inicializar con array vacío en lugar de tarjeta inicial
+  const [cards, setCards] = useState([]);
 
-const [openCardDialog, setOpenCardDialog] = useState(false);
-const [currentCard, setCurrentCard] = useState({
-  description: '',
-  buttons: []
-});
-
-const handleAddCard = () => {
-  setOpenCardDialog(true);
-};
-
-const handleCloseCardDialog = () => {
-  setOpenCardDialog(false);
-  // Reset card and upload states
-  setCurrentCard({
+  const [openCardDialog, setOpenCardDialog] = useState(false);
+  const [currentCard, setCurrentCard] = useState({
+    title: '',
     description: '',
     buttons: []
   });
-  setMediaId(null);
-  setUploadedUrl(null);
-  setImagePreview(null);
-};
 
-const handleSaveCard = () => {
-  if (currentCard.description) { // Solo verificar que tenga descripción
-    const newCard = {
-      id: Date.now().toString(),
-      description: currentCard.description,
-      mediaId: mediaId,
-      imageUrl: uploadedUrl,
-      imagePreview: imagePreview,
-      buttons: currentCard.buttons
-    };
-    setCards([...cards, newCard]);
-    handleCloseCardDialog();
-  }
-};
-
-const handleAddButton = () => {
-  const newButton = {
-    id: Date.now().toString(),
-    title: '',
-    type: 'QUICK_REPLY',
-    value: ''
+  const handleAddCard = () => {
+    setOpenCardDialog(true);
   };
-  setCurrentCard({
-    ...currentCard,
-    buttons: [...(currentCard.buttons || []), newButton]
-  });
-};
 
-const handleRemoveCard = (cardId) => {
-  setCards(cards.filter(card => card.id !== cardId));
-};
+  const handleCloseCardDialog = () => {
+    setOpenCardDialog(false);
+    // Reset card and upload states
+    setCurrentCard({
+      title: '',
+      description: '',
+      buttons: []
+    });
+    setMediaId(null);
+    setUploadedUrl(null);
+    setImagePreview(null);
+  };
 
-const updateButtonCard = (buttonId, field, value) => {
-  const updatedButtons = (currentCard.buttons || []).map(button =>
-    button.id === buttonId ? { ...button, [field]: value } : button
-  );
-  setCurrentCard({ ...currentCard, buttons: updatedButtons });
-};
+  const handleSaveCard = () => {
+    if (currentCard.title && currentCard.description) {
+      const newCard = {
+        id: Date.now().toString(),
+        title: currentCard.title,
+        description: currentCard.description,
+        mediaId: mediaId,
+        imageUrl: uploadedUrl,
+        imagePreview: imagePreview,
+        buttons: currentCard.buttons
+      };
+      setCards([...cards, newCard]);
+      handleCloseCardDialog();
+    }
+  };
+
+  const handleAddButton = () => {
+    const newButton = {
+      id: Date.now().toString(),
+      title: '',
+      type: 'QUICK_REPLY',
+      value: ''
+    };
+    setCurrentCard({
+      ...currentCard,
+      buttons: [...(currentCard.buttons || []), newButton]
+    });
+  };
+
+  const handleRemoveCard = (cardId) => {
+    // Prevent removing the initial card
+    if (cardId === 'initial-card') return;
+    setCards(cards.filter(card => card.id !== cardId));
+  };
+
+  const updateButtonCard = (buttonId, field, value) => {
+    const updatedButtons = (currentCard.buttons || []).map(button =>
+      button.id === buttonId ? { ...button, [field]: value } : button
+    );
+    setCurrentCard({ ...currentCard, buttons: updatedButtons });
+  };
 
 
   return (
@@ -847,6 +851,7 @@ const updateButtonCard = (buttonId, field, value) => {
         </Box>
 
         {/* Carrusel --data-urlencode content */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          <Box sx={{ width: '100%', marginTop: 2, p: 4}}
           {/* Agregar tarjeta */}<Button
             startIcon={<AddIcon />}
             variant="contained"
@@ -856,6 +861,7 @@ const updateButtonCard = (buttonId, field, value) => {
           >
             Agregar Tarjeta
           </Button>
+          </Box>
 
           <Swiper
             modules={[Navigation, Pagination]}
@@ -932,6 +938,15 @@ const updateButtonCard = (buttonId, field, value) => {
                   </Box>
                 )}
 
+                <TextField
+                  label="Título"
+                  value={currentCard.title}
+                  onChange={(e) => setCurrentCard({
+                    ...currentCard,
+                    title: e.target.value
+                  })}
+                  fullWidth
+                />
                 <TextField
                   label="Descripción"
                   value={currentCard.description}
