@@ -851,7 +851,6 @@ const TemplateFormCarousel = () => {
         </Box>
 
         {/* Carrusel --data-urlencode content */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-        <Box sx={{ width: '100%', marginTop: 2, p: 4 }}>
           {/* Agregar tarjeta */}<Button
             startIcon={<AddIcon />}
             variant="contained"
@@ -862,6 +861,7 @@ const TemplateFormCarousel = () => {
             Agregar Tarjeta
           </Button>
           </Box>
+          <Box sx={{ width: '100%', marginTop: 2, p: 4 }}>
 
           <Swiper
             modules={[Navigation, Pagination]}
