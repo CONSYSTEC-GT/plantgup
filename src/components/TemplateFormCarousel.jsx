@@ -860,7 +860,7 @@ const TemplateFormCarousel = () => {
           >
             Agregar Tarjeta
           </Button>
-          </Box>
+          
           <Box sx={{ width: '100%', marginTop: 2, p: 4 }}>
 
           <Swiper
@@ -1013,6 +1013,7 @@ const TemplateFormCarousel = () => {
               </Button>
             </Box>
           </Dialog>
+        </Box>
         </Box>
 
 
