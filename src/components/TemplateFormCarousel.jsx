@@ -951,7 +951,7 @@ const TemplateFormCarousel = () => {
             </Swiper>
           </Box>
 
-          <Dialog open={openCardDialog} onClose={handleCloseCardDialog} maxWidth="lg" fullWidth>
+          <Dialog open={openCardDialog} maxWidth="lg" fullWidth>
             <DialogTitle>
               Agregar Nueva Tarjeta ({cards.length}/10)
             </DialogTitle>
@@ -1125,28 +1125,6 @@ const TemplateFormCarousel = () => {
               Vista previa
             </Typography>
 
-            {/* Vista previa de la imagen */}
-            {imagePreview && (
-              <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
-                {typeof imagePreview === "string" && imagePreview.startsWith("data:image") ? (
-                  <img
-                    src={imagePreview}
-                    alt="Vista previa"
-                    style={{ width: "100%", borderRadius: 2, display: "block" }}
-                  />
-                ) : imagePreview.includes("video") ? (
-                  <video controls width="100%">
-                    <source src={imagePreview} />
-                    Tu navegador no soporta este formato de video.
-                  </video>
-                ) : imagePreview.includes("pdf") ? (
-                  <iframe src={imagePreview} width="100%" height="500px"></iframe>
-                ) : null}
-              </Box>
-            )}
-            {/* Muestra el estado de la subida */}
-            {uploadStatus && <p>{uploadStatus}</p>}
-
             {/* Mensaje de WhatsApp */}
             <Box
               sx={{
@@ -1162,10 +1140,86 @@ const TemplateFormCarousel = () => {
                 boxShadow: 1,
               }}
             >
+              <Swiper
+                modules={[Navigation, Pagination]}
+                spaceBetween={30}
+                slidesPerView={1}
+                navigation
+                pagination={{ clickable: true }}
+              >
+                {cards.map((card) => (
+                  <SwiperSlide key={card.id}>
+                    <Card sx={{
+                      maxWidth: 345,
+                      margin: 'auto',
+                      my: 4,
+                      boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                      position: 'relative'
+                    }}>
+                      {/* Delete button positioned top right */}
+                      {card.id !== 'initial-card' && (
+                        <IconButton
+                          color="error"
+                          sx={{
+                            position: 'absolute',
+                            top: 8,
+                            right: 8,
+                            backgroundColor: 'rgba(255,255,255,0.8)',
+                            '&:hover': {
+                              backgroundColor: 'rgba(255,255,255,0.9)',
+                            }
+                          }}
+                          onClick={() => handleRemoveCard(card.id)}
+                          size="small"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
 
-              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
-                {example}
-              </Typography>
+                      {(card.imageUrl || card.imagePreview) && (
+                        <CardMedia
+                          component="img"
+                          height="194"
+                          image={card.imageUrl || card.imagePreview}
+                          alt={card.title}
+                        />
+                      )}
+                      <CardContent sx={{ pt: 3, pb: 2 }}>
+                        <Typography variant="h5" component="div" gutterBottom>
+                          {card.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {card.description}
+                        </Typography>
+                      </CardContent>
+                      <CardActions sx={{ px: 2, pb: 3, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                        {card.buttons.map((button) => (
+                          <Button
+                            key={button.id}
+                            size="small"
+                            variant={button.type === 'QUICK_REPLY' ? 'contained' : 'outlined'}
+                            color={
+                              button.type === 'QUICK_REPLY' ? 'primary' :
+                                button.type === 'URL' ? 'secondary' : 'info'
+                            }
+                            startIcon={
+                              button.type === 'URL' ? <Link /> :
+                                button.type === 'PHONE_NUMBER' ? <Phone /> : null
+                            }
+                            sx={{
+                              borderRadius: '20px',
+                              px: 2,
+                              mb: 1
+                            }}
+                          >
+                            {button.title}
+                          </Button>
+                        ))}
+                      </CardActions>
+                    </Card>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
 
               <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
                 {new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: true })}
