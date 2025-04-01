@@ -1051,7 +1051,7 @@ const TemplateFormCarousel = () => {
                 alignSelf: "flex",
                 maxWidth: "100%",
                 minHeight: "40px",
-                display: "flex",
+                display: "block",
                 flexDirection: "column",
                 gap: 0.5,
                 boxShadow: 1,
