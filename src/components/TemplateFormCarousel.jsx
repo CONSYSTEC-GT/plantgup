@@ -932,8 +932,8 @@ const TemplateFormCarousel = () => {
                               button.type === 'URL' ? 'secondary' : 'info'
                           }
                           startIcon={
-                            button.type === 'URL' ? <LinkIcon /> :
-                              button.type === 'PHONE_NUMBER' ? <PhoneIcon /> : null
+                            button.type === 'URL' ? <Link /> :
+                              button.type === 'PHONE_NUMBER' ? <Phone /> : null
                           }
                           sx={{
                             borderRadius: '20px',
