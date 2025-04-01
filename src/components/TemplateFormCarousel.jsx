@@ -850,71 +850,111 @@ const TemplateFormCarousel = () => {
           />
         </Box>
 
-        {/* Carrusel --data-urlencode content */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          {/* Agregar tarjeta */}<Button
-            startIcon={<AddIcon />}
-            variant="contained"
-            onClick={handleAddCard}
-            size='large'
-            sx={{ mb: 2 }}
-          >
-            Agregar Tarjeta
-          </Button>
-          
-          <Box sx={{ width: '100%', marginTop: 2, p: 4 }}>
+        {/* Carrusel - with improvements */}
+        <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          {/* Header with Add button and counter */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Button
+              startIcon={<AddIcon />}
+              variant="contained"
+              onClick={handleAddCard}
+              size='large'
+              disabled={cards.length >= 10}
+            >
+              Agregar Tarjeta
+            </Button>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              {cards.length}/10 Tarjetas
+            </Typography>
+          </Box>
 
-          <Swiper
-            modules={[Navigation, Pagination]}
-            spaceBetween={10}
-            slidesPerView={1}
-            navigation
-            pagination={{ clickable: true }}
-          >
-            {cards.map((card) => (
-              <SwiperSlide key={card.id}>
-                <Card sx={{ maxWidth: 345, margin: 'auto' }}>
-                  {(card.imageUrl || card.imagePreview) && (
-                    <CardMedia
-                      component="img"
-                      height="194"
-                      image={card.imageUrl || card.imagePreview}
-                      alt={card.title}
-                    />
-                  )}
-                  <CardContent>
-                    <Typography variant="h5" component="div">
-                      {card.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {card.description}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    {card.buttons.map((button) => (
-                      <Button
-                        key={button.id}
-                        size="small"
-                        variant="outlined"
-                      >
-                        {button.title}
-                      </Button>
-                    ))}
+          <Box sx={{ width: '100%', my: 3 }}>
+            <Swiper
+              modules={[Navigation, Pagination]}
+              spaceBetween={30}
+              slidesPerView={1}
+              navigation
+              pagination={{ clickable: true }}
+            >
+              {cards.map((card) => (
+                <SwiperSlide key={card.id}>
+                  <Card sx={{
+                    maxWidth: 345,
+                    margin: 'auto',
+                    my: 4,
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                    position: 'relative'
+                  }}>
+                    {/* Delete button positioned top right */}
                     {card.id !== 'initial-card' && (
                       <IconButton
                         color="error"
+                        sx={{
+                          position: 'absolute',
+                          top: 8,
+                          right: 8,
+                          backgroundColor: 'rgba(255,255,255,0.8)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.9)',
+                          }
+                        }}
                         onClick={() => handleRemoveCard(card.id)}
+                        size="small"
                       >
                         <DeleteIcon />
                       </IconButton>
                     )}
-                  </CardActions>
-                </Card>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+
+                    {(card.imageUrl || card.imagePreview) && (
+                      <CardMedia
+                        component="img"
+                        height="194"
+                        image={card.imageUrl || card.imagePreview}
+                        alt={card.title}
+                      />
+                    )}
+                    <CardContent sx={{ pt: 3, pb: 2 }}>
+                      <Typography variant="h5" component="div" gutterBottom>
+                        {card.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {card.description}
+                      </Typography>
+                    </CardContent>
+                    <CardActions sx={{ px: 2, pb: 3, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                      {card.buttons.map((button) => (
+                        <Button
+                          key={button.id}
+                          size="small"
+                          variant={button.type === 'QUICK_REPLY' ? 'contained' : 'outlined'}
+                          color={
+                            button.type === 'QUICK_REPLY' ? 'primary' :
+                              button.type === 'URL' ? 'secondary' : 'info'
+                          }
+                          startIcon={
+                            button.type === 'URL' ? <LinkIcon /> :
+                              button.type === 'PHONE_NUMBER' ? <PhoneIcon /> : null
+                          }
+                          sx={{
+                            borderRadius: '20px',
+                            px: 2,
+                            mb: 1
+                          }}
+                        >
+                          {button.title}
+                        </Button>
+                      ))}
+                    </CardActions>
+                  </Card>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </Box>
 
           <Dialog open={openCardDialog} onClose={handleCloseCardDialog} maxWidth="sm" fullWidth>
-            <DialogTitle>Agregar Nueva Tarjeta</DialogTitle>
+            <DialogTitle>
+              Agregar Nueva Tarjeta ({cards.length}/10)
+            </DialogTitle>
             <DialogContent>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
                 {/* File Upload Component */}
@@ -959,29 +999,62 @@ const TemplateFormCarousel = () => {
                   fullWidth
                 />
 
-                {/* Buttons Section */}
+                {/* Buttons Section with improved styling */}
+                <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: 'bold' }}>
+                  Botones ({currentCard.buttons?.length || 0}/3)
+                </Typography>
+
                 <Button
                   startIcon={<AddIcon />}
                   onClick={handleAddButton}
                   variant="outlined"
+                  disabled={(currentCard.buttons?.length || 0) >= 3}
+                  sx={{ alignSelf: 'flex-start', mb: 1 }}
                 >
                   Agregar Botón
                 </Button>
 
                 {currentCard.buttons?.map((button) => (
-                  <Box key={button.id} sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                  <Box
+                    key={button.id}
+                    sx={{
+                      display: 'flex',
+                      gap: 1,
+                      alignItems: 'flex-start',
+                      flexDirection: { xs: 'column', md: 'row' },
+                      p: 2,
+                      border: '1px solid #e0e0e0',
+                      borderRadius: 1,
+                      position: 'relative'
+                    }}
+                  >
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={() => {
+                        const updatedButtons = currentCard.buttons.filter(b => b.id !== button.id);
+                        setCurrentCard({ ...currentCard, buttons: updatedButtons });
+                      }}
+                      sx={{ position: 'absolute', top: 8, right: 8 }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+
                     <TextField
                       label="Título del Botón"
                       value={button.title}
-                      onChange={(e) => updateButton(button.id, 'title', e.target.value)}
+                      onChange={(e) => updateButtonCard(button.id, 'title', e.target.value)}
                       fullWidth
+                      size="small"
+                      sx={{ flexGrow: 1, mb: { xs: 1, md: 0 } }}
                     />
-                    <FormControl fullWidth>
+                    <FormControl sx={{ minWidth: 150, mb: { xs: 1, md: 0 } }}>
                       <InputLabel>Tipo de Botón</InputLabel>
                       <Select
                         value={button.type}
                         label="Tipo de Botón"
-                        onChange={(e) => updateButton(button.id, 'type', e.target.value)}
+                        onChange={(e) => updateButtonCard(button.id, 'type', e.target.value)}
+                        size="small"
                       >
                         <MenuItem value="QUICK_REPLY">Respuesta Rápida</MenuItem>
                         <MenuItem value="URL">URL</MenuItem>
@@ -992,8 +1065,9 @@ const TemplateFormCarousel = () => {
                       <TextField
                         label={button.type === 'URL' ? 'URL' : 'Número de Teléfono'}
                         value={button.value || ''}
-                        onChange={(e) => updateButton(button.id, 'value', e.target.value)}
+                        onChange={(e) => updateButtonCard(button.id, 'value', e.target.value)}
                         fullWidth
+                        size="small"
                       />
                     )}
                   </Box>
@@ -1008,12 +1082,12 @@ const TemplateFormCarousel = () => {
                 onClick={handleSaveCard}
                 variant="contained"
                 color="primary"
+                disabled={!currentCard.title || !currentCard.description}
               >
                 Guardar Tarjeta
               </Button>
             </Box>
           </Dialog>
-        </Box>
         </Box>
 
 
