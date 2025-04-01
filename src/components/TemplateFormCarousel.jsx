@@ -852,8 +852,6 @@ const TemplateFormCarousel = () => {
 
         {/* Carrusel - with improvements */}
         <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          {/* Header with Add button and counter */}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
             <Button
               startIcon={<AddIcon />}
               variant="contained"
@@ -866,9 +864,9 @@ const TemplateFormCarousel = () => {
             <Typography variant="h6">
               {cards.length}/10 Tarjetas
             </Typography>
-          </Box>
+          
 
-          <Dialog open={openCardDialog} maxWidth="lg" fullWidth>
+          <Dialog maxWidth="lg" fullWidth>
             <DialogTitle>
               Agregar Nueva Tarjeta ({cards.length}/10)
             </DialogTitle>
