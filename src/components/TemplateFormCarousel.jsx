@@ -1067,7 +1067,8 @@ const TemplateFormCarousel = () => {
                 {cards.map((card) => (
                   <SwiperSlide key={card.id}>
                     <Card sx={{
-                      maxWidth: 345,
+                      maxWidth: "100%",
+                      minHeight: "40px",
                       margin: 'auto',
                       my: 4,
                       boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
