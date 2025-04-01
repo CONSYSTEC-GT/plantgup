@@ -624,80 +624,69 @@ const TemplateFormCarousel = () => {
   }, [message, variableExamples]);
 
   //PARA LAS TARJETAS DEL CARRUSEL
-  const [cards, setCards] = useState([
-    {
-      id: 'initial-card',
-      title: 'Bienvenido',
-      description: 'Esta es tu primera tarjeta. Puedes modificarla o agregar más.',
-      buttons: []
-    }
-  ]);
+// PARA LAS TARJETAS DEL CARRUSEL
+const [cards, setCards] = useState([]); // Inicializar con array vacío en lugar de tarjeta inicial
 
-  const [openCardDialog, setOpenCardDialog] = useState(false);
-  const [currentCard, setCurrentCard] = useState({
-    title: '',
+const [openCardDialog, setOpenCardDialog] = useState(false);
+const [currentCard, setCurrentCard] = useState({
+  description: '',
+  buttons: []
+});
+
+const handleAddCard = () => {
+  setOpenCardDialog(true);
+};
+
+const handleCloseCardDialog = () => {
+  setOpenCardDialog(false);
+  // Reset card and upload states
+  setCurrentCard({
     description: '',
     buttons: []
   });
+  setMediaId(null);
+  setUploadedUrl(null);
+  setImagePreview(null);
+};
 
-  const handleAddCard = () => {
-    setOpenCardDialog(true);
-  };
-
-  const handleCloseCardDialog = () => {
-    setOpenCardDialog(false);
-    // Reset card and upload states
-    setCurrentCard({
-      title: '',
-      description: '',
-      buttons: []
-    });
-    setMediaId(null);
-    setUploadedUrl(null);
-    setImagePreview(null);
-  };
-
-  const handleSaveCard = () => {
-    if (currentCard.title && currentCard.description) {
-      const newCard = {
-        id: Date.now().toString(),
-        title: currentCard.title,
-        description: currentCard.description,
-        mediaId: mediaId,
-        imageUrl: uploadedUrl,
-        imagePreview: imagePreview,
-        buttons: currentCard.buttons
-      };
-      setCards([...cards, newCard]);
-      handleCloseCardDialog();
-    }
-  };
-
-  const handleAddButton = () => {
-    const newButton = {
+const handleSaveCard = () => {
+  if (currentCard.description) { // Solo verificar que tenga descripción
+    const newCard = {
       id: Date.now().toString(),
-      title: '',
-      type: 'QUICK_REPLY',
-      value: ''
+      description: currentCard.description,
+      mediaId: mediaId,
+      imageUrl: uploadedUrl,
+      imagePreview: imagePreview,
+      buttons: currentCard.buttons
     };
-    setCurrentCard({
-      ...currentCard,
-      buttons: [...(currentCard.buttons || []), newButton]
-    });
-  };
+    setCards([...cards, newCard]);
+    handleCloseCardDialog();
+  }
+};
 
-  const handleRemoveCard = (cardId) => {
-    // Prevent removing the initial card
-    if (cardId === 'initial-card') return;
-    setCards(cards.filter(card => card.id !== cardId));
+const handleAddButton = () => {
+  const newButton = {
+    id: Date.now().toString(),
+    title: '',
+    type: 'QUICK_REPLY',
+    value: ''
   };
+  setCurrentCard({
+    ...currentCard,
+    buttons: [...(currentCard.buttons || []), newButton]
+  });
+};
 
-  const updateButtonCard = (buttonId, field, value) => {
-    const updatedButtons = (currentCard.buttons || []).map(button =>
-      button.id === buttonId ? { ...button, [field]: value } : button
-    );
-    setCurrentCard({ ...currentCard, buttons: updatedButtons });
-  };
+const handleRemoveCard = (cardId) => {
+  setCards(cards.filter(card => card.id !== cardId));
+};
+
+const updateButtonCard = (buttonId, field, value) => {
+  const updatedButtons = (currentCard.buttons || []).map(button =>
+    button.id === buttonId ? { ...button, [field]: value } : button
+  );
+  setCurrentCard({ ...currentCard, buttons: updatedButtons });
+};
 
 
   return (
@@ -943,15 +932,6 @@ const TemplateFormCarousel = () => {
                   </Box>
                 )}
 
-                <TextField
-                  label="Título"
-                  value={currentCard.title}
-                  onChange={(e) => setCurrentCard({
-                    ...currentCard,
-                    title: e.target.value
-                  })}
-                  fullWidth
-                />
                 <TextField
                   label="Descripción"
                   value={currentCard.description}
