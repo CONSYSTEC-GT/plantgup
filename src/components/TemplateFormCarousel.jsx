@@ -863,7 +863,7 @@ const TemplateFormCarousel = () => {
             >
               Agregar Tarjeta
             </Button>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h6">
               {cards.length}/10 Tarjetas
             </Typography>
           </Box>
@@ -951,7 +951,7 @@ const TemplateFormCarousel = () => {
             </Swiper>
           </Box>
 
-          <Dialog open={openCardDialog} onClose={handleCloseCardDialog} maxWidth="sm" fullWidth>
+          <Dialog open={openCardDialog} onClose={handleCloseCardDialog} maxWidth="lg" fullWidth>
             <DialogTitle>
               Agregar Nueva Tarjeta ({cards.length}/10)
             </DialogTitle>
