@@ -1127,30 +1127,42 @@ const TemplateFormCarousel = () => {
                           {card.description}
                         </Typography>
                       </CardContent>
-                      <CardActions sx={{ px: 2, pb: 3, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                        {card.buttons.map((button) => (
-                          <Button
+                      {/* Botones */}<Stack spacing={1} sx={{ mt: 0 }}>
+                        {buttons.map((button) => (
+                          <Box
                             key={button.id}
-                            size="small"
-                            variant={button.type === 'QUICK_REPLY' ? 'contained' : 'outlined'}
-                            color={
-                              button.type === 'QUICK_REPLY' ? 'primary' :
-                                button.type === 'URL' ? 'secondary' : 'info'
-                            }
-                            startIcon={
-                              button.type === 'URL' ? <Link /> :
-                                button.type === 'PHONE_NUMBER' ? <Phone /> : null
-                            }
                             sx={{
-                              borderRadius: '20px',
-                              px: 2,
-                              mb: 1
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "flex-start",
+                              gap: 1,
+                              border: "1px solid #ccc",
+                              borderRadius: "20px",
+                              p: 1,
+                              backgroundColor: "#ffffff",
+                              boxShadow: 1,
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: "#f5f5f5",
+                              },
                             }}
                           >
-                            {button.title}
-                          </Button>
+                            {button.type === "QUICK_REPLY" && (
+                              <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
+                            )}
+                            {button.type === "URL" && (
+                              <Link sx={{ fontSize: "16px", color: "#075e54" }} />
+                            )}
+                            {button.type === "PHONE_NUMBER" && (
+                              <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
+                            )}
+                            <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
+                              {button.title}
+                            </Typography>
+                          </Box>
                         ))}
-                      </CardActions>
+                      </Stack>
+
                     </Card>
                   </SwiperSlide>
                 ))}
