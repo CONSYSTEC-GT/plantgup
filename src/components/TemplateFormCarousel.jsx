@@ -1079,13 +1079,13 @@ const TemplateFormCarousel = () => {
                 slidesPerView={1}
                 navigation
                 pagination={{ clickable: true }}
-                style={{ width: '320px' }}  // Ancho fijo para el carrusel
+                style={{ width: '360px' }}  // Ancho fijo para el carrusel
               >
                 {cards.map((card) => (
                   <SwiperSlide key={card.id}>
                     <Card sx={{
                       width: '350px',       // Ancho fijo para cada tarjeta
-                      height: '430px',      // Altura fija para cada tarjeta
+                      height: '450px',      // Altura fija para cada tarjeta
                       margin: 'auto',
                       my: 2,
                       boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
