@@ -904,32 +904,35 @@ const TemplateFormCarousel = () => {
               />
 
               {/* Buttons Section with improved styling */}
-              <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: 'bold' }}>
+              <Typography variant="subtitle1" sx={{ mt: 1 }}>
                 Botones ({currentCard.buttons?.length || 0}/3)
               </Typography>
 
               <Button
                 startIcon={<AddIcon />}
                 onClick={handleAddButton}
-                variant="outlined"
+                variant="contained"
                 disabled={(currentCard.buttons?.length || 0) >= 3}
                 sx={{ alignSelf: 'flex-start', mb: 1 }}
               >
                 Agregar Botón
               </Button>
 
+              <FormHelperText>
+                Elija los botones que se agregarán a la plantilla. Puede elegir hasta 10 botones.
+              </FormHelperText>
+
               {currentCard.buttons?.map((button) => (
                 <Box
                   key={button.id}
                   sx={{
-                    display: 'flex',
-                    gap: 1,
-                    alignItems: 'flex-start',
-                    flexDirection: { xs: 'column', md: 'row' },
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                    border: "1px solid #ccc",
+                    borderRadius: 2,
                     p: 2,
-                    border: '1px solid #e0e0e0',
-                    borderRadius: 1,
-                    position: 'relative'
+                    backgroundColor: "#f9f9f9",
                   }}
                 >
                   <IconButton
@@ -949,31 +952,58 @@ const TemplateFormCarousel = () => {
                     value={button.title}
                     onChange={(e) => updateButtonCard(button.id, 'title', e.target.value)}
                     fullWidth
-                    size="small"
-                    sx={{ flexGrow: 1, mb: { xs: 1, md: 0 } }}
                   />
-                  <FormControl sx={{ minWidth: 150, mb: { xs: 1, md: 0 } }}>
-                    <InputLabel>Tipo de Botón</InputLabel>
-                    <Select
-                      value={button.type}
-                      label="Tipo de Botón"
-                      onChange={(e) => updateButtonCard(button.id, 'type', e.target.value)}
-                      size="small"
-                    >
-                      <MenuItem value="QUICK_REPLY">Respuesta Rápida</MenuItem>
-                      <MenuItem value="URL">URL</MenuItem>
-                      <MenuItem value="PHONE_NUMBER">Número de Teléfono</MenuItem>
-                    </Select>
-                  </FormControl>
-                  {(button.type === 'URL' || button.type === 'PHONE_NUMBER') && (
+
+                  {/* Selector de tipo de botón */}
+                  <Select
+                    value={button.type}
+                    label="Tipo de Botón"
+                    onChange={(e) => updateButtonCard(button.id, 'type', e.target.value)}
+                    sx={{ minWidth: 150 }}
+                  >
+                    <MenuItem value="QUICK_REPLY">Respuesta Rápida</MenuItem>
+                    <MenuItem value="URL">URL</MenuItem>
+                    <MenuItem value="PHONE_NUMBER">Número de Teléfono</MenuItem>
+                  </Select>
+
+
+
+                  {/* Campo adicional según el tipo de botón */}
+                  {button.type === "URL" && (
                     <TextField
-                      label={button.type === 'URL' ? 'URL' : 'Número de Teléfono'}
-                      value={button.value || ''}
-                      onChange={(e) => updateButtonCard(button.id, 'value', e.target.value)}
+                      label="URL"
+                      value={button.url || ''}
+                      onChange={(e) => updateButtonWithValidation(
+                        button.id,
+                        "url",
+                        e.target.value,
+                        setButtons,
+                        setValidationErrors
+                      )}
                       fullWidth
-                      size="small"
+                      error={validationErrors[button.id] !== undefined}
+                      helperText={validationErrors[button.id]}
                     />
                   )}
+
+                  {button.type === "PHONE_NUMBER" && (
+                    <TextField
+                      label="Phone Number"
+                      value={button.phoneNumber}
+                      onChange={(e) => updateButton(button.id, "phoneNumber", e.target.value)}
+                      fullWidth
+                    />
+                  )}
+
+                  {/* Icono según el tipo de botón */}
+                  {button.type === "QUICK_REPLY" && <ArrowForward />}
+                  {button.type === "URL" && <Link />}
+                  {button.type === "PHONE_NUMBER" && <Phone />}
+
+                  {/* Botón para eliminar */}
+                  <IconButton color="error" onClick={() => removeButton(button.id)}>
+                    <Delete />
+                  </IconButton>
                 </Box>
               ))}
             </Box>
