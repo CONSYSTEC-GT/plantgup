@@ -1073,130 +1073,138 @@ const TemplateFormCarousel = () => {
                 boxShadow: 1,
               }}
             >*/}
-              <Swiper
-                modules={[Navigation, Pagination]}
-                spaceBetween={30}
-                slidesPerView={1}
-                navigation
-                pagination={{ clickable: true }}
-                style={{ width: '360px' }}  // Ancho fijo para el carrusel
-              >
-                {cards.map((card) => (
-                  <SwiperSlide key={card.id}>
-                    <Card sx={{
-                      width: '350px',       // Ancho fijo para cada tarjeta
-                      height: '450px',      // Altura fija para cada tarjeta
-                      margin: 'auto',
-                      my: 2,
-                      boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                      position: 'relative',
-                      display: 'flex',
-                      flexDirection: 'column'
-                    }}>
-                      {/* Delete button positioned top right */}
-                      {card.id !== 'initial-card' && (
-                        <IconButton
-                          color="error"
-                          sx={{
-                            position: 'absolute',
-                            top: 8,
-                            right: 8,
-                            backgroundColor: 'rgba(255,255,255,0.8)',
-                            zIndex: 2,
-                            '&:hover': {
-                              backgroundColor: 'rgba(255,255,255,0.9)',
-                            }
-                          }}
-                          onClick={() => handleRemoveCard(card.id)}
-                          size="small"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      )}
+            <Swiper
+              modules={[Navigation, Pagination]}
+              spaceBetween={30}
+              slidesPerView={1}
+              navigation
+              pagination={{ clickable: true }}
+              style={{ width: '360px' }}  // Ancho fijo para el carrusel
+            >
+              {cards.map((card) => (
+                <SwiperSlide key={card.id}>
+                  <Card sx={{
+                    width: '350px',       // Ancho fijo para cada tarjeta
+                    height: '450px',      // Altura fija para cada tarjeta
+                    margin: 'auto',
+                    my: 2,
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}>
+                    {/* Delete button positioned top right */}
+                    {card.id !== 'initial-card' && (
+                      <IconButton
+                        color="error"
+                        sx={{
+                          position: 'absolute',
+                          top: 8,
+                          right: 8,
+                          backgroundColor: 'rgba(255,255,255,0.8)',
+                          zIndex: 2,
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.9)',
+                          }
+                        }}
+                        onClick={() => handleRemoveCard(card.id)}
+                        size="small"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
 
-                      {/* Contenedor de imagen con altura fija */}
-                      <Box sx={{ height: '180px', overflow: 'hidden', position: 'relative' }}>
-                        {(card.imageUrl || card.imagePreview) ? (
-                          <CardMedia
-                            component="img"
+                    {/* Contenedor de imagen con altura fija */}
+                    <Box sx={{ height: '180px', overflow: 'hidden', position: 'relative' }}>
+                      {(card.imageUrl || card.imagePreview) ? (
+                        <CardMedia
+                          component="img"
+                          sx={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                          }}
+                          image={card.imageUrl || card.imagePreview}
+                          alt={card.title}
+                        />
+                      ) : (
+                        <Box sx={{ height: '100%', width: '100%', bgcolor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Typography variant="body2" color="text.secondary">Sin imagen</Typography>
+                        </Box>
+                      )}
+                    </Box>
+
+                    {/* Contenedor de texto con altura fija */}
+                    <CardContent sx={{ pt: 2, pb: 1, height: '120px', overflow: 'auto' }}>
+                      <Typography variant="h6" component="div" gutterBottom noWrap sx={{ fontWeight: 'bold' }}>
+                        {card.title || "Título"}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>
+                        {card.description || "Descripción de la tarjeta"}
+                      </Typography>
+                    </CardContent>
+
+                    {/* Contenedor de botones con altura fija */}
+                    <Box sx={{
+                      p: 2,
+                      pt: 0,
+                      flex: 1,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end'
+                    }}>
+                      <Stack spacing={0} sx={{ width: '100%' }}> {/* Cambia spacing a 0 */}
+                        {card.buttons.map((button, index) => (
+                          <Box
+                            key={button.id}
                             sx={{
                               width: '100%',
-                              height: '100%',
-                              objectFit: 'cover'
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "flex-start",
+                              gap: 1,
+                              borderTop: index === 0 ? "1px solid #e0e0e0" : "none", // Borde solo arriba para el primer botón
+                              borderBottom: "1px solid #e0e0e0", // Borde abajo para todos los botones
+                              p: 1.5, // Ajusta el padding para mejor aspecto
+                              backgroundColor: "#ffffff",
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: "#f5f5f5",
+                              },
+                              borderRadius: 0, // Elimina el borderRadius para que queden cuadrados
                             }}
-                            image={card.imageUrl || card.imagePreview}
-                            alt={card.title}
-                          />
-                        ) : (
-                          <Box sx={{ height: '100%', width: '100%', bgcolor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Typography variant="body2" color="text.secondary">Sin imagen</Typography>
+                          >
+                            {button.type === "QUICK_REPLY" && (
+                              <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
+                            )}
+                            {button.type === "URL" && (
+                              <Link sx={{ fontSize: "16px", color: "#075e54" }} />
+                            )}
+                            {button.type === "PHONE_NUMBER" && (
+                              <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
+                            )}
+                            <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
+                              {button.title}
+                            </Typography>
                           </Box>
-                        )}
-                      </Box>
+                        ))}
+                      </Stack>
+                    </Box>
+                  </Card>
+                </SwiperSlide>
+              ))}
+            </Swiper>
 
-                      {/* Contenedor de texto con altura fija */}
-                      <CardContent sx={{ pt: 2, pb: 1, height: '120px', overflow: 'auto' }}>
-                        <Typography variant="h6" component="div" gutterBottom noWrap sx={{ fontWeight: 'bold' }}>
-                          {card.title || "Título"}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{
-                          display: '-webkit-box',
-                          WebkitLineClamp: 3,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis'
-                        }}>
-                          {card.description || "Descripción de la tarjeta"}
-                        </Typography>
-                      </CardContent>
+            <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end", mt: 1 }}>
+              {new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: true })}
+            </Typography>
 
-                      {/* Contenedor de botones con altura fija */}
-                      <Box sx={{ p: 2, pt: 0, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-                        <Stack spacing={1} sx={{ mt: 0, maxHeight: 'auto', overflow: 'auto' }}>
-                          {card.buttons.map((button) => (
-                            <Box
-                              key={button.id}
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "flex-start",
-                                gap: 1,
-                                border: "1px solid #ccc",
-                                borderRadius: "20px",
-                                p: 1,
-                                backgroundColor: "#ffffff",
-                                boxShadow: 1,
-                                cursor: "pointer",
-                                "&:hover": {
-                                  backgroundColor: "#f5f5f5",
-                                },
-                              }}
-                            >
-                              {button.type === "QUICK_REPLY" && (
-                                <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
-                              )}
-                              {button.type === "URL" && (
-                                <Link sx={{ fontSize: "16px", color: "#075e54" }} />
-                              )}
-                              {button.type === "PHONE_NUMBER" && (
-                                <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
-                              )}
-                              <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
-                                {button.title}
-                              </Typography>
-                            </Box>
-                          ))}
-                        </Stack>
-                      </Box>
-                    </Card>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-
-              <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end", mt: 1 }}>
-                {new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: true })}
-              </Typography>
-            
           </Box>
         </Box>
       </Grid>
