@@ -11,6 +11,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import 'swiper/css/effect-coverflow';
 
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
@@ -1074,12 +1075,20 @@ const TemplateFormCarousel = () => {
               }}
             >*/}
             <Swiper
-              modules={[Navigation, Pagination]}
+              modules={[EffectCoverflow, Pagination]}
+              effect={'coverflow'}
               spaceBetween={30}
-              slidesPerView={1}
-              navigation
+              slidesPerView={'auto'}
+              centeredSlides={true}
               pagination={{ clickable: true }}
               style={{ width: '360px' }}  // Ancho fijo para el carrusel
+              coverflowEffect={{
+                rotate: 50,
+                stretch: 0,
+                depth: 100,
+                modifier: 1,
+                slideShadows: true,
+              }}
             >
               {cards.map((card) => (
                 <SwiperSlide key={card.id}>
