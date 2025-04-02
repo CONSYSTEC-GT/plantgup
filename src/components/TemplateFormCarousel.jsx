@@ -852,25 +852,15 @@ const TemplateFormCarousel = () => {
 
         {/* Carrusel - with improvements */}
         <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-
-            <Button
-              startIcon={<AddIcon />}
-              variant="contained"
-              onClick={handleAddCard}
-              size='large'
-              disabled={cards.length >= 10}
-            >
-              Agregar Tarjeta
-            </Button>
             <Typography variant="h6">
               {cards.length}/10 Tarjetas
             </Typography>
           
-          <Dialog open={true} maxWidth="lg" fullWidth>
-            <DialogTitle>
+            <FormControl fullWidth>
+            <FormLabel htmlFor="carousel-name-input">
               Agregar Nueva Tarjeta ({cards.length}/10)
-            </DialogTitle>
-            <DialogContent>
+            </FormLabel>
+            
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
                 {/* File Upload Component */}
                 <FileUploadComponent
@@ -988,7 +978,7 @@ const TemplateFormCarousel = () => {
                   </Box>
                 ))}
               </Box>
-            </DialogContent>
+            
             <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
               <Button onClick={handleCloseCardDialog} variant="contained" color="secondary">
                 Cancelar
@@ -1002,7 +992,7 @@ const TemplateFormCarousel = () => {
                 Guardar Tarjeta
               </Button>
             </Box>
-          </Dialog>
+            </FormControl>
         </Box>
 
 
