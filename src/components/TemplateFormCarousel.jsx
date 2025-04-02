@@ -7,7 +7,7 @@ import EmojiPicker from "emoji-picker-react"; // Selector de emojis
 
 // Import Swiper styles
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
+import { EffectCoverflow, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
