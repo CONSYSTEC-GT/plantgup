@@ -1152,7 +1152,7 @@ const TemplateFormCarousel = () => {
 
                       {/* Contenedor de botones con altura fija */}
                       <Box sx={{ p: 2, pt: 0, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-                        <Stack spacing={1} sx={{ mt: 0, maxHeight: '100px', overflow: 'auto' }}>
+                        <Stack spacing={1} sx={{ mt: 0, maxHeight: 'auto', overflow: 'auto' }}>
                           {card.buttons.map((button) => (
                             <Box
                               key={button.id}
