@@ -1059,7 +1059,7 @@ const TemplateFormCarousel = () => {
               Vista previa
             </Typography>
 
-            {/* Mensaje de WhatsApp */}
+            {/* Mensaje de WhatsApp 
             <Box
               sx={{
                 bgcolor: "#ffffff",
@@ -1072,7 +1072,7 @@ const TemplateFormCarousel = () => {
                 gap: 0.5,
                 boxShadow: 1,
               }}
-            >
+            >*/}
               <Swiper
                 modules={[Navigation, Pagination]}
                 spaceBetween={30}
@@ -1196,7 +1196,7 @@ const TemplateFormCarousel = () => {
               <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end", mt: 1 }}>
                 {new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: true })}
               </Typography>
-            </Box>
+            
           </Box>
         </Box>
       </Grid>
