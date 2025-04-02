@@ -852,133 +852,132 @@ const TemplateFormCarousel = () => {
 
         {/* Carrusel - with improvements */}
         <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          <Box display="flex" justifyContent="flex-end">
             <Typography variant="h6">
               {cards.length}/10 Tarjetas
             </Typography>
-          
-            <FormControl fullWidth>
-            <FormLabel htmlFor="carousel-name-input">
-              Agregar Nueva Tarjeta ({cards.length}/10)
-            </FormLabel>
-            
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-                {/* File Upload Component */}
-                <FileUploadComponent
-                  templateType="carousel"
-                  onUploadSuccess={(mediaId, uploadedUrl) => {
-                    setMediaId(mediaId);
-                    setUploadedUrl(uploadedUrl);
+          </Box>
+
+          <FormControl fullWidth>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+              {/* File Upload Component */}
+              <FileUploadComponent
+                templateType="carousel"
+                onUploadSuccess={(mediaId, uploadedUrl) => {
+                  setMediaId(mediaId);
+                  setUploadedUrl(uploadedUrl);
+                }}
+                onImagePreview={(preview) => setImagePreview(preview)}
+              />
+
+              {/* Image Preview */}
+              {(uploadedUrl || imagePreview) && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                  <img
+                    src={uploadedUrl || imagePreview}
+                    alt="Preview"
+                    style={{ maxWidth: '100%', maxHeight: 200 }}
+                  />
+                </Box>
+              )}
+
+              <TextField
+                label="Título"
+                value={currentCard.title}
+                onChange={(e) => setCurrentCard({
+                  ...currentCard,
+                  title: e.target.value
+                })}
+                fullWidth
+              />
+              <TextField
+                label="Descripción"
+                value={currentCard.description}
+                onChange={(e) => setCurrentCard({
+                  ...currentCard,
+                  description: e.target.value
+                })}
+                multiline
+                rows={3}
+                fullWidth
+              />
+
+              {/* Buttons Section with improved styling */}
+              <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: 'bold' }}>
+                Botones ({currentCard.buttons?.length || 0}/3)
+              </Typography>
+
+              <Button
+                startIcon={<AddIcon />}
+                onClick={handleAddButton}
+                variant="outlined"
+                disabled={(currentCard.buttons?.length || 0) >= 3}
+                sx={{ alignSelf: 'flex-start', mb: 1 }}
+              >
+                Agregar Botón
+              </Button>
+
+              {currentCard.buttons?.map((button) => (
+                <Box
+                  key={button.id}
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    alignItems: 'flex-start',
+                    flexDirection: { xs: 'column', md: 'row' },
+                    p: 2,
+                    border: '1px solid #e0e0e0',
+                    borderRadius: 1,
+                    position: 'relative'
                   }}
-                  onImagePreview={(preview) => setImagePreview(preview)}
-                />
-
-                {/* Image Preview */}
-                {(uploadedUrl || imagePreview) && (
-                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                    <img
-                      src={uploadedUrl || imagePreview}
-                      alt="Preview"
-                      style={{ maxWidth: '100%', maxHeight: 200 }}
-                    />
-                  </Box>
-                )}
-
-                <TextField
-                  label="Título"
-                  value={currentCard.title}
-                  onChange={(e) => setCurrentCard({
-                    ...currentCard,
-                    title: e.target.value
-                  })}
-                  fullWidth
-                />
-                <TextField
-                  label="Descripción"
-                  value={currentCard.description}
-                  onChange={(e) => setCurrentCard({
-                    ...currentCard,
-                    description: e.target.value
-                  })}
-                  multiline
-                  rows={3}
-                  fullWidth
-                />
-
-                {/* Buttons Section with improved styling */}
-                <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: 'bold' }}>
-                  Botones ({currentCard.buttons?.length || 0}/3)
-                </Typography>
-
-                <Button
-                  startIcon={<AddIcon />}
-                  onClick={handleAddButton}
-                  variant="outlined"
-                  disabled={(currentCard.buttons?.length || 0) >= 3}
-                  sx={{ alignSelf: 'flex-start', mb: 1 }}
                 >
-                  Agregar Botón
-                </Button>
-
-                {currentCard.buttons?.map((button) => (
-                  <Box
-                    key={button.id}
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      alignItems: 'flex-start',
-                      flexDirection: { xs: 'column', md: 'row' },
-                      p: 2,
-                      border: '1px solid #e0e0e0',
-                      borderRadius: 1,
-                      position: 'relative'
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={() => {
+                      const updatedButtons = currentCard.buttons.filter(b => b.id !== button.id);
+                      setCurrentCard({ ...currentCard, buttons: updatedButtons });
                     }}
+                    sx={{ position: 'absolute', top: 8, right: 8 }}
                   >
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() => {
-                        const updatedButtons = currentCard.buttons.filter(b => b.id !== button.id);
-                        setCurrentCard({ ...currentCard, buttons: updatedButtons });
-                      }}
-                      sx={{ position: 'absolute', top: 8, right: 8 }}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
 
+                  <TextField
+                    label="Título del Botón"
+                    value={button.title}
+                    onChange={(e) => updateButtonCard(button.id, 'title', e.target.value)}
+                    fullWidth
+                    size="small"
+                    sx={{ flexGrow: 1, mb: { xs: 1, md: 0 } }}
+                  />
+                  <FormControl sx={{ minWidth: 150, mb: { xs: 1, md: 0 } }}>
+                    <InputLabel>Tipo de Botón</InputLabel>
+                    <Select
+                      value={button.type}
+                      label="Tipo de Botón"
+                      onChange={(e) => updateButtonCard(button.id, 'type', e.target.value)}
+                      size="small"
+                    >
+                      <MenuItem value="QUICK_REPLY">Respuesta Rápida</MenuItem>
+                      <MenuItem value="URL">URL</MenuItem>
+                      <MenuItem value="PHONE_NUMBER">Número de Teléfono</MenuItem>
+                    </Select>
+                  </FormControl>
+                  {(button.type === 'URL' || button.type === 'PHONE_NUMBER') && (
                     <TextField
-                      label="Título del Botón"
-                      value={button.title}
-                      onChange={(e) => updateButtonCard(button.id, 'title', e.target.value)}
+                      label={button.type === 'URL' ? 'URL' : 'Número de Teléfono'}
+                      value={button.value || ''}
+                      onChange={(e) => updateButtonCard(button.id, 'value', e.target.value)}
                       fullWidth
                       size="small"
-                      sx={{ flexGrow: 1, mb: { xs: 1, md: 0 } }}
                     />
-                    <FormControl sx={{ minWidth: 150, mb: { xs: 1, md: 0 } }}>
-                      <InputLabel>Tipo de Botón</InputLabel>
-                      <Select
-                        value={button.type}
-                        label="Tipo de Botón"
-                        onChange={(e) => updateButtonCard(button.id, 'type', e.target.value)}
-                        size="small"
-                      >
-                        <MenuItem value="QUICK_REPLY">Respuesta Rápida</MenuItem>
-                        <MenuItem value="URL">URL</MenuItem>
-                        <MenuItem value="PHONE_NUMBER">Número de Teléfono</MenuItem>
-                      </Select>
-                    </FormControl>
-                    {(button.type === 'URL' || button.type === 'PHONE_NUMBER') && (
-                      <TextField
-                        label={button.type === 'URL' ? 'URL' : 'Número de Teléfono'}
-                        value={button.value || ''}
-                        onChange={(e) => updateButtonCard(button.id, 'value', e.target.value)}
-                        fullWidth
-                        size="small"
-                      />
-                    )}
-                  </Box>
-                ))}
-              </Box>
-            
+                  )}
+                </Box>
+              ))}
+            </Box>
+
             <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
               <Button onClick={handleCloseCardDialog} variant="contained" color="secondary">
                 Cancelar
@@ -992,7 +991,7 @@ const TemplateFormCarousel = () => {
                 Guardar Tarjeta
               </Button>
             </Box>
-            </FormControl>
+          </FormControl>
         </Box>
 
 
