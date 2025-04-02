@@ -25,7 +25,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
-import FileUploadComponent from './FileUploadComponent';
+import FileUploadCarousel from './FileUploadCarousel';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
 import { createTemplateGupshup } from '../api/gupshupApi';
 import { saveTemplateToTalkMe } from '../api/templatesGSApi';
@@ -863,7 +863,7 @@ const TemplateFormCarousel = () => {
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
               {/* File Upload Component */}
-              <FileUploadComponent
+              <FileUploadCarousel
                 templateType="carousel"
                 onUploadSuccess={(mediaId, uploadedUrl) => {
                   setMediaId(mediaId);
