@@ -722,6 +722,37 @@ const transformButtons = (buttons) => {
   }).filter(button => button !== null);
 };
 
+// Crear la tarjeta con el formato requerido
+const formattedCard = {
+  headerType: "IMAGE",
+  mediaUrl: uploadedUrl || "",
+  mediaId: null,
+  exampleMedia: null,
+  body: currentCard.description,
+  sampleText: `${currentCard.description} User`,
+  buttons: transformButtons(buttons)
+};
+
+// Agregar la tarjeta al array de tarjetas
+const updatedCards = [...cards, formattedCard];
+setCards(updatedCards);
+
+// Guardar el array completo en un estado o variable global
+// Este es el array que utilizarás para tu request
+const requestFormat = JSON.stringify(updatedCards);
+
+// También puedes guardarlo en localStorage si necesitas persistencia
+//localStorage.setItem('formattedCards', requestFormat);
+
+// Limpiar los campos del formulario
+setCurrentCard({
+  title: "",
+  description: ""
+});
+setButtons([]);
+setUploadedUrl("");
+setImagePreview("");
+
 
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
