@@ -908,9 +908,9 @@ const TemplateFormCarousel = () => {
               </Typography>
 
               <Button
-                startIcon={<AddIcon />}
-                onClick={handleAddButton}
                 variant="contained"
+                startIcon={<AddIcon />}
+                onClick={addButton}
                 disabled={(currentCard.buttons?.length || 0) >= 3}
                 sx={{ alignSelf: 'flex-start', mb: 1 }}
               >
@@ -918,7 +918,7 @@ const TemplateFormCarousel = () => {
               </Button>
 
               <FormHelperText>
-                Elija los botones que se agregarán a la plantilla. Puede elegir hasta 10 botones.
+                Elija los botones que se agregarán a la tarjeta del carrusel.
               </FormHelperText>
 
               {currentCard.buttons?.map((button) => (
@@ -934,38 +934,23 @@ const TemplateFormCarousel = () => {
                     backgroundColor: "#f9f9f9",
                   }}
                 >
-                  <IconButton
-                    size="small"
-                    color="error"
-                    onClick={() => {
-                      const updatedButtons = currentCard.buttons.filter(b => b.id !== button.id);
-                      setCurrentCard({ ...currentCard, buttons: updatedButtons });
-                    }}
-                    sx={{ position: 'absolute', top: 8, right: 8 }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-
+                  {/* Campo de texto para el título del botón */}
                   <TextField
-                    label="Título del Botón"
+                    label="Titulo del botón"
                     value={button.title}
-                    onChange={(e) => updateButtonCard(button.id, 'title', e.target.value)}
+                    onChange={(e) => updateButton(button.id, "title", e.target.value)}
                     fullWidth
                   />
-
                   {/* Selector de tipo de botón */}
                   <Select
                     value={button.type}
-                    label="Tipo de Botón"
-                    onChange={(e) => updateButtonCard(button.id, 'type', e.target.value)}
+                    onChange={(e) => updateButton(button.id, "type", e.target.value)}
                     sx={{ minWidth: 150 }}
                   >
-                    <MenuItem value="QUICK_REPLY">Respuesta Rápida</MenuItem>
+                    <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
                     <MenuItem value="URL">URL</MenuItem>
-                    <MenuItem value="PHONE_NUMBER">Número de Teléfono</MenuItem>
+                    <MenuItem value="PHONE_NUMBER">Número de teléfono</MenuItem>
                   </Select>
-
-
 
                   {/* Campo adicional según el tipo de botón */}
                   {button.type === "URL" && (
