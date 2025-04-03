@@ -917,96 +917,96 @@ const TemplateFormCarousel = () => {
                 Agregar botón
               </Button>
 
-              <FormHelperText>
-                Elija los botones que se agregarán a la tarjeta del carrusel.
-              </FormHelperText>
-
-              {currentCard.buttons?.map((button) => (
-                <Box
-                  key={button.id}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 2,
-                    border: "1px solid #ccc",
-                    borderRadius: 2,
-                    p: 2,
-                    backgroundColor: "#f9f9f9",
-                  }}
-                >
-                  {/* Campo de texto para el título del botón */}
-                  <TextField
-                    label="Titulo del botón"
-                    value={button.title}
-                    onChange={(e) => updateButton(button.id, "title", e.target.value)}
-                    fullWidth
-                  />
-                  {/* Selector de tipo de botón */}
-                  <Select
-                    value={button.type}
-                    onChange={(e) => updateButton(button.id, "type", e.target.value)}
-                    sx={{ minWidth: 150 }}
+              <Stack spacing={2}>
+                {buttons.map((button, index) => (
+                  <Box
+                    key={button.id}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      border: "1px solid #ccc",
+                      borderRadius: 2,
+                      p: 2,
+                      backgroundColor: "#f9f9f9",
+                    }}
                   >
-                    <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
-                    <MenuItem value="URL">URL</MenuItem>
-                    <MenuItem value="PHONE_NUMBER">Número de teléfono</MenuItem>
-                  </Select>
-
-                  {/* Campo adicional según el tipo de botón */}
-                  {button.type === "URL" && (
+                    {/* Campo de texto para el título del botón */}
                     <TextField
-                      label="URL"
-                      value={button.url || ''}
-                      onChange={(e) => updateButtonWithValidation(
-                        button.id,
-                        "url",
-                        e.target.value,
-                        setButtons,
-                        setValidationErrors
-                      )}
-                      fullWidth
-                      error={validationErrors[button.id] !== undefined}
-                      helperText={validationErrors[button.id]}
-                    />
-                  )}
-
-                  {button.type === "PHONE_NUMBER" && (
-                    <TextField
-                      label="Phone Number"
-                      value={button.phoneNumber}
-                      onChange={(e) => updateButton(button.id, "phoneNumber", e.target.value)}
+                      label="Titulo del botón"
+                      value={button.title}
+                      onChange={(e) => updateButton(button.id, "title", e.target.value)}
                       fullWidth
                     />
-                  )}
 
-                  {/* Icono según el tipo de botón */}
-                  {button.type === "QUICK_REPLY" && <ArrowForward />}
-                  {button.type === "URL" && <Link />}
-                  {button.type === "PHONE_NUMBER" && <Phone />}
+                    {/* Selector de tipo de botón */}
+                    <Select
+                      value={button.type}
+                      onChange={(e) => updateButton(button.id, "type", e.target.value)}
+                      sx={{ minWidth: 150 }}
+                    >
+                      <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
+                      <MenuItem value="URL">URL</MenuItem>
+                      <MenuItem value="PHONE_NUMBER">Número de teléfono</MenuItem>
+                    </Select>
 
-                  {/* Botón para eliminar */}
-                  <IconButton color="error" onClick={() => removeButton(button.id)}>
-                    <Delete />
-                  </IconButton>
-                </Box>
-              ))}
-            </Box>
+                    {/* Campo adicional según el tipo de botón */}
+                    {button.type === "URL" && (
+                      <TextField
+                        label="URL"
+                        value={button.url || ''}
+                        onChange={(e) => updateButtonWithValidation(
+                          button.id,
+                          "url",
+                          e.target.value,
+                          setButtons,
+                          setValidationErrors
+                        )}
+                        fullWidth
+                        error={validationErrors[button.id] !== undefined}
+                        helperText={validationErrors[button.id]}
+                      />
+                    )}
 
-            <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
-              <Button onClick={handleCloseCardDialog} variant="contained" color="secondary">
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleSaveCard}
-                variant="contained"
-                color="primary"
-                disabled={!currentCard.title || !currentCard.description}
-              >
-                Guardar Tarjeta
-              </Button>
+                    {button.type === "PHONE_NUMBER" && (
+                      <TextField
+                        label="Phone Number"
+                        value={button.phoneNumber}
+                        onChange={(e) => updateButton(button.id, "phoneNumber", e.target.value)}
+                        fullWidth
+                      />
+                    )}
+
+                    {/* Icono según el tipo de botón */}
+                    {button.type === "QUICK_REPLY" && <ArrowForward />}
+                    {button.type === "URL" && <Link />}
+                    {button.type === "PHONE_NUMBER" && <Phone />}
+
+                    {/* Botón para eliminar */}
+                    <IconButton color="error" onClick={() => removeButton(button.id)}>
+                      <Delete />
+                    </IconButton>
+                  </Box>
+                ))}
+              </Stack>
+
+              <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
+                <Button onClick={handleCloseCardDialog} variant="contained" color="secondary">
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleSaveCard}
+                  variant="contained"
+                  color="primary"
+                  disabled={!currentCard.title || !currentCard.description}
+                >
+                  Guardar Tarjeta
+                </Button>
+              </Box>
             </Box>
           </FormControl>
         </Box>
+
 
 
 
