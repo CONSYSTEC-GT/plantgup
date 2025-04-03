@@ -501,7 +501,7 @@ const TemplateFormCarousel = () => {
   };
 
   const charLimit = 60;
-  const maxButtons = 10;
+  const maxButtons = 3;
 
   //BOTONES PLANTILLA
   const addButton = () => {
@@ -692,6 +692,35 @@ const TemplateFormCarousel = () => {
     );
     setCurrentCard({ ...currentCard, buttons: updatedButtons });
   };
+
+  
+// Función para transformar el formato de botones
+const transformButtons = (buttons) => {
+  return buttons.map(button => {
+    if (button.type === "URL") {
+      return {
+        type: "URL",
+        text: button.title,
+        url: button.url,
+        buttonValue: button.url.split("{{")[0] || button.url,
+        suffix: "",  // Puedes ajustar esto según tus necesidades
+        example: [button.url]  // Aquí podrías incluir ejemplos de URLs completas
+      };
+    } else if (button.type === "QUICK_REPLY") {
+      return {
+        type: "QUICK_REPLY",
+        text: button.title
+      };
+    } else if (button.type === "PHONE_NUMBER") {
+      return {
+        type: "PHONE_NUMBER",
+        text: button.title,
+        phoneNumber: button.phoneNumber
+      };
+    }
+    return null;
+  }).filter(button => button !== null);
+};
 
 
   return (
@@ -904,11 +933,12 @@ const TemplateFormCarousel = () => {
 
               {/* Buttons Section with improved styling */}
               <Typography variant="subtitle1" sx={{ mt: 1 }}>
-                Botones ({currentCard.buttons?.length || 0}/3)
+                Botones ({buttons?.length || 0}/3)
               </Typography>
 
               <Button
                 variant="contained"
+                size="sm"
                 startIcon={<AddIcon />}
                 onClick={addButton}
                 disabled={buttons.length >= maxButtons || Object.keys(validationErrors).length > 0}
