@@ -3,7 +3,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Alert, Box, Button, FormControl, FormLabel, Typography, TextField, Snackbar, } from '@mui/material';
 
-const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImagePreview, onHeaderChange }) => {
+const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }) => {
 
   // Recupera el token del localStorage
   const token = localStorage.getItem('authToken');

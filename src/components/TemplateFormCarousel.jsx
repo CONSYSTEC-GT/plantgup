@@ -864,9 +864,7 @@ const TemplateFormCarousel = () => {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
               {/* File Upload Component */}
               <FileUploadCarousel
-                templateType="carousel"
-                onUploadSuccess={(mediaId, uploadedUrl) => {
-                  setMediaId(mediaId);
+                onUploadSuccess={(uploadedUrl) => {
                   setUploadedUrl(uploadedUrl);
                 }}
                 onImagePreview={(preview) => setImagePreview(preview)}
@@ -1209,11 +1207,6 @@ const TemplateFormCarousel = () => {
                 </SwiperSlide>
               ))}
             </Swiper>
-
-            <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end", mt: 1 }}>
-              {new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: true })}
-            </Typography>
-
           </Box>
         </Box>
       </Grid>
