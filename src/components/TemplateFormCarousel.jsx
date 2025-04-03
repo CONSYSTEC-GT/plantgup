@@ -627,30 +627,6 @@ const TemplateFormCarousel = () => {
   //PARA LAS TARJETAS DEL CARRUSEL
   const [cards, setCards] = useState([]);
 
-  const [openCardDialog, setOpenCardDialog] = useState(false);
-  const [currentCard, setCurrentCard] = useState({
-    title: '',
-    description: '',
-    buttons: []
-  });
-
-  const handleAddCard = () => {
-    setOpenCardDialog(true);
-  };
-
-  const handleCloseCardDialog = () => {
-    setOpenCardDialog(false);
-    // Reset card and upload states
-    setCurrentCard({
-      title: '',
-      description: '',
-      buttons: []
-    });
-    setMediaId(null);
-    setUploadedUrl(null);
-    setImagePreview(null);
-  };
-
   const handleSaveCard = () => {
     if (currentCard.title && currentCard.description) {
       const newCard = {
@@ -667,91 +643,70 @@ const TemplateFormCarousel = () => {
     }
   };
 
-  const handleAddButton = () => {
-    const newButton = {
-      id: Date.now().toString(),
-      title: '',
-      type: 'QUICK_REPLY',
-      value: ''
-    };
-    setCurrentCard({
-      ...currentCard,
-      buttons: [...(currentCard.buttons || []), newButton]
-    });
-  };
-
   const handleRemoveCard = (cardId) => {
     // Prevent removing the initial card
     if (cardId === 'initial-card') return;
     setCards(cards.filter(card => card.id !== cardId));
   };
 
-  const updateButtonCard = (buttonId, field, value) => {
-    const updatedButtons = (currentCard.buttons || []).map(button =>
-      button.id === buttonId ? { ...button, [field]: value } : button
-    );
-    setCurrentCard({ ...currentCard, buttons: updatedButtons });
+  // Función para transformar el formato de botones
+  const transformButtons = (buttons) => {
+    return buttons.map(button => {
+      if (button.type === "URL") {
+        return {
+          type: "URL",
+          text: button.title,
+          url: button.url,
+          buttonValue: button.url.split("{{")[0] || button.url,
+          suffix: "",  // Puedes ajustar esto según tus necesidades
+          example: [button.url]  // Aquí podrías incluir ejemplos de URLs completas
+        };
+      } else if (button.type === "QUICK_REPLY") {
+        return {
+          type: "QUICK_REPLY",
+          text: button.title
+        };
+      } else if (button.type === "PHONE_NUMBER") {
+        return {
+          type: "PHONE_NUMBER",
+          text: button.title,
+          phoneNumber: button.phoneNumber
+        };
+      }
+      return null;
+    }).filter(button => button !== null);
   };
 
-  
-// Función para transformar el formato de botones
-const transformButtons = (buttons) => {
-  return buttons.map(button => {
-    if (button.type === "URL") {
-      return {
-        type: "URL",
-        text: button.title,
-        url: button.url,
-        buttonValue: button.url.split("{{")[0] || button.url,
-        suffix: "",  // Puedes ajustar esto según tus necesidades
-        example: [button.url]  // Aquí podrías incluir ejemplos de URLs completas
-      };
-    } else if (button.type === "QUICK_REPLY") {
-      return {
-        type: "QUICK_REPLY",
-        text: button.title
-      };
-    } else if (button.type === "PHONE_NUMBER") {
-      return {
-        type: "PHONE_NUMBER",
-        text: button.title,
-        phoneNumber: button.phoneNumber
-      };
-    }
-    return null;
-  }).filter(button => button !== null);
-};
+  // Crear la tarjeta con el formato requerido
+  const formattedCard = {
+    headerType: "IMAGE",
+    mediaUrl: uploadedUrl || "",
+    mediaId: null,
+    exampleMedia: null,
+    body: currentCard.description,
+    sampleText: `${currentCard.description} User`,
+    buttons: transformButtons(buttons)
+  };
 
-// Crear la tarjeta con el formato requerido
-const formattedCard = {
-  headerType: "IMAGE",
-  mediaUrl: uploadedUrl || "",
-  mediaId: null,
-  exampleMedia: null,
-  body: currentCard.description,
-  sampleText: `${currentCard.description} User`,
-  buttons: transformButtons(buttons)
-};
+  // Agregar la tarjeta al array de tarjetas
+  const updatedCards = [...cards, formattedCard];
+  setCards(updatedCards);
 
-// Agregar la tarjeta al array de tarjetas
-const updatedCards = [...cards, formattedCard];
-setCards(updatedCards);
+  // Guardar el array completo en un estado o variable global
+  // Este es el array que utilizarás para tu request
+  const requestFormat = JSON.stringify(updatedCards);
 
-// Guardar el array completo en un estado o variable global
-// Este es el array que utilizarás para tu request
-const requestFormat = JSON.stringify(updatedCards);
+  // También puedes guardarlo en localStorage si necesitas persistencia
+  //localStorage.setItem('formattedCards', requestFormat);
 
-// También puedes guardarlo en localStorage si necesitas persistencia
-//localStorage.setItem('formattedCards', requestFormat);
-
-// Limpiar los campos del formulario
-setCurrentCard({
-  title: "",
-  description: ""
-});
-setButtons([]);
-setUploadedUrl("");
-setImagePreview("");
+  // Limpiar los campos del formulario
+  setCurrentCard({
+    title: "",
+    description: ""
+  });
+  setButtons([]);
+  setUploadedUrl("");
+  setImagePreview("");
 
 
   return (
