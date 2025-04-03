@@ -911,10 +911,10 @@ const TemplateFormCarousel = () => {
                 variant="contained"
                 startIcon={<AddIcon />}
                 onClick={addButton}
-                disabled={(currentCard.buttons?.length || 0) >= 3}
-                sx={{ alignSelf: 'flex-start', mb: 1 }}
+                disabled={buttons.length >= maxButtons || Object.keys(validationErrors).length > 0}
+                sx={{ mt: 3, mb: 3 }}
               >
-                Agregar Botón
+                Agregar botón
               </Button>
 
               <FormHelperText>
