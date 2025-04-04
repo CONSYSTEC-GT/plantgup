@@ -745,7 +745,7 @@ const TemplateFormCarousel = () => {
 
   // Guardar el array completo en un estado o variable global
   // Este es el array que utilizarás para tu request
-  const requestFormat = JSON.stringify(updatedCards);
+  //const requestFormat = JSON.stringify(updatedCards);
 
   // También puedes guardarlo en localStorage si necesitas persistencia
   //localStorage.setItem('formattedCards', requestFormat);
