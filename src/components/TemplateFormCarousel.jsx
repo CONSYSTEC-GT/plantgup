@@ -691,9 +691,14 @@ const TemplateFormCarousel = () => {
         buttons: transformedButtons,
         imagePreview: imagePreview
       };
-
+     
       // Agregar la tarjeta al array
-      setCards([...cards, formattedCard]);
+      const updatedCards = [...cards, formattedCard];
+
+      // Log para verificar el formato de las tarjetas
+      console.log("Tarjetas guardadas:", JSON.stringify(updatedCards, null, 2));
+
+      setCards(updatedCards);
 
       // Limpiar los campos
       setCurrentCard({
