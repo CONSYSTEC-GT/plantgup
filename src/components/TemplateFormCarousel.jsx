@@ -651,6 +651,7 @@ const TemplateFormCarousel = () => {
 
   // Función para guardar la tarjeta
   const handleSaveCard = () => {
+    console.log("Valor de uploadedUrl:", uploadedUrl); // <-- ¿Viene vacío aquí?
     if (currentCard.title && currentCard.description) {
       // Transformar botones al formato requerido
       const transformedButtons = buttons.map(button => {
