@@ -639,7 +639,7 @@ const TemplateFormCarousel = () => {
 
 
 
-  
+
   //PARA LAS TARJETAS DEL CARRUSEL
   const [cards, setCards] = useState([]);
 
@@ -649,18 +649,62 @@ const TemplateFormCarousel = () => {
     buttons: []
   });
 
+  // Función para guardar la tarjeta
   const handleSaveCard = () => {
     if (currentCard.title && currentCard.description) {
-      const newCard = {
+      // Transformar botones al formato requerido
+      const transformedButtons = buttons.map(button => {
+        if (button.type === "URL") {
+          return {
+            type: "URL",
+            text: button.title,
+            url: button.url,
+            buttonValue: button.url.split("{{")[0] || button.url,
+            suffix: "",
+            example: [button.url]
+          };
+        } else if (button.type === "QUICK_REPLY") {
+          return {
+            type: "QUICK_REPLY",
+            text: button.title
+          };
+        } else if (button.type === "PHONE_NUMBER") {
+          return {
+            type: "PHONE_NUMBER",
+            text: button.title,
+            phoneNumber: button.phoneNumber
+          };
+        }
+        return null;
+      }).filter(button => button !== null);
+
+      // Crear la tarjeta con el formato requerido
+      const formattedCard = {
         id: Date.now().toString(),
         title: currentCard.title,
-        description: currentCard.description,
+        headerType: "IMAGE",
+        mediaUrl: uploadedUrl || "",
         mediaId: mediaId,
-        imageUrl: uploadedUrl,
-        imagePreview: imagePreview,
-        buttons: currentCard.buttons
+        exampleMedia: null,
+        body: currentCard.description,
+        sampleText: `${currentCard.description} User`,
+        buttons: transformedButtons,
+        imagePreview: imagePreview
       };
-      setCards([...cards, newCard]);
+
+      // Agregar la tarjeta al array
+      setCards([...cards, formattedCard]);
+
+      // Limpiar los campos
+      setCurrentCard({
+        title: "",
+        description: "",
+        buttons: []
+      });
+      setButtons([]);
+      setUploadedUrl("");
+      setImagePreview("");
+      setMediaId(null);
     }
   };
 
@@ -698,20 +742,6 @@ const TemplateFormCarousel = () => {
     }).filter(button => button !== null);
   };
 
-  // Crear la tarjeta con el formato requerido
-  const formattedCard = {
-    headerType: "IMAGE",
-    mediaUrl: uploadedUrl || "",
-    mediaId: null,
-    exampleMedia: null,
-    body: currentCard.description,
-    sampleText: `${currentCard.description} User`,
-    buttons: transformButtons(buttons)
-  };
-
-  // Agregar la tarjeta al array de tarjetas
-  const updatedCards = [...cards, formattedCard];
-  setCards(updatedCards);
 
   // Guardar el array completo en un estado o variable global
   // Este es el array que utilizarás para tu request
@@ -719,15 +749,6 @@ const TemplateFormCarousel = () => {
 
   // También puedes guardarlo en localStorage si necesitas persistencia
   //localStorage.setItem('formattedCards', requestFormat);
-
-  // Limpiar los campos del formulario
-  setCurrentCard({
-    title: "",
-    description: ""
-  });
-  setButtons([]);
-  setUploadedUrl("");
-  setImagePreview("");
 
 
   return (
