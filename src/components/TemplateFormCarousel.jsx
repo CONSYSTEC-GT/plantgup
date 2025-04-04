@@ -624,10 +624,25 @@ const TemplateFormCarousel = () => {
     setExample(newExample);
   }, [message, variableExamples]);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   //PARA LAS TARJETAS DEL CARRUSEL
   const [cards, setCards] = useState([]);
-  
+
   const [currentCard, setCurrentCard] = useState({
     title: '',
     description: '',
@@ -1013,7 +1028,7 @@ const TemplateFormCarousel = () => {
               </Stack>
 
               <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
-                <Button onClick={handleCloseCardDialog} variant="contained" color="secondary">
+                <Button variant="contained" color="secondary">
                   Cancelar
                 </Button>
                 <Button
