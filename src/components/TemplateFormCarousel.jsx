@@ -270,11 +270,11 @@ const TemplateFormCarousel = () => {
       idUsuarioTalkMe = decoded.id_usuario;
       idNombreUsuarioTalkMe = decoded.nombre_usuario;
       empresaTalkMe = decoded.empresa;
-      console.log('appId:', appId);
-      console.log('authCode:', authCode);
-      console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
-      console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
-      console.log('empresaTalkMe:', empresaTalkMe);
+      //console.log('appId:', appId);
+      //console.log('authCode:', authCode);
+      //console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
+      //console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
+      //console.log('empresaTalkMe:', empresaTalkMe);
 
     } catch (error) {
       console.error('Error decodificando el token:', error);
@@ -680,18 +680,16 @@ const TemplateFormCarousel = () => {
 
       // Crear la tarjeta con el formato requerido
       const formattedCard = {
-        id: Date.now().toString(),
-        title: currentCard.title,
         headerType: "IMAGE",
+        title: currentCard.title,
         mediaUrl: uploadedUrl || "",
-        mediaId: mediaId,
+        mediaId: null,
         exampleMedia: null,
         body: currentCard.description,
-        sampleText: `${currentCard.description} User`,
-        buttons: transformedButtons,
-        imagePreview: imagePreview
+        sampleText: `${currentCard.description}`,
+        buttons: transformedButtons
       };
-     
+
       // Agregar la tarjeta al array
       const updatedCards = [...cards, formattedCard];
 
