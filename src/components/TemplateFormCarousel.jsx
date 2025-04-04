@@ -624,8 +624,15 @@ const TemplateFormCarousel = () => {
     setExample(newExample);
   }, [message, variableExamples]);
 
+  
   //PARA LAS TARJETAS DEL CARRUSEL
   const [cards, setCards] = useState([]);
+  
+  const [currentCard, setCurrentCard] = useState({
+    title: '',
+    description: '',
+    buttons: []
+  });
 
   const handleSaveCard = () => {
     if (currentCard.title && currentCard.description) {
@@ -639,7 +646,6 @@ const TemplateFormCarousel = () => {
         buttons: currentCard.buttons
       };
       setCards([...cards, newCard]);
-      handleCloseCardDialog();
     }
   };
 
