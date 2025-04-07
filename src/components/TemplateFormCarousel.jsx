@@ -571,8 +571,38 @@ const TemplateFormCarousel = () => {
     messageRef.current?.focus();
   };
 
+  // Función para borrar una variable específica de la tarjeta
+  const deleteVariableCard = (variableToDelete) => {
+    // Eliminar la variable del texto de la descripción
+    const newDescription = currentCard.description.replace(variableToDelete, '');
+
+    // Actualizar la tarjeta con la nueva descripción
+    setCurrentCard(prev => ({
+      ...prev,
+      description: newDescription
+    }));
+
+    // Eliminar la variable de la lista de variables de tarjeta
+    const updatedVariablesTarjeta = variablesTarjeta.filter(v => v !== variableToDelete);
+    setVariablesTarjeta(updatedVariablesTarjeta);
+
+    // Si tienes una referencia al campo de descripción
+    // descriptionRef.current?.focus();
+  };
+
   // Nueva función para borrar todas las variables
   const deleteAllVariables = () => {
+    let newMessage = message;
+    variables.forEach(variable => {
+      newMessage = newMessage.replaceAll(variable, '');
+    });
+    setMessage(newMessage);
+    setVariables([]);
+    messageRef.current?.focus();
+  };
+
+  // Nueva función para borrar todas las variables
+  const deleteAllVariablesCard = () => {
     let newMessage = message;
     variables.forEach(variable => {
       newMessage = newMessage.replaceAll(variable, '');
@@ -607,6 +637,21 @@ const TemplateFormCarousel = () => {
       ...prevDescriptions,
       [variable]: value
     }));
+  };
+
+  const handleUpdateDescriptionsCard = (variable, value) => {
+    setVariableDescriptionsTarjeta(prevDescriptions => ({
+      ...prevDescriptions,
+      [variable]: value
+    }));
+  };
+
+  const handleUpdateExampleCard = (variable, value) => {
+    setVariableExamplesTarjeta(prevExamples => {
+      const updatedExamples = { ...prevExamples, [variable]: value };
+      console.log("Ejemplo de tarjeta actualizado:", updatedExamples);
+      return updatedExamples;
+    });
   };
 
   // Función para generar el ejemplo combinando el mensaje y los valores de las variables
@@ -1196,7 +1241,7 @@ const TemplateFormCarousel = () => {
                     variant="outlined"
                     size="small"
                     startIcon={<ClearIcon />}
-                    onClick={deleteAllVariables}
+                    onClick={deleteAllVariablesCard}
                     sx={{ ml: "auto", borderRadius: 1 }}
                   >
                     Borrar todas
@@ -1219,7 +1264,7 @@ const TemplateFormCarousel = () => {
               )}
 
               {/* Carrusel Variables disponibles como chips con campos de texto para ejemplos y descripción */}
-              {variables.length > 0 && (
+              {variablesTarjeta.length > 0 && (
                 <Paper
                   sx={{
                     my: 2,
@@ -1232,7 +1277,7 @@ const TemplateFormCarousel = () => {
                     Agrega una descripción y un ejemplo a tu variable:
                   </Typography>
 
-                  {variables.map((variable, index) => (
+                  {variablesTarjeta.map((variable, index) => (
                     <Box
                       key={index}
                       sx={{
@@ -1256,7 +1301,7 @@ const TemplateFormCarousel = () => {
                             <DeleteIcon />
                           </Tooltip>
                         }
-                        onDelete={() => deleteVariable(variable)}
+                        onDelete={() => deleteVariableCard(variable)}
                       />
 
                       <Stack sx={{ flexGrow: 1, gap: 1 }}>
@@ -1265,7 +1310,7 @@ const TemplateFormCarousel = () => {
                           label="Descripción"
                           placeholder="¿Para qué sirve esta variable?"
                           value={variableDescriptions[variable] || ''}
-                          onChange={(e) => handleUpdateDescriptions(variable, e.target.value)}
+                          onChange={(e) => handleUpdateDescriptionsCard(variable, e.target.value)}
                           sx={{ flexGrow: 1 }}
                         />
 
@@ -1273,7 +1318,7 @@ const TemplateFormCarousel = () => {
                           size="small"
                           label="Texto de ejemplo"
                           value={variableExamples[variable] || ''}
-                          onChange={(e) => handleUpdateExample(variable, e.target.value)}
+                          onChange={(e) => handleUpdateExampleCard(variable, e.target.value)}
                           sx={{ flexGrow: 1 }}
                           inputRef={(el) => (exampleRefs.current[variable] = el)}
                           error={!!variableErrors[variable]}
