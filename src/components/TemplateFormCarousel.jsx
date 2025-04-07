@@ -442,7 +442,6 @@ const TemplateFormCarousel = () => {
     }
   };
 
-
   const handleHeaderTemplateTypeChange = (event) => {
     setTemplateType(event.target.value);
     setHeader(''); // Resetear el header al cambiar el tipo
@@ -461,8 +460,6 @@ const TemplateFormCarousel = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const MAX_IMG_SIZE = 5 * 1024 * 1024; // 5 MB en bytes
   const [error, setError] = useState(''); // Estado para manejar errores
-
-
 
   const handleMediaTypeChange = (event) => {
     setMediaType(event.target.value);
@@ -923,9 +920,7 @@ const TemplateFormCarousel = () => {
 
           <FormControl fullWidth>
             <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
-              <MenuItem value="text">TEXTO</MenuItem>
-              <MenuItem value="image">IMAGEN</MenuItem>
-              <MenuItem value="document">DOCUMENTO</MenuItem>
+              <MenuItem value="CAROUSEL">CARRUSEL</MenuItem>
             </Select>
             <FormHelperText>
               Escoge el tipo de plantilla que se va a crear
