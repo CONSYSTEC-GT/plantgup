@@ -541,7 +541,10 @@ const TemplateFormCarousel = () => {
   };
 
   const handleEmojiClickCarousel = (emojiObject) => {
-    setCurrentCard((prev) => `${prev} ${emojiObject.emoji}`);
+    setCurrentCard((prev) => ({
+      ...prev,
+      description: prev.description + emojiObject.emoji
+    }));
     setShowEmojiPicker(false);
   };
 
