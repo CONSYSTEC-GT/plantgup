@@ -74,6 +74,7 @@ const TemplateFormCarousel = () => {
   //const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [variables, setVariables] = useState([]);
+  const [variablesTarjeta, setVariablesTarjeta] = useState([]);
 
   // Estado para almacenar ejemplos de variables
   const [variableExamples, setVariableExamples] = useState({});
@@ -533,6 +534,15 @@ const TemplateFormCarousel = () => {
     const newVariable = `{{${variables.length + 1}}}`;
     setMessage((prev) => `${prev} ${newVariable}`);
     setVariables([...variables, newVariable]);
+  };
+
+  const handleAddVariableCard = () => {
+    const newVariableTarjeta = `{{${variablesTarjeta.length + 1}}}`;
+    setCurrentCard((prev) => ({
+      ...prev,
+      description: prev.description + " " + newVariableTarjeta
+    }));
+    setVariablesTarjeta([...variablesTarjeta, newVariableTarjeta]);
   };
 
   const handleEmojiClick = (emojiObject) => {
@@ -1174,7 +1184,7 @@ const TemplateFormCarousel = () => {
                   variant="contained"
                   size="small"
                   startIcon={<AddIcon />}
-                  onClick={handleAddVariable}
+                  onClick={handleAddVariableCard}
                   sx={{ borderRadius: 1 }}
                 >
                   Agregar Variable
@@ -1208,7 +1218,7 @@ const TemplateFormCarousel = () => {
                 </Paper>
               )}
 
-              {/* Variables disponibles como chips con campos de texto para ejemplos y descripción */}
+              {/* Carrusel Variables disponibles como chips con campos de texto para ejemplos y descripción */}
               {variables.length > 0 && (
                 <Paper
                   sx={{
