@@ -284,6 +284,8 @@ const TemplateFormCarousel = () => {
   const iniciarRequest = async () => {
     try {
       // Hacer el primer request a GupShup API
+
+      const cardsToSend = [...cards]; // Creo una copia para no modificar el estado original
       const result = await createTemplateCarouselGupshup(
         appId,
         authCode,
@@ -299,7 +301,7 @@ const TemplateFormCarousel = () => {
           mediaId,
           buttons,
           example,
-          updatedCards
+          carousel: cardsToSend
         },
         validateFields
       );

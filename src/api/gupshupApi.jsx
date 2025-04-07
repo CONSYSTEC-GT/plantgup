@@ -198,7 +198,7 @@ export const createTemplateCarouselGupshup = async (appId, authCode, templateDat
     vertical,
     message,
     example,
-    updatedCards
+    carousel
   } = templateData;
 
   const url = `https://partner.gupshup.io/partner/app/${appId}/templates`;
@@ -217,7 +217,7 @@ export const createTemplateCarouselGupshup = async (appId, authCode, templateDat
   data.append("example", example);
   data.append("enableSample", true);
   data.append("allowTemplateCategoryChange", false);
-  data.append("cards", updatedCards)
+  data.append("cards", carousel)
 
   console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
 
