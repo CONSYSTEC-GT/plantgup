@@ -915,6 +915,179 @@ const TemplateFormCarousel = () => {
           />
         </Box>
 
+        {/* BodyMessage --data-urlencode content */}<Box
+          sx={{
+            width: "100%",
+            marginTop: 2,
+            p: 4,
+            border: "1px solid #ddd",
+            borderRadius: 2,
+            boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+
+          }}
+        >
+          <FormControl fullWidth>
+            <FormLabel sx={{ fontSize: "1.1rem", fontWeight: "500", color: "#333" }}>
+              *Contenido
+            </FormLabel>
+          </FormControl>
+
+          {/* Campo de texto con soporte para emojis y variables */}
+          <Box sx={{ position: "relative" }}>
+            <TextField
+              fullWidth
+              multiline
+              aria-required="true"
+              error={contenidoPlantillaTypeError}
+              rows={4}
+              label="Escribe"
+              placeholder="Ingresa el contenido de tu mensaje aquí..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              sx={{
+                mb: 3,
+                mt: 4,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 1.5,
+                  "&:hover fieldset": {
+                    borderColor: "primary.main",
+                  }
+                }
+              }}
+              inputRef={messageRef}
+            />
+
+            {/* Botones de emojis y acciones en una barra de herramientas mejor diseñada */}
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                mb: 2,
+                p: 1,
+                borderRadius: 1,
+                backgroundColor: "rgba(0,0,0,0.02)"
+              }}
+            >
+              <Tooltip title="Agregar emojis">
+                <IconButton
+                  color="primary"
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  sx={{ borderRadius: 1 }}
+                >
+                  <Smile size={20} />
+                </IconButton>
+              </Tooltip>
+
+              <Divider orientation="vertical" flexItem />
+
+              <Button
+                variant="contained"
+                size="small"
+                startIcon={<AddIcon />}
+                onClick={handleAddVariable}
+                sx={{ borderRadius: 1 }}
+              >
+                Agregar Variable
+              </Button>
+
+              {variables.length > 0 && (
+                <Button
+                  color="error"
+                  variant="outlined"
+                  size="small"
+                  startIcon={<ClearIcon />}
+                  onClick={deleteAllVariables}
+                  sx={{ ml: "auto", borderRadius: 1 }}
+                >
+                  Borrar todas
+                </Button>
+              )}
+            </Stack>
+
+            {/* Selector de emojis */}
+            {showEmojiPicker && (
+              <Paper
+                elevation={3}
+                sx={{
+                  position: "absolute",
+                  zIndex: 1000,
+                  mt: 1
+                }}
+              >
+                <EmojiPicker onEmojiClick={handleEmojiClick} />
+              </Paper>
+            )}
+
+            {/* Variables disponibles como chips con campos de texto para ejemplos y descripción */}
+            {variables.length > 0 && (
+              <Paper
+                sx={{
+                  my: 2,
+                  p: 2,
+                  borderRadius: 2,
+                  border: "1px solid #ddd",
+                }}
+              >
+                <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 2 }}>
+                  Agrega una descripción y un ejemplo a tu variable:
+                </Typography>
+
+                {variables.map((variable, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: 2,
+                      mb: 2,
+                      p: 1.5,
+                      backgroundColor: "#fff",
+                      borderRadius: 1,
+                      border: "1px solid #e0e0e0"
+                    }}
+                  >
+                    <Chip
+                      label={variable}
+                      color="primary"
+                      sx={{ fontWeight: "500" }}
+                      deleteIcon={
+                        <Tooltip title="Borrar variable">
+                          <DeleteIcon />
+                        </Tooltip>
+                      }
+                      onDelete={() => deleteVariable(variable)}
+                    />
+
+                    <Stack sx={{ flexGrow: 1, gap: 1 }}>
+                      <TextField
+                        size="small"
+                        label="Descripción"
+                        placeholder="¿Para qué sirve esta variable?"
+                        value={variableDescriptions[variable] || ''}
+                        onChange={(e) => handleUpdateDescriptions(variable, e.target.value)}
+                        sx={{ flexGrow: 1 }}
+                      />
+
+                      <TextField
+                        size="small"
+                        label="Texto de ejemplo"
+                        value={variableExamples[variable] || ''}
+                        onChange={(e) => handleUpdateExample(variable, e.target.value)}
+                        sx={{ flexGrow: 1 }}
+                        inputRef={(el) => (exampleRefs.current[variable] = el)}
+                        error={!!variableErrors[variable]}
+                        helperText={variableErrors[variable]}
+                      />
+
+                    </Stack>
+                  </Box>
+                ))}
+              </Paper>
+            )}
+          </Box>
+        </Box>
+
         {/* Carrusel - with improvements */}
         <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <Box display="flex" justifyContent="flex-end">
@@ -955,16 +1128,149 @@ const TemplateFormCarousel = () => {
                 fullWidth
               />
               <TextField
-                label="Descripción"
+                label="Contenido de tarjeta"
+                multiline
                 value={currentCard.description}
                 onChange={(e) => setCurrentCard({
                   ...currentCard,
                   description: e.target.value
                 })}
-                multiline
                 rows={3}
                 fullWidth
               />
+
+              {/* Botones de emojis y acciones en una barra de herramientas mejor diseñada */}
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  mb: 2,
+                  p: 1,
+                  borderRadius: 1,
+                  backgroundColor: "rgba(0,0,0,0.02)"
+                }}
+              >
+                <Tooltip title="Agregar emojis">
+                  <IconButton
+                    color="primary"
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    sx={{ borderRadius: 1 }}
+                  >
+                    <Smile size={20} />
+                  </IconButton>
+                </Tooltip>
+
+                <Divider orientation="vertical" flexItem />
+
+                <Button
+                  variant="contained"
+                  size="small"
+                  startIcon={<AddIcon />}
+                  onClick={handleAddVariable}
+                  sx={{ borderRadius: 1 }}
+                >
+                  Agregar Variable
+                </Button>
+
+                {variables.length > 0 && (
+                  <Button
+                    color="error"
+                    variant="outlined"
+                    size="small"
+                    startIcon={<ClearIcon />}
+                    onClick={deleteAllVariables}
+                    sx={{ ml: "auto", borderRadius: 1 }}
+                  >
+                    Borrar todas
+                  </Button>
+                )}
+              </Stack>
+
+              {/* Selector de emojis */}
+              {showEmojiPicker && (
+                <Paper
+                  elevation={3}
+                  sx={{
+                    position: "absolute",
+                    zIndex: 1000,
+                    mt: 1
+                  }}
+                >
+                  <EmojiPicker onEmojiClick={handleEmojiClick} />
+                </Paper>
+              )}
+
+              {/* Variables disponibles como chips con campos de texto para ejemplos y descripción */}
+              {variables.length > 0 && (
+                <Paper
+                  sx={{
+                    my: 2,
+                    p: 2,
+                    borderRadius: 2,
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 2 }}>
+                    Agrega una descripción y un ejemplo a tu variable:
+                  </Typography>
+
+                  {variables.map((variable, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: 2,
+                        mb: 2,
+                        p: 1.5,
+                        backgroundColor: "#fff",
+                        borderRadius: 1,
+                        border: "1px solid #e0e0e0"
+                      }}
+                    >
+                      <Chip
+                        label={variable}
+                        color="primary"
+                        sx={{ fontWeight: "500" }}
+                        deleteIcon={
+                          <Tooltip title="Borrar variable">
+                            <DeleteIcon />
+                          </Tooltip>
+                        }
+                        onDelete={() => deleteVariable(variable)}
+                      />
+
+                      <Stack sx={{ flexGrow: 1, gap: 1 }}>
+                        <TextField
+                          size="small"
+                          label="Descripción"
+                          placeholder="¿Para qué sirve esta variable?"
+                          value={variableDescriptions[variable] || ''}
+                          onChange={(e) => handleUpdateDescriptions(variable, e.target.value)}
+                          sx={{ flexGrow: 1 }}
+                        />
+
+                        <TextField
+                          size="small"
+                          label="Texto de ejemplo"
+                          value={variableExamples[variable] || ''}
+                          onChange={(e) => handleUpdateExample(variable, e.target.value)}
+                          sx={{ flexGrow: 1 }}
+                          inputRef={(el) => (exampleRefs.current[variable] = el)}
+                          error={!!variableErrors[variable]}
+                          helperText={variableErrors[variable]}
+                        />
+
+                      </Stack>
+                    </Box>
+                  ))}
+                </Paper>
+
+              )}
+
+
+
 
               {/* Buttons Section with improved styling */}
               <Typography variant="subtitle1" sx={{ mt: 1 }}>
@@ -1170,7 +1476,7 @@ const TemplateFormCarousel = () => {
 
                     {/* Contenedor de imagen con altura fija */}
                     <Box sx={{ height: '180px', overflow: 'hidden', position: 'relative' }}>
-                        {(card.mediaUrl || card.imagePreview) ? (
+                      {(card.mediaUrl || card.imagePreview) ? (
                         <CardMedia
                           component="img"
                           sx={{
