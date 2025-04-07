@@ -1167,7 +1167,7 @@ const TemplateFormCarousel = () => {
 
                     {/* Contenedor de imagen con altura fija */}
                     <Box sx={{ height: '180px', overflow: 'hidden', position: 'relative' }}>
-                      {(card.uploadedUrl || card.imagePreview) ? (
+                        {(card.mediaUrl || card.imagePreview) ? (
                         <CardMedia
                           component="img"
                           sx={{
@@ -1175,7 +1175,7 @@ const TemplateFormCarousel = () => {
                             height: '100%',
                             objectFit: 'cover'
                           }}
-                          image={card.uploadedUrl || card.imagePreview}
+                          image={card.mediaUrl || card.imagePreview}
                           alt={card.title}
                         />
                       ) : (
