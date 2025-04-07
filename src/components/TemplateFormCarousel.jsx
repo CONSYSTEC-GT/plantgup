@@ -27,7 +27,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 import FileUploadCarousel from './FileUploadCarousel';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
-import { createTemplateGupshup } from '../api/gupshupApi';
+import { createTemplateCarouselGupshup } from '../api/gupshupApi';
 import { saveTemplateToTalkMe } from '../api/templatesGSApi';
 
 const TemplateFormCarousel = () => {
