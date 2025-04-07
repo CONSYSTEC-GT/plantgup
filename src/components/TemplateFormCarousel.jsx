@@ -286,7 +286,7 @@ const TemplateFormCarousel = () => {
     try {
       // Hacer el primer request a GupShup API
 
-      const cardsToSend = [...cards]; // Creo una copia para no modificar el estado original
+      const cardsToSend = JSON.stringify([...cards]); // Convertir a JSON string // Creo una copia para no modificar el estado original
       const result = await createTemplateCarouselGupshup(
         appId,
         authCode,
@@ -302,7 +302,7 @@ const TemplateFormCarousel = () => {
           mediaId,
           buttons,
           example,
-          carousel: cardsToSend
+          carousel: cardsToSend // Enviar como string JSON
         },
         validateFields
       );
@@ -686,22 +686,6 @@ const TemplateFormCarousel = () => {
 
     setExample(newExample);
   }, [message, variableExamples]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   //PARA LAS TARJETAS DEL CARRUSEL
   const [cards, setCards] = useState([]);
