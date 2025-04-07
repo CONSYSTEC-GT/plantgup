@@ -1069,9 +1069,6 @@ const TemplateFormCarousel = () => {
           </FormControl>
         </Box>
 
-
-
-
         {/*Boton Guardar Plantilla*/}<Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
           <Button
             variant="contained"
@@ -1170,7 +1167,7 @@ const TemplateFormCarousel = () => {
 
                     {/* Contenedor de imagen con altura fija */}
                     <Box sx={{ height: '180px', overflow: 'hidden', position: 'relative' }}>
-                      {(card.imageUrl || card.imagePreview) ? (
+                      {(card.uploadedUrl || card.imagePreview) ? (
                         <CardMedia
                           component="img"
                           sx={{
@@ -1178,7 +1175,7 @@ const TemplateFormCarousel = () => {
                             height: '100%',
                             objectFit: 'cover'
                           }}
-                          image={card.imageUrl || card.imagePreview}
+                          image={card.uploadedUrl || card.imagePreview}
                           alt={card.title}
                         />
                       ) : (
