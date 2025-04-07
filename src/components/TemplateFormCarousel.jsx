@@ -540,6 +540,11 @@ const TemplateFormCarousel = () => {
     setShowEmojiPicker(false);
   };
 
+  const handleEmojiClickCarousel = (emojiObject) => {
+    setCurrentCard((prev) => `${prev} ${emojiObject.emoji}`);
+    setShowEmojiPicker(false);
+  };
+
   // Nueva función para borrar una variable específica
   const deleteVariable = (variableToDelete) => {
     // Eliminar la variable del texto
@@ -1139,7 +1144,7 @@ const TemplateFormCarousel = () => {
                 fullWidth
               />
 
-              {/* Botones de emojis y acciones en una barra de herramientas mejor diseñada */}
+              {/* Carrusel Botones de emojis y variables */}
               <Stack
                 direction="row"
                 spacing={1}
@@ -1196,7 +1201,7 @@ const TemplateFormCarousel = () => {
                     mt: 1
                   }}
                 >
-                  <EmojiPicker onEmojiClick={handleEmojiClick} />
+                  <EmojiPicker onEmojiClick={handleEmojiClickCarousel} />
                 </Paper>
               )}
 
@@ -1268,9 +1273,6 @@ const TemplateFormCarousel = () => {
                 </Paper>
 
               )}
-
-
-
 
               {/* Buttons Section with improved styling */}
               <Typography variant="subtitle1" sx={{ mt: 1 }}>
