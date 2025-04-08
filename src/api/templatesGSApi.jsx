@@ -46,25 +46,31 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions)
   }
 };
 
-const saveCardsTemplate = async ({ ID_PLANTILLA, carousel = [] }, idNombreUsuarioTalkMe) => {
+const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTalkMe) => {
   const url = 'http://localhost:3004/api/tarjetas/';
   const headers = {
     "Content-Type": "application/json",
   };
 
-  for (const card of carousel) {
-    const { title, mediaUrl, body, buttons } = card;
+  for (const card of cards) {
+    const { title, mediaUrl, body, buttons = [] } = card;
+
+    // Validación básica
+    if (!mediaUrl && !body) {
+      console.warn("Tarjeta ignorada: no tiene contenido (mediaUrl o body)");
+      continue;
+    }
 
     const data = {
       ID_PLANTILLA_WHATSAPP_TARJETA: null,
       ID_PLANTILLA: ID_PLANTILLA,
-      ID_MEDIA: null, // si manejas ID_MEDIA lo puedes adaptar aquí
+      ID_MEDIA: null,
       DESCRIPCION: body,
-      LINK: mediaUrl,
+      LINK: mediaUrl || null,
       BOTON_0_TEXTO: buttons[0]?.text || null,
-      BOTON_0_COMANDO: buttons[0]?.phoneNumber || null,
+      BOTON_0_COMANDO: buttons[0]?.phoneNumber || buttons[0]?.url || null,
       BOTON_1_TEXTO: buttons[1]?.text || null,
-      BOTON_1_COMANDO: buttons[1]?.phoneNumber || null,
+      BOTON_1_COMANDO: buttons[1]?.phoneNumber || buttons[1]?.url || null,
       CREADO_POR: idNombreUsuarioTalkMe,
     };
 
@@ -164,11 +170,11 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
       await saveTemplateParams(result.ID_PLANTILLA, variables, variableDescriptions);
     }
 
-    if (result && result.ID_PLANTILLA && carousel && carousel.length > 0) {
+    if (result && result.ID_PLANTILLA && cards  && cards.length > 0) {
       await saveCardsTemplate(
         {
           ID_PLANTILLA: result.ID_PLANTILLA,
-          carousel
+          cards: cards 
         },
         idNombreUsuarioTalkMe
       );
