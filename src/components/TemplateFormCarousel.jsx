@@ -286,7 +286,9 @@ const TemplateFormCarousel = () => {
     try {
       // Hacer el primer request a GupShup API
 
+      const cardsToSendArray = [...cards]; // Esto es un array de objetos
       const cardsToSend = JSON.stringify([...cards]); // Convertir a JSON string // Creo una copia para no modificar el estado original
+    
       const result = await createTemplateCarouselGupshup(
         appId,
         authCode,
@@ -323,7 +325,8 @@ const TemplateFormCarousel = () => {
           },
           idNombreUsuarioTalkMe || "Sistema.TalkMe",
           variables,
-          variableDescriptions
+          variableDescriptions,
+          cardsToSendArray 
         );
 
         // El tercer request se maneja dentro de saveTemplateToTalkMe

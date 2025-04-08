@@ -2,9 +2,7 @@
 import { showSnackbar } from '../utils/Snackbar';
 import { getMediaType } from '../utils/validarUrl';
 
-/**
- * Guardo la información de los parametros de la plantilla
- */
+/* Guardo la información de los parametros de la plantilla */
 const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions) => {
   const tipoDatoId = 1;
 
@@ -48,22 +46,69 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions)
   }
 };
 
-/**
- * Guardo la información de la plantilla
- */
-export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}) => {
+const saveCardsTemplate = async ({ ID_PLANTILLA, carousel = [] }, idNombreUsuarioTalkMe) => {
+  const url = 'http://localhost:3004/api/tarjetas/';
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  for (const card of carousel) {
+    const { title, mediaUrl, body, buttons } = card;
+
+    const data = {
+      ID_PLANTILLA_WHATSAPP_TARJETA: null,
+      ID_PLANTILLA: ID_PLANTILLA,
+      ID_MEDIA: null, // si manejas ID_MEDIA lo puedes adaptar aquí
+      DESCRIPCION: body,
+      LINK: mediaUrl,
+      BOTON_0_TEXTO: buttons[0]?.text || null,
+      BOTON_0_COMANDO: buttons[0]?.phoneNumber || null,
+      BOTON_1_TEXTO: buttons[1]?.text || null,
+      BOTON_1_COMANDO: buttons[1]?.phoneNumber || null,
+      CREADO_POR: idNombreUsuarioTalkMe,
+    };
+
+    console.log("Enviando tarjeta:", data);
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        console.error("Error al guardar tarjeta:", errorResponse);
+        showSnackbar(`❌ Error guardando tarjeta: ${errorResponse.message || "Solicitud inválida"}`, "error");
+        continue;
+      }
+
+      const result = await response.json();
+      console.log("Tarjeta guardada exitosamente:", result);
+      showSnackbar("✅ Tarjeta guardada correctamente", "success");
+    } catch (error) {
+      console.error("Error en la petición de tarjeta:", error);
+      showSnackbar("❌ Error en la petición de tarjeta", "error");
+    }
+  }
+};
+
+
+/* Guardo la información de la plantilla*/
+export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}, cards = []) => {
   const { templateName, selectedCategory, message, uploadedUrl } = templateData;
 
   const url = 'https://dev.talkme.pro/templatesGS/api/plantillas/';
   const headers = {
     "Content-Type": "application/json",
   };
-
+  //13 y 14 son en certi
   let ID_PLANTILLA_CATEGORIA;
   if (selectedCategory === "MARKETING") {
-    ID_PLANTILLA_CATEGORIA = 13;
+    ID_PLANTILLA_CATEGORIA = 17;
   } else if (selectedCategory === "UTILITY") {
-    ID_PLANTILLA_CATEGORIA = 14;
+    ID_PLANTILLA_CATEGORIA = 18;
   } else {
     console.error("Categoría no válida:", selectedCategory);
     showSnackbar("❌ Categoría no válida", "error");
@@ -117,6 +162,16 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     // Si tenemos variables, hacer el tercer request
     if (result && result.ID_PLANTILLA && variables && variables.length > 0) {
       await saveTemplateParams(result.ID_PLANTILLA, variables, variableDescriptions);
+    }
+
+    if (result && result.ID_PLANTILLA && carousel && carousel.length > 0) {
+      await saveCardsTemplate(
+        {
+          ID_PLANTILLA: result.ID_PLANTILLA,
+          carousel
+        },
+        idNombreUsuarioTalkMe
+      );
     }
 
     return result; // Retornar el resultado en caso de éxito
