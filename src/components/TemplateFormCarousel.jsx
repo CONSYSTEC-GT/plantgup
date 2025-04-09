@@ -288,7 +288,7 @@ const TemplateFormCarousel = () => {
 
       const cardsToSendArray = [...cards]; // Esto es un array de objetos
       const cardsToSend = JSON.stringify([...cards]); // Convertir a JSON string // Creo una copia para no modificar el estado original
-    
+
       const result = await createTemplateCarouselGupshup(
         appId,
         authCode,
@@ -326,7 +326,7 @@ const TemplateFormCarousel = () => {
           idNombreUsuarioTalkMe || "Sistema.TalkMe",
           variables,
           variableDescriptions,
-          cardsToSendArray 
+          cardsToSendArray
         );
 
         // El tercer request se maneja dentro de saveTemplateToTalkMe
@@ -900,17 +900,18 @@ const TemplateFormCarousel = () => {
 
         {/* Tipo de plantilla --data-urlencode templateType*/}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
-            <FormLabel>
-              *Tipo de plantilla
-            </FormLabel>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
+            <FormLabel>*Tipo de plantilla</FormLabel>
+            <Select
+              labelId="template-type-label"
+              id="template-type"
+              value="CAROUSEL"
+              disabled
+              label="Select"
+            >
               <MenuItem value="CAROUSEL">CARRUSEL</MenuItem>
             </Select>
             <FormHelperText>
-              Escoge el tipo de plantilla que se va a crear
+              Tipo de plantilla predeterminada
             </FormHelperText>
           </FormControl>
         </Box>
