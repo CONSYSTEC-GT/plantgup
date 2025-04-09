@@ -161,7 +161,10 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
       console.log('Proceso de subida completado exitosamente.');
       //setUploadStatus('¡Archivo subido exitosamente!');
+      setIsUploading(false);
     } catch (error) {
+      setIsUploading(false);
+      
       console.error('Error en el proceso de subida:', error);
 
       // Imprimir el request completo en caso de error
