@@ -55,7 +55,6 @@ const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTa
   for (const card of cards) {
     const { title, mediaUrl, body, buttons = [] } = card;
 
-    // Validación básica
     if (!mediaUrl && !body) {
       console.warn("Tarjeta ignorada: no tiene contenido (mediaUrl o body)");
       continue;
@@ -68,9 +67,9 @@ const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTa
       DESCRIPCION: body,
       LINK: mediaUrl || null,
       BOTON_0_TEXTO: buttons[0]?.text || null,
-      BOTON_0_COMANDO: buttons[0]?.phoneNumber || buttons[0]?.url || null,
+      BOTON_0_COMANDO: buttons[0]?.text || null,
       BOTON_1_TEXTO: buttons[1]?.text || null,
-      BOTON_1_COMANDO: buttons[1]?.phoneNumber || buttons[1]?.url || null,
+      BOTON_1_COMANDO: buttons[1]?.text || null,
       CREADO_POR: idNombreUsuarioTalkMe,
     };
 
