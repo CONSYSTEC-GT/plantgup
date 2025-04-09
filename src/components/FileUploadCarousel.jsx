@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { Alert, Box, Button, FormControl, FormLabel, Typography, TextField, Snackbar, } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, FormLabel, Typography, TextField, Snackbar, } from '@mui/material';
 
 const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }) => {
 
@@ -35,6 +35,10 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
   const [uploadStatus, setUploadStatus] = useState('');
   const [imagePreview, setImagePreview] = useState(null); // Estado para la vista previa de la imagen
   const [uploadedUrl, setUploadedUrl] = useState('');
+
+  const [isUploading, setIsUploading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
 
 
   // Manejadores de eventos
@@ -89,6 +93,8 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
       console.error('Error: No se ha seleccionado ningún archivo.');
       return;
     }
+
+    setIsUploading(true);
 
     try {
       console.log('Iniciando proceso de subida de archivo...');
@@ -150,6 +156,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
       if (onUploadSuccess) {
         console.log('Notificando al componente padre con el mediaId y la URL...');
         onUploadSuccess(ownServiceData.url); // Pasar ambos valores
+        setShowSuccessModal(true);
       }
 
       console.log('Proceso de subida completado exitosamente.');
@@ -167,6 +174,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         });
       }
 
+      setIsUploading(false);
       setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
       //setUploadStatus('Error al subir el archivo');
     }
@@ -223,6 +231,11 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
           >
             Subir Archivo
           </Button>
+          {isUploading && (
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+              <CircularProgress />
+            </Box>
+          )}
         </Box>
 
         {selectedFile && (
