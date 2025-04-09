@@ -900,18 +900,17 @@ const TemplateFormCarousel = () => {
 
         {/* Tipo de plantilla --data-urlencode templateType*/}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
-            <FormLabel>*Tipo de plantilla</FormLabel>
-            <Select
-              labelId="template-type-label"
-              id="template-type"
-              value="CAROUSEL"
-              disabled
-              label="Select"
-            >
+            <FormLabel>
+              *Tipo de plantilla
+            </FormLabel>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
               <MenuItem value="CAROUSEL">CARRUSEL</MenuItem>
             </Select>
             <FormHelperText>
-              Tipo de plantilla predeterminada
+              Escoge el tipo de plantilla que se va a crear
             </FormHelperText>
           </FormControl>
         </Box>
@@ -1549,7 +1548,7 @@ const TemplateFormCarousel = () => {
                         overflow: 'hidden',
                         textOverflow: 'ellipsis'
                       }}>
-                        {card.description || "Descripción de la tarjeta"}
+                        {card.body || "Descripción de la tarjeta"}
                       </Typography>
                     </CardContent>
 
@@ -1593,7 +1592,7 @@ const TemplateFormCarousel = () => {
                               <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
                             )}
                             <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
-                              {button.title}
+                              {button.title || button.text} {/* Soporta ambos formatos */}
                             </Typography>
                           </Box>
                         ))}
