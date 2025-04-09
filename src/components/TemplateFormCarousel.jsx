@@ -1432,15 +1432,7 @@ const TemplateFormCarousel = () => {
           </Button>
         </Box>
 
-        <Dialog open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
-          <DialogTitle>¡Éxito!</DialogTitle>
-          <DialogContent>
-            <Typography>La imagen fue subida correctamente.</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setShowSuccessModal(false)}>Cerrar</Button>
-          </DialogActions>
-        </Dialog>
+        
 
       </Box>
       </Grid>
