@@ -40,7 +40,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
   const [isUploading, setIsUploading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showErrorModalArchivos, setshowErrorModalArchivos] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
 
 
