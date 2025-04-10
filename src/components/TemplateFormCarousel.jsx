@@ -1487,7 +1487,7 @@ const TemplateFormCarousel = () => {
 
       {/* Preview (30%) */}
       <Grid item xs={4}>
-        <Box sx={{ position: "sticky", top: 0, height: "100vh", mt: 2, borderRadius: 2 }}>
+        <Box sx={{ position: "fixed", top: 0, height: "100vh", mt: 2, borderRadius: 2 }}>
           <Box
             sx={{
               p: 3,
