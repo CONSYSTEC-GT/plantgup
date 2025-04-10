@@ -16,6 +16,8 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import EmailIcon from '@mui/icons-material/Email';
 import ForumIcon from '@mui/icons-material/Forum';
+import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
+import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 
 const NAVIGATION = [
   {
@@ -26,22 +28,22 @@ const NAVIGATION = [
   {
     segment: 'CreateTemplatePage',
     title: 'Crear Plantillas',
-    icon: <CreateIcon />,
+    icon: <WhatsAppIcon />,
     children: [
       {
-        segment: 'crear/whatsapp',
-        title: 'Plantilla WhatsApp',
-        icon: <WhatsAppIcon />,
+        segment: 'CreateTemplatePage',
+        title: 'Texto, imagen y documento',
+        icon: <CreateIcon />,
       },
       {
-        segment: 'crear/email',
-        title: 'Plantilla Email',
-        icon: <EmailIcon />,
+        segment: 'CreateTemplateCatalog',
+        title: 'Cátalogo',
+        icon: <AutoAwesomeMosaicIcon />,
       },
       {
-        segment: 'crear/sms',
-        title: 'Plantilla SMS',
-        icon: <ForumIcon />,
+        segment: 'CreateTemplateCarousel',
+        title: 'Carrusel',
+        icon: <ViewCarouselIcon />,
       }
     ]
   },
