@@ -3,6 +3,8 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Alert, Box, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, FormLabel, Typography, TextField, Snackbar, } from '@mui/material';
 
+import { CustomDialog } from '../utils/CustomDialog';
+
 const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }) => {
 
   // Recupera el token del localStorage
@@ -281,31 +283,29 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         )}
       </div>
 
-      // Diálogo de éxito (success)
-      <Dialog open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
-        <DialogTitle>¡Éxito!</DialogTitle>
-        <DialogContent>
-          <Alert severity="success">
-            La imagen fue subida correctamente.
-          </Alert>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowSuccessModal(false)}>Entendido</Button>
-        </DialogActions>
-      </Dialog>
+      {/* Diálogo de éxito */}
+      <CustomDialog
+        open={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="¡Éxito!"
+        message="La imagen fue subida correctamente."
+        severity="success"
+      />
 
-// Diálogo de advertencia o información (warning o info)
-      <Dialog open={showErrorModalArchivos} onClose={() => setshowErrorModalArchivos(false)}>
-        <DialogTitle>Información</DialogTitle>
-        <DialogContent>
-          <Alert severity="warning">
-            El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.
-          </Alert>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setshowErrorModalArchivos(false)}>Entendido</Button>
-        </DialogActions>
-      </Dialog>
+      {/* Diálogo de error */}
+      <CustomDialog
+        open={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Error en la subida"
+        message={
+          fileSizeExceeded
+            ? "El archivo es demasiado grande. El tamaño máximo permitido es 5 MB."
+            : "Hubo un problema al subir el archivo. Por favor, inténtalo de nuevo."
+        }
+        severity="error"
+        buttonVariant="outlined"
+      />
+      
     </Box>
   );
 };
