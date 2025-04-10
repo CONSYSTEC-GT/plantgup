@@ -38,6 +38,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
   const [isUploading, setIsUploading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModalArchivos, setshowErrorModalArchivos] = useState(false);
 
 
 
@@ -59,7 +60,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
     // Verificar el tamaño del archivo
     if (file.size > MAX_FILE_SIZE) {
-      setError('El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.');
+      setshowErrorModalArchivos(true);
       setSelectedFile(null);
       setImagePreview(null);
       return;
@@ -284,6 +285,15 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         <DialogTitle>¡Éxito!</DialogTitle>
         <DialogContent>
           <Typography>La imagen fue subida correctamente.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowSuccessModal(false)}>Cerrar</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={showErrorModalArchivos} onClose={() => setShowSuccessModal(false)}>
+        <DialogTitle>Información</DialogTitle>
+        <DialogContent>
+          <Typography>El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setShowSuccessModal(false)}>Cerrar</Button>

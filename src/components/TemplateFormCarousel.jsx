@@ -50,7 +50,7 @@ const TemplateFormCarousel = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const [showErrorModalArchivos, setshowErrorModalArchivos] = useState(false);
+  
 
   const [languageCode, setLanguageCode] = useState("es"); // Valor predeterminado: español
   const [languageTypeError, setLanguageTypeError] = useState(false);
@@ -1433,15 +1433,7 @@ const TemplateFormCarousel = () => {
           </Button>
         </Box>
 
-        <Dialog open={showErrorModalArchivos} onClose={() => setShowSuccessModal(false)}>
-          <DialogTitle>Información</DialogTitle>
-          <DialogContent>
-            <Typography>El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setShowSuccessModal(false)}>Cerrar</Button>
-          </DialogActions>
-        </Dialog>
+        
 
         
 
