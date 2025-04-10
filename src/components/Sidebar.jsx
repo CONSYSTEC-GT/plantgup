@@ -1,11 +1,18 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useTheme } from '@mui/material/styles';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-//iconos
+// Iconos
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import CreateIcon from '@mui/icons-material/Create';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -13,6 +20,10 @@ import CheckIcon from '@mui/icons-material/Check';
 import SendIcon from '@mui/icons-material/Send';
 import SmsFailedIcon from '@mui/icons-material/SmsFailed';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import TemplateIcon from '@mui/icons-material/Description';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import EmailIcon from '@mui/icons-material/Email';
+import ForumIcon from '@mui/icons-material/Forum';
 
 const NAVIGATION = [
   {
@@ -24,6 +35,24 @@ const NAVIGATION = [
     segment: 'CreateTemplatePage',
     title: 'Crear Plantillas',
     icon: <CreateIcon />,
+    hasDropdown: true,
+    dropdownItems: [
+      {
+        title: 'Plantilla WhatsApp',
+        icon: <WhatsAppIcon />,
+        path: 'crear/whatsapp'
+      },
+      {
+        title: 'Plantilla Email',
+        icon: <EmailIcon />,
+        path: 'crear/email'
+      },
+      {
+        title: 'Plantilla SMS',
+        icon: <ForumIcon />,
+        path: 'crear/sms'
+      }
+    ]
   },
   {
     kind: 'divider',
@@ -66,7 +95,7 @@ const Skeleton = styled('div')(({ theme, height }) => ({
   content: '" "',
 }));
 
-const MenuItem = styled('div')(({ theme, selected }) => ({
+const StyledMenuItem = styled('div')(({ theme, selected }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(1, 2),
@@ -77,30 +106,109 @@ const MenuItem = styled('div')(({ theme, selected }) => ({
   '&:hover': {
     backgroundColor: theme.palette.action.hover,
   },
+  cursor: 'pointer',
+}));
+
+const DropdownButton = styled(Button)(({ theme }) => ({
+  textAlign: 'left',
+  justifyContent: 'flex-start',
+  padding: theme.spacing(1, 2),
+  textTransform: 'none',
+  width: '100%',
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
 }));
 
 export default function Sidebar(props) {
   const { window } = props;
   const theme = useTheme();
   const location = useLocation();
-
+  const navigate = useNavigate();
+  
+  // Estado para controlar el menú desplegable
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [activeItem, setActiveItem] = React.useState(null);
+  
   // Determina si el menú está seleccionado basado en la ruta actual
   const isSelected = (segment) => {
     return location.pathname.includes(segment);
   };
+  
+  // Funciones para manejar el menú desplegable
+  const handleMenuOpen = (event, item) => {
+    setAnchorEl(event.currentTarget);
+    setActiveItem(item);
+  };
+  
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+  
+  const handleMenuItemClick = (path) => {
+    navigate(path);
+    handleMenuClose();
+  };
+  
+  // Componente personalizado para los elementos de navegación
+  const NavigationItem = ({ item }) => {
+    if (item.hasDropdown) {
+      return (
+        <DropdownButton
+          startIcon={React.cloneElement(item.icon, {
+            style: {
+              color: isSelected(item.segment) ? theme.palette.primary.main : theme.palette.text.primary,
+            },
+          })}
+          endIcon={<ExpandMoreIcon />}
+          onClick={(e) => handleMenuOpen(e, item)}
+          color={isSelected(item.segment) ? "primary" : "inherit"}
+        >
+          {item.title}
+        </DropdownButton>
+      );
+    }
+    
+    return (
+      <StyledMenuItem
+        selected={isSelected(item.segment)}
+        onClick={() => navigate(`/${item.segment}`)}
+      >
+        {React.cloneElement(item.icon, {
+          style: {
+            marginRight: theme.spacing(1),
+            color: isSelected(item.segment) ? theme.palette.primary.main : theme.palette.text.primary,
+          },
+        })}
+        {item.title}
+      </StyledMenuItem>
+    );
+  };
+
+  const renderNavigationItems = () => {
+    return NAVIGATION.map((item, index) => {
+      if (item.kind === 'divider') {
+        return <hr key={`divider-${index}`} style={{ margin: theme.spacing(1, 0) }} />;
+      }
+      
+      if (item.kind === 'header') {
+        return (
+          <div key={`header-${index}`} style={{ padding: theme.spacing(1, 2), opacity: 0.7 }}>
+            {item.title}
+          </div>
+        );
+      }
+      
+      return <NavigationItem key={item.segment} item={item} />;
+    });
+  };
 
   return (
     <AppProvider
-      navigation={NAVIGATION.map((item) => {
+      navigation={NAVIGATION.filter(item => !item.hasDropdown || item.kind).map((item) => {
         if (item.kind === 'divider' || item.kind === 'header') {
           return item;
         }
-
-        const clonedIcon = React.cloneElement(item.icon, {
-          style: {
-            color: isSelected(item.segment) ? theme.palette.primary.main : theme.palette.text.primary,
-          },
-        });
 
         return {
           ...item,
@@ -125,6 +233,32 @@ export default function Sidebar(props) {
       }}
     >
       <DashboardLayout>
+        {/* Menú desplegable */}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+        >
+          {activeItem?.dropdownItems?.map((dropdownItem, index) => (
+            <MenuItem 
+              key={index} 
+              onClick={() => handleMenuItemClick(dropdownItem.path)}
+            >
+              <ListItemIcon>
+                {dropdownItem.icon}
+              </ListItemIcon>
+              <ListItemText primary={dropdownItem.title} />
+            </MenuItem>
+          ))}
+        </Menu>
         <Outlet />
       </DashboardLayout>
     </AppProvider>
