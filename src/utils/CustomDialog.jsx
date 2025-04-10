@@ -33,7 +33,7 @@ export const CustomDialog = ({
       fullWidth
       maxWidth="sm"
     >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1,  bgcolor: 'primary.light', color: 'primary.contrastText', py: 1, px: 2}}>
         {title}
       </DialogTitle>
       

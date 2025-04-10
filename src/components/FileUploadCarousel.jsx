@@ -290,16 +290,17 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         title="¡Éxito!"
         message="La imagen fue subida correctamente."
         severity="success"
+        buttonVariant="contained"
       />
 
       {/* Diálogo de error */}
       <CustomDialog
         open={showErrorModal}
         onClose={() => setShowErrorModal(false)}
-        title="Error en la subida"
+        title="Error al cargar archivo"
         message={"El archivo es demasiado grande. El tamaño máximo permitido es 5 MB."}
         severity="error"
-        buttonVariant="outlined"
+        buttonVariant="contained"
       />
       
     </Box>
