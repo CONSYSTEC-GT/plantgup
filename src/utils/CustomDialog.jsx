@@ -32,15 +32,37 @@ export const CustomDialog = ({
       TransitionComponent={Transition}
       fullWidth
       maxWidth="sm"
+      PaperProps={{
+        sx: {
+          borderRadius: 2
+        }
+      }}
     >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1,  bgcolor: 'primary.light', color: 'primary.contrastText', py: 1, px: 2}}>
+      <DialogTitle 
+        sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 1,  
+          bgcolor: 'primary.light', 
+          color: 'primary.contrastText', 
+          py: 1, 
+          px: 2,
+          fontWeight: 'medium'
+        }}
+      >
         {title}
       </DialogTitle>
       
-      <DialogContent sx={{ pt: 4 }}>
+      <DialogContent sx={{ pt: 4, textAlign: 'center' }}>
         <Alert
           severity={severity}
-          sx={{ mb: 2, alignItems: 'center' }}
+          sx={{ 
+            mb: 2, 
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'left'
+          }}
           icon={showIcon ? undefined : false}
         >
           {message}
@@ -54,6 +76,11 @@ export const CustomDialog = ({
           color="primary"
           fullWidth={fullWidthButton}
           size="large"
+          sx={{
+            borderRadius: 1,
+            textTransform: 'none',
+            fontWeight: 'medium'
+          }}
         >
           {buttonText}
         </Button>
