@@ -103,6 +103,27 @@ const TemplateFormCarousel = () => {
   const selectedCategoryRef = useRef(null);
   const exampleRefs = useRef({});
 
+  const resetForm = () => {
+    setTemplateName("");
+    setSelectedCategory("");
+    setLanguageCode("");
+    setVertical("");
+    setMessage("");
+    setMediaId("");
+    setButtons([]);
+    setExample("");
+    setCards([]);
+    setUploadedUrl("");
+    setVariables([]);
+    setVariableDescriptions([]);
+    // Agrega cualquier otro estado relacionado
+  };
+  
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessageGupshup, setErrorMessageGupshup] = useState("La plantilla no pudo ser creada.");
+
+
   // Función para mostrar Snackbar
   const showSnackbar = (message, severity) => {
     setSnackbarMessage(message);
@@ -330,9 +351,16 @@ const TemplateFormCarousel = () => {
           cardsToSendArray
         );
 
+        // Limpia todos los campos si todo fue bien
+        resetForm();
+        setShowSuccessModal(true);
+
         // El tercer request se maneja dentro de saveTemplateToTalkMe
       } else {
         console.error("El primer request no fue exitoso o no tiene el formato esperado.");
+        setErrorMessageGupshup(result?.message || "La plantilla no pudo ser creada.");
+        setShowErrorModal(true);
+
         console.error("Resultado del primer request:", result);
       }
     } catch (error) {
@@ -1433,10 +1461,25 @@ const TemplateFormCarousel = () => {
           </Button>
         </Box>
 
-        
+        {/* Diálogo de éxito */}
+        <CustomDialog
+          open={showSuccessModal}
+          onClose={() => setShowSuccessModal(false)}
+          title="¡Éxito!"
+          message="La plantilla fue creada correctamente."
+          severity="success"
+          buttonVariant="contained"
+        />
 
-        
-
+        {/* Diálogo de error */}
+        <CustomDialog
+          open={showErrorModal}
+          onClose={() => setShowErrorModal(false)}
+          title="Error al crear plantilla"
+          message={errorMessageGupshup}
+          severity="error"
+          buttonVariant="contained"
+        />
       </Box>
       </Grid>
 
