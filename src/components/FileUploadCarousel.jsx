@@ -62,7 +62,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
     // Verificar el tamaño del archivo
     if (file.size > MAX_FILE_SIZE) {
-      setshowErrorModalArchivos(true);
+      setShowErrorModal(true);
       setSelectedFile(null);
       setImagePreview(null);
       return;
@@ -297,11 +297,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         open={showErrorModal}
         onClose={() => setShowErrorModal(false)}
         title="Error en la subida"
-        message={
-          fileSizeExceeded
-            ? "El archivo es demasiado grande. El tamaño máximo permitido es 5 MB."
-            : "Hubo un problema al subir el archivo. Por favor, inténtalo de nuevo."
-        }
+        message={"El archivo es demasiado grande. El tamaño máximo permitido es 5 MB."}
         severity="error"
         buttonVariant="outlined"
       />
