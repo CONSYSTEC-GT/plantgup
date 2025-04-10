@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Alert, Box, Button, Card, CardActions, CardContent, CardMedia, Chip, Container, Dialog, DialogTitle, DialogContent, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
+import { Alert, Box, Button, Card, CardActions, CardContent, CardMedia, Chip, Container, Dialog, DialogTitle, DialogContent, DialogActions, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 
 import { Smile } from "react-feather"; // Icono para emojis
@@ -50,6 +50,7 @@ const TemplateFormCarousel = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [showErrorModalArchivos, setshowErrorModalArchivos] = useState(false);
 
   const [languageCode, setLanguageCode] = useState("es"); // Valor predeterminado: español
   const [languageTypeError, setLanguageTypeError] = useState(false);
@@ -1431,6 +1432,16 @@ const TemplateFormCarousel = () => {
             Enviar solicitud
           </Button>
         </Box>
+
+        <Dialog open={showErrorModalArchivos} onClose={() => setShowSuccessModal(false)}>
+          <DialogTitle>Información</DialogTitle>
+          <DialogContent>
+            <Typography>El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowSuccessModal(false)}>Cerrar</Button>
+          </DialogActions>
+        </Dialog>
 
         
 
