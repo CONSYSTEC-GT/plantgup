@@ -165,7 +165,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
       setIsUploading(false);
     } catch (error) {
       setIsUploading(false);
-      
+
       console.error('Error en el proceso de subida:', error);
 
       // Imprimir el request completo en caso de error
@@ -281,22 +281,29 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         )}
       </div>
 
+      // Diálogo de éxito (success)
       <Dialog open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
         <DialogTitle>¡Éxito!</DialogTitle>
         <DialogContent>
-          <Typography>La imagen fue subida correctamente.</Typography>
+          <Alert severity="success">
+            La imagen fue subida correctamente.
+          </Alert>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowSuccessModal(false)}>Cerrar</Button>
+          <Button onClick={() => setShowSuccessModal(false)}>Entendido</Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={showErrorModalArchivos} onClose={() => setShowSuccessModal(false)}>
+
+// Diálogo de advertencia o información (warning o info)
+      <Dialog open={showErrorModalArchivos} onClose={() => setshowErrorModalArchivos(false)}>
         <DialogTitle>Información</DialogTitle>
         <DialogContent>
-          <Typography>El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.</Typography>
+          <Alert severity="warning">
+            El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.
+          </Alert>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowSuccessModal(false)}>Cerrar</Button>
+          <Button onClick={() => setshowErrorModalArchivos(false)}>Entendido</Button>
         </DialogActions>
       </Dialog>
     </Box>
