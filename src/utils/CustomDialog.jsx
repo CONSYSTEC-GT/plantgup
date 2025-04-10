@@ -37,7 +37,7 @@ export const CustomDialog = ({
         {title}
       </DialogTitle>
       
-      <DialogContent sx={{ pt: 2 }}>
+      <DialogContent sx={{ pt: 4 }}>
         <Alert
           severity={severity}
           sx={{ mb: 2, alignItems: 'center' }}

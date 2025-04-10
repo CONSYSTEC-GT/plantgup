@@ -244,25 +244,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
           )}
         </Box>
 
-        {selectedFile && (
-          <Typography variant="body2" sx={{ mt: 2 }}>
-            Archivo seleccionado: {selectedFile.name}
-          </Typography>
-        )}
-
-        {imagePreview && mediaType === 'image' && (
-          <Box sx={{ mt: 2 }}>
-            <img src={imagePreview} alt="Vista previa" style={{ width: '100%', borderRadius: 2 }} />
-          </Box>
-        )}
-
-        {mediaId && (
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="body2">
-              Media ID: {mediaId}
-            </Typography>
-          </Box>
-        )}
+        
       </Box>
 
       <Snackbar
