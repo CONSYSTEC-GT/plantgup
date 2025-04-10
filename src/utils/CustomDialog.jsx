@@ -32,36 +32,31 @@ export const CustomDialog = ({
       TransitionComponent={Transition}
       fullWidth
       maxWidth="sm"
-      PaperProps={{
-        sx: {
-          borderRadius: 2
-        }
-      }}
     >
-      <DialogTitle 
-        sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 1,  
-          bgcolor: 'primary.light', 
-          color: 'primary.contrastText', 
-          py: 1, 
-          px: 2,
-          fontWeight: 'medium'
-        }}
-      >
+      <DialogTitle sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: 1,  
+        bgcolor: 'primary.light', 
+        color: 'primary.contrastText', 
+        py: 2, // Aumentado el padding vertical
+        px: 3, // Aumentado el padding horizontal
+        fontWeight: 'medium'
+      }}>
         {title}
       </DialogTitle>
       
-      <DialogContent sx={{ pt: 4, textAlign: 'center' }}>
+      <DialogContent sx={{ 
+        pt: 3, // Espacio superior reducido
+        pb: 1, // Espacio inferior reducido
+        px: 3  // Padding horizontal consistente
+      }}>
         <Alert
           severity={severity}
           sx={{ 
-            mb: 2, 
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'left'
+            my: 2, // Margen vertical
+            width: '100%', // Ocupa todo el ancho disponible
+            alignItems: 'flex-start' // Alinea el icono con el texto
           }}
           icon={showIcon ? undefined : false}
         >
@@ -69,7 +64,11 @@ export const CustomDialog = ({
         </Alert>
       </DialogContent>
       
-      <DialogActions sx={{ px: 3, pb: 2 }}>
+      <DialogActions sx={{ 
+        px: 3, 
+        pb: 3, // Aumentado el padding inferior
+        pt: 0  // Eliminado padding superior
+      }}>
         <Button
           onClick={onClose}
           variant={buttonVariant}
@@ -78,7 +77,7 @@ export const CustomDialog = ({
           size="large"
           sx={{
             borderRadius: 1,
-            textTransform: 'none',
+            py: 1.5, // Padding vertical para el botón
             fontWeight: 'medium'
           }}
         >
