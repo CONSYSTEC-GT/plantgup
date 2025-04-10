@@ -1,15 +1,9 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useTheme } from '@mui/material/styles';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Box from '@mui/material/Box';
 
 // Iconos
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -23,7 +17,6 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import EmailIcon from '@mui/icons-material/Email';
 import ForumIcon from '@mui/icons-material/Forum';
 
-// Definición original de la navegación
 const NAVIGATION = [
   {
     segment: 'Dashboard',
@@ -34,6 +27,23 @@ const NAVIGATION = [
     segment: 'CreateTemplatePage',
     title: 'Crear Plantillas',
     icon: <CreateIcon />,
+    children: [
+      {
+        segment: 'crear/whatsapp',
+        title: 'Plantilla WhatsApp',
+        icon: <WhatsAppIcon />,
+      },
+      {
+        segment: 'crear/email',
+        title: 'Plantilla Email',
+        icon: <EmailIcon />,
+      },
+      {
+        segment: 'crear/sms',
+        title: 'Plantilla SMS',
+        icon: <ForumIcon />,
+      }
+    ]
   },
   {
     kind: 'divider',
@@ -69,26 +79,14 @@ const NAVIGATION = [
   },
 ];
 
-// Opciones del menú desplegable para Crear Plantillas
-const CREATE_TEMPLATE_OPTIONS = [
-  {
-    title: 'Plantilla WhatsApp',
-    icon: <WhatsAppIcon />,
-    path: 'crear/whatsapp'
-  },
-  {
-    title: 'Plantilla Email',
-    icon: <EmailIcon />,
-    path: 'crear/email'
-  },
-  {
-    title: 'Plantilla SMS',
-    icon: <ForumIcon />,
-    path: 'crear/sms'
-  }
-];
+const Skeleton = styled('div')(({ theme, height }) => ({
+  backgroundColor: theme.palette.action.hover,
+  borderRadius: theme.shape.borderRadius,
+  height,
+  content: '" "',
+}));
 
-const StyledMenuItem = styled('div')(({ theme, selected }) => ({
+const MenuItem = styled('div')(({ theme, selected }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(1, 2),
@@ -99,72 +97,55 @@ const StyledMenuItem = styled('div')(({ theme, selected }) => ({
   '&:hover': {
     backgroundColor: theme.palette.action.hover,
   },
-  cursor: 'pointer',
 }));
 
 export default function Sidebar(props) {
   const { window } = props;
   const theme = useTheme();
   const location = useLocation();
-  const navigate = useNavigate();
-  
-  // Estado para controlar el menú desplegable
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  
+
   // Determina si el menú está seleccionado basado en la ruta actual
   const isSelected = (segment) => {
     return location.pathname.includes(segment);
   };
-  
-  const handleMenuOpen = (event) => {
-    // Evitar la navegación al hacer clic en el elemento Crear Plantillas
-    event.preventDefault();
-    event.stopPropagation();
-    setAnchorEl(event.currentTarget);
-  };
-  
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-  
-  const handleMenuItemClick = (path) => {
-    navigate(path);
-    handleMenuClose();
-  };
 
-  // Método personalizado para modificar el menú de navegación
-  const customizeNavigation = () => {
-    return NAVIGATION.map((item) => {
-      if (item.kind === 'divider' || item.kind === 'header') {
-        return item;
-      }
+  // Función para aplicar el estilo de color a los iconos
+  const applyIconStyles = (item) => {
+    if (item.kind === 'divider' || item.kind === 'header') {
+      return item;
+    }
 
-      // Clonar el icono con el estilo adecuado
-      const clonedIcon = React.cloneElement(item.icon, {
-        style: {
-          color: isSelected(item.segment) ? theme.palette.primary.main : theme.palette.text.primary,
-        },
-      });
-
-      // Agregar un manejador especial para el botón Crear Plantillas
-      if (item.segment === 'CreateTemplatePage') {
-        return {
-          ...item,
-          icon: clonedIcon,
-          onClick: handleMenuOpen
-        };
-      }
-
-      return {
-        ...item,
-        icon: clonedIcon,
-      };
+    const styledIcon = React.cloneElement(item.icon, {
+      style: {
+        color: isSelected(item.segment) ? theme.palette.primary.main : theme.palette.text.primary,
+      },
     });
+
+    const result = {
+      ...item,
+      icon: styledIcon,
+    };
+
+    // Si el elemento tiene hijos, aplicamos el estilo también a ellos
+    if (item.children && Array.isArray(item.children)) {
+      result.children = item.children.map(child => {
+        return {
+          ...child,
+          icon: React.cloneElement(child.icon, {
+            style: {
+              color: isSelected(child.segment) ? theme.palette.primary.main : theme.palette.text.primary,
+            },
+          }),
+        };
+      });
+    }
+
+    return result;
   };
 
   return (
     <AppProvider
-      navigation={customizeNavigation()}
+      navigation={NAVIGATION.map(applyIconStyles)}
       theme={theme}
       branding={{
         title: 'TalkMe',
@@ -179,29 +160,6 @@ export default function Sidebar(props) {
       }}
     >
       <DashboardLayout>
-        {/* Menú desplegable para Crear Plantillas */}
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          PaperProps={{
-            elevation: 3,
-            sx: { width: 220 }
-          }}
-        >
-          {CREATE_TEMPLATE_OPTIONS.map((option, index) => (
-            <MenuItem 
-              key={index} 
-              onClick={() => handleMenuItemClick(option.path)}
-            >
-              <ListItemIcon>
-                {option.icon}
-              </ListItemIcon>
-              <ListItemText primary={option.title} />
-            </MenuItem>
-          ))}
-        </Menu>
-        
         <Outlet />
       </DashboardLayout>
     </AppProvider>
