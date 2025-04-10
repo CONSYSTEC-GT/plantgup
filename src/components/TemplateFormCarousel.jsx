@@ -30,6 +30,8 @@ import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
 import { createTemplateCarouselGupshup } from '../api/gupshupApi';
 import { saveTemplateToTalkMe } from '../api/templatesGSApi';
 
+import { CustomDialog } from '../utils/CustomDialog';
+
 const TemplateFormCarousel = () => {
 
   //CAMPOS DEL FORMULARIO PARA EL REQUEST
