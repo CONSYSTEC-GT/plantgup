@@ -53,7 +53,7 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path="/CreateTemplateCatalog"
+            path="/CreateTemplatePage/CreateTemplateCatalog"
             element={
               <ProtectedRoute>
                 <CreateTemplateCatalog />
@@ -61,7 +61,7 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path="/CreateTemplateCarousel"
+            path="/CreateTemplatePage/CreateTemplateCarousel"
             element={
               <ProtectedRoute>
                 <CreateTemplateCarousel />
