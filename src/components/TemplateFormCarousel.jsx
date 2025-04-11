@@ -1482,18 +1482,19 @@ const TemplateFormCarousel = () => {
                 </Box>
               </Box>
             </FormControl>
-          </Box>
 
-          {/*Boton Guardar Plantilla*/}<Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
-            <Button
-              variant="contained"
-              size="large"
-              color="primary"
-              onClick={iniciarRequest}
-              sx={{ mt: 3, mb: 3 }}
-            >
-              Enviar solicitud
-            </Button>
+
+            {/*Boton Guardar Plantilla*/}<Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
+              <Button
+                variant="contained"
+                size="large"
+                color="primary"
+                onClick={iniciarRequest}
+                sx={{ mt: 3, mb: 3 }}
+              >
+                Enviar solicitud
+              </Button>
+            </Box>
           </Box>
 
           {/* Diálogo de éxito */}
