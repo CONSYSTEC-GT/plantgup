@@ -4,6 +4,18 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
   const location = useLocation();
+  
+  // Verificar si estamos en entorno de desarrollo local
+  const isLocalDevelopment = process.env.NODE_ENV === 'development' && 
+                            (window.location.hostname === 'localhost' || 
+                             window.location.hostname === '127.0.0.1');
+
+  // Permitir acceso directo en desarrollo local
+  if (isLocalDevelopment) {
+    return children;
+  }
+
+  // Para producción, mantener la lógica original de validación de token
   const token = localStorage.getItem('authToken');
 
   if (!token) {
