@@ -52,7 +52,7 @@ const TemplateFormCarousel = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  
+
 
   const [languageCode, setLanguageCode] = useState("es"); // Valor predeterminado: español
   const [languageTypeError, setLanguageTypeError] = useState(false);
@@ -120,7 +120,7 @@ const TemplateFormCarousel = () => {
     setVariableDescriptions([]);
     // Agrega cualquier otro estado relacionado
   };
-  
+
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessageGupshup, setErrorMessageGupshup] = useState("La plantilla no pudo ser creada.");
@@ -1019,7 +1019,12 @@ const TemplateFormCarousel = () => {
               label="Escribe"
               placeholder="Ingresa el contenido de tu mensaje aquí..."
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) => {
+                const maxLength = 280; // Establece tu límite de caracteres aquí
+                if (e.target.value.length <= maxLength) {
+                  setMessage(e.target.value);
+                }
+              }}
               sx={{
                 mb: 3,
                 mt: 4,
@@ -1031,6 +1036,16 @@ const TemplateFormCarousel = () => {
                 }
               }}
               inputRef={messageRef}
+              inputProps={{
+                maxLength: 280, // Esto limita físicamente la entrada
+              }}
+              helperText={`${message.length}/280 caracteres`} // Muestra el contador
+              FormHelperTextProps={{
+                sx: {
+                  textAlign: 'right', // Alinea el contador a la derecha
+                  color: message.length === 280 ? 'error.main' : 'text.secondary' // Cambia color si llega al límite
+                }
+              }}
             />
 
             {/* Botones de emojis y acciones en una barra de herramientas mejor diseñada */}
