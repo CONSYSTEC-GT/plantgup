@@ -29,8 +29,14 @@ const CreateTemplateCarousel = () => {
         </Button>
       </Tooltip>
 
-      {/*Informacion inicial*/}<Box sx={{ backgroundColor: '#fdf3f5', padding: 2, borderRadius: 1, marginTop: 3 }}>
-        <Typography variant="body1">
+      {/*Informacion inicial*/}<Box sx={{
+        backgroundColor: '#fdf3f5',
+        padding: 1,  // Reducido de 2 a 1
+        borderRadius: 1,
+        marginTop: 2, // Reducido de 3 a 2
+        fontSize: '0.875rem' // Tamaño de fuente ligeramente más pequeño
+      }}>
+        <Typography variant="body2"> {/* Cambiado a body2 que es más pequeño que body1 */}
           Tenga en cuenta que ahora es obligatorio proporcionar muestras al crear plantillas de mensajes.
           <br />
           Las muestras son una forma de proporcionar un ejemplo de posibles datos para su plantilla. Esto nos
