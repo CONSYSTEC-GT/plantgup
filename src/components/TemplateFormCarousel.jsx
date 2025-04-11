@@ -76,6 +76,7 @@ const TemplateFormCarousel = () => {
 
   //const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showEmojiPickerCards, setShowEmojiPickerCards] = useState(false);
   const [variables, setVariables] = useState([]);
   const [variablesTarjeta, setVariablesTarjeta] = useState([]);
 
@@ -1295,7 +1296,7 @@ const TemplateFormCarousel = () => {
                 </Stack>
 
                 {/* Selector de emojis */}
-                {showEmojiPicker && (
+                {showEmojiPickerCards && (
                   <Paper
                     elevation={3}
                     sx={{
@@ -1518,7 +1519,7 @@ const TemplateFormCarousel = () => {
       </Grid>
 
       {/* Preview (30%) */}
-      <Grid item xs={4}>
+      <Grid item xs={4} sx={{ height: '100vh' }}>
         <Box sx={{ height: '100%', px: 2, py: 2, borderLeft: '1px solid #ddd', borderRadius: 2 }}>
           <Box
             sx={{
