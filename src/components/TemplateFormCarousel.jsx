@@ -880,7 +880,7 @@ const TemplateFormCarousel = () => {
           py: 2,
           display: 'flex',
           flexDirection: 'column',
-          paddingBottom: 4  // Añadir padding abajo para asegurar que el último botón sea visible
+          paddingBottom: 10  // Añadir padding abajo para asegurar que el último botón sea visible
         }}>
 
           {/* Template Name */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
