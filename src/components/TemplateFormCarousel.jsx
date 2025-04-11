@@ -580,16 +580,16 @@ const TemplateFormCarousel = () => {
   const handleEmojiClick = (emojiObject) => {
     // Obtener la posición actual del cursor
     const cursor = messageRef.current.selectionStart;
-    
+
     // Crear el nuevo texto insertando el emoji en la posición del cursor
     const newText = message.slice(0, cursor) + emojiObject.emoji + message.slice(cursor);
-    
+
     // Actualizar el estado del mensaje
     setMessage(newText);
-    
+
     // Cerrar el selector de emojis
     setShowEmojiPicker(false);
-    
+
     // Devolver el foco al campo de texto y mover el cursor después del emoji
     setTimeout(() => {
       messageRef.current.focus();
@@ -1519,7 +1519,14 @@ const TemplateFormCarousel = () => {
       </Grid>
 
       {/* Preview (30%) */}
-      <Grid item xs={4} sx={{ height: '100vh' }}>
+      <Grid item xs={4} sx={{
+        position: 'sticky',
+        top: 0,
+        height: '100vh',
+        px: 2,
+        py: 2,
+        borderLeft: '1px solid #ddd'
+      }}>
         <Box sx={{ height: '100%', px: 2, py: 2, borderLeft: '1px solid #ddd', borderRadius: 2 }}>
           <Box
             sx={{
