@@ -837,7 +837,7 @@ const TemplateFormCarousel = () => {
 
 
   return (
-    <Grid container spacing={2} sx={{ height: '100vh' }}>
+    <Grid container sx={{ height: '100vh' }}>
 
       {/* Notificaciones */}<Snackbar
         open={openSnackbar}
@@ -850,7 +850,7 @@ const TemplateFormCarousel = () => {
         </Alert>
       </Snackbar>
 
-      {/* Formulario (70%) */}<Grid item xs={8}><Box sx={{ height: '100%', overflowY: 'auto', pr: 2 }}>
+      {/* Formulario (70%) */}<Grid item xs={8}><Box sx={{ height: '100%', overflowY: 'auto', pr: 2, px:2, py:2 }}>
 
         {/* Template Name */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
@@ -1020,7 +1020,7 @@ const TemplateFormCarousel = () => {
               placeholder="Ingresa el contenido de tu mensaje aquí..."
               value={message}
               onChange={(e) => {
-                const maxLength = 280; // Establece tu límite de caracteres aquí
+                const maxLength = 1024; // Establece tu límite de caracteres aquí
                 if (e.target.value.length <= maxLength) {
                   setMessage(e.target.value);
                 }
@@ -1502,7 +1502,7 @@ const TemplateFormCarousel = () => {
 
       {/* Preview (30%) */}
       <Grid item xs={4}>
-        <Box sx={{ position: "fixed", top: 0, height: "100vh", mt: 2, borderRadius: 2 }}>
+        <Box sx={{ height: '100%', px:2, py:2, borderLeft: '1px solid #ddd', borderRadius: 2 }}>
           <Box
             sx={{
               p: 3,
