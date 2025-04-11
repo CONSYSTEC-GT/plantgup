@@ -850,387 +850,207 @@ const TemplateFormCarousel = () => {
         </Alert>
       </Snackbar>
 
-      {/* Formulario (70%) */}<Grid item xs={8}><Box sx={{ height: '100%', overflowY: 'auto', pr: 2, px:2, py:2 }}>
+      {/* Formulario (70%) */}
+      <Grid item xs={8} sx={{ height: '100vh' }}>
+        <Box sx={{ height: '100%', overflowY: 'auto', pr: 2, px: 2, py: 2 }}>
 
-        {/* Template Name */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel htmlFor="template-name-input">
-              *Nombre de la plantilla
-            </FormLabel>
-            <TextField
-              id="template-name-input"
-              aria-required="true"
-              helperText={templateNameHelperText}
-              error={templateNameError}
-              value={templateName}
-              onChange={handleTemplateNameChange}
-              fullWidth
-              inputRef={templateNameRef}
-            />
-          </FormControl>
-        </Box>
-
-        {/*Categoría --data-urlencode 'category*/}<Box sx={{ maxWidth: '100%', border: "1px solid #ddd", borderRadius: 2, marginTop: 2, p: 3 }}>
-          <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
+          {/* Template Name */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <FormControl fullWidth>
-              <FormLabel>
-                *Categoría
+              <FormLabel htmlFor="template-name-input">
+                *Nombre de la plantilla
               </FormLabel>
+              <TextField
+                id="template-name-input"
+                aria-required="true"
+                helperText={templateNameHelperText}
+                error={templateNameError}
+                value={templateName}
+                onChange={handleTemplateNameChange}
+                fullWidth
+                inputRef={templateNameRef}
+              />
             </FormControl>
-            <Tooltip title="Tu plantilla debe pertencer a una de estas categorías">
-              <IconButton size="small">
-                <HelpOutlineIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
           </Box>
 
-          <RadioGroup value={selectedCategory} onChange={handleCategoryChange}>
-            <Stack spacing={2}>
-              {categories.map((category) => (
-                <Paper key={category.id} sx={{
-                  p: 2,
-                  cursor: category.disabled ? "default" : "pointer",
-                  opacity: category.disabled ? 0.5 : 1,
-                  border: categoriaPlantillaError && !selectedCategory ? "1px solid red" : "none", // Resaltar en rojo si hay error
-                  "&:hover": {
-                    bgcolor: category.disabled
-                      ? "transparent"
-                      : (theme) => alpha(theme.palette.primary.main, 0.04),
-                  },
-                }}>
-                  <FormControlLabel
-                    value={category.id}
-                    disabled={category.disabled}
-                    control={<Radio />}
-                    label={
-                      <Box sx={{ ml: 1 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                          {category.icon}
-                          <Typography variant="subtitle1" component="span">
-                            {category.title}
-                          </Typography>
-                        </Box>
-                        <Typography variant="body2" color="text.secondary">
-                          {category.description}
-                        </Typography>
-                      </Box>
-                    }
-                    sx={{ margin: 0, width: '100%' }}
-                  />
-                </Paper>
-              ))}
-            </Stack>
-          </RadioGroup>
-          {/* Mensaje de error */}
-          {categoriaPlantillaError && (
-            <FormHelperText error={categoriaPlantillaError}>
-              {categoriaPlantillaHelperText}
-            </FormHelperText>
-          )}
-        </Box>
-
-        {/* Tipo de plantilla --data-urlencode templateType*/}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              *Tipo de plantilla
-            </FormLabel>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
-              <MenuItem value="CAROUSEL">CARRUSEL</MenuItem>
-            </Select>
-            <FormHelperText>
-              Escoge el tipo de plantilla que se va a crear
-            </FormHelperText>
-          </FormControl>
-        </Box>
-
-        {/*Idioma --data-urlencodeo languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>*Idioma de plantilla</FormLabel>
-          </FormControl>
-
-          <FormControl fullWidth error={languageTypeError}>
-            <InputLabel id="languageCode">Selección</InputLabel>
-            <Select
-              labelId="languageCode"
-              id="languageCode"
-              label="Escoge el idioma"
-              aria-required="true"
-              value={languageCode} // Usamos directamente el código de idioma
-              onChange={handleLanguageCodeChange}
-              ref={languageCodeRef}
-            >
-              {Object.entries(languageMap).map(([code, name]) => (
-                <MenuItem key={code} value={code}>
-                  {name} ({code.toUpperCase()})
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>
-              {languageTypeError ? languageTypeHelperText : "Escoge el idioma de plantilla que se va a crear"}
-            </FormHelperText>
-          </FormControl>
-        </Box>
-
-        {/*Etiquetas de plantilla --data-urlencode vertical*/}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              *Etiquetas de plantilla
-            </FormLabel>
-          </FormControl>
-          <TextField
-            fullWidth
-            aria-required="true"
-            error={etiquetaPlantillaError}
-            value={vertical}
-            helperText="Defina para qué caso de uso, por ejemplo, actualización de cuenta, OTP, etc, en 2 o 3 palabras"
-            onChange={handleVerticalChange}
-            inputRef={verticalRef}
-          />
-        </Box>
-
-        {/* BodyMessage --data-urlencode content */}<Box
-          sx={{
-            width: "100%",
-            marginTop: 2,
-            p: 4,
-            border: "1px solid #ddd",
-            borderRadius: 2,
-            boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-
-          }}
-        >
-          <FormControl fullWidth>
-            <FormLabel sx={{ fontSize: "1.1rem", fontWeight: "500", color: "#333" }}>
-              *Contenido
-            </FormLabel>
-          </FormControl>
-
-          {/* Campo de texto con soporte para emojis y variables */}
-          <Box sx={{ position: "relative" }}>
-            <TextField
-              fullWidth
-              multiline
-              aria-required="true"
-              error={contenidoPlantillaTypeError}
-              rows={4}
-              label="Escribe"
-              placeholder="Ingresa el contenido de tu mensaje aquí..."
-              value={message}
-              onChange={(e) => {
-                const maxLength = 1024; // Establece tu límite de caracteres aquí
-                if (e.target.value.length <= maxLength) {
-                  setMessage(e.target.value);
-                }
-              }}
-              sx={{
-                mb: 3,
-                mt: 4,
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 1.5,
-                  "&:hover fieldset": {
-                    borderColor: "primary.main",
-                  }
-                }
-              }}
-              inputRef={messageRef}
-              inputProps={{
-                maxLength: 280, // Esto limita físicamente la entrada
-              }}
-              helperText={`${message.length}/280 caracteres`} // Muestra el contador
-              FormHelperTextProps={{
-                sx: {
-                  textAlign: 'right', // Alinea el contador a la derecha
-                  color: message.length === 280 ? 'error.main' : 'text.secondary' // Cambia color si llega al límite
-                }
-              }}
-            />
-
-            {/* Botones de emojis y acciones en una barra de herramientas mejor diseñada */}
-            <Stack
-              direction="row"
-              spacing={1}
-              sx={{
-                mb: 2,
-                p: 1,
-                borderRadius: 1,
-                backgroundColor: "rgba(0,0,0,0.02)"
-              }}
-            >
-              <Tooltip title="Agregar emojis">
-                <IconButton
-                  color="primary"
-                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                  sx={{ borderRadius: 1 }}
-                >
-                  <Smile size={20} />
+          {/*Categoría --data-urlencode 'category*/}<Box sx={{ maxWidth: '100%', border: "1px solid #ddd", borderRadius: 2, marginTop: 2, p: 3 }}>
+            <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <FormControl fullWidth>
+                <FormLabel>
+                  *Categoría
+                </FormLabel>
+              </FormControl>
+              <Tooltip title="Tu plantilla debe pertencer a una de estas categorías">
+                <IconButton size="small">
+                  <HelpOutlineIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
+            </Box>
 
-              <Divider orientation="vertical" flexItem />
-
-              <Button
-                variant="contained"
-                size="small"
-                startIcon={<AddIcon />}
-                onClick={handleAddVariable}
-                sx={{ borderRadius: 1 }}
-              >
-                Agregar Variable
-              </Button>
-
-              {variables.length > 0 && (
-                <Button
-                  color="error"
-                  variant="outlined"
-                  size="small"
-                  startIcon={<ClearIcon />}
-                  onClick={deleteAllVariables}
-                  sx={{ ml: "auto", borderRadius: 1 }}
-                >
-                  Borrar todas
-                </Button>
-              )}
-            </Stack>
-
-            {/* Selector de emojis */}
-            {showEmojiPicker && (
-              <Paper
-                elevation={3}
-                sx={{
-                  position: "absolute",
-                  zIndex: 1000,
-                  mt: 1
-                }}
-              >
-                <EmojiPicker onEmojiClick={handleEmojiClick} />
-              </Paper>
-            )}
-
-            {/* Variables disponibles como chips con campos de texto para ejemplos y descripción */}
-            {variables.length > 0 && (
-              <Paper
-                sx={{
-                  my: 2,
-                  p: 2,
-                  borderRadius: 2,
-                  border: "1px solid #ddd",
-                }}
-              >
-                <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 2 }}>
-                  Agrega una descripción y un ejemplo a tu variable:
-                </Typography>
-
-                {variables.map((variable, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      gap: 2,
-                      mb: 2,
-                      p: 1.5,
-                      backgroundColor: "#fff",
-                      borderRadius: 1,
-                      border: "1px solid #e0e0e0"
-                    }}
-                  >
-                    <Chip
-                      label={variable}
-                      color="primary"
-                      sx={{ fontWeight: "500" }}
-                      deleteIcon={
-                        <Tooltip title="Borrar variable">
-                          <DeleteIcon />
-                        </Tooltip>
+            <RadioGroup value={selectedCategory} onChange={handleCategoryChange}>
+              <Stack spacing={2}>
+                {categories.map((category) => (
+                  <Paper key={category.id} sx={{
+                    p: 2,
+                    cursor: category.disabled ? "default" : "pointer",
+                    opacity: category.disabled ? 0.5 : 1,
+                    border: categoriaPlantillaError && !selectedCategory ? "1px solid red" : "none", // Resaltar en rojo si hay error
+                    "&:hover": {
+                      bgcolor: category.disabled
+                        ? "transparent"
+                        : (theme) => alpha(theme.palette.primary.main, 0.04),
+                    },
+                  }}>
+                    <FormControlLabel
+                      value={category.id}
+                      disabled={category.disabled}
+                      control={<Radio />}
+                      label={
+                        <Box sx={{ ml: 1 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                            {category.icon}
+                            <Typography variant="subtitle1" component="span">
+                              {category.title}
+                            </Typography>
+                          </Box>
+                          <Typography variant="body2" color="text.secondary">
+                            {category.description}
+                          </Typography>
+                        </Box>
                       }
-                      onDelete={() => deleteVariable(variable)}
+                      sx={{ margin: 0, width: '100%' }}
                     />
-
-                    <Stack sx={{ flexGrow: 1, gap: 1 }}>
-                      <TextField
-                        size="small"
-                        label="Descripción"
-                        placeholder="¿Para qué sirve esta variable?"
-                        value={variableDescriptions[variable] || ''}
-                        onChange={(e) => handleUpdateDescriptions(variable, e.target.value)}
-                        sx={{ flexGrow: 1 }}
-                      />
-
-                      <TextField
-                        size="small"
-                        label="Texto de ejemplo"
-                        value={variableExamples[variable] || ''}
-                        onChange={(e) => handleUpdateExample(variable, e.target.value)}
-                        sx={{ flexGrow: 1 }}
-                        inputRef={(el) => (exampleRefs.current[variable] = el)}
-                        error={!!variableErrors[variable]}
-                        helperText={variableErrors[variable]}
-                      />
-
-                    </Stack>
-                  </Box>
+                  </Paper>
                 ))}
-              </Paper>
+              </Stack>
+            </RadioGroup>
+            {/* Mensaje de error */}
+            {categoriaPlantillaError && (
+              <FormHelperText error={categoriaPlantillaError}>
+                {categoriaPlantillaHelperText}
+              </FormHelperText>
             )}
           </Box>
-        </Box>
 
-        {/* Carrusel - with improvements */}
-        <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <Box display="flex" justifyContent="flex-end">
-            <Typography variant="h6">
-              {cards.length}/10 Tarjetas
-            </Typography>
+          {/* Tipo de plantilla --data-urlencode templateType*/}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+            <FormControl fullWidth>
+              <FormLabel>
+                *Tipo de plantilla
+              </FormLabel>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
+                <MenuItem value="CAROUSEL">CARRUSEL</MenuItem>
+              </Select>
+              <FormHelperText>
+                Escoge el tipo de plantilla que se va a crear
+              </FormHelperText>
+            </FormControl>
           </Box>
 
-          <FormControl fullWidth>
+          {/*Idioma --data-urlencodeo languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+            <FormControl fullWidth>
+              <FormLabel>*Idioma de plantilla</FormLabel>
+            </FormControl>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-              {/* File Upload Component */}
-              <FileUploadCarousel
-                onUploadSuccess={(uploadedUrl) => {
-                  setUploadedUrl(uploadedUrl);
-                }}
-                onImagePreview={(preview) => setImagePreview(preview)}
-              />
+            <FormControl fullWidth error={languageTypeError}>
+              <InputLabel id="languageCode">Selección</InputLabel>
+              <Select
+                labelId="languageCode"
+                id="languageCode"
+                label="Escoge el idioma"
+                aria-required="true"
+                value={languageCode} // Usamos directamente el código de idioma
+                onChange={handleLanguageCodeChange}
+                ref={languageCodeRef}
+              >
+                {Object.entries(languageMap).map(([code, name]) => (
+                  <MenuItem key={code} value={code}>
+                    {name} ({code.toUpperCase()})
+                  </MenuItem>
+                ))}
+              </Select>
+              <FormHelperText>
+                {languageTypeError ? languageTypeHelperText : "Escoge el idioma de plantilla que se va a crear"}
+              </FormHelperText>
+            </FormControl>
+          </Box>
 
-              {/* Image Preview */}
-              {(uploadedUrl || imagePreview) && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                  <img
-                    src={uploadedUrl || imagePreview}
-                    alt="Preview"
-                    style={{ maxWidth: '100%', maxHeight: 200 }}
-                  />
-                </Box>
-              )}
+          {/*Etiquetas de plantilla --data-urlencode vertical*/}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+            <FormControl fullWidth>
+              <FormLabel>
+                *Etiquetas de plantilla
+              </FormLabel>
+            </FormControl>
+            <TextField
+              fullWidth
+              aria-required="true"
+              error={etiquetaPlantillaError}
+              value={vertical}
+              helperText="Defina para qué caso de uso, por ejemplo, actualización de cuenta, OTP, etc, en 2 o 3 palabras"
+              onChange={handleVerticalChange}
+              inputRef={verticalRef}
+            />
+          </Box>
 
+          {/* BodyMessage --data-urlencode content */}<Box
+            sx={{
+              width: "100%",
+              marginTop: 2,
+              p: 4,
+              border: "1px solid #ddd",
+              borderRadius: 2,
+              boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+
+            }}
+          >
+            <FormControl fullWidth>
+              <FormLabel sx={{ fontSize: "1.1rem", fontWeight: "500", color: "#333" }}>
+                *Contenido
+              </FormLabel>
+            </FormControl>
+
+            {/* Campo de texto con soporte para emojis y variables */}
+            <Box sx={{ position: "relative" }}>
               <TextField
-                label="Título"
-                value={currentCard.title}
-                onChange={(e) => setCurrentCard({
-                  ...currentCard,
-                  title: e.target.value
-                })}
                 fullWidth
-              />
-              <TextField
-                label="Contenido de tarjeta"
                 multiline
-                value={currentCard.description}
-                onChange={(e) => setCurrentCard({
-                  ...currentCard,
-                  description: e.target.value
-                })}
-                rows={3}
-                fullWidth
+                aria-required="true"
+                error={contenidoPlantillaTypeError}
+                rows={4}
+                label="Escribe"
+                placeholder="Ingresa el contenido de tu mensaje aquí..."
+                value={message}
+                onChange={(e) => {
+                  const maxLength = 1024; // Establece tu límite de caracteres aquí
+                  if (e.target.value.length <= maxLength) {
+                    setMessage(e.target.value);
+                  }
+                }}
+                sx={{
+                  mb: 3,
+                  mt: 4,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 1.5,
+                    "&:hover fieldset": {
+                      borderColor: "primary.main",
+                    }
+                  }
+                }}
+                inputRef={messageRef}
+                inputProps={{
+                  maxLength: 280, // Esto limita físicamente la entrada
+                }}
+                helperText={`${message.length}/280 caracteres`} // Muestra el contador
+                FormHelperTextProps={{
+                  sx: {
+                    textAlign: 'right', // Alinea el contador a la derecha
+                    color: message.length === 280 ? 'error.main' : 'text.secondary' // Cambia color si llega al límite
+                  }
+                }}
               />
 
-              {/* Carrusel Botones de emojis y variables */}
+              {/* Botones de emojis y acciones en una barra de herramientas mejor diseñada */}
               <Stack
                 direction="row"
                 spacing={1}
@@ -1257,7 +1077,7 @@ const TemplateFormCarousel = () => {
                   variant="contained"
                   size="small"
                   startIcon={<AddIcon />}
-                  onClick={handleAddVariableCard}
+                  onClick={handleAddVariable}
                   sx={{ borderRadius: 1 }}
                 >
                   Agregar Variable
@@ -1269,7 +1089,7 @@ const TemplateFormCarousel = () => {
                     variant="outlined"
                     size="small"
                     startIcon={<ClearIcon />}
-                    onClick={deleteAllVariablesCard}
+                    onClick={deleteAllVariables}
                     sx={{ ml: "auto", borderRadius: 1 }}
                   >
                     Borrar todas
@@ -1287,12 +1107,12 @@ const TemplateFormCarousel = () => {
                     mt: 1
                   }}
                 >
-                  <EmojiPicker onEmojiClick={handleEmojiClickCarousel} />
+                  <EmojiPicker onEmojiClick={handleEmojiClick} />
                 </Paper>
               )}
 
-              {/* Carrusel Variables disponibles como chips con campos de texto para ejemplos y descripción */}
-              {variablesTarjeta.length > 0 && (
+              {/* Variables disponibles como chips con campos de texto para ejemplos y descripción */}
+              {variables.length > 0 && (
                 <Paper
                   sx={{
                     my: 2,
@@ -1305,7 +1125,7 @@ const TemplateFormCarousel = () => {
                     Agrega una descripción y un ejemplo a tu variable:
                   </Typography>
 
-                  {variablesTarjeta.map((variable, index) => (
+                  {variables.map((variable, index) => (
                     <Box
                       key={index}
                       sx={{
@@ -1329,7 +1149,7 @@ const TemplateFormCarousel = () => {
                             <DeleteIcon />
                           </Tooltip>
                         }
-                        onDelete={() => deleteVariableCard(variable)}
+                        onDelete={() => deleteVariable(variable)}
                       />
 
                       <Stack sx={{ flexGrow: 1, gap: 1 }}>
@@ -1338,7 +1158,7 @@ const TemplateFormCarousel = () => {
                           label="Descripción"
                           placeholder="¿Para qué sirve esta variable?"
                           value={variableDescriptions[variable] || ''}
-                          onChange={(e) => handleUpdateDescriptionsCard(variable, e.target.value)}
+                          onChange={(e) => handleUpdateDescriptions(variable, e.target.value)}
                           sx={{ flexGrow: 1 }}
                         />
 
@@ -1346,7 +1166,7 @@ const TemplateFormCarousel = () => {
                           size="small"
                           label="Texto de ejemplo"
                           value={variableExamples[variable] || ''}
-                          onChange={(e) => handleUpdateExampleCard(variable, e.target.value)}
+                          onChange={(e) => handleUpdateExample(variable, e.target.value)}
                           sx={{ flexGrow: 1 }}
                           inputRef={(el) => (exampleRefs.current[variable] = el)}
                           error={!!variableErrors[variable]}
@@ -1357,152 +1177,334 @@ const TemplateFormCarousel = () => {
                     </Box>
                   ))}
                 </Paper>
-
               )}
+            </Box>
+          </Box>
 
-              {/* Buttons Section with improved styling */}
-              <Typography variant="subtitle1" sx={{ mt: 1 }}>
-                Botones ({buttons?.length || 0}/3)
+          {/* Carrusel - with improvements */}
+          <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+            <Box display="flex" justifyContent="flex-end">
+              <Typography variant="h6">
+                {cards.length}/10 Tarjetas
               </Typography>
+            </Box>
 
-              <Button
-                variant="contained"
-                size="sm"
-                startIcon={<AddIcon />}
-                onClick={addButton}
-                disabled={buttons.length >= maxButtons || Object.keys(validationErrors).length > 0}
-                sx={{ mt: 3, mb: 3 }}
-              >
-                Agregar botón
-              </Button>
+            <FormControl fullWidth>
 
-              <Stack spacing={2}>
-                {buttons.map((button, index) => (
-                  <Box
-                    key={button.id}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+                {/* File Upload Component */}
+                <FileUploadCarousel
+                  onUploadSuccess={(uploadedUrl) => {
+                    setUploadedUrl(uploadedUrl);
+                  }}
+                  onImagePreview={(preview) => setImagePreview(preview)}
+                />
+
+                {/* Image Preview */}
+                {(uploadedUrl || imagePreview) && (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    <img
+                      src={uploadedUrl || imagePreview}
+                      alt="Preview"
+                      style={{ maxWidth: '100%', maxHeight: 200 }}
+                    />
+                  </Box>
+                )}
+
+                <TextField
+                  label="Título"
+                  value={currentCard.title}
+                  onChange={(e) => setCurrentCard({
+                    ...currentCard,
+                    title: e.target.value
+                  })}
+                  fullWidth
+                />
+                <TextField
+                  label="Contenido de tarjeta"
+                  multiline
+                  value={currentCard.description}
+                  onChange={(e) => setCurrentCard({
+                    ...currentCard,
+                    description: e.target.value
+                  })}
+                  rows={3}
+                  fullWidth
+                />
+
+                {/* Carrusel Botones de emojis y variables */}
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  sx={{
+                    mb: 2,
+                    p: 1,
+                    borderRadius: 1,
+                    backgroundColor: "rgba(0,0,0,0.02)"
+                  }}
+                >
+                  <Tooltip title="Agregar emojis">
+                    <IconButton
+                      color="primary"
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      sx={{ borderRadius: 1 }}
+                    >
+                      <Smile size={20} />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Divider orientation="vertical" flexItem />
+
+                  <Button
+                    variant="contained"
+                    size="small"
+                    startIcon={<AddIcon />}
+                    onClick={handleAddVariableCard}
+                    sx={{ borderRadius: 1 }}
+                  >
+                    Agregar Variable
+                  </Button>
+
+                  {variables.length > 0 && (
+                    <Button
+                      color="error"
+                      variant="outlined"
+                      size="small"
+                      startIcon={<ClearIcon />}
+                      onClick={deleteAllVariablesCard}
+                      sx={{ ml: "auto", borderRadius: 1 }}
+                    >
+                      Borrar todas
+                    </Button>
+                  )}
+                </Stack>
+
+                {/* Selector de emojis */}
+                {showEmojiPicker && (
+                  <Paper
+                    elevation={3}
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      border: "1px solid #ccc",
-                      borderRadius: 2,
-                      p: 2,
-                      backgroundColor: "#f9f9f9",
+                      position: "absolute",
+                      zIndex: 1000,
+                      mt: 1
                     }}
                   >
-                    {/* Campo de texto para el título del botón */}
-                    <TextField
-                      label="Titulo del botón"
-                      value={button.title}
-                      onChange={(e) => updateButton(button.id, "title", e.target.value)}
-                      fullWidth
-                    />
+                    <EmojiPicker onEmojiClick={handleEmojiClickCarousel} />
+                  </Paper>
+                )}
 
-                    {/* Selector de tipo de botón */}
-                    <Select
-                      value={button.type}
-                      onChange={(e) => updateButton(button.id, "type", e.target.value)}
-                      sx={{ minWidth: 150 }}
-                    >
-                      <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
-                      <MenuItem value="URL">URL</MenuItem>
-                      <MenuItem value="PHONE_NUMBER">Número de teléfono</MenuItem>
-                    </Select>
+                {/* Carrusel Variables disponibles como chips con campos de texto para ejemplos y descripción */}
+                {variablesTarjeta.length > 0 && (
+                  <Paper
+                    sx={{
+                      my: 2,
+                      p: 2,
+                      borderRadius: 2,
+                      border: "1px solid #ddd",
+                    }}
+                  >
+                    <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 2 }}>
+                      Agrega una descripción y un ejemplo a tu variable:
+                    </Typography>
 
-                    {/* Campo adicional según el tipo de botón */}
-                    {button.type === "URL" && (
-                      <TextField
-                        label="URL"
-                        value={button.url || ''}
-                        onChange={(e) => updateButtonWithValidation(
-                          button.id,
-                          "url",
-                          e.target.value,
-                          setButtons,
-                          setValidationErrors
-                        )}
-                        fullWidth
-                        error={validationErrors[button.id] !== undefined}
-                        helperText={validationErrors[button.id]}
-                      />
-                    )}
+                    {variablesTarjeta.map((variable, index) => (
+                      <Box
+                        key={index}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          flexWrap: 'wrap',
+                          gap: 2,
+                          mb: 2,
+                          p: 1.5,
+                          backgroundColor: "#fff",
+                          borderRadius: 1,
+                          border: "1px solid #e0e0e0"
+                        }}
+                      >
+                        <Chip
+                          label={variable}
+                          color="primary"
+                          sx={{ fontWeight: "500" }}
+                          deleteIcon={
+                            <Tooltip title="Borrar variable">
+                              <DeleteIcon />
+                            </Tooltip>
+                          }
+                          onDelete={() => deleteVariableCard(variable)}
+                        />
 
-                    {button.type === "PHONE_NUMBER" && (
-                      <TextField
-                        label="Phone Number"
-                        value={button.phoneNumber}
-                        onChange={(e) => updateButton(button.id, "phoneNumber", e.target.value)}
-                        fullWidth
-                      />
-                    )}
+                        <Stack sx={{ flexGrow: 1, gap: 1 }}>
+                          <TextField
+                            size="small"
+                            label="Descripción"
+                            placeholder="¿Para qué sirve esta variable?"
+                            value={variableDescriptions[variable] || ''}
+                            onChange={(e) => handleUpdateDescriptionsCard(variable, e.target.value)}
+                            sx={{ flexGrow: 1 }}
+                          />
 
-                    {/* Icono según el tipo de botón */}
-                    {button.type === "QUICK_REPLY" && <ArrowForward />}
-                    {button.type === "URL" && <Link />}
-                    {button.type === "PHONE_NUMBER" && <Phone />}
+                          <TextField
+                            size="small"
+                            label="Texto de ejemplo"
+                            value={variableExamples[variable] || ''}
+                            onChange={(e) => handleUpdateExampleCard(variable, e.target.value)}
+                            sx={{ flexGrow: 1 }}
+                            inputRef={(el) => (exampleRefs.current[variable] = el)}
+                            error={!!variableErrors[variable]}
+                            helperText={variableErrors[variable]}
+                          />
 
-                    {/* Botón para eliminar */}
-                    <IconButton color="error" onClick={() => removeButton(button.id)}>
-                      <Delete />
-                    </IconButton>
-                  </Box>
-                ))}
-              </Stack>
+                        </Stack>
+                      </Box>
+                    ))}
+                  </Paper>
 
-              <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
-                <Button variant="contained" color="secondary">
-                  Cancelar
-                </Button>
+                )}
+
+                {/* Buttons Section with improved styling */}
+                <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                  Botones ({buttons?.length || 0}/3)
+                </Typography>
+
                 <Button
-                  onClick={handleSaveCard}
                   variant="contained"
-                  color="primary"
-                  disabled={!currentCard.title || !currentCard.description}
+                  size="sm"
+                  startIcon={<AddIcon />}
+                  onClick={addButton}
+                  disabled={buttons.length >= maxButtons || Object.keys(validationErrors).length > 0}
+                  sx={{ mt: 3, mb: 3 }}
                 >
-                  Guardar Tarjeta
+                  Agregar botón
                 </Button>
+
+                <Stack spacing={2}>
+                  {buttons.map((button, index) => (
+                    <Box
+                      key={button.id}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        border: "1px solid #ccc",
+                        borderRadius: 2,
+                        p: 2,
+                        backgroundColor: "#f9f9f9",
+                      }}
+                    >
+                      {/* Campo de texto para el título del botón */}
+                      <TextField
+                        label="Titulo del botón"
+                        value={button.title}
+                        onChange={(e) => updateButton(button.id, "title", e.target.value)}
+                        fullWidth
+                      />
+
+                      {/* Selector de tipo de botón */}
+                      <Select
+                        value={button.type}
+                        onChange={(e) => updateButton(button.id, "type", e.target.value)}
+                        sx={{ minWidth: 150 }}
+                      >
+                        <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
+                        <MenuItem value="URL">URL</MenuItem>
+                        <MenuItem value="PHONE_NUMBER">Número de teléfono</MenuItem>
+                      </Select>
+
+                      {/* Campo adicional según el tipo de botón */}
+                      {button.type === "URL" && (
+                        <TextField
+                          label="URL"
+                          value={button.url || ''}
+                          onChange={(e) => updateButtonWithValidation(
+                            button.id,
+                            "url",
+                            e.target.value,
+                            setButtons,
+                            setValidationErrors
+                          )}
+                          fullWidth
+                          error={validationErrors[button.id] !== undefined}
+                          helperText={validationErrors[button.id]}
+                        />
+                      )}
+
+                      {button.type === "PHONE_NUMBER" && (
+                        <TextField
+                          label="Phone Number"
+                          value={button.phoneNumber}
+                          onChange={(e) => updateButton(button.id, "phoneNumber", e.target.value)}
+                          fullWidth
+                        />
+                      )}
+
+                      {/* Icono según el tipo de botón */}
+                      {button.type === "QUICK_REPLY" && <ArrowForward />}
+                      {button.type === "URL" && <Link />}
+                      {button.type === "PHONE_NUMBER" && <Phone />}
+
+                      {/* Botón para eliminar */}
+                      <IconButton color="error" onClick={() => removeButton(button.id)}>
+                        <Delete />
+                      </IconButton>
+                    </Box>
+                  ))}
+                </Stack>
+
+                <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
+                  <Button variant="contained" color="secondary">
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={handleSaveCard}
+                    variant="contained"
+                    color="primary"
+                    disabled={!currentCard.title || !currentCard.description}
+                  >
+                    Guardar Tarjeta
+                  </Button>
+                </Box>
               </Box>
-            </Box>
-          </FormControl>
+            </FormControl>
+          </Box>
+
+          {/*Boton Guardar Plantilla*/}<Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
+            <Button
+              variant="contained"
+              size="large"
+              color="primary"
+              onClick={iniciarRequest}
+              sx={{ mt: 3, mb: 3 }}
+            >
+              Enviar solicitud
+            </Button>
+          </Box>
+
+          {/* Diálogo de éxito */}
+          <CustomDialog
+            open={showSuccessModal}
+            onClose={() => setShowSuccessModal(false)}
+            title="¡Éxito!"
+            message="La plantilla fue creada correctamente."
+            severity="success"
+            buttonVariant="contained"
+          />
+
+          {/* Diálogo de error */}
+          <CustomDialog
+            open={showErrorModal}
+            onClose={() => setShowErrorModal(false)}
+            title="Error al crear plantilla"
+            message={errorMessageGupshup}
+            severity="error"
+            buttonVariant="contained"
+          />
         </Box>
-
-        {/*Boton Guardar Plantilla*/}<Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
-          <Button
-            variant="contained"
-            size="large"
-            color="primary"
-            onClick={iniciarRequest}
-            sx={{ mt: 3, mb: 3 }}
-          >
-            Enviar solicitud
-          </Button>
-        </Box>
-
-        {/* Diálogo de éxito */}
-        <CustomDialog
-          open={showSuccessModal}
-          onClose={() => setShowSuccessModal(false)}
-          title="¡Éxito!"
-          message="La plantilla fue creada correctamente."
-          severity="success"
-          buttonVariant="contained"
-        />
-
-        {/* Diálogo de error */}
-        <CustomDialog
-          open={showErrorModal}
-          onClose={() => setShowErrorModal(false)}
-          title="Error al crear plantilla"
-          message={errorMessageGupshup}
-          severity="error"
-          buttonVariant="contained"
-        />
-      </Box>
       </Grid>
 
       {/* Preview (30%) */}
       <Grid item xs={4}>
-        <Box sx={{ height: '100%', px:2, py:2, borderLeft: '1px solid #ddd', borderRadius: 2 }}>
+        <Box sx={{ height: '100%', px: 2, py: 2, borderLeft: '1px solid #ddd', borderRadius: 2 }}>
           <Box
             sx={{
               p: 3,
