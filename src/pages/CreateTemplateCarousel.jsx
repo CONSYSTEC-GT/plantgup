@@ -22,7 +22,7 @@ const CreateTemplateCarousel = () => {
         Crear Plantilla Carrusel
       </Typography>
 
-      {/*Boton Regresar*/}<Tooltip title="Volver al Dashboard">
+      {/*Boton Regresar<Tooltip title="Volver al Dashboard">
         <Button
           variant="contained"
           color="primary"
@@ -32,7 +32,7 @@ const CreateTemplateCarousel = () => {
         >
           Regresar
         </Button>
-      </Tooltip>
+      </Tooltip>*/}
 
       {/*Informacion inicial*/}<Box sx={{
         backgroundColor: '#fdf3f5',
