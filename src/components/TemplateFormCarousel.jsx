@@ -853,7 +853,7 @@ const TemplateFormCarousel = () => {
 
 
   return (
-    <Grid container sx={{ height: '100vh' }}>
+    <Grid container sx={{ height: 'calc(100vh - 16px)' }}>
 
       {/* Notificaciones */}<Snackbar
         open={openSnackbar}
@@ -867,8 +867,21 @@ const TemplateFormCarousel = () => {
       </Snackbar>
 
       {/* Formulario (70%) */}
-      <Grid item xs={8} sx={{ height: '100vh' }}>
-        <Box sx={{ height: '100%', overflowY: 'auto', pr: 2, px: 2, py: 2 }}>
+      <Grid item xs={8} sx={{
+        height: '100%',  // Usa 100% en lugar de 100vh
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        <Box sx={{
+          flexGrow: 1,
+          overflowY: 'auto',
+          pr: 2,
+          px: 2,
+          py: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          paddingBottom: 4  // Añadir padding abajo para asegurar que el último botón sea visible
+        }}>
 
           {/* Template Name */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <FormControl fullWidth>
@@ -1519,13 +1532,9 @@ const TemplateFormCarousel = () => {
         </Box>
       </Grid>
 
-      {/* Preview (30%) */}
+      {/* Panel lateral (30%) */}
       <Grid item xs={4} sx={{
-        position: 'sticky',
-        top: 0,
-        height: '100vh',
-        px: 2,
-        py: 2,
+        height: '100%',  // Usa 100% en lugar de 100vh
         borderLeft: '1px solid #ddd'
       }}>
         <Box sx={{ height: '100%', px: 2, py: 2, borderLeft: '1px solid #ddd', borderRadius: 2 }}>
