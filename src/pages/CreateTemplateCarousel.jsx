@@ -12,7 +12,12 @@ const CreateTemplateCarousel = () => {
   };
 
   return (
-    <Box sx={{ padding: 3 }}>
+    <Box sx={{ padding: 3,
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden'
+     }}>
       {/*Titulo*/}<Typography variant="h4" component="h1" gutterBottom>
         Crear Plantilla Carrusel
       </Typography>
@@ -34,6 +39,7 @@ const CreateTemplateCarousel = () => {
         padding: 1,  // Reducido de 2 a 1
         borderRadius: 1,
         marginTop: 2, // Reducido de 3 a 2
+        marginBottom: 2,
         fontSize: '0.875rem' // Tamaño de fuente ligeramente más pequeño
       }}>
         <Typography variant="body2"> {/* Cambiado a body2 que es más pequeño que body1 */}
