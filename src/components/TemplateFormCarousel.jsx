@@ -577,8 +577,23 @@ const TemplateFormCarousel = () => {
   };
 
   const handleEmojiClick = (emojiObject) => {
-    setMessage((prev) => `${prev} ${emojiObject.emoji}`);
+    // Obtener la posición actual del cursor
+    const cursor = messageRef.current.selectionStart;
+    
+    // Crear el nuevo texto insertando el emoji en la posición del cursor
+    const newText = message.slice(0, cursor) + emojiObject.emoji + message.slice(cursor);
+    
+    // Actualizar el estado del mensaje
+    setMessage(newText);
+    
+    // Cerrar el selector de emojis
     setShowEmojiPicker(false);
+    
+    // Devolver el foco al campo de texto y mover el cursor después del emoji
+    setTimeout(() => {
+      messageRef.current.focus();
+      messageRef.current.setSelectionRange(cursor + emojiObject.emoji.length, cursor + emojiObject.emoji.length);
+    }, 10);
   };
 
   const handleEmojiClickCarousel = (emojiObject) => {
