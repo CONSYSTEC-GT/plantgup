@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Alert, Box, Button, Card, CardActions, CardContent, CardMedia, Chip, Container, Dialog, DialogTitle, DialogContent, DialogActions, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Alert, Box, Button, Card, CardActions, CardContent, CardMedia, Chip, Container, Dialog, DialogTitle, DialogContent, DialogActions, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 
 import { Smile } from "react-feather"; // Icono para emojis
@@ -24,6 +24,10 @@ import Phone from "@mui/icons-material/Phone";
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import FileUploadCarousel from './FileUploadCarousel';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
@@ -38,16 +42,24 @@ const TemplateFormCarousel = () => {
   const [templateName, setTemplateName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [templateType, setTemplateType] = useState("CAROUSEL");
+  const [carouselType, setcarouselType] = useState("");
   const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al texto de su plantilla.");
   const [templateNameError, setTemplateNameError] = useState(false);
   const [vertical, setVertical] = useState("");
   const [message, setMessage] = useState("");
+
+  //carousel
+  const [messageCard, setMessageCard] = useState("");
+  const [cantidadBotones, setCantidadBotones] = useState("1");
+  const [tipoBoton, setTipoBoton] = useState("QUICK_REPLY")
+
   const [header, setHeader] = useState("");
   const [footer, setFooter] = useState("");
   const [buttons, setButtons] = useState([]);
   const [validationErrors, setValidationErrors] = useState({});
   const [example, setExample] = useState("");
   const [exampleMedia, setExampleMedia] = useState("");
+
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -99,12 +111,17 @@ const TemplateFormCarousel = () => {
 
   const templateNameRef = useRef(null);
   const templateTypeRef = useRef(null);
+  const carouselTypeRef = useRef(null);
   const languageCodeRef = useRef(null);
   const verticalRef = useRef(null);
   const messageRef = useRef(null);
+  const messageCardRef = useRef(null);
   const exampleRef = useRef(null);
   const selectedCategoryRef = useRef(null);
   const exampleRefs = useRef({});
+
+  const emojiPickerRef = useRef(null);
+  const emojiPickerCardRef = useRef(null);
 
   const resetForm = () => {
     setTemplateName("");
@@ -477,6 +494,11 @@ const TemplateFormCarousel = () => {
     }
   };
 
+  //CAROUSEL PLANTILLA
+  const handleCarouselTypeChange = (event) => {
+    setcarouselType(event.target.value)
+  }
+
   const handleHeaderTemplateTypeChange = (event) => {
     setTemplateType(event.target.value);
     setHeader(''); // Resetear el header al cambiar el tipo
@@ -562,10 +584,114 @@ const TemplateFormCarousel = () => {
   };
 
   // VARIABLES DEL BODY MESSAGE
+  const handleBodyMessageChange = (e) => {
+    const newText = e.target.value;
+    const maxLength = 1024;
+
+    if (newText.length <= maxLength) {
+      // Guardar el nuevo texto
+      setMessage(newText);
+
+      // Verificar qué variables se han eliminado del texto
+      const deletedVariables = [];
+      variables.forEach(variable => {
+        if (!newText.includes(variable)) {
+          deletedVariables.push(variable);
+        }
+      });
+
+      // Si se eliminaron variables, actualiza el estado
+      if (deletedVariables.length > 0) {
+        // Filtrar las variables eliminadas
+        const remainingVariables = variables.filter(v => !deletedVariables.includes(v));
+
+        // Actualizar el estado de las variables
+        setVariables(remainingVariables);
+
+        // Actualizar las descripciones y ejemplos
+        const newDescriptions = { ...variableDescriptions };
+        const newExamples = { ...variableExamples };
+        const newErrors = { ...variableErrors };
+
+        deletedVariables.forEach(v => {
+          delete newDescriptions[v];
+          delete newExamples[v];
+          delete newErrors[v];
+        });
+
+        setVariableDescriptions(newDescriptions);
+        setVariableExamples(newExamples);
+        setVariableErrors(newErrors);
+      }
+    }
+  };
+
+  const handleBodyMessageCardChange = (e) => {
+    const newText = e.target.value;
+    const maxLength = 1024;
+
+    if (newText.length <= maxLength) {
+      // Guardar el nuevo texto
+      setMessageCard(newText);
+
+      // Verificar qué variables se han eliminado del texto
+      const deletedVariables = [];
+      variables.forEach(variable => {
+        if (!newText.includes(variable)) {
+          deletedVariables.push(variable);
+        }
+      });
+
+      // Si se eliminaron variables, actualiza el estado
+      if (deletedVariables.length > 0) {
+        // Filtrar las variables eliminadas
+        const remainingVariables = variables.filter(v => !deletedVariables.includes(v));
+
+        // Actualizar el estado de las variables
+        setVariables(remainingVariables);
+
+        // Actualizar las descripciones y ejemplos
+        const newDescriptions = { ...variableDescriptions };
+        const newExamples = { ...variableExamples };
+        const newErrors = { ...variableErrors };
+
+        deletedVariables.forEach(v => {
+          delete newDescriptions[v];
+          delete newExamples[v];
+          delete newErrors[v];
+        });
+
+        setVariableDescriptions(newDescriptions);
+        setVariableExamples(newExamples);
+        setVariableErrors(newErrors);
+      }
+    }
+  };
+
+  // VARIABLES DEL BODY MESSAGE
   const handleAddVariable = () => {
     const newVariable = `{{${variables.length + 1}}}`;
-    setMessage((prev) => `${prev} ${newVariable}`);
+
+    // Obtener la posición actual del cursor
+    const cursorPosition = messageRef.current.selectionStart;
+
+    // Dividir el texto en dos partes: antes y después del cursor
+    const textBeforeCursor = message.substring(0, cursorPosition);
+    const textAfterCursor = message.substring(cursorPosition);
+
+    // Insertar la variable en la posición del cursor
+    const newMessage = `${textBeforeCursor}${newVariable}${textAfterCursor}`;
+    setMessage(newMessage);
+
+    // Actualizar el array de variables
     setVariables([...variables, newVariable]);
+
+    // OPCIONAL: Colocar el cursor después de la variable insertada
+    setTimeout(() => {
+      const newPosition = cursorPosition + newVariable.length;
+      messageRef.current.focus();
+      messageRef.current.setSelectionRange(newPosition, newPosition);
+    }, 0);
   };
 
   const handleAddVariableCard = () => {
@@ -598,14 +724,26 @@ const TemplateFormCarousel = () => {
   };
 
   const handleEmojiClickCarousel = (emojiObject) => {
-    setCurrentCard((prev) => ({
-      ...prev,
-      description: prev.description + emojiObject.emoji
-    }));
-    setShowEmojiPicker(false);
+        // Obtener la posición actual del cursor
+        const cursor = messageRef.current.selectionStart;
+
+        // Crear el nuevo texto insertando el emoji en la posición del cursor
+        const newText = message.slice(0, cursor) + emojiObject.emoji + message.slice(cursor);
+    
+        // Actualizar el estado del mensaje
+        setMessage(newText);
+    
+        // Cerrar el selector de emojis
+        setShowEmojiPickerCards(false);
+    
+        // Devolver el foco al campo de texto y mover el cursor después del emoji
+        setTimeout(() => {
+          messageRef.current.focus();
+          messageRef.current.setSelectionRange(cursor + emojiObject.emoji.length, cursor + emojiObject.emoji.length);
+        }, 10);
   };
 
-  // Nueva función para borrar una variable específica
+  // Función para borrar una variable específica
   const deleteVariable = (variableToDelete) => {
     // Eliminar la variable del texto
     const newMessage = message.replace(variableToDelete, '');
@@ -613,10 +751,62 @@ const TemplateFormCarousel = () => {
 
     // Eliminar la variable de la lista de variables
     const updatedVariables = variables.filter(v => v !== variableToDelete);
-    setVariables(updatedVariables);
+
+    // Renumerar las variables restantes para mantener el orden secuencial
+    const renumberedVariables = [];
+    const variableMapping = {}; // Mapeo de variable antigua a nueva
+
+    updatedVariables.forEach((v, index) => {
+      const newVar = `{{${index + 1}}}`;
+      renumberedVariables.push(newVar);
+      variableMapping[v] = newVar;
+    });
+
+    // Actualizar el texto con las variables renumeradas
+    let updatedMessage = newMessage;
+    Object.entries(variableMapping).forEach(([oldVar, newVar]) => {
+      updatedMessage = updatedMessage.replaceAll(oldVar, newVar);
+    });
+
+    // Crear nuevos objetos para descripciones y ejemplos de variables
+    const newVariableDescriptions = {};
+    const newVariableExamples = {};
+    const newVariableErrors = { ...variableErrors };
+
+    // Eliminar la variable eliminada de los errores
+    delete newVariableErrors[variableToDelete];
+
+    // Copiar las descripciones y ejemplos con las nuevas claves
+    Object.entries(variableMapping).forEach(([oldVar, newVar]) => {
+      if (variableDescriptions[oldVar]) {
+        newVariableDescriptions[newVar] = variableDescriptions[oldVar];
+      }
+      if (variableExamples[oldVar]) {
+        newVariableExamples[newVar] = variableExamples[oldVar];
+      }
+      if (variableErrors[oldVar]) {
+        newVariableErrors[newVar] = variableErrors[oldVar];
+        delete newVariableErrors[oldVar];
+      }
+    });
+
+    // Actualizar todos los estados
+    setMessage(updatedMessage);
+    setVariables(renumberedVariables);
+    setVariableDescriptions(newVariableDescriptions);
+    setVariableExamples(newVariableExamples);
+    setVariableErrors(newVariableErrors);
+
+    // Actualizar las referencias
+    const newExampleRefs = {};
+    renumberedVariables.forEach(v => {
+      newExampleRefs[v] = exampleRefs.current[variableMapping[v]] || null;
+    });
+    exampleRefs.current = newExampleRefs;
 
     messageRef.current?.focus();
   };
+
 
   // Función para borrar una variable específica de la tarjeta
   const deleteVariableCard = (variableToDelete) => {
@@ -637,7 +827,7 @@ const TemplateFormCarousel = () => {
     // descriptionRef.current?.focus();
   };
 
-  // Nueva función para borrar todas las variables
+  // Función para borrar todas las variables
   const deleteAllVariables = () => {
     let newMessage = message;
     variables.forEach(variable => {
@@ -645,6 +835,13 @@ const TemplateFormCarousel = () => {
     });
     setMessage(newMessage);
     setVariables([]);
+
+    // Limpiar todos los estados relacionados con variables
+    setVariableDescriptions({});
+    setVariableExamples({});
+    setVariableErrors({});
+    exampleRefs.current = {};
+
     messageRef.current?.focus();
   };
 
@@ -725,6 +922,8 @@ const TemplateFormCarousel = () => {
     return result;
   };
 
+
+
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
   useEffect(() => {
     console.log("Mensaje original:", message);
@@ -737,7 +936,26 @@ const TemplateFormCarousel = () => {
     setExample(newExample);
   }, [message, variableExamples]);
 
+  useEffect(() => {
+    // Función que maneja los clics fuera del componente
+    const handleClickOutside = (event) => {
+      // Si el picker está visible y el clic fue fuera del picker
+      if (showEmojiPicker && emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    // Agregar el detector de eventos al documento
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Limpiar el detector de eventos cuando el componente se desmonte
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showEmojiPicker]); // Se ejecuta cuando showEmojiPicker cambia
+
   //PARA LAS TARJETAS DEL CARRUSEL
+  {/* 
   const [cards, setCards] = useState([]);
 
   const [currentCard, setCurrentCard] = useState({
@@ -842,14 +1060,58 @@ const TemplateFormCarousel = () => {
       return null;
     }).filter(button => button !== null);
   };
+  */}
 
+  // Estado para los acordeones - solo guardamos el ID único y el contenido del formulario
+  const [accordions, setAccordions] = useState([
+    { id: 'accordion-1', name: '', email: '' },
+    { id: 'accordion-2', name: '', email: '' },
+  ]);
 
-  // Guardar el array completo en un estado o variable global
-  // Este es el array que utilizarás para tu request
-  //const requestFormat = JSON.stringify(updatedCards);
+  // Estado para controlar qué acordeón está expandido
+  const [expanded, setExpanded] = useState(false);
 
-  // También puedes guardarlo en localStorage si necesitas persistencia
-  //localStorage.setItem('formattedCards', requestFormat);
+  // Manejar cambios en la expansión del acordeón
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
+  // Manejar cambios en los formularios
+  const handleFormChange = (id, field, value) => {
+    setAccordions(accordions.map(accordion =>
+      accordion.id === id ? { ...accordion, [field]: value } : accordion
+    ));
+  };
+
+  // Añadir nuevo acordeón
+  const addAccordion = () => {
+    // Generamos un ID único
+    const newId = `accordion-${Date.now()}`;
+    setAccordions([...accordions, {
+      id: newId,
+      name: '',
+      email: ''
+    }]);
+  };
+
+  // Eliminar acordeón
+  const deleteAccordion = (id, event) => {
+    // Detener la propagación para evitar que se abra/cierre el acordeón
+    event.stopPropagation();
+    setAccordions(accordions.filter(accordion => accordion.id !== id));
+  };
+
+  // Manejar el fin del arrastre
+  const onDragEnd = (result) => {
+    // Si no hay destino válido, no hacer nada
+    if (!result.destination) return;
+
+    const items = Array.from(accordions);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setAccordions(items);
+  };
 
 
   return (
@@ -867,7 +1129,7 @@ const TemplateFormCarousel = () => {
       </Snackbar>
 
       {/* Formulario (70%) */}
-      <Grid item xs={8} sx={{ height: '100vh' }}>
+      <Grid item xs={8} sx={{ height: '100%' }}>
         <Box sx={{ height: '100%', overflowY: 'auto', pr: 2, px: 2, py: 2 }}>
 
           {/* Template Name */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
@@ -1037,12 +1299,7 @@ const TemplateFormCarousel = () => {
                 label="Escribe"
                 placeholder="Ingresa el contenido de tu mensaje aquí..."
                 value={message}
-                onChange={(e) => {
-                  const maxLength = 1024; // Establece tu límite de caracteres aquí
-                  if (e.target.value.length <= maxLength) {
-                    setMessage(e.target.value);
-                  }
-                }}
+                onChange={handleBodyMessageChange}
                 sx={{
                   mb: 3,
                   mt: 4,
@@ -1080,6 +1337,7 @@ const TemplateFormCarousel = () => {
                 <Tooltip title="Agregar emojis">
                   <IconButton
                     color="primary"
+                    ref={emojiPickerRef}
                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                     sx={{ borderRadius: 1 }}
                   >
@@ -1199,292 +1457,327 @@ const TemplateFormCarousel = () => {
 
           {/* Carrusel - with improvements */}
           <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <Box display="flex" justifyContent="flex-end">
-              <Typography variant="h6">
-                {cards.length}/10 Tarjetas
-              </Typography>
+            <Box>
+              <FormControl fullWidth>
+                <FormLabel sx={{ fontSize: "1.1rem", fontWeight: "500", color: "#333", mb: 2 }}>
+                  *Carrusel
+                </FormLabel>
+
+                <FormLabel sx={{ mb: 2 }}>
+                  Agregue medios, botones y descripciones de tarjetas para sus tarjetas de carrusel.
+                </FormLabel>
+
+                <TextField
+                  id="carousel-type"
+                  select
+                  label="Tipo de carrusel"
+                  value={carouselType}
+                  onChange={handleCarouselTypeChange}
+                  inputRef={carouselTypeRef}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                >
+                  <MenuItem value="IMAGEN">Imagen</MenuItem>
+                  <MenuItem value="VIDEO">Video</MenuItem>
+                  {/* Agrega más opciones si quieres */}
+
+                </TextField>
+              </FormControl>
             </Box>
 
-            <FormControl fullWidth>
+            <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
 
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-                {/* File Upload Component */}
-                <FileUploadCarousel
-                  onUploadSuccess={(uploadedUrl) => {
-                    setUploadedUrl(uploadedUrl);
-                  }}
-                  onImagePreview={(preview) => setImagePreview(preview)}
-                />
 
-                {/* Image Preview */}
-                {(uploadedUrl || imagePreview) && (
-                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                    <img
-                      src={uploadedUrl || imagePreview}
-                      alt="Preview"
-                      style={{ maxWidth: '100%', maxHeight: 200 }}
-                    />
-                  </Box>
-                )}
+              {/* Segundo Select Cantidad de botones */}
+              <TextField
+                id="carousel-style"
+                select
+                label="Cantidad de botones"
+                fullWidth
+                value={cantidadBotones}
+              >
+                <MenuItem value="1">1</MenuItem>
+                <MenuItem value="2">2</MenuItem>
+              </TextField>
 
-                <TextField
-                  label="Título"
-                  value={currentCard.title}
-                  onChange={(e) => setCurrentCard({
-                    ...currentCard,
-                    title: e.target.value
-                  })}
-                  fullWidth
-                />
-                <TextField
-                  label="Contenido de tarjeta"
-                  multiline
-                  value={currentCard.description}
-                  onChange={(e) => setCurrentCard({
-                    ...currentCard,
-                    description: e.target.value
-                  })}
-                  rows={3}
-                  fullWidth
-                />
+              {/* Tercer Select TIPO DE BOTONES */}
+              <TextField
+                id="carousel-animation"
+                select
+                label="Tipo de botones"
+                fullWidth
+                value={tipoBoton}
+              >
+                <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
+                <MenuItem value="URL">Link</MenuItem>
+                <MenuItem value="PHONE_NUMBER">Teléfono</MenuItem>
+              </TextField>
 
-                {/* Carrusel Botones de emojis y variables */}
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  sx={{
-                    mb: 2,
-                    p: 1,
-                    borderRadius: 1,
-                    backgroundColor: "rgba(0,0,0,0.02)"
-                  }}
-                >
-                  <Tooltip title="Agregar emojis">
-                    <IconButton
-                      color="primary"
-                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <Smile size={20} />
-                    </IconButton>
-                  </Tooltip>
 
-                  <Divider orientation="vertical" flexItem />
+            </Box>
 
-                  <Button
-                    variant="contained"
-                    size="small"
-                    startIcon={<AddIcon />}
-                    onClick={handleAddVariableCard}
-                    sx={{ borderRadius: 1 }}
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="accordions">
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
                   >
-                    Agregar Variable
-                  </Button>
-
-                  {variables.length > 0 && (
-                    <Button
-                      color="error"
-                      variant="outlined"
-                      size="small"
-                      startIcon={<ClearIcon />}
-                      onClick={deleteAllVariablesCard}
-                      sx={{ ml: "auto", borderRadius: 1 }}
-                    >
-                      Borrar todas
-                    </Button>
-                  )}
-                </Stack>
-
-                {/* Selector de emojis */}
-                {showEmojiPickerCards && (
-                  <Paper
-                    elevation={3}
-                    sx={{
-                      position: "absolute",
-                      zIndex: 1000,
-                      mt: 1
-                    }}
-                  >
-                    <EmojiPicker onEmojiClick={handleEmojiClickCarousel} />
-                  </Paper>
-                )}
-
-                {/* Carrusel Variables disponibles como chips con campos de texto para ejemplos y descripción */}
-                {variablesTarjeta.length > 0 && (
-                  <Paper
-                    sx={{
-                      my: 2,
-                      p: 2,
-                      borderRadius: 2,
-                      border: "1px solid #ddd",
-                    }}
-                  >
-                    <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 2 }}>
-                      Agrega una descripción y un ejemplo a tu variable:
-                    </Typography>
-
-                    {variablesTarjeta.map((variable, index) => (
-                      <Box
-                        key={index}
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          flexWrap: 'wrap',
-                          gap: 2,
-                          mb: 2,
-                          p: 1.5,
-                          backgroundColor: "#fff",
-                          borderRadius: 1,
-                          border: "1px solid #e0e0e0"
-                        }}
+                    {accordions.map((accordion, index) => (
+                      <Draggable
+                        key={accordion.id}
+                        draggableId={accordion.id}
+                        index={index}
                       >
-                        <Chip
-                          label={variable}
-                          color="primary"
-                          sx={{ fontWeight: "500" }}
-                          deleteIcon={
-                            <Tooltip title="Borrar variable">
-                              <DeleteIcon />
-                            </Tooltip>
-                          }
-                          onDelete={() => deleteVariableCard(variable)}
-                        />
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                          >
+                            <Accordion
+                              expanded={expanded === accordion.id}
+                              onChange={handleChange(accordion.id)}
+                              sx={{
+                                mb: 2,
+                                transition: 'all 0.3s ease'
 
-                        <Stack sx={{ flexGrow: 1, gap: 1 }}>
-                          <TextField
-                            size="small"
-                            label="Descripción"
-                            placeholder="¿Para qué sirve esta variable?"
-                            value={variableDescriptions[variable] || ''}
-                            onChange={(e) => handleUpdateDescriptionsCard(variable, e.target.value)}
-                            sx={{ flexGrow: 1 }}
-                          />
+                              }}
+                            >
+                              <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls={`${accordion.id}-content`}
+                                id={`${accordion.id}-header`}
+                                sx={{
+                                  '& .MuiAccordionSummary-content': {
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    width: '100%',
+                                    backgroundColor: '#f4fdff', // Color de fondo del encabezado
+                                    borderTop: '3px solid #f4fdff', // Ejemplo de borde superior con el mismo color
 
-                          <TextField
-                            size="small"
-                            label="Texto de ejemplo"
-                            value={variableExamples[variable] || ''}
-                            onChange={(e) => handleUpdateExampleCard(variable, e.target.value)}
-                            sx={{ flexGrow: 1 }}
-                            inputRef={(el) => (exampleRefs.current[variable] = el)}
-                            error={!!variableErrors[variable]}
-                            helperText={variableErrors[variable]}
-                          />
+                                  },
+                                  cursor: 'default'
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    width: '100%',
+                                    cursor: 'grab',
+                                    '&:active': {
+                                      cursor: 'grabbing'
+                                    }
+                                  }}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <DragIndicatorIcon sx={{ mr: 1, color: 'text.secondary' }} />
+                                  {/* Usamos el índice + 1 para mostrar el número correcto en el título */}
+                                  <Typography>Tarjeta {index + 1}</Typography>
+                                </Box>
+                                <IconButton
+                                  size="small"
+                                  onClick={(e) => deleteAccordion(accordion.id, e)}
+                                  sx={{ ml: 2 }}
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </AccordionSummary>
+                              <AccordionDetails>
+                                <Box component="form" sx={{ '& .MuiTextField-root': { mb: 2, width: '100%' } }}>
+                                  <FileUploadCarousel />
 
-                        </Stack>
-                      </Box>
+
+                                  <Box sx={{ position: "relative" }}>
+                                    <TextField
+                                      fullWidth
+                                      multiline
+                                      aria-required="true"
+                                      error={contenidoPlantillaTypeError}
+                                      rows={4}
+                                      label="Escribe"
+                                      placeholder="Ingresa el contenido de tu mensaje aquí..."
+                                      value={messageCard}
+                                      onChange={handleBodyMessageCardChange}
+                                      sx={{
+                                        mb: 3,
+                                        mt: 4,
+                                        "& .MuiOutlinedInput-root": {
+                                          borderRadius: 1.5,
+                                          "&:hover fieldset": {
+                                            borderColor: "primary.main",
+                                          }
+                                        }
+                                      }}
+                                      inputRef={messageCardRef}
+                                      inputProps={{
+                                        maxLength: 280, // Esto limita físicamente la entrada
+                                      }}
+                                      helperText={`${messageCard.length}/280 caracteres`} // Muestra el contador
+                                      FormHelperTextProps={{
+                                        sx: {
+                                          textAlign: 'right', // Alinea el contador a la derecha
+                                          color: messageCard.length === 280 ? 'error.main' : 'text.secondary' // Cambia color si llega al límite
+                                        }
+                                      }}
+                                    />
+
+                                    {/* Botones de emojis y acciones en una barra de herramientas mejor diseñada */}
+                                    <Stack
+                                      direction="row"
+                                      spacing={1}
+                                      sx={{
+                                        mb: 2,
+                                        p: 1,
+                                        borderRadius: 1,
+                                        backgroundColor: "rgba(0,0,0,0.02)"
+                                      }}
+                                    >
+                                      <Tooltip title="Agregar emojis">
+                                        <IconButton
+                                          color="primary"
+                                          ref={emojiPickerCardRef}
+                                          onClick={() => setShowEmojiPickerCards(!showEmojiPickerCards)}
+                                          sx={{ borderRadius: 1 }}
+                                        >
+                                          <Smile size={20} />
+                                        </IconButton>
+                                      </Tooltip>
+
+                                      <Divider orientation="vertical" flexItem />
+
+                                      <Button
+                                        variant="contained"
+                                        size="small"
+                                        startIcon={<AddIcon />}
+                                        onClick={handleAddVariableCard}
+                                        sx={{ borderRadius: 1 }}
+                                      >
+                                        Agregar Variable
+                                      </Button>
+
+                                      {variables.length > 0 && (
+                                        <Button
+                                          color="error"
+                                          variant="outlined"
+                                          size="small"
+                                          startIcon={<ClearIcon />}
+                                          onClick={deleteAllVariablesCard}
+                                          sx={{ ml: "auto", borderRadius: 1 }}
+                                        >
+                                          Borrar todas
+                                        </Button>
+                                      )}
+                                    </Stack>
+
+                                    {/* Selector de emojis */}
+                                    {setShowEmojiPickerCards && (
+                                      <Paper
+                                        elevation={3}
+                                        sx={{
+                                          position: "absolute",
+                                          zIndex: 1000,
+                                          mt: 1
+                                        }}
+                                      >
+                                        <EmojiPicker onEmojiClick={handleEmojiClickCarousel} />
+                                      </Paper>
+                                    )}
+
+                                    {/* Variables disponibles como chips con campos de texto para ejemplos y descripción */}
+                                    {variables.length > 0 && (
+                                      <Paper
+                                        sx={{
+                                          my: 2,
+                                          p: 2,
+                                          borderRadius: 2,
+                                          border: "1px solid #ddd",
+                                        }}
+                                      >
+                                        <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 2 }}>
+                                          Agrega una descripción y un ejemplo a tu variable:
+                                        </Typography>
+
+                                        {variables.map((variable, index) => (
+                                          <Box
+                                            key={index}
+                                            sx={{
+                                              display: 'flex',
+                                              alignItems: 'center',
+                                              flexWrap: 'wrap',
+                                              gap: 2,
+                                              mb: 2,
+                                              p: 1.5,
+                                              backgroundColor: "#fff",
+                                              borderRadius: 1,
+                                              border: "1px solid #e0e0e0"
+                                            }}
+                                          >
+                                            <Chip
+                                              label={variable}
+                                              color="primary"
+                                              sx={{ fontWeight: "500" }}
+                                              deleteIcon={
+                                                <Tooltip title="Borrar variable">
+                                                  <DeleteIcon />
+                                                </Tooltip>
+                                              }
+                                              onDelete={() => deleteVariable(variable)}
+                                            />
+
+                                            <Stack sx={{ flexGrow: 1, gap: 1 }}>
+                                              <TextField
+                                                size="small"
+                                                label="Descripción"
+                                                placeholder="¿Para qué sirve esta variable?"
+                                                value={variableDescriptions[variable] || ''}
+                                                onChange={(e) => handleUpdateDescriptions(variable, e.target.value)}
+                                                sx={{ flexGrow: 1 }}
+                                              />
+
+                                              <TextField
+                                                size="small"
+                                                label="Texto de ejemplo"
+                                                value={variableExamples[variable] || ''}
+                                                onChange={(e) => handleUpdateExample(variable, e.target.value)}
+                                                sx={{ flexGrow: 1 }}
+                                                inputRef={(el) => (exampleRefs.current[variable] = el)}
+                                                error={!!variableErrors[variable]}
+                                                helperText={variableErrors[variable]}
+                                              />
+
+                                            </Stack>
+                                          </Box>
+                                        ))}
+                                      </Paper>
+                                    )}
+                                  </Box>
+
+                                </Box>
+                              </AccordionDetails>
+                            </Accordion>
+                          </div>
+                        )}
+                      </Draggable>
                     ))}
-                  </Paper>
-
+                    {provided.placeholder}
+                  </div>
                 )}
+              </Droppable>
+            </DragDropContext>
 
-                {/* Buttons Section with improved styling */}
-                <Typography variant="subtitle1" sx={{ mt: 1 }}>
-                  Botones ({buttons?.length || 0}/3)
-                </Typography>
-
-                <Button
-                  variant="contained"
-                  size="sm"
-                  startIcon={<AddIcon />}
-                  onClick={addButton}
-                  disabled={buttons.length >= maxButtons || Object.keys(validationErrors).length > 0}
-                  sx={{ mt: 3, mb: 3 }}
-                >
-                  Agregar botón
-                </Button>
-
-                <Stack spacing={2}>
-                  {buttons.map((button, index) => (
-                    <Box
-                      key={button.id}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 2,
-                        border: "1px solid #ccc",
-                        borderRadius: 2,
-                        p: 2,
-                        backgroundColor: "#f9f9f9",
-                      }}
-                    >
-                      {/* Campo de texto para el título del botón */}
-                      <TextField
-                        label="Titulo del botón"
-                        value={button.title}
-                        onChange={(e) => updateButton(button.id, "title", e.target.value)}
-                        fullWidth
-                      />
-
-                      {/* Selector de tipo de botón */}
-                      <Select
-                        value={button.type}
-                        onChange={(e) => updateButton(button.id, "type", e.target.value)}
-                        sx={{ minWidth: 150 }}
-                      >
-                        <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
-                        <MenuItem value="URL">URL</MenuItem>
-                        <MenuItem value="PHONE_NUMBER">Número de teléfono</MenuItem>
-                      </Select>
-
-                      {/* Campo adicional según el tipo de botón */}
-                      {button.type === "URL" && (
-                        <TextField
-                          label="URL"
-                          value={button.url || ''}
-                          onChange={(e) => updateButtonWithValidation(
-                            button.id,
-                            "url",
-                            e.target.value,
-                            setButtons,
-                            setValidationErrors
-                          )}
-                          fullWidth
-                          error={validationErrors[button.id] !== undefined}
-                          helperText={validationErrors[button.id]}
-                        />
-                      )}
-
-                      {button.type === "PHONE_NUMBER" && (
-                        <TextField
-                          label="Phone Number"
-                          value={button.phoneNumber}
-                          onChange={(e) => updateButton(button.id, "phoneNumber", e.target.value)}
-                          fullWidth
-                        />
-                      )}
-
-                      {/* Icono según el tipo de botón */}
-                      {button.type === "QUICK_REPLY" && <ArrowForward />}
-                      {button.type === "URL" && <Link />}
-                      {button.type === "PHONE_NUMBER" && <Phone />}
-
-                      {/* Botón para eliminar */}
-                      <IconButton color="error" onClick={() => removeButton(button.id)}>
-                        <Delete />
-                      </IconButton>
-                    </Box>
-                  ))}
-                </Stack>
-
-                <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
-                  <Button variant="contained" color="secondary">
-                    Cancelar
-                  </Button>
-                  <Button
-                    onClick={handleSaveCard}
-                    variant="contained"
-                    color="primary"
-                    disabled={!currentCard.title || !currentCard.description}
-                  >
-                    Guardar Tarjeta
-                  </Button>
-                </Box>
-              </Box>
-            </FormControl>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={addAccordion}
+              sx={{ mt: 2 }}
+            >
+              Añadir Acordeón
+            </Button>
           </Box>
 
-          {/*Boton Guardar Plantilla*/}<Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
+          {/*Boton Guardar Plantilla*/}<Box sx={{ display: "flex", justifyContent: "flex-end", p: 2, mb: 20 }}>
             <Button
               variant="contained"
               size="large"
@@ -1519,15 +1812,8 @@ const TemplateFormCarousel = () => {
       </Grid>
 
       {/* Preview (30%) */}
-      <Grid item xs={4} sx={{
-        position: 'sticky',
-        top: 0,
-        height: '100vh',
-        px: 2,
-        py: 2,
-        borderLeft: '1px solid #ddd'
-      }}>
-        <Box sx={{ height: '100%', px: 2, py: 2, borderLeft: '1px solid #ddd', borderRadius: 2 }}>
+      <Grid item xs={4}>
+        <Box sx={{ position: "sticky", top: 0, height: "100vh", mt: 2, borderRadius: 2 }}>
           <Box
             sx={{
               p: 3,
@@ -1543,7 +1829,7 @@ const TemplateFormCarousel = () => {
               Vista previa
             </Typography>
 
-            {/* Mensaje de WhatsApp 
+            {/* Mensaje de WhatsApp */}
             <Box
               sx={{
                 bgcolor: "#ffffff",
@@ -1556,142 +1842,28 @@ const TemplateFormCarousel = () => {
                 gap: 0.5,
                 boxShadow: 1,
               }}
-            >*/}
-            <Swiper
-              modules={[EffectCoverflow, Pagination]}
-              effect={'coverflow'}
-              spaceBetween={30}
-              slidesPerView={'auto'}
-              centeredSlides={true}
-              pagination={{ clickable: true }}
-              style={{ width: '360px' }}  // Ancho fijo para el carrusel
-              coverflowEffect={{
-                rotate: 50,
-                stretch: 0,
-                depth: 100,
-                modifier: 1,
-                slideShadows: true,
-              }}
             >
-              {cards.map((card) => (
-                <SwiperSlide key={card.id}>
-                  <Card sx={{
-                    width: '350px',       // Ancho fijo para cada tarjeta
-                    height: '450px',      // Altura fija para cada tarjeta
-                    margin: 'auto',
-                    my: 2,
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                    position: 'relative',
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}>
-                    {/* Delete button positioned top right */}
-                    {card.id !== 'initial-card' && (
-                      <IconButton
-                        color="error"
-                        sx={{
-                          position: 'absolute',
-                          top: 8,
-                          right: 8,
-                          backgroundColor: 'rgba(255,255,255,0.8)',
-                          zIndex: 2,
-                          '&:hover': {
-                            backgroundColor: 'rgba(255,255,255,0.9)',
-                          }
-                        }}
-                        onClick={() => handleRemoveCard(card.id)}
-                        size="small"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    )}
+              <Swiper
+                modules={[EffectCoverflow, Pagination]}
+                effect={'coverflow'}
+                spaceBetween={30}
+                slidesPerView={'auto'}
+                centeredSlides={true}
+                pagination={{ clickable: true }}
+                style={{ width: '360px' }}  // Ancho fijo para el carrusel
+                coverflowEffect={{
+                  rotate: 50,
+                  stretch: 0,
+                  depth: 100,
+                  modifier: 1,
+                  slideShadows: true,
+                }}
+              >
+                
+              </Swiper>
 
-                    {/* Contenedor de imagen con altura fija */}
-                    <Box sx={{ height: '180px', overflow: 'hidden', position: 'relative' }}>
-                      {(card.mediaUrl || card.imagePreview) ? (
-                        <CardMedia
-                          component="img"
-                          sx={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover'
-                          }}
-                          image={card.mediaUrl || card.imagePreview}
-                          alt={card.title}
-                        />
-                      ) : (
-                        <Box sx={{ height: '100%', width: '100%', bgcolor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Typography variant="body2" color="text.secondary">Sin imagen</Typography>
-                        </Box>
-                      )}
-                    </Box>
-
-                    {/* Contenedor de texto con altura fija */}
-                    <CardContent sx={{ pt: 2, pb: 1, height: '120px', overflow: 'auto' }}>
-                      <Typography variant="h6" component="div" gutterBottom noWrap sx={{ fontWeight: 'bold' }}>
-                        {card.title || "Título"}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{
-                        display: '-webkit-box',
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
-                      }}>
-                        {card.body || "Descripción de la tarjeta"}
-                      </Typography>
-                    </CardContent>
-
-                    {/* Contenedor de botones con altura fija */}
-                    <Box sx={{
-                      p: 2,
-                      pt: 0,
-                      flex: 1,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'flex-end'
-                    }}>
-                      <Stack spacing={0} sx={{ width: '100%' }}> {/* Cambia spacing a 0 */}
-                        {card.buttons.map((button, index) => (
-                          <Box
-                            key={button.id}
-                            sx={{
-                              width: '100%',
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "flex-start",
-                              gap: 1,
-                              borderTop: index === 0 ? "1px solid #e0e0e0" : "none", // Borde solo arriba para el primer botón
-                              borderBottom: "1px solid #e0e0e0", // Borde abajo para todos los botones
-                              p: 1.5, // Ajusta el padding para mejor aspecto
-                              backgroundColor: "#ffffff",
-                              cursor: "pointer",
-                              "&:hover": {
-                                backgroundColor: "#f5f5f5",
-                              },
-                              borderRadius: 0, // Elimina el borderRadius para que queden cuadrados
-                            }}
-                          >
-                            {button.type === "QUICK_REPLY" && (
-                              <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
-                            )}
-                            {button.type === "URL" && (
-                              <Link sx={{ fontSize: "16px", color: "#075e54" }} />
-                            )}
-                            {button.type === "PHONE_NUMBER" && (
-                              <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
-                            )}
-                            <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
-                              {button.title || button.text} {/* Soporta ambos formatos */}
-                            </Typography>
-                          </Box>
-                        ))}
-                      </Stack>
-                    </Box>
-                  </Card>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+              
+            </Box>
           </Box>
         </Box>
       </Grid>

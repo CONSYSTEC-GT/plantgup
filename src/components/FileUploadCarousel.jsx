@@ -207,16 +207,10 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
   return (
     <Box>
-      <FormControl fullWidth>
-        <FormLabel>
-          Carrusel
-        </FormLabel>
-      </FormControl>
-      <Typography variant="body2" color="text.secondary" gutterBottom>
-        Seleccione la imagen y cargue un archivo.
-      </Typography>
+      
+      
 
-      <Box sx={{ mt: 2 }}>
+      <Box sx={{ mb: 2 }}>
         <input
           accept={getAcceptedFileTypes()}
           style={{ display: 'none' }}
