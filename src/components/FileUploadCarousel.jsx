@@ -212,7 +212,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
       <Box sx={{ mb: 2 }}>
         <input
-          accept={getAcceptedFileTypes()}
+          accept=".jpg, .jpeg, .png"
           style={{ display: 'none' }}
           id="file-upload"
           type="file"

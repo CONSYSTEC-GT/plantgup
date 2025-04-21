@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Alert, Box, Button, Card, CardActions, CardContent, CardMedia, Chip, Container, Dialog, DialogTitle, DialogContent, DialogActions, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
+import { v4 as uuidv4 } from 'uuid';
+
+
+
 
 import { Smile } from "react-feather"; // Icono para emojis
 import EmojiPicker from "emoji-picker-react"; // Selector de emojis
@@ -29,6 +33,7 @@ import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
+import WhatsAppCarouselPreview from './WhatsappCarouselPreview';
 import FileUploadCarousel from './FileUploadCarousel';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
 import { createTemplateCarouselGupshup } from '../api/gupshupApi';
@@ -50,7 +55,7 @@ const TemplateFormCarousel = () => {
 
   //carousel
   const [messageCard, setMessageCard] = useState("");
-  const [cantidadBotones, setCantidadBotones] = useState("1");
+  const [cantidadBotones, setCantidadBotones] = useState();
   const [tipoBoton, setTipoBoton] = useState("QUICK_REPLY")
 
   const [header, setHeader] = useState("");
@@ -90,7 +95,7 @@ const TemplateFormCarousel = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showEmojiPickerCards, setShowEmojiPickerCards] = useState(false);
   const [variables, setVariables] = useState([]);
-  const [variablesTarjeta, setVariablesTarjeta] = useState([]);
+  const [variablesCard, setVariablesCard] = useState([]);
 
   // Estado para almacenar ejemplos de variables
   const [variableExamples, setVariableExamples] = useState({});
@@ -98,10 +103,20 @@ const TemplateFormCarousel = () => {
   const [variableExamplesHelperText, setvariableExamplesHelperText] = useState("");
   const [variableErrors, setVariableErrors] = useState({});
 
+  // Estado para almacenar ejemplos de variables
+  const [variableExamplesCard, setVariableExamplesCard] = useState({});
+  const [variableExamplesErrorCard, setvariableExamplesErrorCard] = useState(false);
+  const [variableExamplesHelperTextCard, setvariableExamplesHelperTextCard] = useState("");
+  const [variableErrorsCard, setVariableErrorsCard] = useState({});
+
   // Estado para almacenar descripciones de variables
   const [variableDescriptions, setVariableDescriptions] = useState({});
   const [variableDescriptionsError, setvariableDescriptionsError] = useState(false);
   const [variableDescriptionsHelperText, setvariableDescriptionsHelperText] = useState("");
+
+  const [variableDescriptionsCard, setVariableDescriptionsCard] = useState({});
+  const [variableDescriptionsErrorCard, setvariableDescriptionsErrorCard] = useState(false);
+  const [variableDescriptionsHelperTextCard, setvariableDescriptionsHelperTextCard] = useState("");
 
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
@@ -117,11 +132,15 @@ const TemplateFormCarousel = () => {
   const messageRef = useRef(null);
   const messageCardRef = useRef(null);
   const exampleRef = useRef(null);
+  const exampleCardRef = useRef(null);
   const selectedCategoryRef = useRef(null);
   const exampleRefs = useRef({});
+  const exampleCardRefs = useRef({});
 
   const emojiPickerRef = useRef(null);
   const emojiPickerCardRef = useRef(null);
+  const emojiPickerButtonRef = useRef(null); // Para el botón
+  const emojiPickerComponentRef = useRef(null); // Para el componente del picker
 
   const resetForm = () => {
     setTemplateName("");
@@ -142,7 +161,6 @@ const TemplateFormCarousel = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessageGupshup, setErrorMessageGupshup] = useState("La plantilla no pudo ser creada.");
-
 
   // Función para mostrar Snackbar
   const showSnackbar = (message, severity) => {
@@ -388,13 +406,7 @@ const TemplateFormCarousel = () => {
     }
   };
 
-  //MEDIA
-  const handleUploadSuccess = (uploadedMediaId) => {
-    console.log('Media subida exitosamente, ID:', uploadedMediaId);
-    setMediaId(uploadedMediaId);
-    // Mostrar mensaje de éxito
-    showSnackbar("✅ Archivo subido exitosamente", "success");
-  };
+
 
   // CATEGORIAS
   const categories = [
@@ -626,46 +638,40 @@ const TemplateFormCarousel = () => {
     }
   };
 
-  const handleBodyMessageCardChange = (e) => {
+  const handleBodyMessageCardChange = (e, cardId) => {
+    console.log('Change triggered', e.target.value, cardId, cards);
     const newText = e.target.value;
-    const maxLength = 1024;
-
-    if (newText.length <= maxLength) {
-      // Guardar el nuevo texto
-      setMessageCard(newText);
-
-      // Verificar qué variables se han eliminado del texto
-      const deletedVariables = [];
-      variables.forEach(variable => {
-        if (!newText.includes(variable)) {
-          deletedVariables.push(variable);
-        }
+    const maxLength = 280; // o 1024 según necesites
+  
+    setCards(cards.map(card => {
+      if (card.id !== cardId) return card;
+  
+      // Verificar variables eliminadas
+      const deletedVariables = variables.filter(
+        variable => !newText.includes(variable)
+      );
+  
+      // Actualizar variables, descripciones y ejemplos
+      const remainingVariables = variables.filter(
+        v => !deletedVariables.includes(v)
+      );
+  
+      const newDescriptions = {...card.variableDescriptions};
+      const newExamples = {...card.variableExamples};
+  
+      deletedVariables.forEach(v => {
+        delete newDescriptions[v];
+        delete newExamples[v];
       });
-
-      // Si se eliminaron variables, actualiza el estado
-      if (deletedVariables.length > 0) {
-        // Filtrar las variables eliminadas
-        const remainingVariables = variables.filter(v => !deletedVariables.includes(v));
-
-        // Actualizar el estado de las variables
-        setVariables(remainingVariables);
-
-        // Actualizar las descripciones y ejemplos
-        const newDescriptions = { ...variableDescriptions };
-        const newExamples = { ...variableExamples };
-        const newErrors = { ...variableErrors };
-
-        deletedVariables.forEach(v => {
-          delete newDescriptions[v];
-          delete newExamples[v];
-          delete newErrors[v];
-        });
-
-        setVariableDescriptions(newDescriptions);
-        setVariableExamples(newExamples);
-        setVariableErrors(newErrors);
-      }
-    }
+  
+      return {
+        ...card,
+        messageCard: newText,
+        variables: remainingVariables,
+        variableDescriptions: newDescriptions,
+        variableExamples: newExamples
+      };
+    }));
   };
 
   // VARIABLES DEL BODY MESSAGE
@@ -694,54 +700,77 @@ const TemplateFormCarousel = () => {
     }, 0);
   };
 
-  const handleAddVariableCard = () => {
-    const newVariableTarjeta = `{{${variablesTarjeta.length + 1}}}`;
-    setCurrentCard((prev) => ({
-      ...prev,
-      description: prev.description + " " + newVariableTarjeta
-    }));
-    setVariablesTarjeta([...variablesTarjeta, newVariableTarjeta]);
+  const handleAddVariableCard = (cardId) => {
+    setCards(prevCards =>
+      prevCards.map(card => {
+        if (card.id !== cardId) return card;
+  
+        const newVariable = `{{${card.variablesCard.length + 1}}}`;
+        const cursorPosition = messageCardRef.current?.selectionStart || 0;
+  
+        const textBefore = card.messageCard.substring(0, cursorPosition);
+        const textAfter = card.messageCard.substring(cursorPosition);
+  
+        const newMessageCard = `${textBefore}${newVariable}${textAfter}`;
+  
+        // OPCIONAL: Actualizar descripción y ejemplos también
+        const updatedDescriptions = { ...card.variableDescriptionsCard, [newVariable]: "" };
+        const updatedExamples = { ...card.variableExamples, [newVariable]: "" };
+  
+        // Retornar la tarjeta actualizada
+        return {
+          ...card,
+          messageCard: newMessageCard,
+          variablesCard: [...card.variablesCard, newVariable],
+          variableDescriptionsCard: updatedDescriptions,
+          variableExamples: updatedExamples
+        };
+      })
+    );
+  
+    // Reenfocar y mover el cursor al final de la variable insertada
+    setTimeout(() => {
+      const newPosition = (messageCardRef.current?.selectionStart || 0) + `{{${cards.find(c => c.id === cardId)?.variablesCard.length + 1}}}`.length;
+      messageCardRef.current?.focus();
+      messageCardRef.current?.setSelectionRange(newPosition, newPosition);
+    }, 0);
   };
+  
+  
 
   const handleEmojiClick = (emojiObject) => {
-    // Obtener la posición actual del cursor
     const cursor = messageRef.current.selectionStart;
-
-    // Crear el nuevo texto insertando el emoji en la posición del cursor
     const newText = message.slice(0, cursor) + emojiObject.emoji + message.slice(cursor);
 
-    // Actualizar el estado del mensaje
     setMessage(newText);
-
-    // Cerrar el selector de emojis
     setShowEmojiPicker(false);
 
-    // Devolver el foco al campo de texto y mover el cursor después del emoji
+    // Aumenta el tiempo de espera para asegurar que el estado se actualiza
     setTimeout(() => {
-      messageRef.current.focus();
-      messageRef.current.setSelectionRange(cursor + emojiObject.emoji.length, cursor + emojiObject.emoji.length);
-    }, 10);
+      if (messageRef.current) {
+        messageRef.current.focus();
+        messageRef.current.setSelectionRange(cursor + emojiObject.emoji.length, cursor + emojiObject.emoji.length);
+      }
+    }, 100);
   };
 
   const handleEmojiClickCarousel = (emojiObject) => {
-        // Obtener la posición actual del cursor
-        const cursor = messageRef.current.selectionStart;
+    const cursor = messageCardRef.current.selectionStart;
+    const newText = messageCard.slice(0, cursor) + emojiObject.emoji + messageCard.slice(cursor);
 
-        // Crear el nuevo texto insertando el emoji en la posición del cursor
-        const newText = message.slice(0, cursor) + emojiObject.emoji + message.slice(cursor);
-    
-        // Actualizar el estado del mensaje
-        setMessage(newText);
-    
-        // Cerrar el selector de emojis
-        setShowEmojiPickerCards(false);
-    
-        // Devolver el foco al campo de texto y mover el cursor después del emoji
-        setTimeout(() => {
-          messageRef.current.focus();
-          messageRef.current.setSelectionRange(cursor + emojiObject.emoji.length, cursor + emojiObject.emoji.length);
-        }, 10);
+    setMessageCard(newText);
+    setShowEmojiPickerCards(false);
+
+    // Aumenta el tiempo de espera para asegurar que el estado se actualiza
+    setTimeout(() => {
+      if (messageCardRef.current) {
+        messageCardRef.current.focus();
+        messageCardRef.current.setSelectionRange(cursor + emojiObject.emoji.length, cursor + emojiObject.emoji.length);
+      }
+    }, 100);
   };
+
+
 
   // Función para borrar una variable específica
   const deleteVariable = (variableToDelete) => {
@@ -809,23 +838,82 @@ const TemplateFormCarousel = () => {
 
 
   // Función para borrar una variable específica de la tarjeta
-  const deleteVariableCard = (variableToDelete) => {
-    // Eliminar la variable del texto de la descripción
-    const newDescription = currentCard.description.replace(variableToDelete, '');
+  const deleteVariableCard = (cardId, variableToDelete) => {
+    console.log("Antes de eliminar", card.messageCard, card.variablesCard);
+console.log("Después de eliminar", updatedMessage, renumberedVariables);
 
-    // Actualizar la tarjeta con la nueva descripción
-    setCurrentCard(prev => ({
-      ...prev,
-      description: newDescription
-    }));
-
-    // Eliminar la variable de la lista de variables de tarjeta
-    const updatedVariablesTarjeta = variablesTarjeta.filter(v => v !== variableToDelete);
-    setVariablesTarjeta(updatedVariablesTarjeta);
-
-    // Si tienes una referencia al campo de descripción
-    // descriptionRef.current?.focus();
+    setCards(prevCards =>
+      prevCards.map(card => {
+        if (card.id !== cardId) return card;
+  
+        // 1. Eliminar la variable del mensaje
+        const newMessage = card.messageCard.replace(variableToDelete, '');
+  
+        // 2. Filtrar la variable a eliminar
+        const updatedVariables = card.variablesCard.filter(v => v !== variableToDelete);
+  
+        // 3. Renumerar variables restantes
+        const renumberedVariables = [];
+        const variableMapping = {};
+        
+        updatedVariables.forEach((v, index) => {
+          const newVar = `{{${index + 1}}}`;
+          renumberedVariables.push(newVar);
+          variableMapping[v] = newVar;
+        });
+  
+        // 4. Actualizar el mensaje con nuevas variables
+        let updatedMessage = newMessage;
+        Object.entries(variableMapping).forEach(([oldVar, newVar]) => {
+          updatedMessage = updatedMessage.replaceAll(oldVar, newVar);
+        });
+  
+        // 5. Actualizar descripciones y ejemplos
+        const newVariableDescriptions = {};
+        const newVariableExamples = {};
+        
+        Object.entries(variableMapping).forEach(([oldVar, newVar]) => {
+          if (variableDescriptionsCard[oldVar]) {
+            newVariableDescriptions[newVar] = variableDescriptionsCard[oldVar];
+          }
+          if (variableExamples[oldVar]) {
+            newVariableExamples[newVar] = variableExamples[oldVar];
+          }
+        });
+  
+        // 6. Actualizar errores
+        const newVariableErrors = { ...variableErrorsCard };
+        delete newVariableErrors[variableToDelete];
+        Object.entries(variableMapping).forEach(([oldVar, newVar]) => {
+          if (variableErrorsCard[oldVar]) {
+            newVariableErrors[newVar] = variableErrorsCard[oldVar];
+            delete newVariableErrors[oldVar];
+          }
+        });
+  
+        // Actualizar estados relacionados
+        setVariableDescriptionsCard(prev => ({
+          ...prev,
+          ...newVariableDescriptions
+        }));
+        setVariableExamples(prev => ({
+          ...prev,
+          ...newVariableExamples
+        }));
+        setVariableErrorsCard(newVariableErrors);
+  
+        return {
+          ...card,
+          messageCard: updatedMessage,
+          variablesCard: renumberedVariables,
+        };
+      })
+    );
+  
+    // Actualizar referencias si es necesario
+    // messageCardRef.current?.focus();
   };
+  
 
   // Función para borrar todas las variables
   const deleteAllVariables = () => {
@@ -846,15 +934,29 @@ const TemplateFormCarousel = () => {
   };
 
   // Nueva función para borrar todas las variables
-  const deleteAllVariablesCard = () => {
-    let newMessage = message;
-    variables.forEach(variable => {
-      newMessage = newMessage.replaceAll(variable, '');
-    });
-    setMessage(newMessage);
-    setVariables([]);
-    messageRef.current?.focus();
+  const deleteAllVariablesCard = (cardId) => {
+    setCards(prevCards =>
+      prevCards.map(card => {
+        if (card.id !== cardId) return card;
+  
+        let newMessage = card.messageCard;
+        card.variablesCard.forEach(variable => {
+          newMessage = newMessage.replaceAll(variable, '');
+        });
+  
+        return {
+          ...card,
+          messageCard: newMessage,
+          variablesCard: [],
+          variableDescriptionsCard: {},
+          variableExamples: {}
+        };
+      })
+    );
+  
+    messageCardRef.current?.focus();
   };
+  
 
   // Función para previsualizar el mensaje con ejemplos aplicados
   const previewMessage = () => {
@@ -922,6 +1024,9 @@ const TemplateFormCarousel = () => {
     return result;
   };
 
+  // Generar IDs únicos para los botones
+  const generateId = () => Math.random().toString(36).substr(2, 9);
+
 
 
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
@@ -939,20 +1044,67 @@ const TemplateFormCarousel = () => {
   useEffect(() => {
     // Función que maneja los clics fuera del componente
     const handleClickOutside = (event) => {
-      // Si el picker está visible y el clic fue fuera del picker
-      if (showEmojiPicker && emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+      // Verificar si el clic fue fuera tanto del botón como del picker
+      if (
+        showEmojiPicker &&
+        emojiPickerButtonRef.current &&
+        emojiPickerComponentRef.current &&
+        !emojiPickerButtonRef.current.contains(event.target) &&
+        !emojiPickerComponentRef.current.contains(event.target)
+      ) {
         setShowEmojiPicker(false);
       }
-    };
 
-    // Agregar el detector de eventos al documento
-    document.addEventListener('mousedown', handleClickOutside);
+      if (
+        showEmojiPickerCards &&
+        emojiPickerCardRef.current &&
+        !emojiPickerCardRef.current.contains(event.target)
+      ) {
+        setShowEmojiPickerCards(false);
+      }
+    }
+  }
+  )
 
-    // Limpiar el detector de eventos cuando el componente se desmonte
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showEmojiPicker]); // Se ejecuta cuando showEmojiPicker cambia
+  // Inicializar botones basado en la cantidad seleccionada
+  useEffect(() => {
+    const newButtons = [];
+    const count = parseInt(cantidadBotones, 10);
+
+    for (let i = 0; i < count; i++) {
+      newButtons.push({
+        id: generateId(),
+        title: '',
+        type: tipoBoton,
+        ...(tipoBoton === 'URL' && { url: '' }),
+        ...(tipoBoton === 'PHONE_NUMBER' && { phoneNumber: '' })
+      });
+    }
+
+    setButtons(newButtons);
+  }, [cantidadBotones, tipoBoton]);
+
+  // Validación para URLs
+  const updateButtonWithValidation = (id, field, value, setButtons, setValidationErrors) => {
+    // Validación simple de URL
+    const isValid = value === '' || /^(ftp|http|https):\/\/[^ "]+$/.test(value);
+
+    setButtons(prevButtons =>
+      prevButtons.map(button =>
+        button.id === id ? { ...button, [field]: value } : button
+      )
+    );
+
+    setValidationErrors(prevErrors => ({
+      ...prevErrors,
+      [id]: isValid ? undefined : 'URL no válida'
+    }));
+  };
+
+  
+
+
+
 
   //PARA LAS TARJETAS DEL CARRUSEL
   {/* 
@@ -1064,8 +1216,6 @@ const TemplateFormCarousel = () => {
 
   // Estado para los acordeones - solo guardamos el ID único y el contenido del formulario
   const [accordions, setAccordions] = useState([
-    { id: 'accordion-1', name: '', email: '' },
-    { id: 'accordion-2', name: '', email: '' },
   ]);
 
   // Estado para controlar qué acordeón está expandido
@@ -1083,23 +1233,28 @@ const TemplateFormCarousel = () => {
     ));
   };
 
-  // Añadir nuevo acordeón
+  // Agregar nueva tarjeta
   const addAccordion = () => {
-    // Generamos un ID único
-    const newId = `accordion-${Date.now()}`;
-    setAccordions([...accordions, {
-      id: newId,
-      name: '',
-      email: ''
+    setCards([...cards, {
+      ...initialCardState,
+      id: uuidv4()
     }]);
   };
 
-  // Eliminar acordeón
-  const deleteAccordion = (id, event) => {
-    // Detener la propagación para evitar que se abra/cierre el acordeón
-    event.stopPropagation();
-    setAccordions(accordions.filter(accordion => accordion.id !== id));
+  // Eliminar tarjeta
+  const deleteAccordion = (id, e) => {
+    e.stopPropagation();
+    setCards(cards.filter(card => card.id !== id));
   };
+
+  // Actualizar cualquier campo de una tarjeta
+const updateCardField = (cardId, field, value) => {
+  setCards(cards.map(card => 
+    card.id === cardId ? { ...card, [field]: value } : card
+  ));
+};
+
+
 
   // Manejar el fin del arrastre
   const onDragEnd = (result) => {
@@ -1113,6 +1268,21 @@ const TemplateFormCarousel = () => {
     setAccordions(items);
   };
 
+  // Estado inicial para cada tarjeta del carrusel
+  const initialCardState = {
+    id: uuidv4(), // o algún otro método para generar IDs únicos
+    carouselType: "IMAGEN",
+    messageCard: "",
+    variablesCard: [],
+    variableDescriptionsCard: {},
+    variableExamples: {},
+    buttons: [],
+    file: null, // para almacenar el archivo subido
+    // otros campos que necesites
+  };
+
+  // Estado principal que contiene todas las tarjetas
+  const [cards, setCards] = useState([initialCardState]);
 
   return (
     <Grid container sx={{ height: '100vh' }}>
@@ -1337,7 +1507,7 @@ const TemplateFormCarousel = () => {
                 <Tooltip title="Agregar emojis">
                   <IconButton
                     color="primary"
-                    ref={emojiPickerRef}
+                    ref={emojiPickerButtonRef}
                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                     sx={{ borderRadius: 1 }}
                   >
@@ -1494,6 +1664,7 @@ const TemplateFormCarousel = () => {
                 select
                 label="Cantidad de botones"
                 fullWidth
+                onChange={(e) => setCantidadBotones(e.target.value)}
                 value={cantidadBotones}
               >
                 <MenuItem value="1">1</MenuItem>
@@ -1507,6 +1678,7 @@ const TemplateFormCarousel = () => {
                 label="Tipo de botones"
                 fullWidth
                 value={tipoBoton}
+                onChange={(e) => setTipoBoton(e.target.value)}
               >
                 <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
                 <MenuItem value="URL">Link</MenuItem>
@@ -1517,26 +1689,14 @@ const TemplateFormCarousel = () => {
             </Box>
 
             <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="accordions">
+              <Droppable droppableId="cards">
                 {(provided) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                  >
-                    {accordions.map((accordion, index) => (
-                      <Draggable
-                        key={accordion.id}
-                        draggableId={accordion.id}
-                        index={index}
-                      >
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {cards.map((card, index) => (
+                      <Draggable key={card.id} draggableId={card.id} index={index}>
                         {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                          >
-                            <Accordion
-                              expanded={expanded === accordion.id}
-                              onChange={handleChange(accordion.id)}
+                          <div ref={provided.innerRef} {...provided.draggableProps}>
+                            <Accordion expanded={expanded === card.id} onChange={handleChange(card.id)}
                               sx={{
                                 mb: 2,
                                 transition: 'all 0.3s ease'
@@ -1545,8 +1705,8 @@ const TemplateFormCarousel = () => {
                             >
                               <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
-                                aria-controls={`${accordion.id}-content`}
-                                id={`${accordion.id}-header`}
+                                aria-controls={`${card.id}-content`}
+                                id={`${card.id}-header`}
                                 sx={{
                                   '& .MuiAccordionSummary-content': {
                                     display: 'flex',
@@ -1578,7 +1738,7 @@ const TemplateFormCarousel = () => {
                                 </Box>
                                 <IconButton
                                   size="small"
-                                  onClick={(e) => deleteAccordion(accordion.id, e)}
+                                  onClick={(e) => deleteAccordion(card.id, e)}
                                   sx={{ ml: 2 }}
                                 >
                                   <DeleteIcon />
@@ -1598,8 +1758,8 @@ const TemplateFormCarousel = () => {
                                       rows={4}
                                       label="Escribe"
                                       placeholder="Ingresa el contenido de tu mensaje aquí..."
-                                      value={messageCard}
-                                      onChange={handleBodyMessageCardChange}
+                                      value={card.messageCard}
+                                      onChange={(e) => handleBodyMessageCardChange(e, card.id)}
                                       sx={{
                                         mb: 3,
                                         mt: 4,
@@ -1637,7 +1797,7 @@ const TemplateFormCarousel = () => {
                                       <Tooltip title="Agregar emojis">
                                         <IconButton
                                           color="primary"
-                                          ref={emojiPickerCardRef}
+                                          ref={emojiPickerButtonRef}
                                           onClick={() => setShowEmojiPickerCards(!showEmojiPickerCards)}
                                           sx={{ borderRadius: 1 }}
                                         >
@@ -1651,19 +1811,19 @@ const TemplateFormCarousel = () => {
                                         variant="contained"
                                         size="small"
                                         startIcon={<AddIcon />}
-                                        onClick={handleAddVariableCard}
+                                        onClick={() => handleAddVariableCard(card.id)}
                                         sx={{ borderRadius: 1 }}
                                       >
                                         Agregar Variable
                                       </Button>
 
-                                      {variables.length > 0 && (
+                                      {card.variablesCard.length > 0 && (
                                         <Button
                                           color="error"
                                           variant="outlined"
                                           size="small"
                                           startIcon={<ClearIcon />}
-                                          onClick={deleteAllVariablesCard}
+                                          onClick={() => deleteAllVariablesCard(card.id)}
                                           sx={{ ml: "auto", borderRadius: 1 }}
                                         >
                                           Borrar todas
@@ -1672,7 +1832,7 @@ const TemplateFormCarousel = () => {
                                     </Stack>
 
                                     {/* Selector de emojis */}
-                                    {setShowEmojiPickerCards && (
+                                    {showEmojiPickerCards && (
                                       <Paper
                                         elevation={3}
                                         sx={{
@@ -1686,7 +1846,7 @@ const TemplateFormCarousel = () => {
                                     )}
 
                                     {/* Variables disponibles como chips con campos de texto para ejemplos y descripción */}
-                                    {variables.length > 0 && (
+                                    {card.variablesCard.length > 0 && (
                                       <Paper
                                         sx={{
                                           my: 2,
@@ -1699,7 +1859,7 @@ const TemplateFormCarousel = () => {
                                           Agrega una descripción y un ejemplo a tu variable:
                                         </Typography>
 
-                                        {variables.map((variable, index) => (
+                                        {card.variablesCard.map((variableCard, index) => (
                                           <Box
                                             key={index}
                                             sx={{
@@ -1715,7 +1875,7 @@ const TemplateFormCarousel = () => {
                                             }}
                                           >
                                             <Chip
-                                              label={variable}
+                                              label={variableCard}
                                               color="primary"
                                               sx={{ fontWeight: "500" }}
                                               deleteIcon={
@@ -1723,7 +1883,7 @@ const TemplateFormCarousel = () => {
                                                   <DeleteIcon />
                                                 </Tooltip>
                                               }
-                                              onDelete={() => deleteVariable(variable)}
+                                              onDelete={() => deleteVariableCard(card.id, variableCard)}
                                             />
 
                                             <Stack sx={{ flexGrow: 1, gap: 1 }}>
@@ -1731,20 +1891,20 @@ const TemplateFormCarousel = () => {
                                                 size="small"
                                                 label="Descripción"
                                                 placeholder="¿Para qué sirve esta variable?"
-                                                value={variableDescriptions[variable] || ''}
-                                                onChange={(e) => handleUpdateDescriptions(variable, e.target.value)}
+                                                value={variableDescriptionsCard[variableCard] || ''}
+                                                onChange={(e) => handleUpdateDescriptionsCard(variableCard, e.target.value)}
                                                 sx={{ flexGrow: 1 }}
                                               />
 
                                               <TextField
                                                 size="small"
                                                 label="Texto de ejemplo"
-                                                value={variableExamples[variable] || ''}
-                                                onChange={(e) => handleUpdateExample(variable, e.target.value)}
+                                                value={variableExamples[variableCard] || ''}
+                                                onChange={(e) => handleUpdateExample(variableCard, e.target.value)}
                                                 sx={{ flexGrow: 1 }}
-                                                inputRef={(el) => (exampleRefs.current[variable] = el)}
-                                                error={!!variableErrors[variable]}
-                                                helperText={variableErrors[variable]}
+                                                inputRef={(el) => (exampleCardRefs.current[variableCard] = el)}
+                                                error={!!variableErrorsCard[variableCard]}
+                                                helperText={variableErrorsCard[variableCard]}
                                               />
 
                                             </Stack>
@@ -1755,6 +1915,79 @@ const TemplateFormCarousel = () => {
                                   </Box>
 
                                 </Box>
+                                <Stack spacing={2}>
+                                  {buttons.map((button, index) => (
+                                    <Box
+                                      key={button.id}
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 2,
+                                        border: "1px solid #ccc",
+                                        borderRadius: 2,
+                                        p: 2,
+                                        backgroundColor: "#f9f9f9",
+                                      }}
+                                    >
+                                      {/* Campo de texto para el título del botón */}
+                                      <TextField
+                                        label="Titulo del botón"
+                                        value={button.title}
+                                        onChange={(e) => updateButton(button.id, "title", e.target.value)}
+                                        fullWidth
+                                      />
+
+                                      {/* Selector de tipo de botón */}
+                                      <Select
+                                        value={button.type}
+                                        onChange={(e) => updateButton(button.id, "type", e.target.value)}
+                                        sx={{ minWidth: 150 }}
+                                        disabled
+                                      >
+                                        <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
+                                        <MenuItem value="URL">URL</MenuItem>
+                                        <MenuItem value="PHONE_NUMBER">Número de teléfono</MenuItem>
+                                      </Select>
+
+                                      {/* Campo adicional según el tipo de botón */}
+                                      {button.type === "URL" && (
+                                        <TextField
+                                          label="URL"
+                                          value={button.url || ''}
+                                          onChange={(e) => updateButtonWithValidation(
+                                            button.id,
+                                            "url",
+                                            e.target.value,
+                                            setButtons,
+                                            setValidationErrors
+                                          )}
+                                          fullWidth
+                                          error={validationErrors[button.id] !== undefined}
+                                          helperText={validationErrors[button.id]}
+                                        />
+                                      )}
+
+                                      {button.type === "PHONE_NUMBER" && (
+                                        <TextField
+                                          label="Phone Number"
+                                          value={button.phoneNumber}
+                                          onChange={(e) => updateButton(button.id, "phoneNumber", e.target.value)}
+                                          fullWidth
+                                        />
+                                      )}
+
+                                      {/* Icono según el tipo de botón */}
+                                      {button.type === "QUICK_REPLY" && <ArrowForward />}
+                                      {button.type === "URL" && <Link />}
+                                      {button.type === "PHONE_NUMBER" && <Phone />}
+
+                                      {/* Botón para eliminar */}
+                                      <IconButton color="error" onClick={() => removeButton(button.id)}>
+                                        <Delete />
+                                      </IconButton>
+                                    </Box>
+                                  ))}
+                                </Stack>
                               </AccordionDetails>
                             </Accordion>
                           </div>
@@ -1773,7 +2006,7 @@ const TemplateFormCarousel = () => {
               onClick={addAccordion}
               sx={{ mt: 2 }}
             >
-              Añadir Acordeón
+              Añadir tarjeta
             </Button>
           </Box>
 
@@ -1843,27 +2076,26 @@ const TemplateFormCarousel = () => {
                 boxShadow: 1,
               }}
             >
-              <Swiper
-                modules={[EffectCoverflow, Pagination]}
-                effect={'coverflow'}
-                spaceBetween={30}
-                slidesPerView={'auto'}
-                centeredSlides={true}
-                pagination={{ clickable: true }}
-                style={{ width: '360px' }}  // Ancho fijo para el carrusel
-                coverflowEffect={{
-                  rotate: 50,
-                  stretch: 0,
-                  depth: 100,
-                  modifier: 1,
-                  slideShadows: true,
-                }}
-              >
-                
-              </Swiper>
+              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
+                {message}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
+                {new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: true })}
+              </Typography>
 
-              
+              {/* Agregar el componente de vista previa 
+              <WhatsAppCarouselPreview
+                accordions={accordions}
+                carouselType={carouselType}
+                cantidadBotones={cantidadBotones}
+                tipoBoton={tipoBoton}
+              />*/}
+
+
+
             </Box>
+
+
           </Box>
         </Box>
       </Grid>
