@@ -346,8 +346,17 @@ const TemplateFormCarousel = () => {
     try {
       // Hacer el primer request a GupShup API
 
-      const cardsToSendArray = [...cards]; // Esto es un array de objetos
-      const cardsToSend = JSON.stringify([...cards]); // Convertir a JSON string // Creo una copia para no modificar el estado original
+      const formattedCards = formatCardsForGupshup(cards);
+    
+      // Asegúrate de que todas las cards tengan los datos necesarios
+      const isValid = formattedCards.every(card => 
+        card.mediaUrl && card.body // Añade aquí más validaciones si son necesarias
+      );
+
+      if (!isValid) {
+        console.error("Algunas cards no tienen todos los datos requeridos");
+        return;
+      }
 
       const result = await createTemplateCarouselGupshup(
         appId,
@@ -364,7 +373,7 @@ const TemplateFormCarousel = () => {
           mediaId,
           buttons,
           example,
-          carousel: cardsToSend // Enviar como string JSON
+          carousel: JSON.stringify(formattedCards) // Enviar como string JSON
         },
         validateFields
       );
@@ -405,7 +414,6 @@ const TemplateFormCarousel = () => {
       console.error("Ocurrió un error:", error);
     }
   };
-
 
 
   // CATEGORIAS
@@ -1132,26 +1140,10 @@ const TemplateFormCarousel = () => {
   };
 
 
-
-
-
-
-  //PARA LAS TARJETAS DEL CARRUSEL
-  {/* 
-  const [cards, setCards] = useState([]);
-
-  const [currentCard, setCurrentCard] = useState({
-    title: '',
-    description: '',
-    buttons: []
-  });
-
-  // Función para guardar la tarjeta
-  const handleSaveCard = () => {
-    console.log("Valor de uploadedUrl:", uploadedUrl); // <-- ¿Viene vacío aquí?
-    if (currentCard.title && currentCard.description) {
-      // Transformar botones al formato requerido
-      const transformedButtons = buttons.map(button => {
+  const formatCardsForGupshup = (cards) => {
+    return cards.map(card => {
+      // Transformar botones al formato requerido por Gupshup
+      const transformedButtons = card.buttons.map(button => {
         if (button.type === "URL") {
           return {
             type: "URL",
@@ -1175,74 +1167,24 @@ const TemplateFormCarousel = () => {
         }
         return null;
       }).filter(button => button !== null);
-
-      // Crear la tarjeta con el formato requerido
-      const formattedCard = {
-        headerType: "IMAGE",
-        title: currentCard.title,
-        mediaUrl: uploadedUrl || "",
-        mediaId: null,
-        exampleMedia: null,
-        body: currentCard.description,
-        sampleText: `${currentCard.description}`,
+  
+      // Crear el formato requerido por Gupshup
+      return {
+        headerType: "<IMAGE>",
+        mediaUrl: card.file?.url || "", // Asumiendo que tienes la URL en este campo
+        mediaId: card.file?.id || "",
+        exampleMedia: card.file?.handle || "",
+        body: card.messageCard || "",
+        sampleText: card.variableExamples?.messageCard || card.messageCard || "",
         buttons: transformedButtons
       };
-
-      // Agregar la tarjeta al array
-      const updatedCards = [...cards, formattedCard];
-
-      // Log para verificar el formato de las tarjetas
-      console.log("Tarjetas guardadas:", JSON.stringify(updatedCards, null, 2));
-
-      setCards(updatedCards);
-
-      // Limpiar los campos
-      setCurrentCard({
-        title: "",
-        description: "",
-        buttons: []
-      });
-      setButtons([]);
-      setUploadedUrl("");
-      setImagePreview("");
-      setMediaId(null);
-    }
+    });
   };
+  
+  // Uso de la función
+  const formattedCardsForGupshup = formatCardsForGupshup(cards);
+  console.log("Formato para Gupshup:", JSON.stringify(formattedCardsForGupshup, null, 2));
 
-  const handleRemoveCard = (cardId) => {
-    // Prevent removing the initial card
-    if (cardId === 'initial-card') return;
-    setCards(cards.filter(card => card.id !== cardId));
-  };
-
-  // Función para transformar el formato de botones
-  const transformButtons = (buttons) => {
-    return buttons.map(button => {
-      if (button.type === "URL") {
-        return {
-          type: "URL",
-          text: button.title,
-          url: button.url,
-          buttonValue: button.url.split("{{")[0] || button.url,
-          suffix: "",  // Puedes ajustar esto según tus necesidades
-          example: [button.url]  // Aquí podrías incluir ejemplos de URLs completas
-        };
-      } else if (button.type === "QUICK_REPLY") {
-        return {
-          type: "QUICK_REPLY",
-          text: button.title
-        };
-      } else if (button.type === "PHONE_NUMBER") {
-        return {
-          type: "PHONE_NUMBER",
-          text: button.title,
-          phoneNumber: button.phoneNumber
-        };
-      }
-      return null;
-    }).filter(button => button !== null);
-  };
-  */}
 
   // Estado para los acordeones - solo guardamos el ID único y el contenido del formulario
   const [accordions, setAccordions] = useState([
@@ -1315,6 +1257,22 @@ const TemplateFormCarousel = () => {
   const [cards, setCards] = useState([initialCardState]);
   console.log("Cards data:", cards);
   const currentCardId = cards[0].id;
+
+
+
+  // Función para manejar la subida de archivos para una card específica
+const handleFileUpload = (cardId, uploadResponse) => {
+  if (uploadResponse.estado === "OK" && uploadResponse.url) {
+    // Actualiza el array de cards con la nueva URL
+    setCardsData(prevCards => 
+      prevCards.map(card => 
+        card.id === cardId 
+          ? { ...card, file: uploadResponse.url } 
+          : card
+      )
+    );
+  }
+};
 
   return (
     <Grid container sx={{ height: '100vh' }}>
@@ -1778,7 +1736,7 @@ const TemplateFormCarousel = () => {
                               </AccordionSummary>
                               <AccordionDetails>
                                 <Box component="form" sx={{ '& .MuiTextField-root': { mb: 2, width: '100%' } }}>
-                                  <FileUploadCarousel />
+                                  <FileUploadCarousel onUploadComplete={(response) => handleFileUpload(card.id, response)} />
 
 
                                   <Box sx={{ position: "relative" }}>
@@ -2116,18 +2074,7 @@ const TemplateFormCarousel = () => {
                 {new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: true })}
               </Typography>
 
-              {/* Agregar el componente de vista previa 
-              <WhatsAppCarouselPreview
-                accordions={accordions}
-                carouselType={carouselType}
-                cantidadBotones={cantidadBotones}
-                tipoBoton={tipoBoton}
-              />*/}
-
-
-
-
-            </Box>
+             </Box>
 
             <Swiper
               modules={[Pagination]}
@@ -2173,7 +2120,7 @@ const TemplateFormCarousel = () => {
 
                     {/* Contenedor de imagen con altura fija */}
                     <Box sx={{ height: '180px', overflow: 'hidden', position: 'relative' }}>
-                      {(card.mediaUrl || card.imagePreview) ? (
+                      {(card.file || card.imagePreview) ? (
                         <CardMedia
                           component="img"
                           sx={{
@@ -2181,7 +2128,7 @@ const TemplateFormCarousel = () => {
                             height: '100%',
                             objectFit: 'cover'
                           }}
-                          image={card.mediaUrl || card.imagePreview}
+                          image={card.file || card.imagePreview}
                           alt={card.title}
                         />
                       ) : (
