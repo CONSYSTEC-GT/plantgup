@@ -12,12 +12,13 @@ const CreateTemplateCarousel = () => {
   };
 
   return (
-    <Box sx={{ padding: 3,
+    <Box sx={{
+      padding: 3,
       height: '100vh',
       display: 'flex',
       flexDirection: 'column',
-      overflow: 'hidden'
-     }}>
+      overflow: 'hidden',
+    }}>
       {/*Titulo*/}<Typography variant="h4" component="h1" gutterBottom>
         Crear Plantilla Carrusel
       </Typography>
@@ -34,21 +35,21 @@ const CreateTemplateCarousel = () => {
         </Button>
       </Tooltip>*/}
 
-      {/*Informacion inicial*/}<Box sx={{
+       {/*Informacion inicial<Box sx={{
         backgroundColor: '#fdf3f5',
         padding: 1,  // Reducido de 2 a 1
         borderRadius: 1,
-        marginTop: 2, // Reducido de 3 a 2
+        marginTop: 1, // Reducido de 3 a 2
         marginBottom: 2,
         fontSize: '0.875rem' // Tamaño de fuente ligeramente más pequeño
       }}>
-        <Typography variant="body2"> {/* Cambiado a body2 que es más pequeño que body1 */}
+        <Typography variant="body2"> {/* Cambiado a body2 que es más pequeño que body1 
           Tenga en cuenta que ahora es obligatorio proporcionar muestras al crear plantillas de mensajes.
           <br />
           Las muestras son una forma de proporcionar un ejemplo de posibles datos para su plantilla. Esto nos
           ayuda durante el proceso de revisión y aprobación, para que podamos entender qué tipo de mensaje planeas enviar.
         </Typography>
-      </Box>
+      </Box> */}
 
       <TemplateFormCarousel />
     </Box>
