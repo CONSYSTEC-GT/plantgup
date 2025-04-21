@@ -839,9 +839,6 @@ const TemplateFormCarousel = () => {
 
   // Función para borrar una variable específica de la tarjeta
   const deleteVariableCard = (cardId, variableToDelete) => {
-    console.log("Antes de eliminar", card.messageCard, card.variablesCard);
-console.log("Después de eliminar", updatedMessage, renumberedVariables);
-
     setCards(prevCards =>
       prevCards.map(card => {
         if (card.id !== cardId) return card;
@@ -868,50 +865,42 @@ console.log("Después de eliminar", updatedMessage, renumberedVariables);
           updatedMessage = updatedMessage.replaceAll(oldVar, newVar);
         });
   
-        // 5. Actualizar descripciones y ejemplos
-        const newVariableDescriptions = {};
-        const newVariableExamples = {};
+        // 5. Actualizar descripciones, ejemplos y errores
+        const newVariableDescriptions = {...card.variableDescriptions};
+        const newVariableExamples = {...card.variableExamples};
+        const newVariableErrors = {...card.variableErrors};
         
-        Object.entries(variableMapping).forEach(([oldVar, newVar]) => {
-          if (variableDescriptionsCard[oldVar]) {
-            newVariableDescriptions[newVar] = variableDescriptionsCard[oldVar];
-          }
-          if (variableExamples[oldVar]) {
-            newVariableExamples[newVar] = variableExamples[oldVar];
-          }
-        });
-  
-        // 6. Actualizar errores
-        const newVariableErrors = { ...variableErrorsCard };
+        // Eliminar la variable que se está borrando
+        delete newVariableDescriptions[variableToDelete];
+        delete newVariableExamples[variableToDelete];
         delete newVariableErrors[variableToDelete];
+        
+        // Actualizar las demás variables con nueva numeración
         Object.entries(variableMapping).forEach(([oldVar, newVar]) => {
-          if (variableErrorsCard[oldVar]) {
-            newVariableErrors[newVar] = variableErrorsCard[oldVar];
+          if (newVariableDescriptions[oldVar]) {
+            newVariableDescriptions[newVar] = newVariableDescriptions[oldVar];
+            delete newVariableDescriptions[oldVar];
+          }
+          if (newVariableExamples[oldVar]) {
+            newVariableExamples[newVar] = newVariableExamples[oldVar];
+            delete newVariableExamples[oldVar];
+          }
+          if (newVariableErrors[oldVar]) {
+            newVariableErrors[newVar] = newVariableErrors[oldVar];
             delete newVariableErrors[oldVar];
           }
         });
-  
-        // Actualizar estados relacionados
-        setVariableDescriptionsCard(prev => ({
-          ...prev,
-          ...newVariableDescriptions
-        }));
-        setVariableExamples(prev => ({
-          ...prev,
-          ...newVariableExamples
-        }));
-        setVariableErrorsCard(newVariableErrors);
   
         return {
           ...card,
           messageCard: updatedMessage,
           variablesCard: renumberedVariables,
+          variableDescriptions: newVariableDescriptions,
+          variableExamples: newVariableExamples,
+          variableErrors: newVariableErrors
         };
       })
     );
-  
-    // Actualizar referencias si es necesario
-    // messageCardRef.current?.focus();
   };
   
 
@@ -985,19 +974,36 @@ console.log("Después de eliminar", updatedMessage, renumberedVariables);
     }));
   };
 
-  const handleUpdateDescriptionsCard = (variable, value) => {
-    setVariableDescriptionsTarjeta(prevDescriptions => ({
-      ...prevDescriptions,
-      [variable]: value
-    }));
+  const handleUpdateDescriptionsCard = (cardId, variable, value) => {
+    setCards(prevCards =>
+      prevCards.map(card => {
+        if (card.id !== cardId) return card;
+        
+        return {
+          ...card,
+          variableDescriptions: {
+            ...card.variableDescriptions,
+            [variable]: value
+          }
+        };
+      })
+    );
   };
 
-  const handleUpdateExampleCard = (variable, value) => {
-    setVariableExamplesTarjeta(prevExamples => {
-      const updatedExamples = { ...prevExamples, [variable]: value };
-      console.log("Ejemplo de tarjeta actualizado:", updatedExamples);
-      return updatedExamples;
-    });
+  const handleUpdateExampleCard = (cardId, variable, value) => {
+    setCards(prevCards =>
+      prevCards.map(card => {
+        if (card.id !== cardId) return card;
+        
+        return {
+          ...card,
+          variableExamples: {
+            ...card.variableExamples,
+            [variable]: value
+          }
+        };
+      })
+    );
   };
 
   // Función para generar el ejemplo combinando el mensaje y los valores de las variables
@@ -1283,6 +1289,7 @@ const updateCardField = (cardId, field, value) => {
 
   // Estado principal que contiene todas las tarjetas
   const [cards, setCards] = useState([initialCardState]);
+  console.log("Cards data:", cards);
 
   return (
     <Grid container sx={{ height: '100vh' }}>
@@ -1891,16 +1898,16 @@ const updateCardField = (cardId, field, value) => {
                                                 size="small"
                                                 label="Descripción"
                                                 placeholder="¿Para qué sirve esta variable?"
-                                                value={variableDescriptionsCard[variableCard] || ''}
-                                                onChange={(e) => handleUpdateDescriptionsCard(variableCard, e.target.value)}
+                                                value={card.variableDescriptions?.[variableCard] || ''}
+                                                onChange={(e) => handleUpdateDescriptionsCard(card.id, variableCard, e.target.value)}
                                                 sx={{ flexGrow: 1 }}
                                               />
 
                                               <TextField
                                                 size="small"
                                                 label="Texto de ejemplo"
-                                                value={variableExamples[variableCard] || ''}
-                                                onChange={(e) => handleUpdateExample(variableCard, e.target.value)}
+                                                value={card.variableExamples?.[variableCard] || ''}
+                                                onChange={(e) => handleUpdateExampleCard(card.id, variableCard, e.target.value)}
                                                 sx={{ flexGrow: 1 }}
                                                 inputRef={(el) => (exampleCardRefs.current[variableCard] = el)}
                                                 error={!!variableErrorsCard[variableCard]}
@@ -2005,6 +2012,7 @@ const updateCardField = (cardId, field, value) => {
               startIcon={<AddIcon />}
               onClick={addAccordion}
               sx={{ mt: 2 }}
+              
             >
               Añadir tarjeta
             </Button>
@@ -2090,10 +2098,147 @@ const updateCardField = (cardId, field, value) => {
                 cantidadBotones={cantidadBotones}
                 tipoBoton={tipoBoton}
               />*/}
+              
 
 
 
             </Box>
+
+            <Swiper
+                modules={[EffectCoverflow, Pagination]}
+                effect={'coverflow'}
+                spaceBetween={30}
+                slidesPerView={'auto'}
+                centeredSlides={true}
+                pagination={{ clickable: true }}
+                style={{ width: '360px' }}  // Ancho fijo para el carrusel
+                coverflowEffect={{
+                  rotate: 50,
+                  stretch: 0,
+                  depth: 100,
+                  modifier: 1,
+                  slideShadows: true,
+                }}
+              >
+                {cards.map((card) => (
+                  <SwiperSlide key={card.id}>
+                    <Card sx={{
+                      width: '350px',       // Ancho fijo para cada tarjeta
+                      height: '450px',      // Altura fija para cada tarjeta
+                      margin: 'auto',
+                      my: 2,
+                      boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                      position: 'relative',
+                      display: 'flex',
+                      flexDirection: 'column'
+                    }}>
+                      {/* Delete button positioned top right */}
+                      {card.id !== 'initial-card' && (
+                        <IconButton
+                          color="error"
+                          sx={{
+                            position: 'absolute',
+                            top: 8,
+                            right: 8,
+                            backgroundColor: 'rgba(255,255,255,0.8)',
+                            zIndex: 2,
+                            '&:hover': {
+                              backgroundColor: 'rgba(255,255,255,0.9)',
+                            }
+                          }}
+                          onClick={() => handleRemoveCard(card.id)}
+                          size="small"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
+
+                      {/* Contenedor de imagen con altura fija */}
+                      <Box sx={{ height: '180px', overflow: 'hidden', position: 'relative' }}>
+                        {(card.mediaUrl || card.imagePreview) ? (
+                          <CardMedia
+                            component="img"
+                            sx={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover'
+                            }}
+                            image={card.mediaUrl || card.imagePreview}
+                            alt={card.title}
+                          />
+                        ) : (
+                          <Box sx={{ height: '100%', width: '100%', bgcolor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Typography variant="body2" color="text.secondary">Sin imagen</Typography>
+                          </Box>
+                        )}
+                      </Box>
+
+                      {/* Contenedor de texto con altura fija */}
+                      <CardContent sx={{ pt: 2, pb: 1, height: '120px', overflow: 'auto' }}>
+                        <Typography variant="h6" component="div" gutterBottom noWrap sx={{ fontWeight: 'bold' }}>
+                          {card.title || "Título"}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{
+                          display: '-webkit-box',
+                          WebkitLineClamp: 3,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis'
+                        }}>
+                          {card.body || "Descripción de la tarjeta"}
+                        </Typography>
+                      </CardContent>
+
+                      {/* Contenedor de botones con altura fija */}
+                      <Box sx={{
+                        p: 2,
+                        pt: 0,
+                        flex: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end'
+                      }}>
+                        <Stack spacing={0} sx={{ width: '100%' }}> {/* Cambia spacing a 0 */}
+                          {card.buttons.map((button, index) => (
+                            <Box
+                              key={button.id}
+                              sx={{
+                                width: '100%',
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "flex-start",
+                                gap: 1,
+                                borderTop: index === 0 ? "1px solid #e0e0e0" : "none", // Borde solo arriba para el primer botón
+                                borderBottom: "1px solid #e0e0e0", // Borde abajo para todos los botones
+                                p: 1.5, // Ajusta el padding para mejor aspecto
+                                backgroundColor: "#ffffff",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  backgroundColor: "#f5f5f5",
+                                },
+                                borderRadius: 0, // Elimina el borderRadius para que queden cuadrados
+                              }}
+                            >
+                              {button.type === "QUICK_REPLY" && (
+                                <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
+                              )}
+                              {button.type === "URL" && (
+                                <Link sx={{ fontSize: "16px", color: "#075e54" }} />
+                              )}
+                              {button.type === "PHONE_NUMBER" && (
+                                <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
+                              )}
+                              <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
+                                {button.title || button.text} {/* Soporta ambos formatos */}
+                              </Typography>
+                            </Box>
+                          ))}
+                        </Stack>
+                      </Box>
+                    </Card>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
 
 
           </Box>
