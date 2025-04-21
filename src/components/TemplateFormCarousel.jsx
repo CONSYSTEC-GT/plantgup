@@ -346,6 +346,12 @@ const TemplateFormCarousel = () => {
     try {
       // Hacer el primer request a GupShup API
 
+      // Verifica que cards esté definido
+    if (!cards || cards.length === 0) {
+      console.error("No hay tarjetas disponibles");
+      return;
+    }
+
       const formattedCards = formatCardsForGupshup(cards);
     
       // Asegúrate de que todas las cards tengan los datos necesarios
@@ -355,6 +361,7 @@ const TemplateFormCarousel = () => {
 
       if (!isValid) {
         console.error("Algunas cards no tienen todos los datos requeridos");
+        console.error(formattedCards);
         return;
       }
 
@@ -1172,8 +1179,8 @@ const TemplateFormCarousel = () => {
       return {
         headerType: "<IMAGE>",
         mediaUrl: card.file?.url || "", // Asumiendo que tienes la URL en este campo
-        mediaId: card.file?.id || "",
-        exampleMedia: card.file?.handle || "",
+        mediaId: card.file?.id || null,
+        exampleMedia: card.file?.handle || null,
         body: card.messageCard || "",
         sampleText: card.variableExamples?.messageCard || card.messageCard || "",
         buttons: transformedButtons
@@ -1182,8 +1189,8 @@ const TemplateFormCarousel = () => {
   };
   
   // Uso de la función
-  const formattedCardsForGupshup = formatCardsForGupshup(cards);
-  console.log("Formato para Gupshup:", JSON.stringify(formattedCardsForGupshup, null, 2));
+  //const formattedCardsForGupshup = formatCardsForGupshup(cards);
+  //console.log("Formato para Gupshup:", JSON.stringify(formattedCardsForGupshup, null, 2));
 
 
   // Estado para los acordeones - solo guardamos el ID único y el contenido del formulario
