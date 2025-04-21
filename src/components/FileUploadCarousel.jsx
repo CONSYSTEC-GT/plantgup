@@ -108,9 +108,9 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
       const payload = {
         idEmpresa: empresaTalkMe,
-        idBot: 54,
+        idBot: 257,
         idBotRedes: 721,
-        idUsuario: idUsuarioTalkMe,
+        idUsuario: idUsuarioTalkMe || 48,
         tipoCarga: 3,
         nombreArchivo: selectedFile.name,
         contenidoArchivo: base64Content.split(',')[1],
@@ -131,12 +131,12 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
       );
 
       console.log('Request completo al servicio propio:', {
-        url: 'https://certificacion.talkme.pro/WsFTP/api/ftp/upload',
+        url: 'https://dev.talkme.pro/WsFTP/api/ftp/upload',
         method: 'POST',
         headers: {
           'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
           'Content-Type': 'application/json',
-          'origin': 'https://certificacion.talkme.pro/',
+          'origin': 'https://dev.talkme.pro/',
         },
         data: payload,
       });
