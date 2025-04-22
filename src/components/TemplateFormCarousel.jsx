@@ -1178,20 +1178,26 @@ const TemplateFormCarousel = () => {
         return null;
       }).filter(button => button !== null);
 
-      // Para la mediaUrl, comprueba si file es una string o un objeto
-    const mediaUrl = typeof card.file === 'string' 
-    ? card.file 
-    : (card.file?.url || "");
+      // Obtener la URL independientemente de la estructura de file
+    let mediaUrl = "";
+    if (typeof card.file === 'string') {
+      mediaUrl = card.file;
+    } else if (card.file && card.file.url) {
+      mediaUrl = card.file.url;
+    }
+
+    console.log(`Tarjeta ${card.id} - mediaUrl:`, mediaUrl);
+    console.log(`Tarjeta ${card.id} - body:`, card.messageCard || "");
   
       // Crear el formato requerido por Gupshup
-      return {
-        headerType: "<IMAGE>",
-        mediaUrl: card.file || "", // Ya que card.file contiene directamente la URL
-        mediaId: null, // Si no tienes mediaId específico
-        exampleMedia: card.file?.handle || null,
-        body: card.messageCard || "",
-        sampleText: card.variableExamples?.messageCard || card.messageCard || "",
-        buttons: transformedButtons
+    return {
+      headerType: "<IMAGE>",
+      mediaUrl: mediaUrl,
+      mediaId: null, // O extráelo de card.file si está disponible
+      exampleMedia: null,
+      body: card.messageCard || "",
+      sampleText: card.variableExamples?.messageCard || card.messageCard || "",
+      buttons: transformedButtons
       };
     });
   };
@@ -1279,28 +1285,16 @@ const TemplateFormCarousel = () => {
   const handleFileUpload = (cardId, uploadResponse) => {
     console.log("Respuesta de subida recibida:", uploadResponse);
     
-    // Si uploadResponse.url existe directamente
     if (uploadResponse && uploadResponse.url) {
-      setCardsData(prevCards => 
+      // Actualizar para guardar toda la información de la respuesta
+      setCards(prevCards => 
         prevCards.map(card => 
           card.id === cardId 
-            ? { ...card, file: uploadResponse.url } // Solo guardamos la URL
+            ? { ...card, file: { url: uploadResponse.url } } // Guardar como objeto con url
             : card
         )
       );
-    } 
-    // Si estado es "OK" y contiene url como mencionabas
-    else if (uploadResponse && uploadResponse.estado === "OK" && uploadResponse.url) {
-      setCardsData(prevCards => 
-        prevCards.map(card => 
-          card.id === cardId 
-            ? { ...card, file: uploadResponse.url } // Solo guardamos la URL
-            : card
-        )
-      );
-    }
-    // Para depuración
-    else {
+    } else {
       console.error("Formato de respuesta no esperado:", uploadResponse);
     }
   };
@@ -2151,7 +2145,7 @@ const TemplateFormCarousel = () => {
 
                     {/* Contenedor de imagen con altura fija */}
                     <Box sx={{ height: '180px', overflow: 'hidden', position: 'relative' }}>
-                      {(card.file || card.imagePreview) ? (
+                      {(card.file || mediaUrl) ? (
                         <CardMedia
                           component="img"
                           sx={{
@@ -2159,7 +2153,7 @@ const TemplateFormCarousel = () => {
                             height: '100%',
                             objectFit: 'cover'
                           }}
-                          image={card.file || card.imagePreview}
+                          image={card.file || card.mediaUrl}
                           alt={card.title}
                         />
                       ) : (
