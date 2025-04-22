@@ -143,6 +143,9 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
       // Generamos un ID único para el medio si no viene en la respuesta
       const mediaId = ownServiceData.mediaId || ownServiceData.id || `media-${Date.now()}`;
+
+      // Mostrar diálogo de éxito
+      setShowSuccessModal(true);
       
       // Notificar al componente padre
       if (onUploadSuccess) {
@@ -159,6 +162,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
       console.log('Proceso de subida completado exitosamente.');
     } catch (error) {
       console.error('Error en el proceso de subida:', error);
+      setShowErrorModal(true); // Mostrar diálogo de error
       setIsUploading(false);
       setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
     }
