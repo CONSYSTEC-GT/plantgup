@@ -1286,12 +1286,17 @@ const TemplateFormCarousel = () => {
   const handleFileUpload = (cardId, uploadResponse) => {
     console.log("Respuesta de subida recibida:", uploadResponse);
     
-    if (uploadResponse && uploadResponse.url) {
-      // Actualizar para guardar toda la información de la respuesta
+    if (uploadResponse && uploadResponse.url && uploadResponse.mediaId) {
       setCards(prevCards => 
         prevCards.map(card => 
           card.id === cardId 
-            ? { ...card, file: { url: uploadResponse.url } } // Guardar como objeto con url
+            ? { 
+                ...card, 
+                file: { 
+                  mediaId: uploadResponse.mediaId, 
+                  url: uploadResponse.url 
+                } 
+              }
             : card
         )
       );
@@ -1299,6 +1304,7 @@ const TemplateFormCarousel = () => {
       console.error("Formato de respuesta no esperado:", uploadResponse);
     }
   };
+  
 
   return (
     <Grid container sx={{ height: 'calc(100vh - 16px)' }}>
@@ -1762,7 +1768,8 @@ const TemplateFormCarousel = () => {
                               </AccordionSummary>
                               <AccordionDetails>
                                 <Box component="form" sx={{ '& .MuiTextField-root': { mb: 2, width: '100%' } }}>
-                                  <FileUploadCarousel onUploadComplete={(response) => handleFileUpload(card.id, response)} />
+                                  <FileUploadCarousel onUploadComplete={(mediaId, url) => handleFileUpload(card.id, { mediaId, url })} />
+
 
 
                                   <Box sx={{ position: "relative" }}>

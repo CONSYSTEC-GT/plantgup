@@ -157,7 +157,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
       // Notificar al componente padre con el mediaId y la URL
       if (onUploadSuccess) {
         console.log('Notificando al componente padre con el mediaId y la URL...');
-        onUploadSuccess(ownServiceData.url); // Pasar ambos valores
+        onUploadSuccess(mediaId, ownServiceData.url); // Pasar ambos valores
         setShowSuccessModal(true);
       }
 
