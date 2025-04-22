@@ -126,6 +126,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
           headers: {
             'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
             'Content-Type': 'application/json',
+            'origin': 'https://dev.talkme.pro/'
           },
         }
       );
@@ -136,7 +137,6 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         headers: {
           'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
           'Content-Type': 'application/json',
-          'origin': 'https://dev.talkme.pro/',
         },
         data: payload,
       });
@@ -161,6 +161,9 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         onUploadSuccess(ownServiceData.url); // Pasar ambos valores
         setShowSuccessModal(true);
       }
+
+      // Resetear el estado del archivo seleccionado para permitir subir otro
+      setSelectedFile(null);
 
       console.log('Proceso de subida completado exitosamente.');
       //setUploadStatus('¡Archivo subido exitosamente!');

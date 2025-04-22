@@ -1178,8 +1178,8 @@ const TemplateFormCarousel = () => {
       // Crear el formato requerido por Gupshup
       return {
         headerType: "<IMAGE>",
-        mediaUrl: card.file?.url || "", // Asumiendo que tienes la URL en este campo
-        mediaId: card.file?.id || null,
+        mediaUrl: card.file || "", // Ya que card.file contiene directamente la URL
+        mediaId: null, // Si no tienes mediaId específico
         exampleMedia: card.file?.handle || null,
         body: card.messageCard || "",
         sampleText: card.variableExamples?.messageCard || card.messageCard || "",
@@ -1268,18 +1268,19 @@ const TemplateFormCarousel = () => {
 
 
   // Función para manejar la subida de archivos para una card específica
-const handleFileUpload = (cardId, uploadResponse) => {
-  if (uploadResponse.estado === "OK" && uploadResponse.url) {
-    // Actualiza el array de cards con la nueva URL
-    setCardsData(prevCards => 
-      prevCards.map(card => 
-        card.id === cardId 
-          ? { ...card, file: uploadResponse.url } 
-          : card
-      )
-    );
-  }
-};
+  const handleFileUpload = (cardId, uploadResponse) => {
+    // Verifica si la respuesta es un objeto con la estructura esperada
+    if (uploadResponse && uploadResponse.url) {
+      // Actualiza el array de cards con la nueva URL
+      setCardsData(prevCards => 
+        prevCards.map(card => 
+          card.id === cardId 
+            ? { ...card, file: uploadResponse } 
+            : card
+        )
+      );
+    }
+  };
 
   return (
     <Grid container sx={{ height: 'calc(100vh - 16px)' }}>
