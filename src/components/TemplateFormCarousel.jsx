@@ -2191,7 +2191,7 @@ const handleFileUpload = (cardId, uploadResponse) => {
                     )}
 
                     <Box sx={{ height: '180px', overflow: 'hidden', position: 'relative' }}>
-                      {(card.fileData && card.file.url) ? (
+                      {(card.fileData && card.fileData.url) ? (
                         <CardMedia
                           component="img"
                           sx={{
@@ -2199,11 +2199,18 @@ const handleFileUpload = (cardId, uploadResponse) => {
                             height: '100%',
                             objectFit: 'cover'
                           }}
-                          image={card.fileData}
-                          alt={card.title}
+                          image={card.fileData.url}
+                          alt={`Imagen tarjeta ${index + 1}`}
                         />
                       ) : (
-                        <Box sx={{ height: '100%', width: '100%', bgcolor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Box sx={{
+                          height: '100%',
+                          width: '100%',
+                          bgcolor: '#f0f0f0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}>
                           <Typography variant="body2" color="text.secondary">Sin imagen</Typography>
                         </Box>
                       )}
