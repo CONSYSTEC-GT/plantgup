@@ -346,11 +346,14 @@ const TemplateFormCarousel = () => {
     try {
       // Hacer el primer request a GupShup API
 
-      // Verifica que todas las tarjetas tengan archivos
-    const allCardsHaveFiles = cards.every(card => card.file && (typeof card.file === 'string' || card.file.url));
+      // Hacer debug de las cards antes de formatear
+      console.log("Cards antes de formatear:", JSON.stringify(cards));
 
-    if (!allCardsHaveFiles) {
-      console.error("Algunas tarjetas no tienen archivos asociados");}
+      // Verificar si alguna tarjeta tiene archivo
+      const cardsWithFiles = cards.filter(card =>
+        card.file && (typeof card.file === 'string' || card.file.url)
+      );
+      console.log("Tarjetas con archivos:", cardsWithFiles.length, "de", cards.length);
 
 
       // Primero verifica que cards esté definido
@@ -1291,16 +1294,33 @@ const TemplateFormCarousel = () => {
 
   // Función para manejar la subida de archivos para una card específica
   const handleFileUpload = (cardId, uploadResponse) => {
-    console.log("Respuesta de subida recibida para tarjeta:", cardId, uploadResponse);
+    console.log("Respuesta de subida recibida:", uploadResponse);
     
-    if (uploadResponse && uploadResponse.url && uploadResponse.mediaId) {
+    // Manejar respuesta del servicio propio
+    if (uploadResponse && uploadResponse.data && uploadResponse.data.url) {
       setCards(prevCards => 
         prevCards.map(card => 
           card.id === cardId 
             ? { 
                 ...card, 
                 file: { 
-                  mediaId: uploadResponse.mediaId, 
+                  url: uploadResponse.data.url,
+                  mediaId: uploadResponse.data.ref || null
+                } 
+              }
+            : card
+        )
+      );
+    } 
+    // Mantén el manejo original por si acaso
+    else if (uploadResponse && uploadResponse.url) {
+      setCards(prevCards => 
+        prevCards.map(card => 
+          card.id === cardId 
+            ? { 
+                ...card, 
+                file: { 
+                  mediaId: uploadResponse.mediaId || null, 
                   url: uploadResponse.url 
                 } 
               }
