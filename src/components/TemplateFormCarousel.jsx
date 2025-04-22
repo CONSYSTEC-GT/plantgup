@@ -1312,51 +1312,31 @@ const TemplateFormCarousel = () => {
 
 
   // Función para manejar la subida de archivos para una card específica
-  const handleFileUpload = (cardId, uploadResponse) => {
-    console.log("Respuesta completa de subida recibida:", uploadResponse);
+const handleFileUpload = (cardId, uploadResponse) => {
+  console.log("Respuesta completa de subida recibida:", uploadResponse);
 
-    // Verifica si existe la propiedad 'data' y dentro de ella 'url'
-    if (uploadResponse && uploadResponse.data) {
-      console.log("uploadResponse.data:", uploadResponse.data);
-      if (uploadResponse.data.url) {
-        console.log("URL encontrada en uploadResponse.data.url:", uploadResponse.data.url);
-      } else {
-        console.warn("No se encontró 'url' en uploadResponse.data");
+  if (uploadResponse) {
+    // Estructura esperada del uploadResponse después de las modificaciones
+    const fileData = {
+      url: uploadResponse.url,
+      mediaId: uploadResponse.mediaId || null
+    };
+
+    console.log("Datos de archivo a guardar:", fileData);
+
+    setCards(prevCards => prevCards.map(card => {
+      if (card.id === cardId) {
+        return {
+          ...card,
+          fileData: fileData // Guardar los datos del archivo en la tarjeta
+        };
       }
-    }
-
-    // Verifica si directamente existe 'url' en uploadResponse
-    if (uploadResponse && uploadResponse.url) {
-      console.log("URL encontrada directamente en uploadResponse.url:", uploadResponse.url);
-    } else {
-      console.warn("No se encontró 'url' directamente en uploadResponse");
-    }
-
-    // Manejo de estado según la estructura recibida
-    if (uploadResponse && uploadResponse.data && uploadResponse.data.url) {
-      setCards(prevCards => prevCards.map(card => {
-        if (card.id === cardId) {
-          return {
-            ...card,
-            fileData: fileData // Asegúrate de guardar los datos del archivo en la tarjeta
-          };
-        }
-        return card;
-      }));
-    } else if (uploadResponse && uploadResponse.url) {
-      setCards(prevCards => prevCards.map(card => {
-        if (card.id === cardId) {
-          return {
-            ...card,
-            fileData: fileData // Asegúrate de guardar los datos del archivo en la tarjeta
-          };
-        }
-        return card;
-      }));
-    } else {
-      console.error("Formato de respuesta no esperado:", uploadResponse);
-    }
-  };
+      return card;
+    }));
+  } else {
+    console.error("No se recibió respuesta de subida válida");
+  }
+};
 
 
 

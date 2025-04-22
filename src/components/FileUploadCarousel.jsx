@@ -223,7 +223,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
           key={fileInputKey}
         />
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-          <label htmlFor="file-upload">
+        <label htmlFor={`file-upload-${fileInputKey}`}>
             <Button variant="contained" component="span">
               Seleccionar Archivo
             </Button>
