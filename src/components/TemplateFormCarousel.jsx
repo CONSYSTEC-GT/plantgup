@@ -1812,7 +1812,7 @@ const TemplateFormCarousel = () => {
                               <AccordionDetails>
                                 <Box component="form" sx={{ '& .MuiTextField-root': { mb: 2, width: '100%' } }}>
                                   <FileUploadCarousel
-                                    onUploadComplete={(mediaId, url) => {
+                                    onUploadSuccess={(mediaId, url) => {
                                       console.log('mediaId:', mediaId);
                                       console.log('url:', url);
                                       handleFileUpload(card.id, { mediaId, url });
