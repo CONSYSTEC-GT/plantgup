@@ -2,7 +2,7 @@ import React from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Tooltip, Typography } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import EditTemplateForm from '../components/EditTemplateForm';
+import EditTemplateFormCarousel from '../components/EditTemplateFormCarousel';
 
 
 
@@ -36,7 +36,7 @@ const ModifyTemplatePage = () => {
       </Tooltip>
 
       {/* Pasa el objeto template a TemplateForm */}
-      <EditTemplateForm />
+      <EditTemplateFormCarousel />
       
 
     </Box>
