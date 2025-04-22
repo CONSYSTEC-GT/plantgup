@@ -346,27 +346,28 @@ const TemplateFormCarousel = () => {
     try {
       // Hacer el primer request a GupShup API
 
-      // Verifica que cards esté definido
-      // Antes de verificar isValid
-    console.log("Cards formateadas:", formattedCards);
+      // Primero verifica que cards esté definido
     if (!cards || cards.length === 0) {
       console.error("No hay tarjetas disponibles");
       return;
     }
 
-      const formattedCards = formatCardsForGupshup(cards);
+    // Luego formatea las cards
+    const formattedCards = formatCardsForGupshup(cards);
     
-      // Asegúrate de que todas las cards tengan los datos necesarios
-      const isValid = formattedCards.every(card => 
-        card.mediaUrl && card.body // Añade aquí más validaciones si son necesarias
-      );
+    // Ahora sí puedes hacer log de formattedCards
+    console.log("Cards formateadas:", formattedCards);
+    
+    // Asegúrate de que todas las cards tengan los datos necesarios
+    const isValid = formattedCards.every(card => 
+      card.mediaUrl && card.body // Añade aquí más validaciones si son necesarias
+    );
 
-      if (!isValid) {
-        console.error("Algunas cards no tienen todos los datos requeridos");
-        console.error(formattedCards);
-        console.error("Tarjetas inválidas:", formattedCards.filter(card => !card.mediaUrl || !card.body));
-        return;
-      }
+    if (!isValid) {
+      console.error("Algunas cards no tienen todos los datos requeridos");
+      console.error(formattedCards);
+      return;
+    }
 
       const result = await createTemplateCarouselGupshup(
         appId,
