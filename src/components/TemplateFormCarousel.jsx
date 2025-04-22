@@ -357,27 +357,27 @@ const TemplateFormCarousel = () => {
 
 
       // Primero verifica que cards esté definido
-    if (!cards || cards.length === 0) {
-      console.error("No hay tarjetas disponibles");
-      return;
-    }
+      if (!cards || cards.length === 0) {
+        console.error("No hay tarjetas disponibles");
+        return;
+      }
 
-    // Luego formatea las cards
-    const formattedCards = formatCardsForGupshup(cards);
-    
-    // Ahora sí puedes hacer log de formattedCards
-    console.log("Cards formateadas:", formattedCards);
-    
-    // Asegúrate de que todas las cards tengan los datos necesarios
-    const isValid = formattedCards.every(card => 
-      card.mediaUrl && card.body // Añade aquí más validaciones si son necesarias
-    );
+      // Luego formatea las cards
+      const formattedCards = formatCardsForGupshup(cards);
 
-    if (!isValid) {
-      console.error("Algunas cards no tienen todos los datos requeridos");
-      console.error(formattedCards);
-      return;
-    }
+      // Ahora sí puedes hacer log de formattedCards
+      console.log("Cards formateadas:", formattedCards);
+
+      // Asegúrate de que todas las cards tengan los datos necesarios
+      const isValid = formattedCards.every(card =>
+        card.mediaUrl && card.body // Añade aquí más validaciones si son necesarias
+      );
+
+      if (!isValid) {
+        console.error("Algunas cards no tienen todos los datos requeridos");
+        console.error(formattedCards);
+        return;
+      }
 
       const result = await createTemplateCarouselGupshup(
         appId,
@@ -1190,29 +1190,29 @@ const TemplateFormCarousel = () => {
       }).filter(button => button !== null);
 
       // Obtener la URL independientemente de la estructura de file
-    let mediaUrl = "";
-    if (typeof card.file === 'string') {
-      mediaUrl = card.file;
-    } else if (card.file && card.file.url) {
-      mediaUrl = card.file.url;
-    }
+      let mediaUrl = "";
+      if (typeof card.file === 'string') {
+        mediaUrl = card.file;
+      } else if (card.file && card.file.url) {
+        mediaUrl = card.file.url;
+      }
 
-    console.log(`Tarjeta ${card.id} - mediaUrl:`, mediaUrl);
-    console.log(`Tarjeta ${card.id} - body:`, card.messageCard || "");
-  
+      console.log(`Tarjeta ${card.id} - mediaUrl:`, mediaUrl);
+      console.log(`Tarjeta ${card.id} - body:`, card.messageCard || "");
+
       // Crear el formato requerido por Gupshup
-    return {
-      headerType: "IMAGE",
-      mediaUrl: mediaUrl,
-      mediaId: null, // O extráelo de card.file si está disponible
-      exampleMedia: null,
-      body: card.messageCard || "",
-      sampleText: card.variableExamples?.messageCard || card.messageCard || "",
-      buttons: transformedButtons
+      return {
+        headerType: "IMAGE",
+        mediaUrl: mediaUrl,
+        mediaId: null, // O extráelo de card.file si está disponible
+        exampleMedia: null,
+        body: card.messageCard || "",
+        sampleText: card.variableExamples?.messageCard || card.messageCard || "",
+        buttons: transformedButtons
       };
     });
   };
-  
+
   // Uso de la función
   //const formattedCardsForGupshup = formatCardsForGupshup(cards);
   //console.log("Formato para Gupshup:", JSON.stringify(formattedCardsForGupshup, null, 2));
@@ -1295,7 +1295,7 @@ const TemplateFormCarousel = () => {
   // Función para manejar la subida de archivos para una card específica
   const handleFileUpload = (cardId, uploadResponse) => {
     console.log("Respuesta completa de subida recibida:", uploadResponse);
-  
+
     // Verifica si existe la propiedad 'data' y dentro de ella 'url'
     if (uploadResponse && uploadResponse.data) {
       console.log("uploadResponse.data:", uploadResponse.data);
@@ -1305,40 +1305,40 @@ const TemplateFormCarousel = () => {
         console.warn("No se encontró 'url' en uploadResponse.data");
       }
     }
-  
+
     // Verifica si directamente existe 'url' en uploadResponse
     if (uploadResponse && uploadResponse.url) {
       console.log("URL encontrada directamente en uploadResponse.url:", uploadResponse.url);
     } else {
       console.warn("No se encontró 'url' directamente en uploadResponse");
     }
-  
+
     // Manejo de estado según la estructura recibida
     if (uploadResponse && uploadResponse.data && uploadResponse.data.url) {
-      setCards(prevCards => 
-        prevCards.map(card => 
-          card.id === cardId 
-            ? { 
-                ...card, 
-                file: { 
-                  url: uploadResponse.data.url,
-                  mediaId: uploadResponse.data.ref || null
-                } 
+      setCards(prevCards =>
+        prevCards.map(card =>
+          card.id === cardId
+            ? {
+              ...card,
+              file: {
+                url: uploadResponse.data.url,
+                mediaId: uploadResponse.data.ref || null
               }
+            }
             : card
         )
       );
     } else if (uploadResponse && uploadResponse.url) {
-      setCards(prevCards => 
-        prevCards.map(card => 
-          card.id === cardId 
-            ? { 
-                ...card, 
-                file: { 
-                  mediaId: uploadResponse.mediaId || null, 
-                  url: uploadResponse.url 
-                } 
+      setCards(prevCards =>
+        prevCards.map(card =>
+          card.id === cardId
+            ? {
+              ...card,
+              file: {
+                mediaId: uploadResponse.mediaId || null,
+                url: uploadResponse.url
               }
+            }
             : card
         )
       );
@@ -1346,8 +1346,8 @@ const TemplateFormCarousel = () => {
       console.error("Formato de respuesta no esperado:", uploadResponse);
     }
   };
-  
-  
+
+
 
   return (
     <Grid container sx={{ height: 'calc(100vh - 16px)' }}>
@@ -2157,7 +2157,7 @@ const TemplateFormCarousel = () => {
                 {new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: true })}
               </Typography>
 
-             </Box>
+            </Box>
 
             <Swiper
               modules={[Pagination]}
@@ -2201,9 +2201,8 @@ const TemplateFormCarousel = () => {
                       </IconButton>
                     )}
 
-                    {/* Contenedor de imagen con altura fija */}
                     <Box sx={{ height: '180px', overflow: 'hidden', position: 'relative' }}>
-                      {(card.file) ? (
+                      {(card.file && card.file.url) ? (
                         <CardMedia
                           component="img"
                           sx={{
@@ -2211,7 +2210,7 @@ const TemplateFormCarousel = () => {
                             height: '100%',
                             objectFit: 'cover'
                           }}
-                          image={card.file}
+                          image={card.file.url}
                           alt={card.title}
                         />
                       ) : (
@@ -2220,6 +2219,7 @@ const TemplateFormCarousel = () => {
                         </Box>
                       )}
                     </Box>
+
 
                     {/* Contenedor de texto con altura fija */}
                     <CardContent sx={{ pt: 2, pb: 1, height: '120px', overflow: 'auto' }}>
@@ -2290,10 +2290,10 @@ const TemplateFormCarousel = () => {
                 </SwiperSlide>
               ))}
             </Swiper>
-            </Box>
-
-
           </Box>
+
+
+        </Box>
 
       </Grid>
     </Grid>
