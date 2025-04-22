@@ -152,7 +152,7 @@ const TemplateFormCarousel = () => {
     setMediaId("");
     setButtons([]);
     setExample("");
-    setCards([]);
+    setCards([initialCardState]);
     setUploadedUrl("");
     setVariables([]);
     setVariableDescriptions([]);
