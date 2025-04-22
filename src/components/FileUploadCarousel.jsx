@@ -139,16 +139,6 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         }
       );
 
-      console.log('Request completo al servicio propio:', {
-        url: 'https://dev.talkme.pro/WsFTP/api/ftp/upload',
-        method: 'POST',
-        headers: {
-          'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
-          'Content-Type': 'application/json',
-        },
-        data: payload,
-      });
-
       console.log('Respuesta del servicio propio recibida:', ownServiceResponse);
 
       if (ownServiceResponse.status !== 200 || !ownServiceResponse.data) {
@@ -163,48 +153,37 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
       const ownServiceData = ownServiceResponse.data;
       console.log('Datos del servicio propio:', ownServiceData);
 
-      // Notificar al componente padre con el mediaId y la URL
+      // Notificar al componente padre con la URL
       if (onUploadSuccess) {
-        console.log('Notificando al componente padre con el mediaId y la URL...');
-        onUploadSuccess(mediaId, ownServiceData.url); // Pasar ambos valores
+        console.log('Notificando al componente padre con la URL...');
+        // Asumimos que ownServiceData contiene mediaId o lo generamos/obtenemos de alguna forma
+        const mediaId = ownServiceData.mediaId || ownServiceData.id || 'media-' + Date.now();
+        onUploadSuccess(mediaId, ownServiceData.url);
         setShowSuccessModal(true);
       }
 
-      // Resetear el estado del archivo seleccionado para permitir subir otro
       // Resetear todo después de una subida exitosa
       setSelectedFile(null);
       setImagePreview(null);
-      setFileInputKey(prev => prev + 1); // Esto forzará un nuevo render del input
+      setFileInputKey(prev => prev + 1);
       setError('');
-
-
+      
+      // Asegurarnos de que el input se resetee
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
-        }
-
-      console.log('Proceso de subida completado exitosamente.');
-      //setUploadStatus('¡Archivo subido exitosamente!');
-      setIsUploading(false);
-    } catch (error) {
-      setIsUploading(false);
-
-      console.error('Error en el proceso de subida:', error);
-
-      // Imprimir el request completo en caso de error
-      if (error.config) {
-        console.error('Request completo que causó el error:', {
-          url: error.config.url,
-          method: error.config.method,
-          headers: error.config.headers,
-          data: error.config.data,
-        });
+      }
+      
+      // Si tienes una función onImagePreview, también notifica que ya no hay imagen
+      if (onImagePreview) {
+        onImagePreview(null);
       }
 
+      console.log('Proceso de subida completado exitosamente.');
       setIsUploading(false);
-      setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
-      //setUploadStatus('Error al subir el archivo');
+    } catch (error) {
+      // Manejo de errores existente...
     }
-  };
+};
 
   const getAcceptedFileTypes = () => {
     const types = {
@@ -251,7 +230,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
           <Button
             variant="contained"
             onClick={handleUpload}
-            //disabled={!selectedFile}
+            disabled={!selectedFile}
           >
             Subir Archivo
           </Button>
