@@ -251,7 +251,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
           <Button
             variant="contained"
             onClick={handleUpload}
-            disabled={!selectedFile}
+            //disabled={!selectedFile}
           >
             Subir Archivo
           </Button>
