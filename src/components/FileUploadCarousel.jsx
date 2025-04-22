@@ -67,6 +67,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
       setShowErrorModal(true);
       setSelectedFile(null);
       setImagePreview(null);
+      event.target.value = ''; // ← Resetear input
       return;
     }
 
@@ -225,8 +226,9 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
           style={{ display: 'none' }}
           id="file-upload"
           type="file"
-          //onChange={handleFileChange}
+          onChange={handleFileChange}
           ref={fileInputRef}
+          key={selectedFile ? selectedFile.name : Date.now()} // ← Fuerza re-render
         />
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <label htmlFor="file-upload">
