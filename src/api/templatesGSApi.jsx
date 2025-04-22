@@ -47,13 +47,17 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions)
 };
 
 const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTalkMe) => {
-  const url = 'http://localhost:3004/api/tarjetas/';
+  const url = 'https://dev.talkme.pro/templatesGS/api/tarjetas/';
   const headers = {
     "Content-Type": "application/json",
   };
 
   for (const card of cards) {
-    const { title, mediaUrl, body, buttons = [] } = card;
+    // Adaptamos la estructura a lo que espera el API
+    const mediaUrl = card?.fileData?.url || null;
+    const body = card.messageCard;
+    const buttons = card.buttons || [];
+    
 
     if (!mediaUrl && !body) {
       console.warn("Tarjeta ignorada: no tiene contenido (mediaUrl o body)");
@@ -121,10 +125,13 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   }
 
   let TIPO_PLANTILLA;
+  let PANTALLAS;
   if (templateType === "CAROUSEL"){
     TIPO_PLANTILLA = 1;
+    PANTALLAS = 4;
   } else {
     TIPO_PLANTILLA = 0;
+    PANTALLAS = 0;
   }
 
   // Crear un objeto con los datos
@@ -138,7 +145,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     TIPO_PLANTILLA: TIPO_PLANTILLA,
     MEDIA: getMediaType(uploadedUrl) ?? null,
     URL: uploadedUrl,
-    PANTALLAS: 0,
+    PANTALLAS: PANTALLAS,
     ESTADO: 1,
     AUTORIZADO: 1,
     ELIMINADO: 0,

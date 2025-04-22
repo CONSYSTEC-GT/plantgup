@@ -345,12 +345,9 @@ const TemplateFormCarousel = () => {
 
   const iniciarRequest = async () => {
     try {
-
-      // Hacer el primer request a GupShup API
       // Hacer debug de las cards antes de formatear
       console.log("Cards antes de formatear:", JSON.stringify(cards));
 
-      
       // Primero verifica que cards esté definido
       if (!cards || cards.length === 0) {
         console.error("No hay tarjetas disponibles");
@@ -374,10 +371,14 @@ const TemplateFormCarousel = () => {
         return;
       }
 
+      //
       const cardsToSendArray = [...cards]; // Esto es un array de objetos
- 
-      const cardsToSend = JSON.stringify([...cards]); // Convertir a JSON string // Creo una copia para no modificar el estado original
+      const cardsToSend = JSON.stringify([...cards]); // Convertir a JSON string
 
+      /******************************
+       * COMENTADO EL PRIMER REQUEST *
+       ******************************/
+      
       const result = await createTemplateCarouselGupshup(
         appId,
         authCode,
@@ -397,8 +398,24 @@ const TemplateFormCarousel = () => {
         },
         validateFields
       );
+      
 
-      // Verificar si el primer request fue exitoso
+      /* Simulamos un resultado exitoso con un templateId hardcodeado para pruebas
+      const mockResult = {
+        status: "success",
+        template: {
+          id: "ID_DE_PRUEBA_1234" // Usa un ID de prueba aquí
+        }
+      };
+
+      // Verificar si el primer request fue exitoso (ahora usando el mock)
+      if (mockResult && mockResult.status === "success") {
+        // Extraer el valor de `id` del objeto `template`
+        const templateId = mockResult.template.id;
+
+        */
+
+        // Verificar si el primer request fue exitoso
       if (result && result.status === "success") {
         // Extraer el valor de `id` del objeto `template`
         const templateId = result.template.id;
@@ -423,13 +440,11 @@ const TemplateFormCarousel = () => {
         resetForm();
         setShowSuccessModal(true);
 
-        // El tercer request se maneja dentro de saveTemplateToTalkMe
       } else {
         console.error("El primer request no fue exitoso o no tiene el formato esperado.");
         setErrorMessageGupshup(result?.message || "La plantilla no pudo ser creada.");
         setShowErrorModal(true);
-
-        console.error("Resultado del primer request:", result);
+        
       }
     } catch (error) {
       console.error("Ocurrió un error:", error);
