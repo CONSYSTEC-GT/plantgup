@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Alert, Box, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, FormLabel, Typography, TextField, Snackbar, } from '@mui/material';
 
 import { CustomDialog } from '../utils/CustomDialog';
 
-const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }) => {
+const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, initialFile = null }) => {
 
   // Recupera el token del localStorage
   const token = localStorage.getItem('authToken');
@@ -57,6 +57,13 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
     if (onHeaderChange) onHeaderChange(newHeader);
   };
 
+  // Efecto para cargar el archivo inicial si existe
+  useEffect(() => {
+    if (initialFile && initialFile.url) {
+      setImagePreview(initialFile.url);
+    }
+  }, [initialFile]);
+
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -64,33 +71,21 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
     if (!file) return;
 
-    // Verificar el tamaño del archivo
     if (file.size > MAX_FILE_SIZE) {
       setError('El archivo es demasiado grande');
       setSelectedFile(null);
-      setImagePreview(null);
-      event.target.value = ''; // Resetear input
+      setImagePreview(initialFile?.url || null);  // Mantener preview anterior si existe
+      event.target.value = '';
       return;
     }
-
-    console.log('Detalles del archivo:', {
-      nombre: file.name,
-      tipo: file.type,
-      tamaño: `${(file.size / 1024 / 1024).toFixed(2)} MB`
-    });
 
     setError('');
     setSelectedFile(file);
 
-    // Crear una vista previa de la imagen
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result);
-
-      // Notificar al componente padre con la vista previa
-      if (onImagePreview) {
-        onImagePreview(reader.result);
-      }
+      onImagePreview?.(reader.result);
     };
     reader.readAsDataURL(file);
   };
@@ -98,19 +93,16 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
   const handleUpload = async () => {
     if (!selectedFile) {
       setError('Por favor, selecciona un archivo.');
-      console.error('Error: No se ha seleccionado ningún archivo.');
       return;
     }
 
     setIsUploading(true);
 
     try {
-      console.log('Iniciando proceso de subida de archivo...');
-
       const base64Content = await convertToBase64(selectedFile);
       
       const payload = {
-        idEmpresa: empresaTalkMe, // Asegúrate de que estas variables estén definidas
+        idEmpresa: empresaTalkMe,
         idBot: 257,
         idBotRedes: 721,
         idUsuario: idUsuarioTalkMe || 48,
@@ -119,9 +111,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         contenidoArchivo: base64Content.split(',')[1],
       };
 
-      console.log('Preparando solicitud al servicio...');
-
-      const ownServiceResponse = await axios.post(
+      const response = await axios.post(
         'https://dev.talkme.pro/WsFTP/api/ftp/upload',
         payload,
         {
@@ -132,39 +122,32 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         }
       );
 
-      console.log('Respuesta del servicio recibida:', ownServiceResponse);
-
-      if (ownServiceResponse.status !== 200 || !ownServiceResponse.data) {
+      if (response.status !== 200 || !response.data) {
         throw new Error('Error en la respuesta del servicio');
       }
 
-      const ownServiceData = ownServiceResponse.data;
-      console.log('Datos del servicio:', ownServiceData);
+      const mediaId = response.data.mediaId || response.data.id || `media-${Date.now()}`;
+      
+      onUploadSuccess({
+        mediaId: mediaId,
+        url: response.data.url,
+        type: selectedFile.type.includes('image') ? 'image' : 'video'
+      });
 
-      // Generamos un ID único para el medio si no viene en la respuesta
-      const mediaId = ownServiceData.mediaId || ownServiceData.id || `media-${Date.now()}`;
-
-      // Mostrar diálogo de éxito
+      // Limpieza parcial - mantener el preview del nuevo archivo subido
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      setFileInputKey(prev => prev + 1);
       setShowSuccessModal(true);
       
-      // Notificar al componente padre
-      if (onUploadSuccess) {
-        console.log('Notificando al componente padre con estructura correcta');
-        onUploadSuccess({
-          mediaId: mediaId,
-          url: ownServiceData.url
-        });
-      }
-
-      // Limpieza completa después de subida exitosa
-      resetComponent();
-      
-      console.log('Proceso de subida completado exitosamente.');
     } catch (error) {
       console.error('Error en el proceso de subida:', error);
-      setShowErrorModal(true); // Mostrar diálogo de error
-      setIsUploading(false);
+      setShowErrorModal(true);
       setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
+    } finally {
+      setIsUploading(false);
     }
   };
 

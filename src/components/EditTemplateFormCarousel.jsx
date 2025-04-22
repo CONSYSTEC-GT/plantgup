@@ -73,8 +73,11 @@ const EditTemplateFormCarousel = () => {
             
             // Detectar cantidad de botones y su tipo basado en la primera tarjeta
             if (meta.cards[0].buttons && meta.cards[0].buttons.length > 0) {
-              setCantidadBotones(Number(meta.cards[0].buttons.length));
+              setCantidadBotones(String(meta.cards[0].buttons.length));
               console.log("Cantidad de botones:", meta.cards[0].buttons.length);
+              console.log("Tipo de dato:", typeof Number(meta.cards[0].buttons.length));
+
+
               setTipoBoton(meta.cards[0].buttons[0].type || "QUICK_REPLY");
             }
 
@@ -138,7 +141,7 @@ const EditTemplateFormCarousel = () => {
   //carousel
   const [messageCard, setMessageCard] = useState("");
   const messageCardRefs = useRef({});
-  const [cantidadBotones, setCantidadBotones] = useState();
+  const [cantidadBotones, setCantidadBotones] = useState("");
   const [tipoBoton, setTipoBoton] = useState("QUICK_REPLY")
 
   const [header, setHeader] = useState("");
@@ -1876,8 +1879,8 @@ const handleFileUpload = (cardId, uploadResponse) => {
                 value={cantidadBotones}
                 onChange={handleCantidadChange}
               >
-                <MenuItem value='1'>1</MenuItem>
-                <MenuItem value='2'>2</MenuItem>
+                <MenuItem value={1}>1</MenuItem>
+                <MenuItem value={2}>2</MenuItem>
               </TextField>
 
               {/* Tercer Select TIPO DE BOTONES */}
@@ -1956,9 +1959,10 @@ const handleFileUpload = (cardId, uploadResponse) => {
                               <AccordionDetails>
                                 <Box component="form" sx={{ '& .MuiTextField-root': { mb: 2, width: '100%' } }}>
                                   <FileUploadCarousel
-                                    onUploadSuccess={(uploadData) => {
-                                      console.log('Datos recibidos del componente hijo:', uploadData);
-                                      handleFileUpload(card.id, uploadData);
+                                    initialFile={card.fileData}  // <- Archivo actual de la API
+                                    onUploadSuccess={(nuevosDatos) => {
+                                      // Actualiza el estado reemplazando el archivo viejo
+                                      handleFileUpload(card.id, nuevosDatos);
                                     }}
                                   />
 
