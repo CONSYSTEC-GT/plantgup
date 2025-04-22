@@ -1203,10 +1203,9 @@ const TemplateFormCarousel = () => {
       }).filter(button => button !== null);
 
       // Obtener la URL independientemente de la estructura de file
-      let mediaUrl = "";
-      if (typeof card.fileData.url === 'string') {
-        mediaUrl = card.file;
-      } else if (card.fileData.url && card.fileData.url) {
+      // Obtener la URL de manera más robusta
+      let mediaUrl = '';
+      if (card.fileData && card.fileData.url) {
         mediaUrl = card.fileData.url;
       }
 
@@ -1217,7 +1216,7 @@ const TemplateFormCarousel = () => {
       return {
         headerType: "IMAGE",
         mediaUrl: mediaUrl,
-        mediaId: null, // O extráelo de card.file si está disponible
+        mediaId: card.fileData?.mediaId || null,  // Usa el mediaId si existe
         exampleMedia: null,
         body: card.messageCard || "",
         sampleText: card.variableExamples?.messageCard || card.messageCard || "",
