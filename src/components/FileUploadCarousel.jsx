@@ -59,21 +59,17 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
 
   const handleFileChange = (event) => {
-    const input = event.target;
     const file = event.target.files[0];
-    
-
-    
     console.log('Archivo seleccionado:', file);
 
     if (!file) return;
 
     // Verificar el tamaño del archivo
     if (file.size > MAX_FILE_SIZE) {
-      setShowErrorModal(true);
+      setError('El archivo es demasiado grande');
       setSelectedFile(null);
       setImagePreview(null);
-      event.target.value = ''; // ← Resetear input
+      event.target.value = ''; // Resetear input
       return;
     }
 
@@ -111,12 +107,10 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
     try {
       console.log('Iniciando proceso de subida de archivo...');
 
-      console.log('Convirtiendo archivo a Base64...');
       const base64Content = await convertToBase64(selectedFile);
-      console.log('Archivo convertido a Base64.');
-
+      
       const payload = {
-        idEmpresa: empresaTalkMe,
+        idEmpresa: empresaTalkMe, // Asegúrate de que estas variables estén definidas
         idBot: 257,
         idBotRedes: 721,
         idUsuario: idUsuarioTalkMe || 48,
@@ -125,8 +119,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         contenidoArchivo: base64Content.split(',')[1],
       };
 
-      console.log('Preparando solicitud al servicio propio...');
-      setUploadStatus('Subiendo archivo al servicio propio...');
+      console.log('Preparando solicitud al servicio...');
 
       const ownServiceResponse = await axios.post(
         'https://dev.talkme.pro/WsFTP/api/ftp/upload',
@@ -139,54 +132,56 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         }
       );
 
-      console.log('Respuesta del servicio propio recibida:', ownServiceResponse);
+      console.log('Respuesta del servicio recibida:', ownServiceResponse);
 
       if (ownServiceResponse.status !== 200 || !ownServiceResponse.data) {
-        console.error('Error en la respuesta del servicio propio:', {
-          status: ownServiceResponse.status,
-          statusText: ownServiceResponse.statusText,
-          errorDetails: ownServiceResponse.data,
-        });
-        throw new Error('Error en la respuesta del servicio propio');
+        throw new Error('Error en la respuesta del servicio');
       }
 
       const ownServiceData = ownServiceResponse.data;
-      console.log('Datos del servicio propio:', ownServiceData);
+      console.log('Datos del servicio:', ownServiceData);
 
-      // Notificar al componente padre con la URL
+      // Generamos un ID único para el medio si no viene en la respuesta
+      const mediaId = ownServiceData.mediaId || ownServiceData.id || `media-${Date.now()}`;
+      
+      // Notificar al componente padre
       if (onUploadSuccess) {
-        console.log('Notificando al componente padre con la URL...');
-        // Asumimos que ownServiceData contiene mediaId o lo generamos/obtenemos de alguna forma
-        const mediaId = ownServiceData.mediaId || ownServiceData.id || 'media-' + Date.now();
-        onUploadSuccess({
-          mediaId: mediaId,
-          url: ownServiceData.url
-        });
-        setShowSuccessModal(true);
+        console.log('Notificando al componente padre:', mediaId, ownServiceData.url);
+        onUploadSuccess(mediaId, ownServiceData.url);
       }
 
-      // Resetear todo después de una subida exitosa
-      setSelectedFile(null);
-      setImagePreview(null);
-      setFileInputKey(prev => prev + 1);
-      setError('');
+      // Limpieza completa después de subida exitosa
+      resetComponent();
       
-      // Asegurarnos de que el input se resetee
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-      
-      // Si tienes una función onImagePreview, también notifica que ya no hay imagen
-      if (onImagePreview) {
-        onImagePreview(null);
-      }
-
       console.log('Proceso de subida completado exitosamente.');
-      setIsUploading(false);
     } catch (error) {
-      // Manejo de errores existente...
+      console.error('Error en el proceso de subida:', error);
+      setIsUploading(false);
+      setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
     }
-};
+  };
+
+  // Función para resetear completamente el componente
+  const resetComponent = () => {
+    // Reset del estado
+    setSelectedFile(null);
+    setImagePreview(null);
+    setError('');
+    setIsUploading(false);
+    
+    // Reset del input file (dos métodos para asegurar compatibilidad)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    
+    // Forzar re-renderizado del input
+    setFileInputKey(prev => prev + 1);
+    
+    // Notificar al padre que ya no hay vista previa
+    if (onImagePreview) {
+      onImagePreview(null);
+    }
+  };
 
   const getAcceptedFileTypes = () => {
     const types = {
