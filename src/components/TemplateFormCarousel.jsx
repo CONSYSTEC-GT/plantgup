@@ -1202,7 +1202,7 @@ const TemplateFormCarousel = () => {
   
       // Crear el formato requerido por Gupshup
     return {
-      headerType: "<IMAGE>",
+      headerType: "IMAGE",
       mediaUrl: mediaUrl,
       mediaId: null, // O extráelo de card.file si está disponible
       exampleMedia: null,
