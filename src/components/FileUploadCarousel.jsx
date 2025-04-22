@@ -42,7 +42,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
-  const [fileInputKey, setFileInputKey] = useState(Date.now());
+  const [fileInputKey, setFileInputKey] = useState(0);
 
 
   
@@ -63,7 +63,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
     const file = event.target.files[0];
     
 
-    input.value = '';
+    
     console.log('Archivo seleccionado:', file);
 
     if (!file) return;
@@ -171,7 +171,13 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
       }
 
       // Resetear el estado del archivo seleccionado para permitir subir otro
+      // Resetear todo después de una subida exitosa
       setSelectedFile(null);
+      setImagePreview(null);
+      setFileInputKey(prev => prev + 1); // Esto forzará un nuevo render del input
+      setError('');
+
+
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
         }
