@@ -102,13 +102,13 @@ const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTa
 
 /* Guardo la información de la plantilla*/
 export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}, cards = []) => {
-  const { templateName, selectedCategory, message, uploadedUrl } = templateData;
+  const { templateName, selectedCategory, message, uploadedUrl, templateType } = templateData;
 
   const url = 'https://dev.talkme.pro/templatesGS/api/plantillas/';
   const headers = {
     "Content-Type": "application/json",
   };
-  //13 y 14 son en certi
+  //13 y 14 son en certi igual que 149 en bot redes
   let ID_PLANTILLA_CATEGORIA;
   if (selectedCategory === "MARKETING") {
     ID_PLANTILLA_CATEGORIA = 17;
@@ -120,15 +120,22 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     return null; // Retornar null si la categoría no es válida
   }
 
+  let TIPO_PLANTILLA;
+  if (templateType === "CAROUSEL"){
+    TIPO_PLANTILLA = 1;
+  } else {
+    TIPO_PLANTILLA = 0;
+  }
+
   // Crear un objeto con los datos
   const data = {
     ID_PLANTILLA: null,
     ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
-    ID_BOT_REDES: 149,
+    ID_BOT_REDES: 721,
     ID_INTERNO: templateId,
     NOMBRE: templateName,
     MENSAJE: message,
-    TIPO_PLANTILLA: 0,
+    TIPO_PLANTILLA: TIPO_PLANTILLA,
     MEDIA: getMediaType(uploadedUrl) ?? null,
     URL: uploadedUrl,
     PANTALLAS: 0,

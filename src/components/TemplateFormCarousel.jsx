@@ -345,18 +345,12 @@ const TemplateFormCarousel = () => {
 
   const iniciarRequest = async () => {
     try {
-      // Hacer el primer request a GupShup API
 
+      // Hacer el primer request a GupShup API
       // Hacer debug de las cards antes de formatear
       console.log("Cards antes de formatear:", JSON.stringify(cards));
 
-      // Verificar si alguna tarjeta tiene archivo
-      const cardsWithFiles = cards.filter(card =>
-        card.file && (typeof card.file === 'string' || card.file.url)
-      );
-      console.log("Tarjetas con archivos:", cardsWithFiles.length, "de", cards.length);
-
-
+      
       // Primero verifica que cards esté definido
       if (!cards || cards.length === 0) {
         console.error("No hay tarjetas disponibles");
@@ -379,6 +373,10 @@ const TemplateFormCarousel = () => {
         console.error(formattedCards);
         return;
       }
+
+      const cardsToSendArray = [...cards]; // Esto es un array de objetos
+ 
+      const cardsToSend = JSON.stringify([...cards]); // Convertir a JSON string // Creo una copia para no modificar el estado original
 
       const result = await createTemplateCarouselGupshup(
         appId,
@@ -412,7 +410,8 @@ const TemplateFormCarousel = () => {
             templateName,
             selectedCategory,
             message,
-            uploadedUrl
+            uploadedUrl,
+            templateType
           },
           idNombreUsuarioTalkMe || "Sistema.TalkMe",
           variables,
