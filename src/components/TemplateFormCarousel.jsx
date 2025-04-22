@@ -1334,33 +1334,25 @@ const TemplateFormCarousel = () => {
 
     // Manejo de estado según la estructura recibida
     if (uploadResponse && uploadResponse.data && uploadResponse.data.url) {
-      setCards(prevCards =>
-        prevCards.map(card =>
-          card.id === cardId
-            ? {
-              ...card,
-              file: {
-                url: uploadResponse.data.url,
-                mediaId: uploadResponse.data.ref || null
-              }
-            }
-            : card
-        )
-      );
+      setCards(prevCards => prevCards.map(card => {
+        if (card.id === cardId) {
+          return {
+            ...card,
+            fileData: fileData // Asegúrate de guardar los datos del archivo en la tarjeta
+          };
+        }
+        return card;
+      }));
     } else if (uploadResponse && uploadResponse.url) {
-      setCards(prevCards =>
-        prevCards.map(card =>
-          card.id === cardId
-            ? {
-              ...card,
-              file: {
-                mediaId: uploadResponse.mediaId || null,
-                url: uploadResponse.url
-              }
-            }
-            : card
-        )
-      );
+      setCards(prevCards => prevCards.map(card => {
+        if (card.id === cardId) {
+          return {
+            ...card,
+            fileData: fileData // Asegúrate de guardar los datos del archivo en la tarjeta
+          };
+        }
+        return card;
+      }));
     } else {
       console.error("Formato de respuesta no esperado:", uploadResponse);
     }

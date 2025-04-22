@@ -146,8 +146,11 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
       
       // Notificar al componente padre
       if (onUploadSuccess) {
-        console.log('Notificando al componente padre:', mediaId, ownServiceData.url);
-        onUploadSuccess(mediaId, ownServiceData.url);
+        console.log('Notificando al componente padre con estructura correcta');
+        onUploadSuccess({
+          mediaId: mediaId,
+          url: ownServiceData.url
+        });
       }
 
       // Limpieza completa después de subida exitosa
@@ -213,7 +216,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
         <input
           accept=".jpg, .jpeg, .png"
           style={{ display: 'none' }}
-          id="file-upload"
+          id={`file-upload-${fileInputKey}`}
           type="file"
           onChange={handleFileChange}
           ref={fileInputRef}
