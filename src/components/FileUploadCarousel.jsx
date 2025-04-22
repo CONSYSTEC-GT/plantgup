@@ -225,7 +225,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
           style={{ display: 'none' }}
           id="file-upload"
           type="file"
-          onChange={handleFileChange}
+          //onChange={handleFileChange}
           ref={fileInputRef}
         />
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
