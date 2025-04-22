@@ -54,7 +54,7 @@ const TemplateFormCarousel = () => {
   const [message, setMessage] = useState("");
 
   //carousel
-  //const [messageCard, setMessageCard] = useState("");
+  const [messageCard, setMessageCard] = useState("");
   const messageCardRefs = useRef({});
   const [cantidadBotones, setCantidadBotones] = useState();
   const [tipoBoton, setTipoBoton] = useState("QUICK_REPLY")
@@ -1544,23 +1544,16 @@ const TemplateFormCarousel = () => {
 
             {/* Campo de texto con soporte para emojis y variables */}
             <Box sx={{ position: "relative" }}>
-              <TextField
+            <TextField
                 fullWidth
                 multiline
+                aria-required="true"
+                error={contenidoPlantillaTypeError}
                 rows={4}
                 label="Escribe"
                 placeholder="Ingresa el contenido de tu mensaje aquí..."
-                value={card.messageCard}
-                onChange={(e) => handleBodyMessageCardChange(e, card.id)}
-                inputRef={(el) => (messageCardRefs.current[card.id] = el)}
-                inputProps={{ maxLength: 280 }}
-                helperText={`${card.messageCard.length}/280 caracteres`}
-                FormHelperTextProps={{
-                  sx: {
-                    textAlign: 'right',
-                    color: card.messageCard.length === 280 ? 'error.main' : 'text.secondary'
-                  }
-                }}
+                value={message}
+                onChange={handleBodyMessageChange}
                 sx={{
                   mb: 3,
                   mt: 4,
@@ -1569,6 +1562,17 @@ const TemplateFormCarousel = () => {
                     "&:hover fieldset": {
                       borderColor: "primary.main",
                     }
+                  }
+                }}
+                inputRef={messageRef}
+                inputProps={{
+                  maxLength: 280, // Esto limita físicamente la entrada
+                }}
+                helperText={`${message.length}/280 caracteres`} // Muestra el contador
+                FormHelperTextProps={{
+                  sx: {
+                    textAlign: 'right', // Alinea el contador a la derecha
+                    color: message.length === 280 ? 'error.main' : 'text.secondary' // Cambia color si llega al límite
                   }
                 }}
               />
@@ -1842,13 +1846,20 @@ const TemplateFormCarousel = () => {
                                     <TextField
                                       fullWidth
                                       multiline
-                                      aria-required="true"
-                                      error={contenidoPlantillaTypeError}
                                       rows={4}
                                       label="Escribe"
                                       placeholder="Ingresa el contenido de tu mensaje aquí..."
                                       value={card.messageCard}
                                       onChange={(e) => handleBodyMessageCardChange(e, card.id)}
+                                      inputRef={(el) => (messageCardRefs.current[card.id] = el)}
+                                      inputProps={{ maxLength: 280 }}
+                                      helperText={`${card.messageCard.length}/280 caracteres`}
+                                      FormHelperTextProps={{
+                                        sx: {
+                                          textAlign: 'right',
+                                          color: card.messageCard.length === 280 ? 'error.main' : 'text.secondary'
+                                        }
+                                      }}
                                       sx={{
                                         mb: 3,
                                         mt: 4,
@@ -1859,18 +1870,8 @@ const TemplateFormCarousel = () => {
                                           }
                                         }
                                       }}
-                                      inputRef={messageCardRef}
-                                      inputProps={{
-                                        maxLength: 280, // Esto limita físicamente la entrada
-                                      }}
-                                      helperText={`${messageCard.length}/280 caracteres`} // Muestra el contador
-                                      FormHelperTextProps={{
-                                        sx: {
-                                          textAlign: 'right', // Alinea el contador a la derecha
-                                          color: messageCard.length === 280 ? 'error.main' : 'text.secondary' // Cambia color si llega al límite
-                                        }
-                                      }}
                                     />
+
 
                                     {/* Botones de emojis y acciones en una barra de herramientas mejor diseñada */}
                                     <Stack
