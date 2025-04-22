@@ -1204,10 +1204,10 @@ const TemplateFormCarousel = () => {
 
       // Obtener la URL independientemente de la estructura de file
       let mediaUrl = "";
-      if (typeof card.file === 'string') {
+      if (typeof card.fileData.url === 'string') {
         mediaUrl = card.file;
-      } else if (card.file && card.file.url) {
-        mediaUrl = card.file.url;
+      } else if (card.fileData.url && card.fileData.url) {
+        mediaUrl = card.fileData.url;
       }
 
       console.log(`Tarjeta ${card.id} - mediaUrl:`, mediaUrl);
@@ -1250,16 +1250,22 @@ const TemplateFormCarousel = () => {
     ));
   };
 
-  // Agregar nueva tarjeta
-  const addAccordion = () => {
-    const cantidad = parseInt(cantidadBotones, 10);
-    const nuevaCard = {
-      ...initialCardState,
-      id: uuidv4(),
-      buttons: generarBotones(cantidad, tipoBoton)
-    };
-    setCards([...cards, nuevaCard]);
+// Agregar nueva tarjeta
+const addAccordion = () => {
+  // Verificar si ya hay 10 acordeones
+  if (cards.length >= 10) {
+    alert("No puedes tener más de 10 acordeones"); // Opcional: mostrar mensaje al usuario
+    return; // Salir de la función sin agregar más
+  }
+  
+  const cantidad = parseInt(cantidadBotones, 10);
+  const nuevaCard = {
+    ...initialCardState,
+    id: uuidv4(),
+    buttons: generarBotones(cantidad, tipoBoton)
   };
+  setCards([...cards, nuevaCard]);
+};
   
 
   // Eliminar tarjeta
