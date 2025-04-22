@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Alert, Box, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, FormLabel, Typography, TextField, Snackbar, } from '@mui/material';
@@ -213,7 +213,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
   };
 
   const fileInputRef = useRef(null);
-  
+
   return (
     <Box>
       
