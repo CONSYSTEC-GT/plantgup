@@ -70,10 +70,10 @@ const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTa
       ID_MEDIA: null,
       DESCRIPCION: body,
       LINK: mediaUrl || null,
-      BOTON_0_TEXTO: buttons[0]?.text || '',
-      BOTON_0_COMANDO: buttons[0]?.text || '',
-      BOTON_1_TEXTO: buttons[1]?.text || '',
-      BOTON_1_COMANDO: buttons[1]?.text || '',
+      BOTON_0_TEXTO: buttons[0]?.title || '',
+      BOTON_0_COMANDO: buttons[0]?.title || '',
+      BOTON_1_TEXTO: buttons[1]?.title || '',
+      BOTON_1_COMANDO: buttons[1]?.title || '',
       CREADO_POR: idNombreUsuarioTalkMe,
     };
 
