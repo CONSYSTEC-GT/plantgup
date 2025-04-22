@@ -346,6 +346,13 @@ const TemplateFormCarousel = () => {
     try {
       // Hacer el primer request a GupShup API
 
+      // Verifica que todas las tarjetas tengan archivos
+    const allCardsHaveFiles = cards.every(card => card.file && (typeof card.file === 'string' || card.file.url));
+
+    if (!allCardsHaveFiles) {
+      console.error("Algunas tarjetas no tienen archivos asociados");}
+
+
       // Primero verifica que cards esté definido
     if (!cards || cards.length === 0) {
       console.error("No hay tarjetas disponibles");
@@ -1284,7 +1291,7 @@ const TemplateFormCarousel = () => {
 
   // Función para manejar la subida de archivos para una card específica
   const handleFileUpload = (cardId, uploadResponse) => {
-    console.log("Respuesta de subida recibida:", uploadResponse);
+    console.log("Respuesta de subida recibida para tarjeta:", cardId, uploadResponse);
     
     if (uploadResponse && uploadResponse.url && uploadResponse.mediaId) {
       setCards(prevCards => 
