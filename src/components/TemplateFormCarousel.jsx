@@ -1294,9 +1294,26 @@ const TemplateFormCarousel = () => {
 
   // Función para manejar la subida de archivos para una card específica
   const handleFileUpload = (cardId, uploadResponse) => {
-    console.log("Respuesta de subida recibida:", uploadResponse);
-    
-    // Manejar respuesta del servicio propio
+    console.log("Respuesta completa de subida recibida:", uploadResponse);
+  
+    // Verifica si existe la propiedad 'data' y dentro de ella 'url'
+    if (uploadResponse && uploadResponse.data) {
+      console.log("uploadResponse.data:", uploadResponse.data);
+      if (uploadResponse.data.url) {
+        console.log("URL encontrada en uploadResponse.data.url:", uploadResponse.data.url);
+      } else {
+        console.warn("No se encontró 'url' en uploadResponse.data");
+      }
+    }
+  
+    // Verifica si directamente existe 'url' en uploadResponse
+    if (uploadResponse && uploadResponse.url) {
+      console.log("URL encontrada directamente en uploadResponse.url:", uploadResponse.url);
+    } else {
+      console.warn("No se encontró 'url' directamente en uploadResponse");
+    }
+  
+    // Manejo de estado según la estructura recibida
     if (uploadResponse && uploadResponse.data && uploadResponse.data.url) {
       setCards(prevCards => 
         prevCards.map(card => 
@@ -1311,9 +1328,7 @@ const TemplateFormCarousel = () => {
             : card
         )
       );
-    } 
-    // Mantén el manejo original por si acaso
-    else if (uploadResponse && uploadResponse.url) {
+    } else if (uploadResponse && uploadResponse.url) {
       setCards(prevCards => 
         prevCards.map(card => 
           card.id === cardId 
@@ -1331,6 +1346,7 @@ const TemplateFormCarousel = () => {
       console.error("Formato de respuesta no esperado:", uploadResponse);
     }
   };
+  
   
 
   return (
@@ -1795,7 +1811,14 @@ const TemplateFormCarousel = () => {
                               </AccordionSummary>
                               <AccordionDetails>
                                 <Box component="form" sx={{ '& .MuiTextField-root': { mb: 2, width: '100%' } }}>
-                                  <FileUploadCarousel onUploadComplete={(mediaId, url) => handleFileUpload(card.id, { mediaId, url })} />
+                                  <FileUploadCarousel
+                                    onUploadComplete={(mediaId, url) => {
+                                      console.log('mediaId:', mediaId);
+                                      console.log('url:', url);
+                                      handleFileUpload(card.id, { mediaId, url });
+                                    }}
+                                  />
+
 
 
 
