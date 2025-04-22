@@ -1258,11 +1258,15 @@ const TemplateFormCarousel = () => {
 
   // Agregar nueva tarjeta
   const addAccordion = () => {
-    setCards([...cards, {
+    const cantidad = parseInt(cantidadBotones, 10);
+    const nuevaCard = {
       ...initialCardState,
-      id: uuidv4()
-    }]);
+      id: uuidv4(),
+      buttons: generarBotones(cantidad, tipoBoton)
+    };
+    setCards([...cards, nuevaCard]);
   };
+  
 
   // Eliminar tarjeta
   const deleteAccordion = (id, e) => {
@@ -1276,6 +1280,21 @@ const TemplateFormCarousel = () => {
       card.id === cardId ? { ...card, [field]: value } : card
     ));
   };
+
+  const generarBotones = (cantidad, tipo) => {
+    const botones = [];
+    for (let i = 0; i < cantidad; i++) {
+      botones.push({
+        id: generateId(), // o uuidv4() si preferís
+        title: `Botón ${i + 1}`,
+        type: tipo,
+        ...(tipo === 'URL' && { url: '' }),
+        ...(tipo === 'PHONE_NUMBER' && { phoneNumber: '' })
+      });
+    }
+    return botones;
+  };
+  
 
 
 
