@@ -2200,7 +2200,7 @@ const handleFileUpload = (cardId, uploadResponse) => {
                             objectFit: 'cover'
                           }}
                           image={card.fileData.url}
-                          alt={`Imagen tarjeta ${index + 1}`}
+                          alt={card.title}
                         />
                       ) : (
                         <Box sx={{
