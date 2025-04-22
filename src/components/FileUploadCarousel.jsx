@@ -43,6 +43,8 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
   const [showErrorModal, setShowErrorModal] = useState(false);
 
 
+  const fileInputRef = useRef(null);
+
 
   // Manejadores de eventos
   const handleHeaderChange = (e) => {
@@ -163,6 +165,9 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
       // Resetear el estado del archivo seleccionado para permitir subir otro
       setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+        }
 
       console.log('Proceso de subida completado exitosamente.');
       //setUploadStatus('¡Archivo subido exitosamente!');
@@ -219,6 +224,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
           id="file-upload"
           type="file"
           onChange={handleFileChange}
+          ref={fileInputRef}
         />
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <label htmlFor="file-upload">
