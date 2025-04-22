@@ -754,20 +754,21 @@ const TemplateFormCarousel = () => {
     setCards(prevCards =>
       prevCards.map(card => {
         if (card.id !== cardId) return card;
-
+  
         const newVariable = `{{${card.variablesCard.length + 1}}}`;
-        const cursorPosition = messageCardRef.current?.selectionStart || 0;
-
+        // Usa la referencia específica de esta tarjeta
+        const textFieldRef = messageCardRefs.current[cardId];
+        const cursorPosition = textFieldRef?.selectionStart || 0;
+  
         const textBefore = card.messageCard.substring(0, cursorPosition);
         const textAfter = card.messageCard.substring(cursorPosition);
-
+  
         const newMessageCard = `${textBefore}${newVariable}${textAfter}`;
-
+  
         // OPCIONAL: Actualizar descripción y ejemplos también
         const updatedDescriptions = { ...card.variableDescriptionsCard, [newVariable]: "" };
         const updatedExamples = { ...card.variableExamples, [newVariable]: "" };
-
-        // Retornar la tarjeta actualizada
+  
         return {
           ...card,
           messageCard: newMessageCard,
@@ -777,13 +778,6 @@ const TemplateFormCarousel = () => {
         };
       })
     );
-
-    // Reenfocar y mover el cursor al final de la variable insertada
-    setTimeout(() => {
-      const newPosition = (messageCardRef.current?.selectionStart || 0) + `{{${cards.find(c => c.id === cardId)?.variablesCard.length + 1}}}`.length;
-      messageCardRef.current?.focus();
-      messageCardRef.current?.setSelectionRange(newPosition, newPosition);
-    }, 0);
   };
 
 
