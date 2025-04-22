@@ -42,6 +42,8 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
+
 
   
 
@@ -57,7 +59,11 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
 
 
   const handleFileChange = (event) => {
+    const input = event.target;
     const file = event.target.files[0];
+    
+
+    input.value = '';
     console.log('Archivo seleccionado:', file);
 
     if (!file) return;
@@ -228,7 +234,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
           type="file"
           onChange={handleFileChange}
           ref={fileInputRef}
-          key={selectedFile ? selectedFile.name : Date.now()} // ← Fuerza re-render
+          key={fileInputKey}
         />
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <label htmlFor="file-upload">
