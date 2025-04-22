@@ -134,6 +134,14 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     PANTALLAS = 0;
   }
 
+  const mediaMap = {
+    IMAGE: "image",
+    VIDEO: "video",
+  };
+  
+  const MEDIA = mediaMap[templateType] || null;
+  
+
   // Crear un objeto con los datos
   const data = {
     ID_PLANTILLA: null,
@@ -143,7 +151,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     NOMBRE: templateName,
     MENSAJE: message,
     TIPO_PLANTILLA: TIPO_PLANTILLA,
-    MEDIA: getMediaType(uploadedUrl) ?? null,
+    MEDIA: MEDIA,
     URL: uploadedUrl,
     PANTALLAS: PANTALLAS,
     ESTADO: 1,
