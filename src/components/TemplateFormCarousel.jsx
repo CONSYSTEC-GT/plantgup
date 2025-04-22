@@ -54,7 +54,8 @@ const TemplateFormCarousel = () => {
   const [message, setMessage] = useState("");
 
   //carousel
-  const [messageCard, setMessageCard] = useState("");
+  //const [messageCard, setMessageCard] = useState("");
+  const messageCardRefs = useRef({});
   const [cantidadBotones, setCantidadBotones] = useState();
   const [tipoBoton, setTipoBoton] = useState("QUICK_REPLY")
 
@@ -683,40 +684,45 @@ const TemplateFormCarousel = () => {
   };
 
   const handleBodyMessageCardChange = (e, cardId) => {
-    console.log('Change triggered', e.target.value, cardId, cards);
     const newText = e.target.value;
-    const maxLength = 280; // o 1024 según necesites
-
-    setCards(cards.map(card => {
-      if (card.id !== cardId) return card;
-
-      // Verificar variables eliminadas
-      const deletedVariables = variables.filter(
-        variable => !newText.includes(variable)
-      );
-
-      // Actualizar variables, descripciones y ejemplos
-      const remainingVariables = variables.filter(
-        v => !deletedVariables.includes(v)
-      );
-
-      const newDescriptions = { ...card.variableDescriptions };
-      const newExamples = { ...card.variableExamples };
-
-      deletedVariables.forEach(v => {
-        delete newDescriptions[v];
-        delete newExamples[v];
-      });
-
-      return {
-        ...card,
-        messageCard: newText,
-        variables: remainingVariables,
-        variableDescriptions: newDescriptions,
-        variableExamples: newExamples
-      };
-    }));
+    const maxLength = 280;
+  
+    setCards(prevCards => 
+      prevCards.map(card => {
+        if (card.id !== cardId) return card;
+  
+        // Variables actuales del mensaje
+        const currentVariables = card.variablesCard || [];
+  
+        // Identificar variables eliminadas
+        const deletedVariables = currentVariables.filter(
+          variable => !newText.includes(variable)
+        );
+  
+        const remainingVariables = currentVariables.filter(
+          v => !deletedVariables.includes(v)
+        );
+  
+        // Actualizar descripciones y ejemplos
+        const updatedDescriptions = { ...card.variableDescriptionsCard };
+        const updatedExamples = { ...card.variableExamples };
+  
+        deletedVariables.forEach(v => {
+          delete updatedDescriptions[v];
+          delete updatedExamples[v];
+        });
+  
+        return {
+          ...card,
+          messageCard: newText,
+          variablesCard: remainingVariables,
+          variableDescriptionsCard: updatedDescriptions,
+          variableExamples: updatedExamples
+        };
+      })
+    );
   };
+  
 
   // VARIABLES DEL BODY MESSAGE
   const handleAddVariable = () => {
@@ -798,21 +804,34 @@ const TemplateFormCarousel = () => {
     }, 100);
   };
 
-  const handleEmojiClickCarousel = (emojiObject) => {
-    const cursor = messageCardRef.current.selectionStart;
-    const newText = messageCard.slice(0, cursor) + emojiObject.emoji + messageCard.slice(cursor);
-
-    setMessageCard(newText);
+  const handleEmojiClickCarousel = (emojiObject, cardId) => {
+    const input = messageCardRefs.current[cardId];
+    const cursor = input?.selectionStart || 0;
+  
+    setCards(prevCards =>
+      prevCards.map(card => {
+        if (card.id !== cardId) return card;
+  
+        const newText =
+          card.messageCard.slice(0, cursor) +
+          emojiObject.emoji +
+          card.messageCard.slice(cursor);
+  
+        return { ...card, messageCard: newText };
+      })
+    );
+  
     setShowEmojiPickerCards(false);
-
-    // Aumenta el tiempo de espera para asegurar que el estado se actualiza
+  
     setTimeout(() => {
-      if (messageCardRef.current) {
-        messageCardRef.current.focus();
-        messageCardRef.current.setSelectionRange(cursor + emojiObject.emoji.length, cursor + emojiObject.emoji.length);
+      if (input) {
+        const newPos = cursor + emojiObject.emoji.length;
+        input.focus();
+        input.setSelectionRange(newPos, newPos);
       }
     }, 100);
   };
+  
 
 
 
@@ -1528,13 +1547,20 @@ const TemplateFormCarousel = () => {
               <TextField
                 fullWidth
                 multiline
-                aria-required="true"
-                error={contenidoPlantillaTypeError}
                 rows={4}
                 label="Escribe"
                 placeholder="Ingresa el contenido de tu mensaje aquí..."
-                value={message}
-                onChange={handleBodyMessageChange}
+                value={card.messageCard}
+                onChange={(e) => handleBodyMessageCardChange(e, card.id)}
+                inputRef={(el) => (messageCardRefs.current[card.id] = el)}
+                inputProps={{ maxLength: 280 }}
+                helperText={`${card.messageCard.length}/280 caracteres`}
+                FormHelperTextProps={{
+                  sx: {
+                    textAlign: 'right',
+                    color: card.messageCard.length === 280 ? 'error.main' : 'text.secondary'
+                  }
+                }}
                 sx={{
                   mb: 3,
                   mt: 4,
@@ -1545,18 +1571,8 @@ const TemplateFormCarousel = () => {
                     }
                   }
                 }}
-                inputRef={messageRef}
-                inputProps={{
-                  maxLength: 280, // Esto limita físicamente la entrada
-                }}
-                helperText={`${message.length}/280 caracteres`} // Muestra el contador
-                FormHelperTextProps={{
-                  sx: {
-                    textAlign: 'right', // Alinea el contador a la derecha
-                    color: message.length === 280 ? 'error.main' : 'text.secondary' // Cambia color si llega al límite
-                  }
-                }}
               />
+
 
               {/* Botones de emojis y acciones en una barra de herramientas mejor diseñada */}
               <Stack
@@ -1914,7 +1930,8 @@ const TemplateFormCarousel = () => {
                                           mt: 1
                                         }}
                                       >
-                                        <EmojiPicker onEmojiClick={handleEmojiClickCarousel} />
+                                        <EmojiPicker onEmojiClick={(emoji) => handleEmojiClickCarousel(emoji, card.id)} />
+
                                       </Paper>
                                     )}
 
