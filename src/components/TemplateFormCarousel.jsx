@@ -347,6 +347,8 @@ const TemplateFormCarousel = () => {
       // Hacer el primer request a GupShup API
 
       // Verifica que cards esté definido
+      // Antes de verificar isValid
+    console.log("Cards formateadas:", formattedCards);
     if (!cards || cards.length === 0) {
       console.error("No hay tarjetas disponibles");
       return;
@@ -362,6 +364,7 @@ const TemplateFormCarousel = () => {
       if (!isValid) {
         console.error("Algunas cards no tienen todos los datos requeridos");
         console.error(formattedCards);
+        console.error("Tarjetas inválidas:", formattedCards.filter(card => !card.mediaUrl || !card.body));
         return;
       }
 
@@ -1174,6 +1177,11 @@ const TemplateFormCarousel = () => {
         }
         return null;
       }).filter(button => button !== null);
+
+      // Para la mediaUrl, comprueba si file es una string o un objeto
+    const mediaUrl = typeof card.file === 'string' 
+    ? card.file 
+    : (card.file?.url || "");
   
       // Crear el formato requerido por Gupshup
       return {
@@ -1269,16 +1277,31 @@ const TemplateFormCarousel = () => {
 
   // Función para manejar la subida de archivos para una card específica
   const handleFileUpload = (cardId, uploadResponse) => {
-    // Verifica si la respuesta es un objeto con la estructura esperada
+    console.log("Respuesta de subida recibida:", uploadResponse);
+    
+    // Si uploadResponse.url existe directamente
     if (uploadResponse && uploadResponse.url) {
-      // Actualiza el array de cards con la nueva URL
       setCardsData(prevCards => 
         prevCards.map(card => 
           card.id === cardId 
-            ? { ...card, file: uploadResponse } 
+            ? { ...card, file: uploadResponse.url } // Solo guardamos la URL
             : card
         )
       );
+    } 
+    // Si estado es "OK" y contiene url como mencionabas
+    else if (uploadResponse && uploadResponse.estado === "OK" && uploadResponse.url) {
+      setCardsData(prevCards => 
+        prevCards.map(card => 
+          card.id === cardId 
+            ? { ...card, file: uploadResponse.url } // Solo guardamos la URL
+            : card
+        )
+      );
+    }
+    // Para depuración
+    else {
+      console.error("Formato de respuesta no esperado:", uploadResponse);
     }
   };
 
