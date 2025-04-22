@@ -190,10 +190,26 @@ export default function BasicCard() {
   };
 
   const handleEdit = (template) => {
-    // Validar el estado del template
+    // Validar el estado del template primero
     if (template.status === "APPROVED" || template.status === "REJECTED" || template.status === "PAUSED") {
-      // Si el estado es válido, navegar a la página de edición
-      navigate('/modify-template', { state: { template } });
+      // Redirigir según el tipo de template
+      switch(template.templateType) {
+        case 'CAROUSEL':
+          navigate('/modify-template-carousel', { state: { template } });
+          break;
+        case 'CATALOGO':
+          navigate('/modify-template-catalogo', { state: { template } });
+          break;
+        case 'TEXT':
+        case 'IMAGE':
+        case 'DOCUMENT':
+        case 'VIDEO':
+          navigate('/modify-template', { state: { template } });
+          break;
+        default:
+          // Ruta por defecto si no coincide con ningún tipo conocido
+          navigate('/modify-template', { state: { template } });
+      }
     } else {
       // Si el estado no es válido, mostrar un mensaje de error
       alert('No se puede editar el template porque su estado no es "APPROVED", "REJECTED" o "PAUSED".');
