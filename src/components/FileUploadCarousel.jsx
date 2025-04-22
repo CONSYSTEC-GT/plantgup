@@ -43,7 +43,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
   const [showErrorModal, setShowErrorModal] = useState(false);
 
 
-  const fileInputRef = useRef(null);
+  
 
 
   // Manejadores de eventos
@@ -212,6 +212,8 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange }
     });
   };
 
+  const fileInputRef = useRef(null);
+  
   return (
     <Box>
       
