@@ -294,7 +294,7 @@ export const editTemplateCarouselGupshup = async (appId, authCode, templateData,
   data.append("example", example);
   data.append("enableSample", "true");
   data.append("allowTemplateCategoryChange", "false");
-  data.append("cards", JSON.stringify(carousel));
+  data.append("cards", carousel);
 
 
   console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
