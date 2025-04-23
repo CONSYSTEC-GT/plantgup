@@ -62,12 +62,11 @@ const fetchTemplates = async (appId, authCode) => {
     });
     const data = await response.json();
     if (data.status === 'success') {
-      return data.templates.slice(0, 4); // Retorna los datos en lugar de establecer el estado
+      const failedTemplates = data.templates.filter(template => template.status === 'FAILED');
+      setTemplates(failedTemplates);
     }
-    return []; // Retorna un array vacío si no hay éxito
   } catch (error) {
     console.error('Error fetching templates:', error);
-    return []; // Retorna un array vacío en caso de error
   }
 };
 
