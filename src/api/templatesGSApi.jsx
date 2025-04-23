@@ -47,6 +47,7 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions)
 };
 
 const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTalkMe) => {
+  console.log("Entrando a saveCardsTemplate con:", cards.length, "tarjetas");
   const url = 'https://dev.talkme.pro/templatesGS/api/tarjetas/';
   const headers = {
     "Content-Type": "application/json",
@@ -102,7 +103,6 @@ const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTa
     }
   }
 };
-
 
 /* Guardo la información de la plantilla*/
 export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}, cards = []) => {
@@ -314,57 +314,39 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
       }
     }
 
-    // Para las tarjetas, usaremos un enfoque diferente ya que no existe el endpoint DELETE
+    console.log("Número de tarjetas a guardar:", cards.length);
+    console.log("Contenido de cards:", cards);
     if (talkmeId && cards && cards.length > 0) {
       try {
-        // 1. Primero obtenemos todas las tarjetas existentes para esta plantilla
-        const tarjetasExistentesResponse = await fetch(`https://dev.talkme.pro/templatesGS/api/plantillas/cards/plantilla/${talkmeId}`);
-        
-        if (tarjetasExistentesResponse.ok) {
-          const tarjetasExistentes = await tarjetasExistentesResponse.json();
-          
-          // 2. Eliminamos manualmente cada tarjeta existente
-          for (const tarjeta of tarjetasExistentes) {
-            const deleteResponse = await fetch(`https://dev.talkme.pro/templatesGS/api/plantillas/cards/${tarjeta.ID_PLANTILLA_WHATSAPP_TARJETA}`, {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-              }
-            });
-            
-            if (!deleteResponse.ok) {
-              console.warn(`No se pudo eliminar la tarjeta ${tarjeta.ID_PLANTILLA_WHATSAPP_TARJETA}`);
-            }
+        // 1. Eliminar todas las tarjetas existentes de una sola vez
+        const deleteResponse = await fetch(`https://dev.talkme.pro/templatesGS/api/tarjetas/plantilla/${talkmeId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
           }
-        } else {
-          console.warn("No se pudieron obtener las tarjetas existentes");
+        });
+        console.log("Número de tarjetas ELIMINADAS:", cards.length);
+        console.log("Contenido de cards:", cards);
+
+    
+        // Solo lanzamos error si la respuesta no es exitosa Y no es un 404 (no encontrado)
+        if (!deleteResponse.ok && deleteResponse.status !== 404) {
+          throw new Error("No se pudieron eliminar las tarjetas existentes");
         }
-        
-        // 3. Ahora agregamos las nuevas tarjetas
+    
+        // 2. Agregar las nuevas tarjetas
         for (const card of cards) {
-          await saveCardTemplate({
+          console.log("Guardando tarjeta:", card);
+          await saveCardsTemplate({
             ID_PLANTILLA: talkmeId,
-            ...card
+            cards: [card]  // <- Esta es la clave
           }, idNombreUsuarioTalkMe);
         }
         
-      } catch (cardError) {
-        console.error("Error al gestionar las tarjetas:", cardError);
-        
-        // 4. Plan B: Si el enfoque anterior falla, simplemente agregamos las nuevas tarjetas
-        try {
-          await saveCardsTemplate(
-            {
-              ID_PLANTILLA: talkmeId,
-              cards: cards 
-            },
-            idNombreUsuarioTalkMe
-          );
-          console.log("Se agregaron nuevas tarjetas (posiblemente duplicadas)");
-        } catch (saveError) {
-          console.error("Error al guardar las tarjetas:", saveError);
-          showSnackbar("⚠️ La plantilla se actualizó pero hubo un problema con las tarjetas", "warning");
-        }
+    
+      } catch (error) {
+        console.error("Error al gestionar las tarjetas:", error);
+        showSnackbar("⚠️ La plantilla se actualizó pero hubo un problema con las tarjetas", "warning");
       }
     }
 
@@ -375,32 +357,5 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
     return null;
   }
 };
-
-// Función para guardar una sola tarjeta
-const saveCardTemplate = async (cardData, idNombreUsuarioTalkMe) => {
-  try {
-    const url = 'https://dev.talkme.pro/templatesGS/api/plantillas/cards/';
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...cardData,
-        CREADO_POR: idNombreUsuarioTalkMe
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error al guardar la tarjeta: ${response.statusText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error guardando tarjeta:", error);
-    throw error;
-  }
-};
-
 
 export { saveTemplateParams };
