@@ -37,7 +37,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import WhatsAppCarouselPreview from './WhatsappCarouselPreview';
 import FileUploadCarousel from './FileUploadCarousel';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
-import { createTemplateCarouselGupshup } from '../api/gupshupApi';
+import { editTemplateCarouselGupshup } from '../api/gupshupApi';
 import { saveTemplateToTalkMe } from '../api/templatesGSApi';
 
 import { CustomDialog } from '../utils/CustomDialog';
@@ -464,7 +464,7 @@ const EditTemplateFormCarousel = () => {
        * COMENTADO EL PRIMER REQUEST *
        ******************************/
       
-      const result = await createTemplateCarouselGupshup(
+      const result = await editTemplateCarouselGupshup(
         appId,
         authCode,
         {
