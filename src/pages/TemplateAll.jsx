@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Asegúrate de instalar jwt-decode
 import { useParams } from 'react-router-dom';
-import { alpha, Box, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem, Stack, styled, Typography } from '@mui/material';
+import { alpha, Box, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fade, Menu, MenuItem, Stack, styled, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 
 // ICONOS
