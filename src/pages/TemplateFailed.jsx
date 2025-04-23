@@ -3,7 +3,8 @@ import { useParams } from 'react-router-dom';
 import { alpha, Autocomplete, Box, Button, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem, TextField, Typography, Stack, styled } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
-import { jwtDecode } from 'jwt-decode'; // Asegúrate de instalar jwt-decode
+import { jwtDecode } from 'jwt-decode';
+import { motion } from 'framer-motion';
 
 // ICONOS
 import AddIcon from '@mui/icons-material/Add';
@@ -202,13 +203,13 @@ const TemplateAproved = () => {
     },
   }));
 
-    const [openReasonDialog, setOpenReasonDialog] = React.useState(false);
-    const [selectedReason, setSelectedReason] = React.useState('');
-  
-    const handleOpenReasonDialog = (reason) => {
-      setSelectedReason(reason);
-      setOpenReasonDialog(true);
-    };
+  const [openReasonDialog, setOpenReasonDialog] = React.useState(false);
+  const [selectedReason, setSelectedReason] = React.useState('');
+
+  const handleOpenReasonDialog = (reason) => {
+    setSelectedReason(reason);
+    setOpenReasonDialog(true);
+  };
 
   return (
     <Box>
@@ -466,25 +467,31 @@ const TemplateAproved = () => {
                     position: 'relative', // Necesario para el posicionamiento
                   }}
                 >
-                  <Button
-                    id="manage-button"
-                    aria-controls={anchorEl ? 'manage-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={anchorEl ? 'true' : undefined}
-                    variant="contained"
-                    disableElevation
-                    onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
-                    endIcon={<KeyboardArrowDownIcon />}
-                    color="primary"
-                    sx={{
-                      borderRadius: 1,
-                      textTransform: 'none',
-                    }}
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    Administrar
-                  </Button>
+                    <Button
+                      id="manage-button"
+                      aria-controls={anchorEl ? 'manage-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={anchorEl ? 'true' : undefined}
+                      variant="contained"
+                      disableElevation
+                      onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
+                      endIcon={<KeyboardArrowDownIcon />}
+                      color="primary"
+                      sx={{
+                        borderRadius: 1,
+                        textTransform: 'none',
+                      }}
+                    >
+                      Administrar
+                    </Button>
+                  </motion.div>
 
-                  <StyledMenu
+                  <Menu
                     id="manage-menu"
                     MenuListProps={{
                       'aria-labelledby': 'manage-button',
@@ -492,22 +499,46 @@ const TemplateAproved = () => {
                     anchorEl={anchorEl}
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
+                    TransitionComponent={Fade}
                   >
-                    <MenuItem
-                      onClick={() => handleEdit(selectedTemplate)}
-                      disableRipple
-                    >
-                      <EditIcon />
-                      Editar
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleDeleteClick}
-                      disableRipple
-                    >
-                      <DeleteIcon />
-                      Eliminar
-                    </MenuItem>
-                  </StyledMenu>
+                    {[
+                      {
+                        text: 'Editar',
+                        onClick: () => handleEdit(selectedTemplate),
+                        icon: <EditIcon fontSize="small" />
+                      },
+                      {
+                        text: 'Eliminar',
+                        onClick: handleDeleteClick,
+                        icon: <DeleteIcon fontSize="small" />
+                      }
+                    ].map((item, index) => (
+                      <MenuItem
+                        key={item.text}
+                        onClick={item.onClick}
+                        component={motion.div}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{
+                          delay: index * 0.1,
+                          type: "spring",
+                          stiffness: 300
+                        }}
+                        sx={{
+                          '&:hover': {
+                            transform: 'scale(1.02)',
+                            transition: 'all 0.2s ease'
+                          }
+                        }}
+                      >
+                        <ListItemIcon>{item.icon}</ListItemIcon>
+                        <ListItemText>{item.text}</ListItemText>
+                      </MenuItem>
+                    ))}
+
+
+
+                  </Menu>
                 </CardActions>
               </Card>
             ))}

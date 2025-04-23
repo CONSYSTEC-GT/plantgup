@@ -282,12 +282,12 @@ export default function BasicCard() {
 
   const crearPlantillaCatalogo = () => {
     handleClose2(); // Cierra el menú antes de navegar
-    navigate("/CreateTemplateCatalog"); // Redirige a otra plantilla
+    navigate("/CreateTemplatePage/CreateTemplateCatalog"); // Redirige a otra plantilla
   };
 
   const crearPlantillaCarrusel = () => {
     handleClose2(); // Cierra el menú antes de navegar
-    navigate("/CreateTemplateCarousel"); // Redirige a otra plantilla
+    navigate("/CreateTemplatePage/CreateTemplateCarousel"); // Redirige a otra plantilla
   };
 
   return (
