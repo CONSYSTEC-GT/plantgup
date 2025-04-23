@@ -22,10 +22,13 @@ import ErrorIcon from '@mui/icons-material/Error';
 import DeleteModal from '../components/DeleteModal';
 import { parseTemplateContent } from "../utils/parseTemplateContent";
 
+import TemplateCardSkeleton from '../utils/SkeletonTemplates';
+
 const TemplateAproved = () => {
   //PARA MANEJAR EL STATUS DE LAS PLANTILLAS | VARIABLES
   const { templateId } = useParams();
   const [templates, setTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filteredTemplates, setFilteredTemplates] = useState([]);
   const [activeFilter, setActiveFilter] = useState('todas');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -48,33 +51,39 @@ const TemplateAproved = () => {
     }
   }
 
-  //FETCH DE LAS PLANTILLAS
-  const fetchTemplates = async (appId, authCode) => {
-    try {
-      const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
-        method: 'GET',
-        headers: {
-          Authorization: authCode,
-        },
-      });
-      const data = await response.json();
-      if (data.status === 'success') {
-        const sendTemplates = data.templates.filter(template => template.status === 'PENDING');
-        setTemplates(sendTemplates);
-      }
-    } catch (error) {
-      console.error('Error fetching templates:', error);
+// Función para obtener las plantillas
+const fetchTemplates = async (appId, authCode) => {
+  try {
+    const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+      method: 'GET',
+      headers: {
+        Authorization: authCode,
+      },
+    });
+    const data = await response.json();
+    if (data.status === 'success') {
+      return data.templates.slice(0, 4); // Retorna los datos en lugar de establecer el estado
     }
-  };
+    return []; // Retorna un array vacío si no hay éxito
+  } catch (error) {
+    console.error('Error fetching templates:', error);
+    return []; // Retorna un array vacío en caso de error
+  }
+};
 
-  // Llama a fetchTemplates cuando el componente se monta
-  useEffect(() => {
-    if (appId && authCode) {
-      fetchTemplates(appId, authCode);
-    } else {
-      console.error('No se encontró appId o authCode en el token');
-    }
-  }, [appId, authCode]);
+// useEffect para cargar datos
+useEffect(() => {
+  if (appId && authCode) {
+    setLoading(true); // Asegúrate de que loading esté en true al inicio
+    fetchTemplates(appId, authCode)
+      .then(data => {
+        setTemplates(data);
+        setLoading(false);
+      });
+  } else {
+    console.error('No se encontró appId o authCode en el token');
+  }
+}, [appId, authCode]);
 
   //MODIFICAR EL COLOR DEPENDIENDO DEL STATUS DE LAS PLANTILLAS
   const getStatusColor = (status) => {
@@ -253,7 +262,14 @@ const TemplateAproved = () => {
             gap: 3,
             justifyItems: "center" // Esto centrará las tarjetas en sus celdas de grid
           }}>
-            {templates.map((template) => (
+            {loading ?
+            // Mostrar skeletons mientras carga
+            Array.from(new Array(4)).map((_, index) => ( // Usamos 4 como en tu slice
+              <TemplateCardSkeleton key={index} />
+            ))
+            :
+            // Mostrar los datos reales cuando termine de cargar
+            templates.map((template) => (
 
               <Card
                 key={template.id}
