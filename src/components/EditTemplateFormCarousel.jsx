@@ -39,6 +39,7 @@ import FileUploadCarousel from './FileUploadCarousel';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
 import { editTemplateCarouselGupshup } from '../api/gupshupApi';
 import { saveTemplateToTalkMe } from '../api/templatesGSApi';
+import { editTemplateToTalkMe } from '../api/templatesGSApi';
 
 import { CustomDialog } from '../utils/CustomDialog';
 
@@ -463,6 +464,7 @@ const EditTemplateFormCarousel = () => {
       /******************************
        * COMENTADO EL PRIMER REQUEST *
        ******************************/
+      /*
       
       const result = await editTemplateCarouselGupshup(
         appId,
@@ -484,9 +486,9 @@ const EditTemplateFormCarousel = () => {
         idTemplate,
         validateFields
       );
-      
+      */
 
-      /* Simulamos un resultado exitoso con un templateId hardcodeado para pruebas
+      // Simulamos un resultado exitoso con un templateId hardcodeado para pruebas
       const mockResult = {
         status: "success",
         template: {
@@ -499,11 +501,12 @@ const EditTemplateFormCarousel = () => {
         // Extraer el valor de `id` del objeto `template`
         const templateId = mockResult.template.id;
 
-        */
+        
 
-        // Verificar si el primer request fue exitoso
+        /* Verificar si el primer request fue exitoso
       if (result && result.status === "success") {
         // Extraer el valor de `id` del objeto `template`
+        */
         
 
         // Hacer el segundo request a TalkMe API

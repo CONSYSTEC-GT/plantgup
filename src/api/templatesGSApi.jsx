@@ -216,7 +216,6 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
   const { templateName, selectedCategory, message, uploadedUrl, templateType } = templateData;
 
   // URL para actualizar plantilla por ID_INTERNO
-  // Tu backend ya busca por ID_INTERNO en el método PUT
   const url = `https://dev.talkme.pro/templatesGS/api/plantillas/${idTemplate}`;
   const headers = {
     "Content-Type": "application/json",
@@ -258,7 +257,7 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
   
   // Crear un objeto con los datos actualizados
   const data = {
-    ID_INTERNO: idTemplate, // ID de la plantilla de GupShup - tu backend lo usa para buscar
+    ID_INTERNO: idTemplate, // ID de la plantilla de GupShup
     ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
     ID_BOT_REDES: 721,
     NOMBRE: templateName,
@@ -306,22 +305,67 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
 
     // Actualizar variables si existen
     if (talkmeId && variables && variables.length > 0) {
-      // Primero eliminamos los parámetros existentes antes de guardar los nuevos
-      await deleteTemplateParams(talkmeId);
-      await saveTemplateParams(talkmeId, variables, variableDescriptions);
+      try {
+        await deleteTemplateParams(talkmeId);
+        await saveTemplateParams(talkmeId, variables, variableDescriptions);
+      } catch (error) {
+        console.error("Error al actualizar los parámetros:", error);
+        showSnackbar("⚠️ Error al actualizar los parámetros", "warning");
+      }
     }
 
-    // Actualizar tarjetas si existen
+    // Para las tarjetas, usaremos un enfoque diferente ya que no existe el endpoint DELETE
     if (talkmeId && cards && cards.length > 0) {
-      // Primero eliminamos las tarjetas existentes antes de guardar las nuevas
-      await deleteCardsTemplate(talkmeId);
-      await saveCardsTemplate(
-        {
-          ID_PLANTILLA: talkmeId,
-          cards: cards 
-        },
-        idNombreUsuarioTalkMe
-      );
+      try {
+        // 1. Primero obtenemos todas las tarjetas existentes para esta plantilla
+        const tarjetasExistentesResponse = await fetch(`https://dev.talkme.pro/templatesGS/api/plantillas/cards/plantilla/${talkmeId}`);
+        
+        if (tarjetasExistentesResponse.ok) {
+          const tarjetasExistentes = await tarjetasExistentesResponse.json();
+          
+          // 2. Eliminamos manualmente cada tarjeta existente
+          for (const tarjeta of tarjetasExistentes) {
+            const deleteResponse = await fetch(`https://dev.talkme.pro/templatesGS/api/plantillas/cards/${tarjeta.ID_PLANTILLA_WHATSAPP_TARJETA}`, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              }
+            });
+            
+            if (!deleteResponse.ok) {
+              console.warn(`No se pudo eliminar la tarjeta ${tarjeta.ID_PLANTILLA_WHATSAPP_TARJETA}`);
+            }
+          }
+        } else {
+          console.warn("No se pudieron obtener las tarjetas existentes");
+        }
+        
+        // 3. Ahora agregamos las nuevas tarjetas
+        for (const card of cards) {
+          await saveCardTemplate({
+            ID_PLANTILLA: talkmeId,
+            ...card
+          }, idNombreUsuarioTalkMe);
+        }
+        
+      } catch (cardError) {
+        console.error("Error al gestionar las tarjetas:", cardError);
+        
+        // 4. Plan B: Si el enfoque anterior falla, simplemente agregamos las nuevas tarjetas
+        try {
+          await saveCardsTemplate(
+            {
+              ID_PLANTILLA: talkmeId,
+              cards: cards 
+            },
+            idNombreUsuarioTalkMe
+          );
+          console.log("Se agregaron nuevas tarjetas (posiblemente duplicadas)");
+        } catch (saveError) {
+          console.error("Error al guardar las tarjetas:", saveError);
+          showSnackbar("⚠️ La plantilla se actualizó pero hubo un problema con las tarjetas", "warning");
+        }
+      }
     }
 
     return result;
@@ -332,68 +376,31 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
   }
 };
 
-// Función auxiliar para eliminar parámetros existentes antes de actualizarlos
-const deleteTemplateParams = async (talkmeId) => {
+// Función para guardar una sola tarjeta
+const saveCardTemplate = async (cardData, idNombreUsuarioTalkMe) => {
   try {
-    const url = `https://dev.talkme.pro/templatesGS/api/plantillas/parametros/${talkmeId}`;
+    const url = 'https://dev.talkme.pro/templatesGS/api/plantillas/cards/';
     const response = await fetch(url, {
-      method: "DELETE",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-      }
+      },
+      body: JSON.stringify({
+        ...cardData,
+        CREADO_POR: idNombreUsuarioTalkMe
+      })
     });
 
     if (!response.ok) {
-      console.error("Error eliminando parámetros existentes");
-      return false;
+      throw new Error(`Error al guardar la tarjeta: ${response.statusText}`);
     }
-    
-    return true;
+
+    return await response.json();
   } catch (error) {
-    console.error("Error al eliminar parámetros:", error);
-    return false;
+    console.error("Error guardando tarjeta:", error);
+    throw error;
   }
 };
 
-// Función auxiliar para eliminar tarjetas existentes antes de actualizarlas
-const deleteCardsTemplate = async (talkmeId) => {
-  try {
-    const url = `https://dev.talkme.pro/templatesGS/api/plantillas/cards/${talkmeId}`;
-    const response = await fetch(url, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      }
-    });
-
-    if (!response.ok) {
-      console.error("Error eliminando tarjetas existentes");
-      return false;
-    }
-    
-    return true;
-  } catch (error) {
-    console.error("Error al eliminar tarjetas:", error);
-    return false;
-  }
-};
-
-// Ejemplo de uso en tu código principal:
-/*
-const updateResult = await editTemplateToTalkMe(
-  idTemplate, // ID_INTERNO de GupShup que ya está en tu formulario
-  {
-    templateName,
-    selectedCategory,
-    message, 
-    uploadedUrl,
-    templateType
-  },
-  idNombreUsuarioTalkMe || "Sistema.TalkMe",
-  variables,
-  variableDescriptions,
-  cardsToSendArray
-);
-*/
 
 export { saveTemplateParams };
