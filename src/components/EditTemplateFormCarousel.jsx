@@ -504,11 +504,11 @@ const EditTemplateFormCarousel = () => {
         // Verificar si el primer request fue exitoso
       if (result && result.status === "success") {
         // Extraer el valor de `id` del objeto `template`
-        const templateId = result.template.id;
+        
 
         // Hacer el segundo request a TalkMe API
-        const result2 = await saveTemplateToTalkMe(
-          templateId,
+        const result2 = await editTemplateToTalkMe(
+          idTemplate,
           {
             templateName,
             selectedCategory,

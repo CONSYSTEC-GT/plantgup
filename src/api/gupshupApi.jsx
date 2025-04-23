@@ -322,11 +322,11 @@ export const editTemplateCarouselGupshup = async (appId, authCode, templateData,
         console.error("Error response (texto):", errorText);
       }
       showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
-      throw new Error(errorResponse.message || "Error al crear la plantilla");
+      throw new Error(errorResponse.message || "Error al editar la plantilla");
     }
 
     const result = await response.json();
-    showSnackbar("✅ Plantilla creada exitosamente", "success");
+    showSnackbar("✅ Plantilla editada exitosamente", "success");
     console.log("Response: ", result);
     return result; // Retornar el resultado
   } catch (error) {

@@ -212,4 +212,188 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   }
 };
 
+export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}, cards = []) => {
+  const { templateName, selectedCategory, message, uploadedUrl, templateType } = templateData;
+
+  // URL para actualizar plantilla por ID_INTERNO
+  // Tu backend ya busca por ID_INTERNO en el método PUT
+  const url = `https://dev.talkme.pro/templatesGS/api/plantillas/${idTemplate}`;
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  // Mapeo de categorías
+  let ID_PLANTILLA_CATEGORIA;
+  if (selectedCategory === "MARKETING") {
+    ID_PLANTILLA_CATEGORIA = 17;
+  } else if (selectedCategory === "UTILITY") {
+    ID_PLANTILLA_CATEGORIA = 18;
+  } else {
+    console.error("Categoría no válida:", selectedCategory);
+    showSnackbar("❌ Categoría no válida", "error");
+    return null;
+  }
+
+  // Configuración de tipo de plantilla
+  let TIPO_PLANTILLA;
+  let PANTALLAS;
+  if (templateType === "CAROUSEL") {
+    TIPO_PLANTILLA = 1;
+    PANTALLAS = 4;
+  } else {
+    TIPO_PLANTILLA = 0;
+    PANTALLAS = 0;
+  }
+
+  // Mapeo de tipos de media
+  const mediaMap = {
+    IMAGE: "image",
+    VIDEO: "video",
+    DOCUMENT: "document",
+    CAROUSEL: "image",
+    CATALOG: "image"
+  };
+  
+  const MEDIA = mediaMap[templateType] || null;
+  
+  // Crear un objeto con los datos actualizados
+  const data = {
+    ID_INTERNO: idTemplate, // ID de la plantilla de GupShup - tu backend lo usa para buscar
+    ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
+    ID_BOT_REDES: 721,
+    NOMBRE: templateName,
+    MENSAJE: message,
+    TIPO_PLANTILLA: TIPO_PLANTILLA,
+    MEDIA: MEDIA,
+    URL: uploadedUrl,
+    PANTALLAS: PANTALLAS,
+    ESTADO: 1,
+    AUTORIZADO: 1,
+    ELIMINADO: 0,
+    SEGUIMIENTO_EDC: 0,
+    MODIFICADO_POR: idNombreUsuarioTalkMe,
+    FECHA_MODIFICACION: new Date().toISOString()
+  };
+
+  // Log para seguimiento
+  console.log("Request de edición enviado:", {
+    url: url,
+    headers: headers,
+    body: data,
+  });
+
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: headers,
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Error response:", errorResponse);
+      showSnackbar(`❌ Error al editar la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
+      return null;
+    }
+
+    const result = await response.json();
+    showSnackbar("✅ Plantilla actualizada exitosamente", "success");
+    console.log("Response de la edición: ", result);
+
+    // Para actualizar los parámetros y tarjetas, necesitamos el ID_PLANTILLA
+    // que viene en la respuesta del servidor
+    const talkmeId = result.ID_PLANTILLA;
+
+    // Actualizar variables si existen
+    if (talkmeId && variables && variables.length > 0) {
+      // Primero eliminamos los parámetros existentes antes de guardar los nuevos
+      await deleteTemplateParams(talkmeId);
+      await saveTemplateParams(talkmeId, variables, variableDescriptions);
+    }
+
+    // Actualizar tarjetas si existen
+    if (talkmeId && cards && cards.length > 0) {
+      // Primero eliminamos las tarjetas existentes antes de guardar las nuevas
+      await deleteCardsTemplate(talkmeId);
+      await saveCardsTemplate(
+        {
+          ID_PLANTILLA: talkmeId,
+          cards: cards 
+        },
+        idNombreUsuarioTalkMe
+      );
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error al editar la plantilla:", error);
+    showSnackbar("❌ Error al editar la plantilla", "error");
+    return null;
+  }
+};
+
+// Función auxiliar para eliminar parámetros existentes antes de actualizarlos
+const deleteTemplateParams = async (talkmeId) => {
+  try {
+    const url = `https://dev.talkme.pro/templatesGS/api/plantillas/parametros/${talkmeId}`;
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+
+    if (!response.ok) {
+      console.error("Error eliminando parámetros existentes");
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Error al eliminar parámetros:", error);
+    return false;
+  }
+};
+
+// Función auxiliar para eliminar tarjetas existentes antes de actualizarlas
+const deleteCardsTemplate = async (talkmeId) => {
+  try {
+    const url = `https://dev.talkme.pro/templatesGS/api/plantillas/cards/${talkmeId}`;
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+
+    if (!response.ok) {
+      console.error("Error eliminando tarjetas existentes");
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Error al eliminar tarjetas:", error);
+    return false;
+  }
+};
+
+// Ejemplo de uso en tu código principal:
+/*
+const updateResult = await editTemplateToTalkMe(
+  idTemplate, // ID_INTERNO de GupShup que ya está en tu formulario
+  {
+    templateName,
+    selectedCategory,
+    message, 
+    uploadedUrl,
+    templateType
+  },
+  idNombreUsuarioTalkMe || "Sistema.TalkMe",
+  variables,
+  variableDescriptions,
+  cardsToSendArray
+);
+*/
+
 export { saveTemplateParams };
