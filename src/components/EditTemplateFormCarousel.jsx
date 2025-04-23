@@ -467,7 +467,6 @@ const EditTemplateFormCarousel = () => {
       const result = await editTemplateCarouselGupshup(
         appId,
         authCode,
-        idTemplate,
         {
           templateName,
           selectedCategory,
@@ -482,6 +481,7 @@ const EditTemplateFormCarousel = () => {
           example,
           carousel: JSON.stringify(formattedCards) // Enviar como string JSON
         },
+        idTemplate,
         validateFields
       );
       
