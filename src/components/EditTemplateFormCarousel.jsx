@@ -467,6 +467,7 @@ const EditTemplateFormCarousel = () => {
       const result = await editTemplateCarouselGupshup(
         appId,
         authCode,
+        idTemplate,
         {
           templateName,
           selectedCategory,

@@ -261,7 +261,7 @@ export const createTemplateCarouselGupshup = async (appId, authCode, templateDat
   }
 };  
 
-export const editTemplateCarouselGupshup = async (appId, authCode, templateData, validateFn) => {
+export const editTemplateCarouselGupshup = async (appId, authCode, templateData, idTemplate, validateFn) => {
   // Validar campos antes de enviar la solicitud
   if (validateFn && !validateFn()) {
     return null; // Detener la ejecución si hay errores
@@ -278,7 +278,8 @@ export const editTemplateCarouselGupshup = async (appId, authCode, templateData,
     carousel
   } = templateData;
 
-  const url = `https://partner.gupshup.io/partner/app/${appId}/templates`;
+  
+  const url = `https://partner.gupshup.io/partner/app/${appId}/templates/${idTemplate}`;
   const headers = {
     Authorization: authCode,
     "Content-Type": "application/x-www-form-urlencoded",
