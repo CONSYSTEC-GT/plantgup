@@ -297,6 +297,7 @@ export const editTemplateCarouselGupshup = async (appId, authCode, templateData,
   data.append("cards", carousel)
 
   console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
+  
 
   try {
     const response = await fetch(url, {
