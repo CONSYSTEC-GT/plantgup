@@ -2251,7 +2251,7 @@ const handleFileUpload = (cardId, uploadResponse) => {
             open={showSuccessModal}
             onClose={() => setShowSuccessModal(false)}
             title="¡Éxito!"
-            message="La plantilla fue creada correctamente."
+            message="La plantilla fue editada correctamente."
             severity="success"
             buttonVariant="contained"
           />
