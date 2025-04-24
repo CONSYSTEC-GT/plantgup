@@ -22,77 +22,40 @@ import FileUploadComponent from './FileUploadComponent';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
 import { createTemplateCatalogGupshup } from '../api/gupshupApi';
 import { saveTemplateToTalkMe } from '../api/templatesGSApi';
+import { editTemplateCatalogoGupshup } from '../api/gupshupApi';
+import { editTemplateToTalkMe } from '../api/templatesGSApi';
+
+import { CustomDialog } from '../utils/CustomDialog';
 
 const TemplateForm = () => {
 
   const location = useLocation();
-    const navigate = useNavigate();
-    const templateData = location.state?.template || {}; // Datos del template
-  
-    // Cargar los datos en el formulario al montar el componente
-    useEffect(() => {
-      if (templateData) {
-        setTemplateName(templateData.elementName || "");
-        setSelectedCategory(templateData.category || "");
-        setTemplateType(templateData.templateType || "");
-        setLanguageCode(templateData.languageCode || "");
-        setVertical(templateData.vertical || "");
-        setIdTemplate(templateData.id);
-  
-        // Parsear containerMeta si existe
-        if (templateData.containerMeta) {
-          try {
-            const meta = JSON.parse(templateData.containerMeta);
-            console.log("Meta parsed:", meta);
-            setMessage(meta.data || "");
-            setExample(meta.sampleText || "");
-  
-            // Detectar el tipo de carrusel basado en la primera tarjeta
-            if (meta.cards && meta.cards.length > 0) {
-              console.log("Cards:", meta.cards);
-              setCarouselType(meta.cards[0].headerType);
-              
-              // Detectar cantidad de botones y su tipo basado en la primera tarjeta
-              if (meta.cards[0].buttons && meta.cards[0].buttons.length > 0) {
-                setCantidadBotones(String(meta.cards[0].buttons.length));
-                console.log("Cantidad de botones:", meta.cards[0].buttons.length);
-                console.log("Tipo de dato:", typeof Number(meta.cards[0].buttons.length));
-  
-  
-                setTipoBoton(meta.cards[0].buttons[0].type || "QUICK_REPLY");
-              }
-  
-              // Configurar las tarjetas con sus datos
-              const destructuredCards = meta.cards.map((card, index) => {
-                return {
-                  id: `card-${index}`, // Genera un ID único para cada tarjeta
-                  messageCard: card.body || "",
-                  variablesCard: [], // Si tienes variables en el body, deberías extraerlas aquí
-                  variableDescriptions: {}, // Mapeo para descripciones de variables
-                  variableExamples: {}, // Mapeo para ejemplos de variables
-                  fileData: card.mediaUrl ? {
-                    url: card.mediaUrl,
-                    id: card.mediaId || `media-${Date.now()}-${index}`,
-                    type: card.headerType === "IMAGE" ? "image" : "video",
-                  } : null,
-                  buttons: card.buttons ? card.buttons.map((button, buttonIndex) => ({
-                    id: `button-${index}-${buttonIndex}`,
-                    title: button.text || "",
-                    type: button.type || "QUICK_REPLY",
-                    url: button.url || "",
-                    phoneNumber: button.phone_number || ""
-                  })) : []
-                };
-              });
-  
-              setCards(destructuredCards);
-            }
-          } catch (error) {
-            console.error("Error al parsear containerMeta:", error);
-          }
+  const navigate = useNavigate();
+  const templateData = location.state?.template || {}; // Datos del template
+
+  // Cargar los datos en el formulario al montar el componente
+  useEffect(() => {
+    if (templateData) {
+      setTemplateName(templateData.elementName || "");
+      setSelectedCategory(templateData.category || "");
+      setTemplateType(templateData.templateType || "");
+      setLanguageCode(templateData.languageCode || "");
+      setVertical(templateData.vertical || "");
+      setIdTemplate(templateData.id);
+
+      // Parsear containerMeta si existe
+      if (templateData.containerMeta) {
+        try {
+          const meta = JSON.parse(templateData.containerMeta);
+          console.log("Meta parsed:", meta);
+          setMessage(meta.data || "");
+          setExample(meta.sampleText || "");
+        } catch (error) {
+          console.error("Error al parsear containerMeta:", error);
         }
       }
-    }, [templateData]);
+    }
+  }, [templateData]);
 
   //CAMPOS DEL FORMULARIO PARA EL REQUEST
   const [templateName, setTemplateName] = useState("");
@@ -162,6 +125,27 @@ const TemplateForm = () => {
   const exampleRef = useRef(null);
   const selectedCategoryRef = useRef(null);
   const exampleRefs = useRef({});
+
+  const [idTemplate, setIdTemplate] = useState("");
+
+  const resetForm = () => {
+    setTemplateName("");
+    setSelectedCategory("");
+    setLanguageCode("");
+    setVertical("");
+    setMessage("");
+    setMediaId("");
+    setButtons([]);
+    setExample("");
+    setUploadedUrl("");
+    setVariables([]);
+    setVariableDescriptions([]);
+    // Agrega cualquier otro estado relacionado
+  };
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessageGupshup, setErrorMessageGupshup] = useState("La plantilla no pudo ser creada.");
 
   // Función para mostrar Snackbar
   const showSnackbar = (message, severity) => {
@@ -346,7 +330,7 @@ const TemplateForm = () => {
   const iniciarRequest = async () => {
     try {
       // Hacer el primer request a GupShup API
-      const result = await createTemplateCatalogGupshup(
+      const result = await editTemplateCatalogGupshup(
         appId,
         authCode,
         {
@@ -358,7 +342,9 @@ const TemplateForm = () => {
           message,
           example
         },
+        idTemplate,
         validateFields
+        
       );
 
       // Verificar si el primer request fue exitoso
@@ -367,7 +353,7 @@ const TemplateForm = () => {
         const templateId = result.template.id;
 
         // Hacer el segundo request a TalkMe API
-        const result2 = await saveTemplateToTalkMe(
+        const result2 = await editTemplateToTalkMe(
           templateId,
           {
             templateName,
@@ -1045,6 +1031,26 @@ const TemplateForm = () => {
             Enviar solicitud
           </Button>
         </Box>
+
+        {/* Diálogo de éxito */}
+        <CustomDialog
+          open={showSuccessModal}
+          onClose={() => setShowSuccessModal(false)}
+          title="¡Éxito!"
+          message="La plantilla fue editada correctamente."
+          severity="success"
+          buttonVariant="contained"
+        />
+
+        {/* Diálogo de error */}
+        <CustomDialog
+          open={showErrorModal}
+          onClose={() => setShowErrorModal(false)}
+          title="Error al crear plantilla"
+          message={errorMessageGupshup}
+          severity="error"
+          buttonVariant="contained"
+        />
 
       </Box>
       </Grid>

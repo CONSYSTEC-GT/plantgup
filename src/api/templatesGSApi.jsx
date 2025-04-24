@@ -46,6 +46,34 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions)
   }
 };
 
+const deleteTemplateParams = async (ID_PLANTILLA) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3004/templatesGS/api/parametros/plantilla/${ID_PLANTILLA}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error al eliminar parámetros: ${errorMessage}`);
+    }
+
+    const result = await response.json();
+    console.log(`✅ ${result.count} parámetros eliminados de la plantilla ${ID_PLANTILLA}`);
+    showSnackbar("🗑️ Parámetros eliminados correctamente", "success");
+    return result;
+  } catch (error) {
+    console.error("Error eliminando parámetros:", error);
+    showSnackbar("❌ Error al eliminar parámetros", "error");
+    throw error;
+  }
+};
+
 const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTalkMe) => {
   console.log("Entrando a saveCardsTemplate con:", cards.length, "tarjetas");
   const url = 'https://dev.talkme.pro/templatesGS/api/tarjetas/';
