@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
 import { Alert, Box, Button, Chip, Container, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 
@@ -22,7 +23,7 @@ import FileUploadComponent from './FileUploadComponent';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
 import { createTemplateCatalogGupshup } from '../api/gupshupApi';
 import { saveTemplateToTalkMe } from '../api/templatesGSApi';
-import { editTemplateCatalogoGupshup } from '../api/gupshupApi';
+import { editTemplateCatalogGupshup } from '../api/gupshupApi';
 import { editTemplateToTalkMe } from '../api/templatesGSApi';
 
 import { CustomDialog } from '../utils/CustomDialog';
@@ -60,7 +61,7 @@ const TemplateForm = () => {
   //CAMPOS DEL FORMULARIO PARA EL REQUEST
   const [templateName, setTemplateName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [templateType, setTemplateType] = useState("CATALOGO");
+  const [templateType, setTemplateType] = useState("CATALOG");
   const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al texto de su plantilla.");
   const [templateNameError, setTemplateNameError] = useState(false);
   const [vertical, setVertical] = useState("");
@@ -775,7 +776,7 @@ const TemplateForm = () => {
 
           <FormControl fullWidth>
             <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
-              <MenuItem value="catalog">CATALOGO</MenuItem>
+              <MenuItem value="CATALOG">CATALOGO</MenuItem>
             </Select>
             <FormHelperText>
               Escoge el tipo de plantilla que se va a crear

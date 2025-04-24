@@ -113,6 +113,7 @@ const TemplateForm = () => {
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessageGupshup, setErrorMessageGupshup] = useState("La plantilla no pudo ser creada.");
 
   // Función para mostrar Snackbar
   const showSnackbar = (message, severity) => {
@@ -337,6 +338,8 @@ const TemplateForm = () => {
 
         // El tercer request se maneja dentro de saveTemplateToTalkMe
       } else {
+        setErrorMessageGupshup(result?.message || "La plantilla no pudo ser creada.");
+        setShowErrorModal(true);
         console.error("El primer request no fue exitoso o no tiene el formato esperado.");
         console.error("Resultado del primer request:", result);
       }

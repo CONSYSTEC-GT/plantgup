@@ -206,8 +206,8 @@ useEffect(() => {
         case 'CAROUSEL':
           navigate('/modify-template-carousel', { state: { template } });
           break;
-        case 'CATALOGO':
-          navigate('/modify-template-catalogo', { state: { template } });
+        case 'CATALOG':
+          navigate('/modify-template-catalog', { state: { template } });
           break;
         case 'TEXT':
         case 'IMAGE':
