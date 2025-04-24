@@ -62,14 +62,14 @@ const fetchTemplates = async (appId, authCode) => {
     });
     const data = await response.json();
     if (data.status === 'success') {
-      const sendTemplates = data.templates.filter(template => template.status === 'PENDING');
-      setTemplates(sendTemplates);
+      return data.templates.filter(template => template.status === 'PENDING');
     }
+    return []; // Retorna un array vacío si no hay éxito
   } catch (error) {
     console.error('Error fetching templates:', error);
+    return []; // Retorna un array vacío en caso de error
   }
 };
-
 // useEffect para cargar datos
 useEffect(() => {
   if (appId && authCode) {

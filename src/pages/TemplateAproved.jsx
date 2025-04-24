@@ -62,8 +62,7 @@ const fetchTemplates = async (appId, authCode) => {
     });
     const data = await response.json();
     if (data.status === 'success') {
-      const aprovedTemplates = data.templates.filter(template => template.status === 'APPROVED');
-      setTemplates(aprovedTemplates);
+      return data.templates.filter(template => template.status === 'APPROVED');
     }
     return []; // Retorna un array vacío si no hay éxito
   } catch (error) {
