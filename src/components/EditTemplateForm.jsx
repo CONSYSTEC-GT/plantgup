@@ -327,22 +327,22 @@ const EditTemplateForm = () => {
       // Agrega aquí cualquier header de autenticación si es necesario
     };
 
-    // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA
+    // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA 13 Y 14 EN CERTI 17 Y 18 EN DEV
     let ID_PLANTILLA_CATEGORIA;
     if (selectedCategory === "MARKETING") {
-      ID_PLANTILLA_CATEGORIA = 13;
+      ID_PLANTILLA_CATEGORIA = 17;
     } else if (selectedCategory === "UTILITY") {
-      ID_PLANTILLA_CATEGORIA = 14;
+      ID_PLANTILLA_CATEGORIA = 18;
     } else {
       console.error("Categoría no válida:", selectedCategory);
       showSnackbar("❌ Categoría no válida", "error");
       return null; // Retornar null si la categoría no es válida
     }
 
-    // Crear un objeto con los datos
+    // Crear un objeto con los datos 149 EN CERTI 721 EN DEV
     const data = {
       ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
-      ID_BOT_REDES: 149,
+      ID_BOT_REDES: 721,
       ID_INTERNO: templateId,
       NOMBRE: templateName,
       MENSAJE: message,
