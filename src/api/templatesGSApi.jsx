@@ -140,12 +140,12 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   const headers = {
     "Content-Type": "application/json",
   };
-  //13 y 14 son en certi igual que 149 en bot redes
+  //13 y 14 son en certi igual que 149 en bot redes y en dev son 17 y 18
   let ID_PLANTILLA_CATEGORIA;
   if (selectedCategory === "MARKETING") {
-    ID_PLANTILLA_CATEGORIA = 17;
+    ID_PLANTILLA_CATEGORIA = 13;
   } else if (selectedCategory === "UTILITY") {
-    ID_PLANTILLA_CATEGORIA = 18;
+    ID_PLANTILLA_CATEGORIA = 14;
   } else {
     console.error("Categoría no válida:", selectedCategory);
     showSnackbar("❌ Categoría no válida", "error");
@@ -252,9 +252,9 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
   // Mapeo de categorías
   let ID_PLANTILLA_CATEGORIA;
   if (selectedCategory === "MARKETING") {
-    ID_PLANTILLA_CATEGORIA = 17;
+    ID_PLANTILLA_CATEGORIA = 13;
   } else if (selectedCategory === "UTILITY") {
-    ID_PLANTILLA_CATEGORIA = 18;
+    ID_PLANTILLA_CATEGORIA = 14;
   } else {
     console.error("Categoría no válida:", selectedCategory);
     showSnackbar("❌ Categoría no válida", "error");
