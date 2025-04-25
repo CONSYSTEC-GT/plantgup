@@ -104,6 +104,8 @@ const TemplateFormCarousel = () => {
   const [variableExamplesHelperText, setvariableExamplesHelperText] = useState("");
   const [variableErrors, setVariableErrors] = useState({});
 
+  const [cardErrors, setCardErrors] = useState({});
+
   // Estado para almacenar ejemplos de variables
   const [variableExamplesCard, setVariableExamplesCard] = useState({});
   const [variableExamplesErrorCard, setvariableExamplesErrorCard] = useState(false);
@@ -298,8 +300,108 @@ const TemplateFormCarousel = () => {
       console.log("No hay variables para validar.");
     }
 
+    // Validación para tarjetas de carrusel
+    if (cards && cards.length > 0) {
+      console.log("Validando tarjetas de carrusel...");
+
+      // Para cada tarjeta
+      for (const card of cards) {
+        // Validar el mensaje de la tarjeta
+        if (!card.messageCard || card.messageCard.trim() === "") {
+          console.log(`Error: La tarjeta ${card.id} no tiene un mensaje válido.`);
+          isValid = false;
+
+          // Actualizar el estado para mostrar error en este campo
+          // Necesitarás crear un estado para errores de tarjetas si no existe
+          setCardErrors(prev => ({
+            ...prev,
+            [card.id]: {
+              ...prev?.[card.id],
+              messageCard: "Este campo es requerido"
+            }
+          }));
+
+          // Enfocar el campo con error
+          if (messageCardRefs.current[card.id]) {
+            messageCardRefs.current[card.id].focus();
+          }
+        }
+
+        // Validar los botones de la tarjeta
+        if (card.buttons && card.buttons.length > 0) {
+          for (const button of card.buttons) {
+            // Validar título del botón
+            if (!button.title || button.title.trim() === "") {
+              console.log(`Error: El botón ${button.id} no tiene un título válido.`);
+              isValid = false;
+
+              // Actualizar estado para errores de botones
+              setButtonErrors(prev => ({
+                ...prev,
+                [button.id]: {
+                  ...prev?.[button.id],
+                  title: "Este campo es requerido"
+                }
+              }));
+            }
+
+            // Validar URL si es un botón de tipo URL
+            if (button.type === "URL" && (!button.url || button.url.trim() === "")) {
+              console.log(`Error: El botón ${button.id} no tiene una URL válida.`);
+              isValid = false;
+
+              // Actualizar estado para errores de botones
+              setButtonErrors(prev => ({
+                ...prev,
+                [button.id]: {
+                  ...prev?.[button.id],
+                  url: "Este campo es requerido"
+                }
+              }));
+            }
+
+            // Validar número de teléfono si es un botón de tipo PHONE_NUMBER
+            if (button.type === "PHONE_NUMBER" && (!button.phoneNumber || button.phoneNumber.trim() === "")) {
+              console.log(`Error: El botón ${button.id} no tiene un número válido.`);
+              isValid = false;
+
+              // Actualizar estado para errores de botones
+              setButtonErrors(prev => ({
+                ...prev,
+                [button.id]: {
+                  ...prev?.[button.id],
+                  phoneNumber: "Este campo es requerido"
+                }
+              }));
+            }
+          }
+        }
+
+        // Validar variables de tarjeta y sus ejemplos
+        if (card.variablesCard && card.variablesCard.length > 0) {
+          for (const variable of card.variablesCard) {
+            if (!card.variableExamples?.[variable] || card.variableExamples[variable].trim() === "") {
+              console.log(`Error: La variable ${variable} en tarjeta ${card.id} no tiene un ejemplo válido.`);
+              isValid = false;
+
+              // Actualizar estado para errores de variables de tarjeta
+              setVariableErrorsCard(prev => ({
+                ...prev,
+                [variable]: "Este campo es requerido"
+              }));
+
+              // Enfocar el campo con error
+              if (exampleCardRefs.current[variable]) {
+                exampleCardRefs.current[variable].focus();
+              }
+            }
+          }
+        }
+      }
+    }
+
     console.log("Validación completada. isValid:", isValid);
-    return isValid; // Retornar el valor final de isValid
+    return isValid;
   };
 
   // Función para determinar el tipo de archivo basado en la extensión
@@ -345,40 +447,37 @@ const TemplateFormCarousel = () => {
 
   const iniciarRequest = async () => {
     try {
-      // Hacer debug de las cards antes de formatear
-      console.log("Cards antes de formatear:", JSON.stringify(cards));
 
+      /* Hacer debug de las cards antes de formatear
+      console.log("Cards antes de formatear:", JSON.stringify(cards));
       // Primero verifica que cards esté definido
       if (!cards || cards.length === 0) {
         console.error("No hay tarjetas disponibles");
         return;
       }
-
-      // Luego formatea las cards
-      const formattedCards = formatCardsForGupshup(cards);
-
+      
       // Ahora sí puedes hacer log de formattedCards
       console.log("Cards formateadas:", formattedCards);
-
       // Asegúrate de que todas las cards tengan los datos necesarios
       const isValid = formattedCards.every(card =>
         card.mediaUrl && card.body // Añade aquí más validaciones si son necesarias
       );
-
       if (!isValid) {
         console.error("Algunas cards no tienen todos los datos requeridos");
         console.error(formattedCards);
         return;
       }
+      */
 
-      //
+      // Luego formatea las cards
+      const formattedCards = formatCardsForGupshup(cards);
       const cardsToSendArray = [...cards]; // Esto es un array de objetos
       const cardsToSend = JSON.stringify([...cards]); // Convertir a JSON string
 
       /******************************
        * COMENTADO EL PRIMER REQUEST *
        ******************************/
-      
+
       const result = await createTemplateCarouselGupshup(
         appId,
         authCode,
@@ -398,7 +497,7 @@ const TemplateFormCarousel = () => {
         },
         validateFields
       );
-      
+
 
       /* Simulamos un resultado exitoso con un templateId hardcodeado para pruebas
       const mockResult = {
@@ -415,7 +514,7 @@ const TemplateFormCarousel = () => {
 
         */
 
-        // Verificar si el primer request fue exitoso
+      // Verificar si el primer request fue exitoso
       if (result && result.status === "success") {
         // Extraer el valor de `id` del objeto `template`
         const templateId = result.template.id;
@@ -444,7 +543,7 @@ const TemplateFormCarousel = () => {
         console.error("El primer request no fue exitoso o no tiene el formato esperado.");
         setErrorMessageGupshup(result?.message || "La plantilla no pudo ser creada.");
         setShowErrorModal(true);
-        
+
       }
     } catch (error) {
       console.error("Ocurrió un error:", error);
@@ -700,32 +799,32 @@ const TemplateFormCarousel = () => {
   const handleBodyMessageCardChange = (e, cardId) => {
     const newText = e.target.value;
     const maxLength = 280;
-  
-    setCards(prevCards => 
+
+    setCards(prevCards =>
       prevCards.map(card => {
         if (card.id !== cardId) return card;
-  
+
         // Variables actuales del mensaje
         const currentVariables = card.variablesCard || [];
-  
+
         // Identificar variables eliminadas
         const deletedVariables = currentVariables.filter(
           variable => !newText.includes(variable)
         );
-  
+
         const remainingVariables = currentVariables.filter(
           v => !deletedVariables.includes(v)
         );
-  
+
         // Actualizar descripciones y ejemplos
         const updatedDescriptions = { ...card.variableDescriptionsCard };
         const updatedExamples = { ...card.variableExamples };
-  
+
         deletedVariables.forEach(v => {
           delete updatedDescriptions[v];
           delete updatedExamples[v];
         });
-  
+
         return {
           ...card,
           messageCard: newText,
@@ -736,7 +835,7 @@ const TemplateFormCarousel = () => {
       })
     );
   };
-  
+
 
   // VARIABLES DEL BODY MESSAGE
   const handleAddVariable = () => {
@@ -768,21 +867,21 @@ const TemplateFormCarousel = () => {
     setCards(prevCards =>
       prevCards.map(card => {
         if (card.id !== cardId) return card;
-  
+
         const newVariable = `{{${card.variablesCard.length + 1}}}`;
         // Usa la referencia específica de esta tarjeta
         const textFieldRef = messageCardRefs.current[cardId];
         const cursorPosition = textFieldRef?.selectionStart || 0;
-  
+
         const textBefore = card.messageCard.substring(0, cursorPosition);
         const textAfter = card.messageCard.substring(cursorPosition);
-  
+
         const newMessageCard = `${textBefore}${newVariable}${textAfter}`;
-  
+
         // OPCIONAL: Actualizar descripción y ejemplos también
         const updatedDescriptions = { ...card.variableDescriptionsCard, [newVariable]: "" };
         const updatedExamples = { ...card.variableExamples, [newVariable]: "" };
-  
+
         return {
           ...card,
           messageCard: newMessageCard,
@@ -815,22 +914,22 @@ const TemplateFormCarousel = () => {
   const handleEmojiClickCarousel = (emojiObject, cardId) => {
     const input = messageCardRefs.current[cardId];
     const cursor = input?.selectionStart || 0;
-  
+
     setCards(prevCards =>
       prevCards.map(card => {
         if (card.id !== cardId) return card;
-  
+
         const newText =
           card.messageCard.slice(0, cursor) +
           emojiObject.emoji +
           card.messageCard.slice(cursor);
-  
+
         return { ...card, messageCard: newText };
       })
     );
-  
+
     setShowEmojiPickerCards(false);
-  
+
     setTimeout(() => {
       if (input) {
         const newPos = cursor + emojiObject.emoji.length;
@@ -839,7 +938,7 @@ const TemplateFormCarousel = () => {
       }
     }, 100);
   };
-  
+
 
 
 
@@ -1263,23 +1362,23 @@ const TemplateFormCarousel = () => {
     ));
   };
 
-// Agregar nueva tarjeta
-const addAccordion = () => {
-  // Verificar si ya hay 10 acordeones
-  if (cards.length >= 10) {
-    alert("No puedes tener más de 10 acordeones"); // Opcional: mostrar mensaje al usuario
-    return; // Salir de la función sin agregar más
-  }
-  
-  const cantidad = parseInt(cantidadBotones, 10);
-  const nuevaCard = {
-    ...initialCardState,
-    id: uuidv4(),
-    buttons: generarBotones(cantidad, tipoBoton)
+  // Agregar nueva tarjeta
+  const addAccordion = () => {
+    // Verificar si ya hay 10 acordeones
+    if (cards.length >= 10) {
+      alert("No puedes tener más de 10 acordeones"); // Opcional: mostrar mensaje al usuario
+      return; // Salir de la función sin agregar más
+    }
+
+    const cantidad = parseInt(cantidadBotones, 10);
+    const nuevaCard = {
+      ...initialCardState,
+      id: uuidv4(),
+      buttons: generarBotones(cantidad, tipoBoton)
+    };
+    setCards([...cards, nuevaCard]);
   };
-  setCards([...cards, nuevaCard]);
-};
-  
+
 
   // Eliminar tarjeta
   const deleteAccordion = (id, e) => {
@@ -1307,7 +1406,7 @@ const addAccordion = () => {
     }
     return botones;
   };
-  
+
 
 
 
@@ -1344,31 +1443,31 @@ const addAccordion = () => {
 
 
   // Función para manejar la subida de archivos para una card específica
-const handleFileUpload = (cardId, uploadResponse) => {
-  console.log("Respuesta completa de subida recibida:", uploadResponse);
+  const handleFileUpload = (cardId, uploadResponse) => {
+    console.log("Respuesta completa de subida recibida:", uploadResponse);
 
-  if (uploadResponse) {
-    // Estructura esperada del uploadResponse después de las modificaciones
-    const fileData = {
-      url: uploadResponse.url,
-      mediaId: uploadResponse.mediaId || null
-    };
+    if (uploadResponse) {
+      // Estructura esperada del uploadResponse después de las modificaciones
+      const fileData = {
+        url: uploadResponse.url,
+        mediaId: uploadResponse.mediaId || null
+      };
 
-    console.log("Datos de archivo a guardar:", fileData);
+      console.log("Datos de archivo a guardar:", fileData);
 
-    setCards(prevCards => prevCards.map(card => {
-      if (card.id === cardId) {
-        return {
-          ...card,
-          fileData: fileData // Guardar los datos del archivo en la tarjeta
-        };
-      }
-      return card;
-    }));
-  } else {
-    console.error("No se recibió respuesta de subida válida");
-  }
-};
+      setCards(prevCards => prevCards.map(card => {
+        if (card.id === cardId) {
+          return {
+            ...card,
+            fileData: fileData // Guardar los datos del archivo en la tarjeta
+          };
+        }
+        return card;
+      }));
+    } else {
+      console.error("No se recibió respuesta de subida válida");
+    }
+  };
 
 
 
@@ -1548,7 +1647,7 @@ const handleFileUpload = (cardId, uploadResponse) => {
 
             {/* Campo de texto con soporte para emojis y variables */}
             <Box sx={{ position: "relative" }}>
-            <TextField
+              <TextField
                 fullWidth
                 multiline
                 aria-required="true"
@@ -1857,6 +1956,7 @@ const handleFileUpload = (cardId, uploadResponse) => {
                                       inputRef={(el) => (messageCardRefs.current[card.id] = el)}
                                       inputProps={{ maxLength: 280 }}
                                       helperText={`${card.messageCard.length}/280 caracteres`}
+                                      error={Boolean(cardErrors[card.id]?.messageCard)}
                                       FormHelperTextProps={{
                                         sx: {
                                           textAlign: 'right',

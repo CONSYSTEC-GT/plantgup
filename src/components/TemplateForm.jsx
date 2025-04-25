@@ -22,6 +22,7 @@ import FileUploadComponent from './FileUploadComponent';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
 import { createTemplateGupshup } from '../api/gupshupApi';
 import { saveTemplateToTalkMe } from '../api/templatesGSApi';
+import { CustomDialog } from '../utils/CustomDialog';
 
 const TemplateForm = () => {
 
@@ -93,6 +94,25 @@ const TemplateForm = () => {
   const exampleRef = useRef(null);
   const selectedCategoryRef = useRef(null);
   const exampleRefs = useRef({});
+
+  const resetForm = () => {
+    setTemplateName("");
+    setSelectedCategory("");
+    setLanguageCode("");
+    setVertical("");
+    setMessage("");
+    setMediaId("");
+    setButtons([]);
+    setExample("");
+    setUploadedUrl("");
+    setVariables([]);
+    setVariableDescriptions([]);
+    // Agrega cualquier otro estado relacionado
+  };
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessageGupshup, setErrorMessageGupshup] = useState("La plantilla no pudo ser creada.");
 
   // Función para mostrar Snackbar
   const showSnackbar = (message, severity) => {
@@ -315,8 +335,14 @@ const TemplateForm = () => {
           variableDescriptions
         );
 
+        // Limpia todos los campos si todo fue bien
+        resetForm();
+        setShowSuccessModal(true);
+
         // El tercer request se maneja dentro de saveTemplateToTalkMe
       } else {
+        setErrorMessageGupshup(result?.message || "La plantilla no pudo ser creada.");
+        setShowErrorModal(true);
         console.error("El primer request no fue exitoso o no tiene el formato esperado.");
         console.error("Resultado del primer request:", result);
       }
@@ -573,7 +599,7 @@ const TemplateForm = () => {
       return updatedExamples;
     });
   };
-  
+
   const handleUpdateDescriptions = (variable, value) => {
     setVariableDescriptions(prevDescriptions => ({
       ...prevDescriptions,
@@ -594,20 +620,20 @@ const TemplateForm = () => {
   const replaceVariables = (text, variables) => {
     let result = text;
     console.log("Texto antes de reemplazar:", text);
-  
+
     Object.keys(variables).forEach(variable => {
       const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // 🔥 Búsqueda exacta de {{variable}}
       console.log(`Reemplazando: {{${variable}}} por ${variables[variable]}`);
       result = result.replace(regex, variables[variable]);
     });
-  
+
     console.log("Texto después de reemplazar:", result);
     return result;
   };
-  
-  
-  
-  
+
+
+
+
 
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
   useEffect(() => {
@@ -1140,6 +1166,26 @@ const TemplateForm = () => {
             Enviar solicitud
           </Button>
         </Box>
+
+        {/* Diálogo de éxito */}
+        <CustomDialog
+          open={showSuccessModal}
+          onClose={() => setShowSuccessModal(false)}
+          title="¡Éxito!"
+          message="La plantilla fue creada correctamente."
+          severity="success"
+          buttonVariant="contained"
+        />
+
+        {/* Diálogo de error */}
+        <CustomDialog
+          open={showErrorModal}
+          onClose={() => setShowErrorModal(false)}
+          title="Error al crear plantilla"
+          message={errorMessageGupshup}
+          severity="error"
+          buttonVariant="contained"
+        />
 
 
       </Box>

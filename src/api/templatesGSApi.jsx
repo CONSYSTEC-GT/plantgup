@@ -177,7 +177,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   const data = {
     ID_PLANTILLA: null,
     ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
-    ID_BOT_REDES: 721,
+    ID_BOT_REDES: 149,
     ID_INTERNO: templateId,
     NOMBRE: templateName,
     MENSAJE: message,
@@ -287,7 +287,7 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
   const data = {
     ID_INTERNO: idTemplate, // ID de la plantilla de GupShup
     ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
-    ID_BOT_REDES: 721,
+    ID_BOT_REDES: 149,
     NOMBRE: templateName,
     MENSAJE: message,
     TIPO_PLANTILLA: TIPO_PLANTILLA,

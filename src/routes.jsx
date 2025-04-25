@@ -47,7 +47,7 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path="/CreateTemplatePage"
+            path="/CreateTemplatePage/CreateTemplatePage"
             element={
               <ProtectedRoute>
                 <CreateTemplatePage />

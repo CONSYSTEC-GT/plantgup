@@ -30,7 +30,7 @@ const TemplateForm = () => {
   //CAMPOS DEL FORMULARIO PARA EL REQUEST
   const [templateName, setTemplateName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [templateType, setTemplateType] = useState("CATALOGO");
+  const [templateType, setTemplateType] = useState("CATALOG");
   const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al texto de su plantilla.");
   const [templateNameError, setTemplateNameError] = useState(false);
   const [vertical, setVertical] = useState("");
@@ -747,7 +747,7 @@ const TemplateForm = () => {
 
           <FormControl fullWidth>
             <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
-              <MenuItem value="catalog">CATALOGO</MenuItem>
+              <MenuItem value="CATALOG">CATALOGO</MenuItem>
             </Select>
             <FormHelperText>
               Escoge el tipo de plantilla que se va a crear
