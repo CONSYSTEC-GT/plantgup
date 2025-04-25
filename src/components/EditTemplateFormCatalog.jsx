@@ -48,9 +48,14 @@ const TemplateForm = () => {
       if (templateData.containerMeta) {
         try {
           const meta = JSON.parse(templateData.containerMeta);
-          console.log("Meta parsed:", meta);
-          setMessage(meta.data || "");
+          const messageText = meta.data || "";
+
+          setMessage(messageText);
           setExample(meta.sampleText || "");
+
+          // Extrae variables del mensaje y actualiza el estado
+          const extractedVariables = extractVariables(messageText);
+          setVariables(extractedVariables); // <- Aquí las guardas
         } catch (error) {
           console.error("Error al parsear containerMeta:", error);
         }
@@ -576,6 +581,12 @@ const TemplateForm = () => {
     setMessage((prev) => `${prev} ${newVariable}`);
     setVariables([...variables, newVariable]);
   };
+
+  // Función para extraer variables ({{1}}, {{2}}, etc.)
+const extractVariables = (text) => {
+  const regex = /\{\{\d+\}\}/g;
+  return text.match(regex) || []; // Retorna un array (ej: ["{{1}}", "{{2}}"])
+};
 
   const handleEmojiClick = (emojiObject) => {
     setMessage((prev) => `${prev} ${emojiObject.emoji}`);
