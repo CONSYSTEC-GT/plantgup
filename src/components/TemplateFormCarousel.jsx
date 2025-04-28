@@ -47,17 +47,20 @@ const TemplateFormCarousel = () => {
   const [templateName, setTemplateName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [templateType, setTemplateType] = useState("CAROUSEL");
-  const [carouselType, setcarouselType] = useState("");
+  const [carouselType, setcarouselType] = useState("IMAGE");
   const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al texto de su plantilla.");
   const [templateNameError, setTemplateNameError] = useState(false);
   const [vertical, setVertical] = useState("");
   const [message, setMessage] = useState("");
 
+
   //carousel
   const [messageCard, setMessageCard] = useState("");
   const messageCardRefs = useRef({});
-  const [cantidadBotones, setCantidadBotones] = useState();
+  const [cantidadBotones, setCantidadBotones] = useState("1");
   const [tipoBoton, setTipoBoton] = useState("QUICK_REPLY")
+
+  const [cantidadBotonesError, setcantidadBotonesError] = useState();
 
   const [header, setHeader] = useState("");
   const [footer, setFooter] = useState("");
@@ -139,6 +142,7 @@ const TemplateFormCarousel = () => {
   const selectedCategoryRef = useRef(null);
   const exampleRefs = useRef({});
   const exampleCardRefs = useRef({});
+  const cantidadBotonesRefs = useRef({});
 
   const emojiPickerRef = useRef(null);
   const emojiPickerCardRef = useRef(null);
@@ -180,226 +184,125 @@ const TemplateFormCarousel = () => {
 
   const validateFields = () => {
     let isValid = true;
-
+    let firstErrorFieldRef = null;
+  
     console.log("Iniciando validación de campos...");
-
+  
+    // Validación de templateName
     if (!templateName || templateName.trim() === "") {
       console.log("Error: templateName está vacío o no es válido.");
       setTemplateNameError(true);
       setTemplateNameHelperText("Este campo es requerido");
       isValid = false;
-      if (templateNameRef.current) templateNameRef.current.focus();
-      console.log("Estado de isValid después de validar templateName:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("templateName es válido.");
+      if (templateNameRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = templateNameRef;
+      }
     }
-
+  
+    // Validación de templateType
     if (!templateType || templateType.trim() === "") {
       console.log("Error: templateType está vacío o no es válido.");
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
       isValid = false;
-      if (templateTypeRef.current) templateTypeRef.current.focus();
-      console.log("Estado de isValid después de validar templateType:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("templateType es válido.");
+      if (templateTypeRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = templateTypeRef;
+      }
     }
-
+  
+    // Validación de languageCode
     if (!languageCode || languageCode.trim() === "") {
       console.log("Error: languageCode está vacío o no es válido.");
       setLanguageTypeError(true);
       setLanguageTypeHelperText("Este campo es requerido");
       isValid = false;
-      if (languageCodeRef.current) languageCodeRef.current.focus();
-      console.log("Estado de isValid después de validar languageCode:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("languageCode es válido.");
+      if (languageCodeRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = languageCodeRef;
+      }
     }
-
+  
+    // Validación de vertical
     if (!vertical || vertical.trim() === "") {
       console.log("Error: vertical está vacío o no es válido.");
       setetiquetaPlantillaError(true);
       isValid = false;
-      if (verticalRef.current) verticalRef.current.focus();
-      console.log("Estado de isValid después de validar vertical:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("vertical es válido.");
+      if (verticalRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = verticalRef;
+      }
     }
-
+  
+    // Validación de message
     if (!message || message.trim() === "") {
       console.log("Error: message está vacío o no es válido.");
       setcontenidoPlantillaTypeError(true);
       setcontenidoPlantillaTypeHelperText("Este campo es requerido");
       isValid = false;
-      if (messageRef.current) messageRef.current.focus();
-      console.log("Estado de isValid después de validar message:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("message es válido.");
+      if (messageRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = messageRef;
+      }
     }
-
+  
+    // Validación de example
     if (!example || example.trim() === "") {
       console.log("Error: example está vacío o no es válido.");
       setejemploPlantillaError(true);
       setejemploPlantillaHelperText("Este campo es requerido");
       isValid = false;
-      if (exampleRef.current) exampleRef.current.focus();
-      console.log("Estado de isValid después de validar example:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("example es válido.");
+      if (exampleRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = exampleRef;
+      }
     }
-
+  
+    // Validación de selectedCategory
     if (!selectedCategory || selectedCategory.trim() === "") {
       console.log("Error: selectedCategory está vacío o no es válido.");
       setcategoriaPlantillaError(true);
       setcategoriaPlantillaHelperText("Este campo es requerido");
       isValid = false;
-      if (selectedCategoryRef.current) selectedCategoryRef.current.focus();
-      console.log("Estado de isValid después de validar selectedCategory:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("selectedCategory es válido.");
+      if (selectedCategoryRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = selectedCategoryRef;
+      }
     }
-
-    // Validar que todas las variables tengan un texto de ejemplo
+  
+    // Validación de variables
     if (variables.length > 0) {
       console.log("Validando variables...");
-      const newErrors = {}; // Objeto para almacenar los errores
-
+      const newErrors = {};
+  
       for (const variable of variables) {
         if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
           console.log(`Error: La variable ${variable} no tiene un ejemplo válido.`);
           isValid = false;
-          newErrors[variable] = "Este campo es requerido"; // Asignar mensaje de error
-
-          // Colocar el foco en el campo de texto de ejemplo vacío
-          if (exampleRefs.current[variable]) {
-            exampleRefs.current[variable].focus();
+          newErrors[variable] = "Este campo es requerido";
+  
+          // Solo establece el primer error de variable si no hay otro error antes
+          if (exampleRefs.current[variable] && !firstErrorFieldRef) {
+            firstErrorFieldRef = { current: exampleRefs.current[variable] };
           }
         } else {
-          console.log(`La variable ${variable} es válida.`);
-          newErrors[variable] = ""; // Sin error
+          newErrors[variable] = "";
         }
       }
-
-      // Actualizar el estado de errores
+  
       setVariableErrors(newErrors);
-
-      // Si hay errores, no retornar aquí, continuar con el flujo
-      if (!isValid) {
-        console.log("Errores encontrados en las variables. isValid:", isValid);
-      } else {
-        console.log("Todas las variables son válidas.");
-      }
-    } else {
-      console.log("No hay variables para validar.");
     }
 
-    // Validación para tarjetas de carrusel
-    if (cards && cards.length > 0) {
-      console.log("Validando tarjetas de carrusel...");
-
-      // Para cada tarjeta
-      for (const card of cards) {
-        // Validar el mensaje de la tarjeta
-        if (!card.messageCard || card.messageCard.trim() === "") {
-          console.log(`Error: La tarjeta ${card.id} no tiene un mensaje válido.`);
-          isValid = false;
-
-          // Actualizar el estado para mostrar error en este campo
-          // Necesitarás crear un estado para errores de tarjetas si no existe
-          setCardErrors(prev => ({
-            ...prev,
-            [card.id]: {
-              ...prev?.[card.id],
-              messageCard: "Este campo es requerido"
-            }
-          }));
-
-          // Enfocar el campo con error
-          if (messageCardRefs.current[card.id]) {
-            messageCardRefs.current[card.id].focus();
-          }
-        }
-
-        // Validar los botones de la tarjeta
-        if (card.buttons && card.buttons.length > 0) {
-          for (const button of card.buttons) {
-            // Validar título del botón
-            if (!button.title || button.title.trim() === "") {
-              console.log(`Error: El botón ${button.id} no tiene un título válido.`);
-              isValid = false;
-
-              // Actualizar estado para errores de botones
-              setButtonErrors(prev => ({
-                ...prev,
-                [button.id]: {
-                  ...prev?.[button.id],
-                  title: "Este campo es requerido"
-                }
-              }));
-            }
-
-            // Validar URL si es un botón de tipo URL
-            if (button.type === "URL" && (!button.url || button.url.trim() === "")) {
-              console.log(`Error: El botón ${button.id} no tiene una URL válida.`);
-              isValid = false;
-
-              // Actualizar estado para errores de botones
-              setButtonErrors(prev => ({
-                ...prev,
-                [button.id]: {
-                  ...prev?.[button.id],
-                  url: "Este campo es requerido"
-                }
-              }));
-            }
-
-            // Validar número de teléfono si es un botón de tipo PHONE_NUMBER
-            if (button.type === "PHONE_NUMBER" && (!button.phoneNumber || button.phoneNumber.trim() === "")) {
-              console.log(`Error: El botón ${button.id} no tiene un número válido.`);
-              isValid = false;
-
-              // Actualizar estado para errores de botones
-              setButtonErrors(prev => ({
-                ...prev,
-                [button.id]: {
-                  ...prev?.[button.id],
-                  phoneNumber: "Este campo es requerido"
-                }
-              }));
-            }
-          }
-        }
-
-        // Validar variables de tarjeta y sus ejemplos
-        if (card.variablesCard && card.variablesCard.length > 0) {
-          for (const variable of card.variablesCard) {
-            if (!card.variableExamples?.[variable] || card.variableExamples[variable].trim() === "") {
-              console.log(`Error: La variable ${variable} en tarjeta ${card.id} no tiene un ejemplo válido.`);
-              isValid = false;
-
-              // Actualizar estado para errores de variables de tarjeta
-              setVariableErrorsCard(prev => ({
-                ...prev,
-                [variable]: "Este campo es requerido"
-              }));
-
-              // Enfocar el campo con error
-              if (exampleCardRefs.current[variable]) {
-                exampleCardRefs.current[variable].focus();
-              }
-            }
-          }
-        }
+    // Validación de selectedCategory
+    if (!cantidadBotones || cantidadBotones.trim() === "") {
+      console.log("Error: cantidadBotones está vacío o no es válido.");
+      setcantidadBotonesError(true);
+      isValid = false;
+      if (cantidadBotonesRefs.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = cantidadBotonesRefs;
       }
     }
-
+  
+    // Enfocar el primer campo con error encontrado
+    if (!isValid && firstErrorFieldRef && firstErrorFieldRef.current) {
+      console.log("Enfocando el primer campo con error:", firstErrorFieldRef);
+      firstErrorFieldRef.current.focus();
+    }
+  
     console.log("Validación completada. isValid:", isValid);
     return isValid;
   };
@@ -622,10 +525,17 @@ const TemplateFormCarousel = () => {
     fr: "frances",
   };
 
-  //VERTICAL PLANTILLA
   const handleVerticalChange = (event) => {
-    setVertical(event.target.value)
-  }
+    const newValue = event.target.value;
+    setVertical(newValue);
+  
+    // Validación en tiempo real mientras escribe
+    if (newValue.trim() === "") {
+      setetiquetaPlantillaError(true);
+    } else {
+      setetiquetaPlantillaError(false);
+    }
+  };
 
   //TIPO PLANTILLA
   const handleTemplateTypeChange = (event) => {
@@ -755,6 +665,20 @@ const TemplateFormCarousel = () => {
 
   // VARIABLES DEL BODY MESSAGE
   const handleBodyMessageChange = (e) => {
+    const newValue = event.target.value;
+    setMessage(newValue);
+
+
+    // Validar si el campo está vacío
+    if (newValue.trim() === "") {
+      setcontenidoPlantillaTypeError(true);
+      setcontenidoPlantillaTypeHelperText("Este campo es requerido");
+    } else {
+      setcontenidoPlantillaTypeError(false);
+      setcontenidoPlantillaTypeHelperText("");
+    }
+
+
     const newText = e.target.value;
     const maxLength = 1024;
 
@@ -797,6 +721,9 @@ const TemplateFormCarousel = () => {
   };
 
   const handleBodyMessageCardChange = (e, cardId) => {
+
+    
+
     const newText = e.target.value;
     const maxLength = 280;
 
@@ -1835,9 +1762,9 @@ const TemplateFormCarousel = () => {
                   fullWidth
                   sx={{ mb: 2 }}
                 >
-                  <MenuItem value="IMAGEN">Imagen</MenuItem>
+                  <MenuItem value="IMAGE">Imagen</MenuItem>
                   <MenuItem value="VIDEO">Video</MenuItem>
-                  {/* Agrega más opciones si quieres */}
+                  
 
                 </TextField>
               </FormControl>
@@ -1854,6 +1781,8 @@ const TemplateFormCarousel = () => {
                 fullWidth
                 onChange={(e) => setCantidadBotones(e.target.value)}
                 value={cantidadBotones}
+                error={cantidadBotonesError}
+                inputRef={cantidadBotonesRefs}
               >
                 <MenuItem value="1">1</MenuItem>
                 <MenuItem value="2">2</MenuItem>
