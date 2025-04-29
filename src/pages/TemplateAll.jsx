@@ -85,8 +85,20 @@ const TemplateAll = () => {
     }
   }, [appId, authCode]);
 
-  const handleFiltrarCategoria = (categoriaFiltro) =>{
-    
+  // useEffect para filtrar plantillas cuando cambia la categoría
+  useEffect(() => {
+    if (categoriaFiltro === '') {
+      // Si no hay filtro, mostrar todas las plantillas
+      setFilteredTemplates(templates);
+    } else {
+      // Filtrar por categoría
+      const filtered = templates.filter(template => template.type === categoriaFiltro);
+      setFilteredTemplates(filtered);
+    }
+  }, [categoriaFiltro, templates]);
+
+  const handleFiltrarCategoria = (event) =>{
+    setCategoriaFiltro(event.target.value);
   }
 
   //MODIFICAR EL COLOR DEPENDIENDO DEL STATUS DE LAS PLANTILLAS
@@ -260,8 +272,8 @@ const TemplateAll = () => {
             <FormControl sx={{ marginLeft: 'auto', minWidth: 200}}>
               <InputLabel id="Categoría">Categoría</InputLabel>
               <Select
-                labelId="Categoría"
-                id="Categoría"
+                labelId="categoria-label"
+                id="categoria-select"
                 value={categoriaFiltro}
                 label="Categoría"
                 onChange={handleFiltrarCategoria}
@@ -289,7 +301,8 @@ const TemplateAll = () => {
               ))
               :
               // Mostrar los datos reales cuando termine de cargar
-              templates.map((template) => (
+              filteredTemplates.length > 0 ? (
+                filteredTemplates.map((template) => (
 
                 <Card
                   key={template.id}
@@ -603,7 +616,13 @@ const TemplateAll = () => {
                     </Menu>
                   </CardActions>
                 </Card>
-              ))}
+              ))
+            ) : (
+              <Typography variant="h6" sx={{ gridColumn: '1 / -1', textAlign: 'center', mt: 4 }}>
+                No hay plantillas disponibles para esta categoría.
+              </Typography>
+            )
+            }
           </Box>
         </Box>
       </Box>

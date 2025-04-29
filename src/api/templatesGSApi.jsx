@@ -172,8 +172,6 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   
   const MEDIA = mediaMap[templateType] || null;
   
-
-  // Crear un objeto con los datos
   const data = {
     ID_PLANTILLA: null,
     ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
