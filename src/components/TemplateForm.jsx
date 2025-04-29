@@ -544,16 +544,88 @@ const TemplateForm = () => {
     setButtons(buttons.filter((button) => button.id !== id));
   };
 
+  const handleBodyMessageChange = (e) => {
+    const newText = e.target.value;
+    const maxLength = 1024;
+
+    if (newText.length <= maxLength) {
+      // Guardar el nuevo texto
+      setMessage(newText);
+
+      // Verificar qué variables se han eliminado del texto
+      const deletedVariables = [];
+      variables.forEach(variable => {
+        if (!newText.includes(variable)) {
+          deletedVariables.push(variable);
+        }
+      });
+
+      // Si se eliminaron variables, actualiza el estado
+      if (deletedVariables.length > 0) {
+        // Filtrar las variables eliminadas
+        const remainingVariables = variables.filter(v => !deletedVariables.includes(v));
+
+        // Actualizar el estado de las variables
+        setVariables(remainingVariables);
+
+        // Actualizar las descripciones y ejemplos
+        const newDescriptions = { ...variableDescriptions };
+        const newExamples = { ...variableExamples };
+        const newErrors = { ...variableErrors };
+
+        deletedVariables.forEach(v => {
+          delete newDescriptions[v];
+          delete newExamples[v];
+          delete newErrors[v];
+        });
+
+        setVariableDescriptions(newDescriptions);
+        setVariableExamples(newExamples);
+        setVariableErrors(newErrors);
+      }
+    }
+  };
+
   // VARIABLES DEL BODY MESSAGE
   const handleAddVariable = () => {
     const newVariable = `{{${variables.length + 1}}}`;
-    setMessage((prev) => `${prev} ${newVariable}`);
+
+    // Obtener la posición actual del cursor
+    const cursorPosition = messageRef.current.selectionStart;
+
+    // Dividir el texto en dos partes: antes y después del cursor
+    const textBeforeCursor = message.substring(0, cursorPosition);
+    const textAfterCursor = message.substring(cursorPosition);
+
+    // Insertar la variable en la posición del cursor
+    const newMessage = `${textBeforeCursor}${newVariable}${textAfterCursor}`;
+    setMessage(newMessage);
+
+    // Actualizar el array de variables
     setVariables([...variables, newVariable]);
+
+    // OPCIONAL: Colocar el cursor después de la variable insertada
+    setTimeout(() => {
+      const newPosition = cursorPosition + newVariable.length;
+      messageRef.current.focus();
+      messageRef.current.setSelectionRange(newPosition, newPosition);
+    }, 0);
   };
 
   const handleEmojiClick = (emojiObject) => {
-    setMessage((prev) => `${prev} ${emojiObject.emoji}`);
+    const cursor = messageRef.current.selectionStart;
+    const newText = message.slice(0, cursor) + emojiObject.emoji + message.slice(cursor);
+
+    setMessage(newText);
     setShowEmojiPicker(false);
+
+    // Aumenta el tiempo de espera para asegurar que el estado se actualiza
+    setTimeout(() => {
+      if (messageRef.current) {
+        messageRef.current.focus();
+        messageRef.current.setSelectionRange(cursor + emojiObject.emoji.length, cursor + emojiObject.emoji.length);
+      }
+    }, 100);
   };
 
   // Nueva función para borrar una variable específica
@@ -564,7 +636,58 @@ const TemplateForm = () => {
 
     // Eliminar la variable de la lista de variables
     const updatedVariables = variables.filter(v => v !== variableToDelete);
-    setVariables(updatedVariables);
+
+    // Renumerar las variables restantes para mantener el orden secuencial
+    const renumberedVariables = [];
+    const variableMapping = {}; // Mapeo de variable antigua a nueva
+
+    updatedVariables.forEach((v, index) => {
+      const newVar = `{{${index + 1}}}`;
+      renumberedVariables.push(newVar);
+      variableMapping[v] = newVar;
+    });
+
+    // Actualizar el texto con las variables renumeradas
+    let updatedMessage = newMessage;
+    Object.entries(variableMapping).forEach(([oldVar, newVar]) => {
+      updatedMessage = updatedMessage.replaceAll(oldVar, newVar);
+    });
+
+    // Crear nuevos objetos para descripciones y ejemplos de variables
+    const newVariableDescriptions = {};
+    const newVariableExamples = {};
+    const newVariableErrors = { ...variableErrors };
+
+    // Eliminar la variable eliminada de los errores
+    delete newVariableErrors[variableToDelete];
+
+    // Copiar las descripciones y ejemplos con las nuevas claves
+    Object.entries(variableMapping).forEach(([oldVar, newVar]) => {
+      if (variableDescriptions[oldVar]) {
+        newVariableDescriptions[newVar] = variableDescriptions[oldVar];
+      }
+      if (variableExamples[oldVar]) {
+        newVariableExamples[newVar] = variableExamples[oldVar];
+      }
+      if (variableErrors[oldVar]) {
+        newVariableErrors[newVar] = variableErrors[oldVar];
+        delete newVariableErrors[oldVar];
+      }
+    });
+
+    // Actualizar todos los estados
+    setMessage(updatedMessage);
+    setVariables(renumberedVariables);
+    setVariableDescriptions(newVariableDescriptions);
+    setVariableExamples(newVariableExamples);
+    setVariableErrors(newVariableErrors);
+
+    // Actualizar las referencias
+    const newExampleRefs = {};
+    renumberedVariables.forEach(v => {
+      newExampleRefs[v] = exampleRefs.current[variableMapping[v]] || null;
+    });
+    exampleRefs.current = newExampleRefs;
 
     messageRef.current?.focus();
   };
@@ -577,6 +700,13 @@ const TemplateForm = () => {
     });
     setMessage(newMessage);
     setVariables([]);
+
+    // Limpiar todos los estados relacionados con variables
+    setVariableDescriptions({});
+    setVariableExamples({});
+    setVariableErrors({});
+    exampleRefs.current = {};
+
     messageRef.current?.focus();
   };
 
@@ -600,12 +730,15 @@ const TemplateForm = () => {
     });
   };
 
-  const handleUpdateDescriptions = (variable, value) => {
+  const handleUpdateDescriptions = (variable, event) => {
+    const newValue = event.target.value.replace(/\s+/g, '_');
     setVariableDescriptions(prevDescriptions => ({
       ...prevDescriptions,
-      [variable]: value
+      [variable]: newValue
     }));
   };
+  
+  
 
   // Función para generar el ejemplo combinando el mensaje y los valores de las variables
   const generateExample = () => {
@@ -877,7 +1010,8 @@ const TemplateForm = () => {
               label="Escribe"
               placeholder="Ingresa el contenido de tu mensaje aquí..."
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={handleBodyMessageChange}
+              //onChange={(e) => setMessage(e.target.value)}
               sx={{
                 mb: 3,
                 mt: 4,
@@ -999,7 +1133,7 @@ const TemplateForm = () => {
                         label="Descripción"
                         placeholder="¿Para qué sirve esta variable?"
                         value={variableDescriptions[variable] || ''}
-                        onChange={(e) => handleUpdateDescriptions(variable, e.target.value)}
+                        onChange={(e) => handleUpdateDescriptions(variable, e)}
                         sx={{ flexGrow: 1 }}
                       />
 

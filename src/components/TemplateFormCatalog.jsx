@@ -716,10 +716,11 @@ const TemplateForm = () => {
     });
   };
 
-  const handleUpdateDescriptions = (variable, value) => {
+  const handleUpdateDescriptions = (variable, event) => {
+    const newValue = event.target.value.replace(/\s+/g, '_');
     setVariableDescriptions(prevDescriptions => ({
       ...prevDescriptions,
-      [variable]: value
+      [variable]: newValue
     }));
   };
 
@@ -1072,7 +1073,7 @@ const TemplateForm = () => {
                         label="Descripción"
                         placeholder="¿Para qué sirve esta variable?"
                         value={variableDescriptions[variable] || ''}
-                        onChange={(e) => handleUpdateDescriptions(variable, e.target.value)}
+                        onChange={(e) => handleUpdateDescriptions(variable, e)}
                         sx={{ flexGrow: 1 }}
                       />
 
