@@ -731,6 +731,7 @@ const EditTemplateForm = () => {
             <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
               <MenuItem value="TEXT">TEXT</MenuItem>
               <MenuItem value="IMAGE">IMAGE</MenuItem>
+              <MenuItem value="VIDEO">VIDEO</MenuItem>
               <MenuItem value="DOCUMENT">DOCUMENT</MenuItem>
             </Select>
             <FormHelperText>

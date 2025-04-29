@@ -752,6 +752,7 @@ const TemplateForm = () => {
             <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
               <MenuItem value="text">TEXTO</MenuItem>
               <MenuItem value="image">IMAGEN</MenuItem>
+              <MenuItem value="video">VIDEO</MenuItem>
               <MenuItem value="document">DOCUMENTO</MenuItem>
             </Select>
             <FormHelperText>
