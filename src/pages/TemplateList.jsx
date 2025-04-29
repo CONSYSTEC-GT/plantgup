@@ -635,7 +635,7 @@ export default function BasicCard() {
                       }}
                     >
                       {/* Imagen para plantillas tipo CAROUSEL o IMAGE */}
-                      {(template.templateType === 'CAROUSEL' || template.templateType === 'IMAGE') && (
+                      {(template.templateType === 'CAROUSEL' || template.templateType === 'IMAGE' || template.templateType === 'VIDEO') && (
                         <Box sx={{ mb: 2, width: '100%', height: 140, borderRadius: 2, overflow: 'hidden' }}>
                           <img
                             src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-UPVXEk3VrllOtMWXfyrUi4GVlt71zdxigtTGguOkqRgWmIX8_aT35EdrnTc0Jn5yy5c&usqp=CAU'

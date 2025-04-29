@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Asegúrate de instalar jwt-decode
 import { useParams } from 'react-router-dom';
-import { alpha, Box, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fade, FormControl, FormLabel, ListItemIcon, ListItemText, InputLabel, Menu, MenuItem, Select, Stack, styled, Typography } from '@mui/material';
+import { alpha, Box, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fade, FormControl, FormLabel, Input, InputAdornment, ListItemIcon, ListItemText, InputLabel, Menu, MenuItem, OutlinedInput, Select, Stack, styled, TextField, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 
 // ICONOS
@@ -16,6 +16,7 @@ import Link from '@mui/icons-material/Link';
 import Phone from '@mui/icons-material/Phone';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ErrorIcon from '@mui/icons-material/Error';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
@@ -32,13 +33,16 @@ const TemplateAll = () => {
   const [activeFilter, setActiveFilter] = useState('todas');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [categoriaFiltro, setCategoriaFiltro] = useState('');
+  const [tipoPlantillaFiltro, setTipoPlantillaFiltro] = useState('ALL');
+  const [categoriaFiltro, setCategoriaFiltro] = useState('ALL');
+  const [busquedaFiltro, setBusquedaFiltro] = useState('');
 
   const navigate = useNavigate(); // Inicializa useNavigate
 
   // Recupera el token del localStorage
   const token = localStorage.getItem('authToken');
 
+  /*
   // Decodifica el token para obtener appId y authCode
   let appId, authCode;
   if (token) {
@@ -50,6 +54,15 @@ const TemplateAll = () => {
       console.error('Error decodificando el token:', error);
     }
   }
+    */
+  let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
+
+  appId = '1fbd9a1e-074c-4e1e-801c-b25a0fcc9487'; // Extrae appId del token
+  authCode = 'sk_d416c60960504bab8be8bc3fac11a358'; // Extrae authCode del token
+  appName = 'DemosTalkMe55'; // Extrae el nombre de la aplicación
+  idUsuarioTalkMe = 78;  // Cambiado de idUsuario a id_usuario
+  idNombreUsuarioTalkMe = 'javier.colocho';  // Cambiado de nombreUsuario a nombre_usuario
+  empresaTalkMe = 2;
 
   // Función para obtener las plantillas
   const fetchTemplates = async (appId, authCode) => {
@@ -85,21 +98,34 @@ const TemplateAll = () => {
     }
   }, [appId, authCode]);
 
-  // useEffect para filtrar plantillas cuando cambia la categoría
   useEffect(() => {
-    if (categoriaFiltro === '') {
-      // Si no hay filtro, mostrar todas las plantillas
-      setFilteredTemplates(templates);
-    } else {
-      // Filtrar por categoría
-      const filtered = templates.filter(template => template.type === categoriaFiltro);
-      setFilteredTemplates(filtered);
+    let filtered = [...templates];
+  
+    if (tipoPlantillaFiltro !== 'ALL') {
+      filtered = filtered.filter(template => template.templateType === tipoPlantillaFiltro);
     }
-  }, [categoriaFiltro, templates]);
+  
+    if (categoriaFiltro && categoriaFiltro !== 'ALL') {
+      filtered = filtered.filter(template => template.category === categoriaFiltro);
+    }
 
-  const handleFiltrarCategoria = (event) =>{
+    if (busquedaFiltro.trim() !== '') {
+      filtered = filtered.filter(template =>
+        template.elementName.toLowerCase().includes(busquedaFiltro.toLowerCase())
+      );
+    }
+  
+    setFilteredTemplates(filtered);
+  }, [tipoPlantillaFiltro, categoriaFiltro, busquedaFiltro, templates]);
+
+  const handleFiltrarTipoPlantilla = (event) =>{
+    setTipoPlantillaFiltro(event.target.value);
+  }
+
+  const handleFiltrarCategoriaPlantilla = (event) =>{
     setCategoriaFiltro(event.target.value);
   }
+  
 
   //MODIFICAR EL COLOR DEPENDIENDO DEL STATUS DE LAS PLANTILLAS
   const getStatusColor = (status) => {
@@ -269,17 +295,51 @@ const TemplateAll = () => {
               Catálogo de Plantillas
             </Typography>
 
-            <FormControl sx={{ marginLeft: 'auto', minWidth: 200}}>
-              <InputLabel id="Categoría">Categoría</InputLabel>
+            <FormControl variant="outlined" sx={{ marginLeft: 'auto', minWidth: 400}}>
+              <InputLabel htmlFor="input-with-icon-adornment">
+                Buscar plantillas por nombre
+              </InputLabel>
+              <OutlinedInput
+                id="input-with-icon-adornment"
+                endAdornment={
+                  <InputAdornment position="end">
+                    <SearchOutlinedIcon />
+                  </InputAdornment>
+                }
+                label="With an end adornment"
+                value={busquedaFiltro}
+                onChange={(e) => setBusquedaFiltro(e.target.value)}
+              />
+            </FormControl>
+
+            <FormControl sx={{ minWidth: 200}}>
+              <InputLabel id="Categoria">Categoría</InputLabel>
               <Select
                 labelId="categoria-label"
                 id="categoria-select"
                 value={categoriaFiltro}
-                label="Categoría"
-                onChange={handleFiltrarCategoria}
+                label="Categoria"
+                onChange={handleFiltrarCategoriaPlantilla}
               >
+                <MenuItem value='ALL'>Todas</MenuItem>
+                <MenuItem value='MARKETING'>Marketing</MenuItem>
+                <MenuItem value='UTILITY'>Utilidad</MenuItem>
+              </Select>
+            </FormControl>
+
+            <FormControl sx={{ minWidth: 200}}>
+              <InputLabel id="Tipo">Tipo</InputLabel>
+              <Select
+                labelId="tipo-label"
+                id="tipo-select"
+                value={tipoPlantillaFiltro}
+                label="Tipo"
+                onChange={handleFiltrarTipoPlantilla}
+              >
+                <MenuItem value='ALL'>Todas</MenuItem>
                 <MenuItem value='TEXT'>Texto</MenuItem>
                 <MenuItem value='IMAGE'>Imagen</MenuItem>
+                <MenuItem value='VIDEO'>Video</MenuItem>
                 <MenuItem value='DOCUMENT'>Documento</MenuItem>
                 <MenuItem value='CATALOG'>Cátalogo</MenuItem>
                 <MenuItem value='CAROUSEL'>Carrusel</MenuItem>
@@ -470,29 +530,45 @@ const TemplateAll = () => {
                         justifyContent: 'flex-start', // Align content to the top
                       }}
                     >
-                      <Box
-                        sx={{
-                          backgroundColor: 'white',
-                          p: 1,
-                          mt: 1,
-                          borderRadius: 4,
-                          width: 284, // Ancho fijo
-                          maxWidth: '100%', // Ensure it doesn't overflow the parent
-                          display: 'inline-flex', // Use inline-flex to wrap content
-                          flexDirection: 'column',
-                          alignSelf: 'center', // Center the white box horizontally
-                        }}
-                      >
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
+                        <Box
                           sx={{
-                            width: 'fit-content', // Ensure typography width fits content
-                            whiteSpace: 'normal', // Allow text to wrap
+                            backgroundColor: 'white',
+                            p: 1,
+                            mt: 1,
+                            borderRadius: 4,
+                            width: 284, // Ancho fijo
+                            maxWidth: '100%', // Ensure it doesn't overflow the parent
+                            display: 'inline-flex', // Use inline-flex to wrap content
+                            flexDirection: 'column',
+                            alignSelf: 'center', // Center the white box horizontally
                           }}
                         >
-                          {parseTemplateContent(template.data).text}
-                        </Typography>
+                          {/* Imagen para plantillas tipo CAROUSEL o IMAGE */}
+                          {(template.templateType === 'CAROUSEL' || template.templateType === 'IMAGE' || template.templateType === 'VIDEO') && (
+                            <Box sx={{ mb: 2, width: '100%', height: 140, borderRadius: 2, overflow: 'hidden' }}>
+                              <img
+                                src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-UPVXEk3VrllOtMWXfyrUi4GVlt71zdxigtTGguOkqRgWmIX8_aT35EdrnTc0Jn5yy5c&usqp=CAU'
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                  borderRadius: '8px',
+                                  alignContent: 'center'
+                                }}
+                              />
+                            </Box>
+                          )}
+
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{
+                              width: 'fit-content', // Ensure typography width fits content
+                              whiteSpace: 'normal', // Allow text to wrap
+                            }}
+                          >
+                            {parseTemplateContent(template.data).text}
+                          </Typography>
 
                         {/* Botones */}
                         <Stack spacing={1} sx={{ mt: 2 }}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { alpha, Autocomplete, Box, Button, Card, CardContent, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fade, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Typography, Stack, styled } from '@mui/material';
+import { alpha, Box, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fade, FormControl, FormLabel, Input, InputAdornment, ListItemIcon, ListItemText, InputLabel, Menu, MenuItem, OutlinedInput, Select, Stack, styled, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { jwtDecode } from 'jwt-decode';
@@ -17,6 +17,7 @@ import Link from '@mui/icons-material/Link';
 import Phone from '@mui/icons-material/Phone';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ErrorIcon from '@mui/icons-material/Error';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
@@ -33,6 +34,9 @@ const TemplateAproved = () => {
   const [activeFilter, setActiveFilter] = useState('todas');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [tipoPlantillaFiltro, setTipoPlantillaFiltro] = useState('ALL');
+  const [categoriaFiltro, setCategoriaFiltro] = useState('ALL');
+  const [busquedaFiltro, setBusquedaFiltro] = useState('');
 
   // Recupera el token del localStorage
   const token = localStorage.getItem('authToken');
@@ -49,38 +53,66 @@ const TemplateAproved = () => {
     }
   }
 
-// Función para obtener las plantillas
-const fetchTemplates = async (appId, authCode) => {
-  try {
-    const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
-      method: 'GET',
-      headers: {
-        Authorization: authCode,
-      },
-    });
-    const data = await response.json();
-    if (data.status === 'success') {
-      return data.templates.filter(template => template.status === 'REJECTED');
-    }
-    return []; // Retorna un array vacío si no hay éxito
-  } catch (error) {
-    console.error('Error fetching templates:', error);
-    return []; // Retorna un array vacío en caso de error
-  }
-};
-// useEffect para cargar datos
-useEffect(() => {
-  if (appId && authCode) {
-    setLoading(true); // Asegúrate de que loading esté en true al inicio
-    fetchTemplates(appId, authCode)
-      .then(data => {
-        setTemplates(data);
-        setLoading(false);
+  // Función para obtener las plantillas
+  const fetchTemplates = async (appId, authCode) => {
+    try {
+      const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
+        method: 'GET',
+        headers: {
+          Authorization: authCode,
+        },
       });
-  } else {
-    console.error('No se encontró appId o authCode en el token');
+      const data = await response.json();
+      if (data.status === 'success') {
+        return data.templates.filter(template => template.status === 'REJECTED');
+      }
+      return []; // Retorna un array vacío si no hay éxito
+    } catch (error) {
+      console.error('Error fetching templates:', error);
+      return []; // Retorna un array vacío en caso de error
+    }
+  };
+  // useEffect para cargar datos
+  useEffect(() => {
+    if (appId && authCode) {
+      setLoading(true); // Asegúrate de que loading esté en true al inicio
+      fetchTemplates(appId, authCode)
+        .then(data => {
+          setTemplates(data);
+          setLoading(false);
+        });
+    } else {
+      console.error('No se encontró appId o authCode en el token');
+    }
+  }, [appId, authCode]);
+
+  useEffect(() => {
+    let filtered = [...templates];
+
+    if (tipoPlantillaFiltro !== 'ALL') {
+      filtered = filtered.filter(template => template.templateType === tipoPlantillaFiltro);
+    }
+
+    if (categoriaFiltro && categoriaFiltro !== 'ALL') {
+      filtered = filtered.filter(template => template.category === categoriaFiltro);
+    }
+
+    if (busquedaFiltro.trim() !== '') {
+      filtered = filtered.filter(template =>
+        template.elementName.toLowerCase().includes(busquedaFiltro.toLowerCase())
+      );
+    }
+
+    setFilteredTemplates(filtered);
+  }, [tipoPlantillaFiltro, categoriaFiltro, busquedaFiltro, templates]);
+
+  const handleFiltrarTipoPlantilla = (event) => {
+    setTipoPlantillaFiltro(event.target.value);
   }
-}, [appId, authCode]);
+
+  const handleFiltrarCategoriaPlantilla = (event) => {
+    setCategoriaFiltro(event.target.value);
+  }
 
   //MODIFICAR EL COLOR DEPENDIENDO DEL STATUS DE LAS PLANTILLAS
   const getStatusColor = (status) => {
@@ -229,9 +261,62 @@ useEffect(() => {
       <Box sx={{ display: 'flex' }}>
 
         <Box sx={{ flexGrow: 1, p: 3 }}>
-          {/*TITULO*/}<Typography variant="h4" gutterBottom>
-            Catálogo de Plantillas
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexGrow: 1, p: 3 }}>
+            {/* Título */}<Typography variant="h4" gutterBottom>
+              Catálogo de Plantillas
+            </Typography>
+
+            <FormControl variant="outlined" sx={{ marginLeft: 'auto', minWidth: 400 }}>
+              <InputLabel htmlFor="input-with-icon-adornment">
+                Buscar plantillas por nombre
+              </InputLabel>
+              <OutlinedInput
+                id="input-with-icon-adornment"
+                endAdornment={
+                  <InputAdornment position="end">
+                    <SearchOutlinedIcon />
+                  </InputAdornment>
+                }
+                label="With an end adornment"
+                value={busquedaFiltro}
+                onChange={(e) => setBusquedaFiltro(e.target.value)}
+              />
+            </FormControl>
+
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel id="Categoria">Categoría</InputLabel>
+              <Select
+                labelId="categoria-label"
+                id="categoria-select"
+                value={categoriaFiltro}
+                label="Categoria"
+                onChange={handleFiltrarCategoriaPlantilla}
+              >
+                <MenuItem value='ALL'>Todas</MenuItem>
+                <MenuItem value='MARKETING'>Marketing</MenuItem>
+                <MenuItem value='UTILITY'>Utilidad</MenuItem>
+              </Select>
+            </FormControl>
+
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel id="Tipo">Tipo</InputLabel>
+              <Select
+                labelId="tipo-label"
+                id="tipo-select"
+                value={tipoPlantillaFiltro}
+                label="Tipo"
+                onChange={handleFiltrarTipoPlantilla}
+              >
+                <MenuItem value='ALL'>Todas</MenuItem>
+                <MenuItem value='TEXT'>Texto</MenuItem>
+                <MenuItem value='IMAGE'>Imagen</MenuItem>
+                <MenuItem value='VIDEO'>Video</MenuItem>
+                <MenuItem value='DOCUMENT'>Documento</MenuItem>
+                <MenuItem value='CATALOG'>Cátalogo</MenuItem>
+                <MenuItem value='CAROUSEL'>Carrusel</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
 
           {/* Grid de tarjetas */}
           <Box sx={{
@@ -241,327 +326,350 @@ useEffect(() => {
             justifyItems: "center" // Esto centrará las tarjetas en sus celdas de grid
           }}>
             {loading ?
-            // Mostrar skeletons mientras carga
-            Array.from(new Array(4)).map((_, index) => ( // Usamos 4 como en tu slice
-              <TemplateCardSkeleton key={index} />
-            ))
-            :
-            // Mostrar los datos reales cuando termine de cargar
-            templates.map((template) => (
+              // Mostrar skeletons mientras carga
+              Array.from(new Array(4)).map((_, index) => ( // Usamos 4 como en tu slice
+                <TemplateCardSkeleton key={index} />
+              ))
+              :
+              // Mostrar los datos reales cuando termine de cargar
+              filteredTemplates.length > 0 ? (
+                filteredTemplates.map((template) => (
 
-              <Card
-                key={template.id}
-                sx={{
-                  maxWidth: 300,
-                  height: 500, // Fija la altura a 480px
-                  borderRadius: 3,
-                  mt: 3, // Aumenta la separación superior
-                  mx: 2, // Agrega margen a los lados
-                  border: '1px solid #e0e0e0',
-                  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
-                  overflow: 'visible',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                <CardContent sx={{ p: 0 }}>
-                  {/* Header Template Name */}
-                  <Box sx={{ p: 2, pb: 0 }}>
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight={700}
-                      sx={{
-                        mb: 0,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2, // muestra máximo 2 líneas
-                        WebkitBoxOrient: 'vertical'
-                      }}
-                    >
-                      {template.elementName}
-                    </Typography>
+                  <Card
+                    key={template.id}
+                    sx={{
+                      maxWidth: 300,
+                      height: 500, // Fija la altura a 480px
+                      borderRadius: 3,
+                      mt: 3, // Aumenta la separación superior
+                      mx: 2, // Agrega margen a los lados
+                      border: '1px solid #e0e0e0',
+                      boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
+                      overflow: 'visible',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    <CardContent sx={{ p: 0 }}>
+                      {/* Header Template Name */}
+                      <Box sx={{ p: 2, pb: 0 }}>
+                        <Typography
+                          variant="subtitle1"
+                          fontWeight={700}
+                          sx={{
+                            mb: 0,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2, // muestra máximo 2 líneas
+                            WebkitBoxOrient: 'vertical'
+                          }}
+                        >
+                          {template.elementName}
+                        </Typography>
 
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-                      {/* Status badge */}
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+                          {/* Status badge */}
+                          <Box
+                            sx={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              backgroundColor: getStatusColor(template.status),
+                              borderRadius: 1,
+                              px: 1,
+                              py: 0.5,
+                            }}
+                          >
+                            <Box
+                              component="span"
+                              sx={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: '50%',
+                                backgroundColor: getStatusDotColor(template.status),
+                                mr: 0.5
+                              }}
+                            />
+                            <Typography variant="caption" sx={{ color: getStatusTextColor(template.status), fontWeight: 500 }}>
+                              {template.status}
+                            </Typography>
+                          </Box>
+
+                          {/* Categoria badge */}
+                          <Box
+                            sx={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              backgroundColor: '#F3F4F6',
+                              borderRadius: 1,
+                              px: 1,
+                              py: 0.5,
+                            }}
+                          >
+                            <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                              {template.category}
+                            </Typography>
+                          </Box>
+
+                          {/* Tipo badge */}
+                          <Box
+                            sx={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              backgroundColor: '#F3F4F6',
+                              borderRadius: 1,
+                              px: 1,
+                              py: 0.5,
+                            }}
+                          >
+                            <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                              {template.templateType}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Box>
+
+                      {/* Razón rechazo */}
+                      {template.reason && (
+                        <React.Fragment>
+                          <Button
+                            color="error"
+                            variant="outlined"
+                            size="small"
+                            onClick={() => handleOpenReasonDialog(template.reason)}
+                            startIcon={<ErrorOutlineIcon />}
+                            sx={{
+                              mt: 1,
+                              textTransform: 'none',
+                              fontSize: '0.75rem',
+                              borderRadius: 1,
+                              py: 0.5,
+                              px: 1,
+                              ml: 2
+                            }}
+                          >
+                            Razón de rechazo
+                          </Button>
+
+                          <Dialog
+                            open={openReasonDialog}
+                            onClose={() => setOpenReasonDialog(false)}
+                            maxWidth="sm"
+                            fullWidth
+                          >
+                            <DialogTitle sx={{
+                              bgcolor: 'error.light',
+                              color: 'error.contrastText',
+                              py: 1,
+                              px: 2
+                            }}>
+                              <Box display="flex" alignItems="center">
+                                <ErrorIcon sx={{ mr: 1 }} />
+                                <Typography variant="subtitle1">Razón de rechazo</Typography>
+                              </Box>
+                            </DialogTitle>
+                            <DialogContent sx={{ py: 3, px: 2 }}>
+                              <Typography>{selectedReason}</Typography>
+                            </DialogContent>
+                            <DialogActions sx={{ px: 2, py: 1 }}>
+                              <Button
+                                onClick={() => setOpenReasonDialog(false)}
+                                variant="contained"
+                                color="primary"
+                                sx={{ borderRadius: 1 }}
+                              >
+                                Entendido
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
+                        </React.Fragment>
+                      )}
+
+                      {/* Content */}
                       <Box
                         sx={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          backgroundColor: getStatusColor(template.status),
-                          borderRadius: 1,
-                          px: 1,
-                          py: 0.5,
+                          backgroundColor: '#FEF9F3', // Fondo amarillo
+                          p: 2, // Aumentar padding para dar más espacio alrededor de la caja blanca
+                          mx: 1,
+                          my: 1,
+                          borderRadius: 2,
+                          minHeight: 302, // Altura mínima en lugar de fija AMARILLA
+                          width: 286,
+                          display: 'flex',
+                          flexDirection: 'column', // Ajusta la dirección del contenido a columna
+                          alignItems: 'center', // Centra horizontalmente
+                          justifyContent: 'flex-start', // Align content to the top
                         }}
                       >
                         <Box
-                          component="span"
                           sx={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: '50%',
-                            backgroundColor: getStatusDotColor(template.status),
-                            mr: 0.5
+                            backgroundColor: 'white',
+                            p: 1,
+                            mt: 1,
+                            borderRadius: 4,
+                            width: 284, // Ancho fijo
+                            maxWidth: '100%', // Ensure it doesn't overflow the parent
+                            display: 'inline-flex', // Use inline-flex to wrap content
+                            flexDirection: 'column',
+                            alignSelf: 'center', // Center the white box horizontally
                           }}
-                        />
-                        <Typography variant="caption" sx={{ color: getStatusTextColor(template.status), fontWeight: 500 }}>
-                          {template.status}
-                        </Typography>
-                      </Box>
+                        >
+                          {/* Imagen para plantillas tipo CAROUSEL o IMAGE */}
+                          {(template.templateType === 'CAROUSEL' || template.templateType === 'IMAGE' || template.templateType === 'VIDEO') && (
+                            <Box sx={{ mb: 2, width: '100%', height: 140, borderRadius: 2, overflow: 'hidden' }}>
+                              <img
+                                src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-UPVXEk3VrllOtMWXfyrUi4GVlt71zdxigtTGguOkqRgWmIX8_aT35EdrnTc0Jn5yy5c&usqp=CAU'
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                  borderRadius: '8px',
+                                  alignContent: 'center'
+                                }}
+                              />
+                            </Box>
+                          )}
 
-                      {/* Categoria badge */}
-                      <Box
-                        sx={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          backgroundColor: '#F3F4F6',
-                          borderRadius: 1,
-                          px: 1,
-                          py: 0.5,
-                        }}
-                      >
-                        <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
-                          {template.category}
-                        </Typography>
-                      </Box>
-
-                      {/* Tipo badge */}
-                      <Box
-                        sx={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          backgroundColor: '#F3F4F6',
-                          borderRadius: 1,
-                          px: 1,
-                          py: 0.5,
-                        }}
-                      >
-                        <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
-                          {template.templateType}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-
-                  {/* Razón rechazo */}
-                  {template.reason && (
-                    <React.Fragment>
-                      <Button
-                        color="error"
-                        variant="outlined"
-                        size="small"
-                        onClick={() => handleOpenReasonDialog(template.reason)}
-                        startIcon={<ErrorOutlineIcon />}
-                        sx={{
-                          mt: 1,
-                          textTransform: 'none',
-                          fontSize: '0.75rem',
-                          borderRadius: 1,
-                          py: 0.5,
-                          px: 1,
-                          ml: 2
-                        }}
-                      >
-                        Razón de rechazo
-                      </Button>
-
-                      <Dialog
-                        open={openReasonDialog}
-                        onClose={() => setOpenReasonDialog(false)}
-                        maxWidth="sm"
-                        fullWidth
-                      >
-                        <DialogTitle sx={{
-                          bgcolor: 'error.light',
-                          color: 'error.contrastText',
-                          py: 1,
-                          px: 2
-                        }}>
-                          <Box display="flex" alignItems="center">
-                            <ErrorIcon sx={{ mr: 1 }} />
-                            <Typography variant="subtitle1">Razón de rechazo</Typography>
-                          </Box>
-                        </DialogTitle>
-                        <DialogContent sx={{ py: 3, px: 2 }}>
-                          <Typography>{selectedReason}</Typography>
-                        </DialogContent>
-                        <DialogActions sx={{ px: 2, py: 1 }}>
-                          <Button
-                            onClick={() => setOpenReasonDialog(false)}
-                            variant="contained"
-                            color="primary"
-                            sx={{ borderRadius: 1 }}
-                          >
-                            Entendido
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                    </React.Fragment>
-                  )}
-
-                  {/* Content */}
-                  <Box
-                    sx={{
-                      backgroundColor: '#FEF9F3', // Fondo amarillo
-                      p: 2, // Aumentar padding para dar más espacio alrededor de la caja blanca
-                      mx: 1,
-                      my: 1,
-                      borderRadius: 2,
-                      minHeight: 302, // Altura mínima en lugar de fija AMARILLA
-                      width: 286,
-                      display: 'flex',
-                      flexDirection: 'column', // Ajusta la dirección del contenido a columna
-                      alignItems: 'center', // Centra horizontalmente
-                      justifyContent: 'flex-start', // Align content to the top
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        backgroundColor: 'white',
-                        p: 1,
-                        mt: 1,
-                        borderRadius: 4,
-                        width: 284, // Ancho fijo
-                        maxWidth: '100%', // Ensure it doesn't overflow the parent
-                        display: 'inline-flex', // Use inline-flex to wrap content
-                        flexDirection: 'column',
-                        alignSelf: 'center', // Center the white box horizontally
-                      }}
-                    >
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{
-                          width: 'fit-content', // Ensure typography width fits content
-                          whiteSpace: 'normal', // Allow text to wrap
-                        }}
-                      >
-                        {parseTemplateContent(template.data).text}
-                      </Typography>
-
-                      {/* Botones */}
-                      <Stack spacing={1} sx={{ mt: 2 }}>
-                        {parseTemplateContent(template.data).buttons.map((button, index) => (
-                          <Box
-                            key={index}
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
                             sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "flex-start",
-                              gap: 1,
-                              border: "1px solid #ccc",
-                              borderRadius: "20px",
-                              p: 1,
-                              backgroundColor: "#ffffff",
-                              boxShadow: 1,
-                              cursor: "pointer",
-                              "&:hover": {
-                                backgroundColor: "#f5f5f5",
-                              },
+                              width: 'fit-content', // Ensure typography width fits content
+                              whiteSpace: 'normal', // Allow text to wrap
                             }}
                           >
-                            {button.type === "QUICK_REPLY" && (
-                              <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
-                            )}
-                            {button.type === "URL" && (
-                              <Link sx={{ fontSize: "16px", color: "#075e54" }} />
-                            )}
-                            {button.type === "PHONE_NUMBER" && (
-                              <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
-                            )}
-                            <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
-                              {button.title}
-                            </Typography>
-                          </Box>
-                        ))}
-                      </Stack>
-                    </Box>
-                  </Box>
-                </CardContent>
+                            {parseTemplateContent(template.data).text}
+                          </Typography>
 
-                {/* Acciones */}<CardActions
-                  sx={{
-                    mt: 'auto',           // Empuja el CardActions hacia abajo
-                    justifyContent: 'flex-end', // Alinea contenido a la izquierda
-                    padding: 2,           // Añade padding consistente
-                    position: 'relative', // Necesario para el posicionamiento
-                  }}
-                >
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  >
-                    <Button
-                      id="manage-button"
-                      aria-controls={anchorEl ? 'manage-menu' : undefined}
-                      aria-haspopup="true"
-                      aria-expanded={anchorEl ? 'true' : undefined}
-                      variant="contained"
-                      disableElevation
-                      onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
-                      endIcon={<KeyboardArrowDownIcon />}
-                      color="primary"
+                          {/* Botones */}
+                          <Stack spacing={1} sx={{ mt: 2 }}>
+                            {parseTemplateContent(template.data).buttons.map((button, index) => (
+                              <Box
+                                key={index}
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "flex-start",
+                                  gap: 1,
+                                  border: "1px solid #ccc",
+                                  borderRadius: "20px",
+                                  p: 1,
+                                  backgroundColor: "#ffffff",
+                                  boxShadow: 1,
+                                  cursor: "pointer",
+                                  "&:hover": {
+                                    backgroundColor: "#f5f5f5",
+                                  },
+                                }}
+                              >
+                                {button.type === "QUICK_REPLY" && (
+                                  <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
+                                )}
+                                {button.type === "URL" && (
+                                  <Link sx={{ fontSize: "16px", color: "#075e54" }} />
+                                )}
+                                {button.type === "PHONE_NUMBER" && (
+                                  <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
+                                )}
+                                <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
+                                  {button.title}
+                                </Typography>
+                              </Box>
+                            ))}
+                          </Stack>
+                        </Box>
+                      </Box>
+                    </CardContent>
+
+                    {/* Acciones */}<CardActions
                       sx={{
-                        borderRadius: 1,
-                        textTransform: 'none',
+                        mt: 'auto',           // Empuja el CardActions hacia abajo
+                        justifyContent: 'flex-end', // Alinea contenido a la izquierda
+                        padding: 2,           // Añade padding consistente
+                        position: 'relative', // Necesario para el posicionamiento
                       }}
                     >
-                      Administrar
-                    </Button>
-                  </motion.div>
-
-                  <Menu
-                    id="manage-menu"
-                    MenuListProps={{
-                      'aria-labelledby': 'manage-button',
-                    }}
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                    TransitionComponent={Fade}
-                  >
-                    {[
-                      {
-                        text: 'Editar',
-                        onClick: () => handleEdit(selectedTemplate),
-                        icon: <EditIcon fontSize="small" />
-                      },
-                      {
-                        text: 'Eliminar',
-                        onClick: handleDeleteClick,
-                        icon: <DeleteIcon fontSize="small" />
-                      }
-                    ].map((item, index) => (
-                      <MenuItem
-                        key={item.text}
-                        onClick={item.onClick}
-                        component={motion.div}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{
-                          delay: index * 0.1,
-                          type: "spring",
-                          stiffness: 300
-                        }}
-                        sx={{
-                          '&:hover': {
-                            transform: 'scale(1.02)',
-                            transition: 'all 0.2s ease'
-                          }
-                        }}
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
                       >
-                        <ListItemIcon>{item.icon}</ListItemIcon>
-                        <ListItemText>{item.text}</ListItemText>
-                      </MenuItem>
-                    ))}
+                        <Button
+                          id="manage-button"
+                          aria-controls={anchorEl ? 'manage-menu' : undefined}
+                          aria-haspopup="true"
+                          aria-expanded={anchorEl ? 'true' : undefined}
+                          variant="contained"
+                          disableElevation
+                          onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
+                          endIcon={<KeyboardArrowDownIcon />}
+                          color="primary"
+                          sx={{
+                            borderRadius: 1,
+                            textTransform: 'none',
+                          }}
+                        >
+                          Administrar
+                        </Button>
+                      </motion.div>
+
+                      <Menu
+                        id="manage-menu"
+                        MenuListProps={{
+                          'aria-labelledby': 'manage-button',
+                        }}
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                        TransitionComponent={Fade}
+                      >
+                        {[
+                          {
+                            text: 'Editar',
+                            onClick: () => handleEdit(selectedTemplate),
+                            icon: <EditIcon fontSize="small" />
+                          },
+                          {
+                            text: 'Eliminar',
+                            onClick: handleDeleteClick,
+                            icon: <DeleteIcon fontSize="small" />
+                          }
+                        ].map((item, index) => (
+                          <MenuItem
+                            key={item.text}
+                            onClick={item.onClick}
+                            component={motion.div}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{
+                              delay: index * 0.1,
+                              type: "spring",
+                              stiffness: 300
+                            }}
+                            sx={{
+                              '&:hover': {
+                                transform: 'scale(1.02)',
+                                transition: 'all 0.2s ease'
+                              }
+                            }}
+                          >
+                            <ListItemIcon>{item.icon}</ListItemIcon>
+                            <ListItemText>{item.text}</ListItemText>
+                          </MenuItem>
+                        ))}
 
 
 
-                  </Menu>
-                </CardActions>
-              </Card>
-            ))}
+                      </Menu>
+                    </CardActions>
+                  </Card>
+                ))
+              ) : (
+                <Typography variant="h6" sx={{ gridColumn: '1 / -1', textAlign: 'center', mt: 4 }}>
+                  No hay plantillas disponibles para esta categoría.
+                </Typography>
+              )
+            }
           </Box>
         </Box>
       </Box>
