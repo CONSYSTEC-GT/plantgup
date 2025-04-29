@@ -342,7 +342,7 @@ const EditTemplateForm = () => {
     // Crear un objeto con los datos 149 EN CERTI 721 EN DEV
     const data = {
       ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
-      ID_BOT_REDES: 149,
+      ID_BOT_REDES: 721,
       ID_INTERNO: templateId,
       NOMBRE: templateName,
       MENSAJE: message,
@@ -546,8 +546,8 @@ const EditTemplateForm = () => {
 
       const payload = {
         idEmpresa: 2,
-        idBot: 54,
-        idBotRedes: 149,
+        idBot: 257,
+        idBotRedes: 721,
         idUsuario: 48,
         tipoCarga: 3,
         nombreArchivo: file.name,

@@ -103,8 +103,8 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       
       const payload = {
         idEmpresa: empresaTalkMe,
-        idBot: 54,
-        idBotRedes: 149,
+        idBot: 257,
+        idBotRedes: 721,
         idUsuario: idUsuarioTalkMe || 48,
         tipoCarga: 3,
         nombreArchivo: selectedFile.name,

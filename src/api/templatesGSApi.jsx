@@ -143,9 +143,9 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   //13 y 14 son en certi igual que 149 en bot redes y en dev son 17 y 18
   let ID_PLANTILLA_CATEGORIA;
   if (selectedCategory === "MARKETING") {
-    ID_PLANTILLA_CATEGORIA = 13;
+    ID_PLANTILLA_CATEGORIA = 17;
   } else if (selectedCategory === "UTILITY") {
-    ID_PLANTILLA_CATEGORIA = 14;
+    ID_PLANTILLA_CATEGORIA = 18;
   } else {
     console.error("Categoría no válida:", selectedCategory);
     showSnackbar("❌ Categoría no válida", "error");
@@ -177,7 +177,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   const data = {
     ID_PLANTILLA: null,
     ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
-    ID_BOT_REDES: 149,
+    ID_BOT_REDES: 721,
     ID_INTERNO: templateId,
     NOMBRE: templateName,
     MENSAJE: message,
@@ -287,7 +287,7 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
   const data = {
     ID_INTERNO: idTemplate, // ID de la plantilla de GupShup
     ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
-    ID_BOT_REDES: 149,
+    ID_BOT_REDES: 721,
     NOMBRE: templateName,
     MENSAJE: message,
     TIPO_PLANTILLA: TIPO_PLANTILLA,
