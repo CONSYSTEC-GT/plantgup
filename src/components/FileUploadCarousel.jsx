@@ -112,7 +112,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       };
 
       const response = await axios.post(
-        'https://certificacion.talkme.pro/WsFTP/api/ftp/upload',
+        'https://dev.talkme.pro/WsFTP/api/ftp/upload',
         payload,
         {
           headers: {

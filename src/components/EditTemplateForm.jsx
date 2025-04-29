@@ -321,7 +321,7 @@ const EditTemplateForm = () => {
 
   // FUNCION PARA ENVIAR EL REQUEST A TALKME
   const sendRequest2 = async (templateId) => {
-    const url = `https://certificacion.talkme.pro/templatesGS/api/plantillas/${templateId}`;
+    const url = `https://dev.talkme.pro/templatesGS/api/plantillas/${templateId}`;
     const headers = {
       "Content-Type": "application/json",
       // Agrega aquí cualquier header de autenticación si es necesario
@@ -555,11 +555,11 @@ const EditTemplateForm = () => {
       };
 
       try {
-        const response = await fetch('https://certificacion.talkme.pro/WsFTP/api/ftp/upload', {
+        const response = await fetch('https://dev.talkme.pro/WsFTP/api/ftp/upload', {
           method: 'POST',
           headers: {
             'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
-            'Origin': 'https://certificacion.talkme.pro/',
+            'Origin': 'https://dev.talkme.pro/',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(payload),

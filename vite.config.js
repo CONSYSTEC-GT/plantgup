@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/WsFTP/api/ftp/upload': {
-        target: 'https://certificacion.talkme.pro',
+        target: 'https://dev.talkme.pro',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/WsFTP\/api\/ftp\/upload/, '/WsFTP/api/ftp/upload')
       },
