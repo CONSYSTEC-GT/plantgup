@@ -162,6 +162,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     PANTALLAS = 0;
   }
 
+  console.log("TEMPLATE TYPE:", templateType);
   const mediaMap = {
     IMAGE: "image",
     VIDEO: "video",
