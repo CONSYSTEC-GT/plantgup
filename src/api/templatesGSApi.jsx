@@ -166,8 +166,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     IMAGE: "image",
     VIDEO: "video",
     DOCUMENT: "document",
-    CAROUSEL: "image",
-    CATALOG: "image"
+    CAROUSEL: "image"
   };
   
   const MEDIA = mediaMap[templateType] || null;

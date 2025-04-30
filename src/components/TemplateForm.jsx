@@ -274,6 +274,7 @@ const TemplateForm = () => {
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
+  /*
   let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
   if (token) {
     try {
@@ -292,10 +293,20 @@ const TemplateForm = () => {
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
-  }
+  } */
+
+  let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
+
+  appId = 'f63360ab-87b0-44da-9790-63a0d524f9dd'; // Extrae appId del token
+  authCode = 'sk_2662b472ec0f4eeebd664238d72b61da'; // Extrae authCode del token
+  appName = 'DemosTalkMe56'; // Extrae el nombre de la aplicación
+  idUsuarioTalkMe = 78;  // Cambiado de idUsuario a id_usuario
+  idNombreUsuarioTalkMe = 'javier.colocho';  // Cambiado de nombreUsuario a nombre_usuario
+  empresaTalkMe = 2;
 
   const iniciarRequest = async () => {
     try {
+      /*
       // Hacer el primer request a GupShup API
       const result = await createTemplateGupshup(
         appId,
@@ -315,17 +326,35 @@ const TemplateForm = () => {
         },
         validateFields
       );
+      */
 
+      /*
       // Verificar si el primer request fue exitoso
       if (result && result.status === "success") {
         // Extraer el valor de `id` del objeto `template`
         const templateId = result.template.id;
+        */
+       // Simulamos un resultado exitoso con un templateId hardcodeado para pruebas
+      const mockResult = {
+        status: "success",
+        template: {
+          id: "ID_DE_PRUEBA_1234" // Usa un ID de prueba aquí
+        }
+      };
+
+      // Verificar si el primer request fue exitoso (ahora usando el mock)
+      if (mockResult && mockResult.status === "success") {
+        // Extraer el valor de `id` del objeto `template`
+        const templateId = mockResult.template.id;
+
+        //
 
         // Hacer el segundo request a TalkMe API
         const result2 = await saveTemplateToTalkMe(
           templateId,
           {
             templateName,
+            templateType,
             selectedCategory,
             message,
             uploadedUrl

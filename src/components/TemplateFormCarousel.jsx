@@ -328,6 +328,7 @@ const TemplateFormCarousel = () => {
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
+  /*
   let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
   if (token) {
     try {
@@ -347,6 +348,16 @@ const TemplateFormCarousel = () => {
       console.error('Error decodificando el token:', error);
     }
   }
+  */
+
+  let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
+
+  appId = 'f63360ab-87b0-44da-9790-63a0d524f9dd'; // Extrae appId del token
+  authCode = 'sk_2662b472ec0f4eeebd664238d72b61da'; // Extrae authCode del token
+  appName = 'DemosTalkMe56'; // Extrae el nombre de la aplicación
+  idUsuarioTalkMe = 78;  // Cambiado de idUsuario a id_usuario
+  idNombreUsuarioTalkMe = 'javier.colocho';  // Cambiado de nombreUsuario a nombre_usuario
+  empresaTalkMe = 2;
 
   const iniciarRequest = async () => {
     try {
