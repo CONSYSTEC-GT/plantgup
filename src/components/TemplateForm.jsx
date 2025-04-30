@@ -285,11 +285,11 @@ const TemplateForm = () => {
       idUsuarioTalkMe = decoded.id_usuario;
       idNombreUsuarioTalkMe = decoded.nombre_usuario;
       empresaTalkMe = decoded.empresa;
-      console.log('appId:', appId);
-      console.log('authCode:', authCode);
-      console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
-      console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
-      console.log('empresaTalkMe:', empresaTalkMe);
+      //console.log('appId:', appId);
+      //console.log('authCode:', authCode);
+      //console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
+      //console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
+      //console.log('empresaTalkMe:', empresaTalkMe);
 
     } catch (error) {
       console.error('Error decodificando el token:', error);
@@ -543,7 +543,9 @@ const TemplateForm = () => {
   const handleHeaderChange = (e) => {
     if (e.target.value.length <= charLimit) {
       setHeader(e.target.value)
+      console.log("Valor del header", header);
       setExampleHeader(e.target.value);
+      console.log("Valor del exampleHeader", exampleHeader);
     }
     console.log("Nuevo valor de header:", e.target.value);
   };
