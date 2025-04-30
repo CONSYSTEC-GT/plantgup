@@ -54,6 +54,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
 
   // Manejadores de eventos
+  
   const handleHeaderChange = (e) => {
     const newHeader = e.target.value;
     setHeader(newHeader);
@@ -61,6 +62,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
     // Añade esta línea para notificar al componente padre
     if (onHeaderChange) onHeaderChange(newHeader);
   };
+  
 
   const handleMediaTypeChange = (event) => {
     console.log('Tipo de medio cambiado a:', event.target.value);

@@ -498,12 +498,14 @@ const TemplateForm = () => {
     setHeader(''); // Resetear el header al cambiar el tipo
   };
 
+  /*
   const handleHeaderTypeChange = (event) => {
     const value = event.target.value;
     if (value.length <= charLimit) {
       setHeader(value);
     }
   };
+  */
 
   //HEADER PLANTILLA
   const [mediaType, setMediaType] = useState(""); // Tipo de media (image, video, etc.)
@@ -540,6 +542,7 @@ const TemplateForm = () => {
     }
   };
 
+  
   const handleHeaderChange = (e) => {
     if (e.target.value.length <= charLimit) {
       setHeader(e.target.value)
@@ -549,6 +552,7 @@ const TemplateForm = () => {
     }
     console.log("Nuevo valor de header:", e.target.value);
   };
+  
 
   //FOOTER PLANTILLA
   const handleFooterChange = (e) => {
@@ -748,7 +752,7 @@ const TemplateForm = () => {
     messageRef.current?.focus();
   };
 
-  // Función para previsualizar el mensaje con ejemplos aplicados
+  /* Función para previsualizar el mensaje con ejemplos aplicados
   const previewMessage = () => {
     let previewHeader = header;
     let previewFooter = footer;
@@ -759,6 +763,7 @@ const TemplateForm = () => {
       previewText = previewText.replaceAll(variable, example);
     });
   }
+    */
 
   const handleUpdateExample = (variable, value) => {
     setVariableExamples(prevExamples => {
@@ -925,7 +930,7 @@ const TemplateForm = () => {
           </FormControl>
         </Box>
 
-        {/* Header*/} {templateType === 'TEXT' ? (
+        {/* Header*/} {templateType === 'text' ? (
           <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <FormControl fullWidth>
               <FormLabel>
@@ -1416,8 +1421,7 @@ const TemplateForm = () => {
               <Typography variant="body1" color="text.primary">
                 {header}
               </Typography>
-
-
+              
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {example}
               </Typography>
