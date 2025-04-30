@@ -164,10 +164,10 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
 
   console.log("TEMPLATE TYPE:", templateType);
   const mediaMap = {
-    IMAGE: "image",
-    VIDEO: "video",
-    DOCUMENT: "document",
-    CAROUSEL: "image"
+    image: "image",
+    video: "video",
+    document: "document",
+    carousel: "image"
   };
   
   const MEDIA = mediaMap[templateType] || null;

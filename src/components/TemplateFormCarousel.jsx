@@ -377,16 +377,16 @@ const TemplateFormCarousel = () => {
         card.mediaUrl && card.body // Añade aquí más validaciones si son necesarias
       );
       if (!isValid) {
-        console.error("Algunas cards no tienen todos los datos requeridos");
+        console.error("No vienen completas las cards");
         console.error(formattedCards);
         return;
       }
       */
 
-      // Luego formatea las cards
+      // format de cards
       const formattedCards = formatCardsForGupshup(cards);
-      const cardsToSendArray = [...cards]; // Esto es un array de objetos
-      const cardsToSend = JSON.stringify([...cards]); // Convertir a JSON string
+      const cardsToSendArray = [...cards]; 
+      const cardsToSend = JSON.stringify([...cards]); 
 
       /******************************
        * COMENTADO EL PRIMER REQUEST *
