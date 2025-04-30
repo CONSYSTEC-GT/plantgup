@@ -328,7 +328,7 @@ const TemplateFormCarousel = () => {
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
-  /*
+  //
   let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
   if (token) {
     try {
@@ -348,7 +348,7 @@ const TemplateFormCarousel = () => {
       console.error('Error decodificando el token:', error);
     }
   }
-  */
+  /*
 
   let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
 
@@ -358,11 +358,11 @@ const TemplateFormCarousel = () => {
   idUsuarioTalkMe = 78;  // Cambiado de idUsuario a id_usuario
   idNombreUsuarioTalkMe = 'javier.colocho';  // Cambiado de nombreUsuario a nombre_usuario
   empresaTalkMe = 2;
-
+*/
   const iniciarRequest = async () => {
     try {
 
-      /* Hacer debug de las cards antes de formatear
+      // Hacer debug de las cards antes de formatear
       console.log("Cards antes de formatear:", JSON.stringify(cards));
       // Primero verifica que cards esté definido
       if (!cards || cards.length === 0) {
@@ -381,7 +381,7 @@ const TemplateFormCarousel = () => {
         console.error(formattedCards);
         return;
       }
-      */
+      //
 
       // format de cards
       const formattedCards = formatCardsForGupshup(cards);
