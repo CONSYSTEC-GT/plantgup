@@ -40,6 +40,7 @@ const TemplateForm = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [example, setExample] = useState("");
   const [exampleMedia, setExampleMedia] = useState("");
+  const [exampleHeader, setExampleHeader] = useState("");
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -326,7 +327,8 @@ const TemplateForm = () => {
           footer,
           mediaId,
           buttons,
-          example
+          example,
+          exampleHeader
         },
         validateFields
       );
@@ -541,8 +543,9 @@ const TemplateForm = () => {
   const handleHeaderChange = (e) => {
     if (e.target.value.length <= charLimit) {
       setHeader(e.target.value)
+      setExampleHeader(e.target.value);
     }
-    console.log("Nuevo valor de header:", event.target.value);
+    console.log("Nuevo valor de header:", e.target.value);
   };
 
   //FOOTER PLANTILLA
@@ -785,7 +788,7 @@ const TemplateForm = () => {
   // Función para reemplazar las variables en el mensaje con sus ejemplos
   const replaceVariables = (text, variables) => {
     let result = text;
-    console.log("Texto antes de reemplazar:", text);
+    
 
     Object.keys(variables).forEach(variable => {
       const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // 🔥 Búsqueda exacta de {{variable}}
@@ -793,7 +796,7 @@ const TemplateForm = () => {
       result = result.replace(regex, variables[variable]);
     });
 
-    console.log("Texto después de reemplazar:", result);
+    
     return result;
   };
 
@@ -803,16 +806,9 @@ const TemplateForm = () => {
 
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
   useEffect(() => {
-    console.log("Mensaje original:", message);
-    console.log("Variables y ejemplos:", variableExamples);
-
     const newExample = replaceVariables(message, variableExamples);
-
-    console.log("Mensaje después de reemplazo:", newExample);
-
     setExample(newExample);
   }, [message, variableExamples]);
-
 
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
