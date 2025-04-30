@@ -19,7 +19,8 @@ export const createTemplateGupshup = async (appId, authCode, templateData, valid
     footer,
     mediaId,
     buttons,
-    example
+    example,
+    exampleHeader
   } = templateData;
 
   const url = `https://partner.gupshup.io/partner/app/${appId}/templates`;
@@ -65,6 +66,7 @@ export const createTemplateGupshup = async (appId, authCode, templateData, valid
 
   data.append("buttons", JSON.stringify(formattedButtons));
   data.append("example", example);
+  data.append("exampleHeader", exampleHeader);
   data.append("enableSample", true);
   data.append("allowTemplateCategoryChange", false);
 
