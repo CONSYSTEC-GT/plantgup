@@ -942,7 +942,7 @@ const TemplateForm = () => {
             </Typography>
             <TextField
               fullWidth
-              label="Header text"
+              label="Escribe el encabezado"
               value={header}
               onChange={handleHeaderChange}
               helperText={`${header.length} / ${charLimit} caracteres`}
