@@ -42,7 +42,7 @@ const TemplateAll = () => {
   // Recupera el token del localStorage
   const token = localStorage.getItem('authToken');
 
-  /*
+  
   // Decodifica el token para obtener appId y authCode
   let appId, authCode;
   if (token) {
@@ -54,7 +54,8 @@ const TemplateAll = () => {
       console.error('Error decodificando el token:', error);
     }
   }
-    */
+    
+   /*
   let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
 
   appId = '1fbd9a1e-074c-4e1e-801c-b25a0fcc9487'; // Extrae appId del token
@@ -63,6 +64,8 @@ const TemplateAll = () => {
   idUsuarioTalkMe = 78;  // Cambiado de idUsuario a id_usuario
   idNombreUsuarioTalkMe = 'javier.colocho';  // Cambiado de nombreUsuario a nombre_usuario
   empresaTalkMe = 2;
+
+  */
 
   // Función para obtener las plantillas
   const fetchTemplates = async (appId, authCode) => {
