@@ -167,6 +167,7 @@ const TemplateFormCarousel = () => {
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showErrorModalTarjetas, setShowErrorModalTarjetas] = useState(false);
   const [errorMessageGupshup, setErrorMessageGupshup] = useState("La plantilla no pudo ser creada.");
 
   // Función para mostrar Snackbar
@@ -371,22 +372,25 @@ const TemplateFormCarousel = () => {
       }
       
       // Ahora sí puedes hacer log de formattedCards
-      console.log("Cards formateadas:", formattedCards);
+      //console.log("Cards formateadas:", formattedCards);
       // Asegúrate de que todas las cards tengan los datos necesarios
+
+      // format de cards
+      const formattedCards = formatCardsForGupshup(cards);
+      const cardsToSendArray = [...cards]; 
+      const cardsToSend = JSON.stringify([...cards]); 
+
+
       const isValid = formattedCards.every(card =>
         card.mediaUrl && card.body // Añade aquí más validaciones si son necesarias
       );
       if (!isValid) {
         console.error("No vienen completas las cards");
         console.error(formattedCards);
+        setShowErrorModalTarjetas(true);
         return;
       }
       //
-
-      // format de cards
-      const formattedCards = formatCardsForGupshup(cards);
-      const cardsToSendArray = [...cards]; 
-      const cardsToSend = JSON.stringify([...cards]); 
 
       /******************************
        * COMENTADO EL PRIMER REQUEST *
@@ -2177,6 +2181,14 @@ const TemplateFormCarousel = () => {
             severity="error"
             buttonVariant="contained"
           />
+          <CustomDialog
+            open={showErrorModalTarjetas}
+            onClose={() => setShowErrorModalTarjetas(false)}
+            title="Error al crear plantilla"
+            message={"Las tarjetas no estan completas | El mensaje está vació o falta asignarle media al carrusel"}
+            severity="error"
+            buttonVariant="contained"
+          />
         </Box>
       </Grid>
 
@@ -2212,7 +2224,7 @@ const TemplateFormCarousel = () => {
                 boxShadow: 1,
               }}
             >
-              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
+              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line", overflowWrap: "break-word" }}>
                 {message}
               </Typography>
               <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
@@ -2296,7 +2308,7 @@ const TemplateFormCarousel = () => {
                         display: '-webkit-box',
                         WebkitLineClamp: 3,
                         WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
+                        overflow: 'overflowWrap: "break-word"',
                         textOverflow: 'ellipsis'
                       }}>
                         {card.messageCard || "Descripción de la tarjeta"}
