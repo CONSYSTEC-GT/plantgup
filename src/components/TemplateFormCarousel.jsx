@@ -1612,13 +1612,13 @@ const TemplateFormCarousel = () => {
                 }}
                 inputRef={messageRef}
                 inputProps={{
-                  maxLength: 280, // Esto limita físicamente la entrada
+                  maxLength: 1024, // Esto limita físicamente la entrada
                 }}
-                helperText={`${message.length}/280 caracteres`} // Muestra el contador
+                helperText={`${message.length}/1024 caracteres`} // Muestra el contador
                 FormHelperTextProps={{
                   sx: {
                     textAlign: 'right', // Alinea el contador a la derecha
-                    color: message.length === 280 ? 'error.main' : 'text.secondary' // Cambia color si llega al límite
+                    color: message.length === 1024 ? 'error.main' : 'text.secondary' // Cambia color si llega al límite
                   }
                 }}
               />
