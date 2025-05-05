@@ -59,8 +59,8 @@ const FileUploadComponent = ({ templateType = 'media' }) => {
       const base64Content = await convertToBase64(selectedFile);
       const payload = {
         idEmpresa: 2,
-        idBot: 257,
-        idBotRedes: 721,
+        idBot: 54,
+        idBotRedes: 149,
         idUsuario: 48,
         tipoCarga: 3,
         nombreArchivo: selectedFile.name,

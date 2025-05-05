@@ -19,7 +19,7 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions)
       };
 
 
-      const response = await fetch('https://dev.talkme.pro/templatesGS/api/parametros/', {
+      const response = await fetch('https://certificacion.talkme.pro/templatesGS/api/parametros/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ const deleteTemplateParams = async (ID_PLANTILLA) => {
 
 const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTalkMe) => {
   console.log("Entrando a saveCardsTemplate con:", cards.length, "tarjetas");
-  const url = 'https://dev.talkme.pro/templatesGS/api/tarjetas/';
+  const url = 'https://certificacion.talkme.pro/templatesGS/api/tarjetas/';
   const headers = {
     "Content-Type": "application/json",
   };
@@ -136,16 +136,16 @@ const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTa
 export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}, cards = []) => {
   const { templateName, selectedCategory, message, uploadedUrl, templateType } = templateData;
 
-  const url = 'https://dev.talkme.pro/templatesGS/api/plantillas/';
+  const url = 'https://certificacion.talkme.pro/templatesGS/api/plantillas/';
   const headers = {
     "Content-Type": "application/json",
   };
   //13 y 14 son en certi igual que 149 en bot redes y en dev son 17 y 18
   let ID_PLANTILLA_CATEGORIA;
   if (selectedCategory === "MARKETING") {
-    ID_PLANTILLA_CATEGORIA = 17;
+    ID_PLANTILLA_CATEGORIA = 13;
   } else if (selectedCategory === "UTILITY") {
-    ID_PLANTILLA_CATEGORIA = 18;
+    ID_PLANTILLA_CATEGORIA = 14;
   } else {
     console.error("Categoría no válida:", selectedCategory);
     showSnackbar("❌ Categoría no válida", "error");
@@ -242,7 +242,7 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
   const { templateName, selectedCategory, message, uploadedUrl, templateType } = templateData;
 
   // URL para actualizar plantilla por ID_INTERNO
-  const url = `https://dev.talkme.pro/templatesGS/api/plantillas/${idTemplate}`;
+  const url = `https://certificacion.talkme.pro/templatesGS/api/plantillas/${idTemplate}`;
   const headers = {
     "Content-Type": "application/json",
   };
@@ -345,7 +345,7 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
     if (talkmeId && cards && cards.length > 0) {
       try {
         // 1. Eliminar todas las tarjetas existentes de una sola vez
-        const deleteResponse = await fetch(`https://dev.talkme.pro/templatesGS/api/tarjetas/plantilla/${talkmeId}`, {
+        const deleteResponse = await fetch(`https://certificacion.talkme.pro/templatesGS/api/tarjetas/plantilla/${talkmeId}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",

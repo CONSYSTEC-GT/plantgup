@@ -172,8 +172,8 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
       const payload = {
         idEmpresa: empresaTalkMe,
-        idBot: 257,
-        idBotRedes: 721,
+        idBot: 54,
+        idBotRedes: 149,
         idUsuario: idUsuarioTalkMe,
         tipoCarga: 3,
         nombreArchivo: selectedFile.name,
@@ -184,7 +184,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       setUploadStatus('Subiendo archivo al servicio propio...');
 
       const ownServiceResponse = await axios.post(
-        'https://dev.talkme.pro/WsFTP/api/ftp/upload',
+        'https://certificacion.talkme.pro/WsFTP/api/ftp/upload',
         payload,
         {
           headers: {
@@ -195,12 +195,12 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       );
 
       console.log('Request completo al servicio propio:', {
-        url: 'https://dev.talkme.pro/WsFTP/api/ftp/upload',
+        url: 'https://certificacion.talkme.pro/WsFTP/api/ftp/upload',
         method: 'POST',
         headers: {
           'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
           'Content-Type': 'application/json',
-          'origin': 'https://dev.talkme.pro/',
+          'origin': 'https://certificacion.talkme.pro/',
         },
         data: payload,
       });

@@ -103,8 +103,8 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       
       const payload = {
         idEmpresa: empresaTalkMe,
-        idBot: 257,
-        idBotRedes: 721,
+        idBot: 54,
+        idBotRedes: 149,
         idUsuario: idUsuarioTalkMe || 48,
         tipoCarga: 3,
         nombreArchivo: selectedFile.name,
@@ -112,7 +112,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       };
 
       const response = await axios.post(
-        'https://dev.talkme.pro/WsFTP/api/ftp/upload',
+        'https://certificacion.talkme.pro/WsFTP/api/ftp/upload',
         payload,
         {
           headers: {
