@@ -483,6 +483,7 @@ const TemplateFormCarousel = () => {
       title: 'Utilidad',
       description: 'Envía actualizaciones de cuenta, actualizaciones de pedidos, alertas y más para compartir información importante.',
       icon: <NotificationsNoneOutlinedIcon />,
+      disabled: true
     },
     {
       id: 'authentication',
@@ -2172,6 +2173,8 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                                         value={button.title}
                                         onChange={(e) => updateButton(button.id, "title", e.target.value)}
                                         fullWidth
+                                        inputProps={{ maxLength: 25 }}
+                                        helperText={`${button.title.length}/25 caracteres`}
                                       />
 
                                       {/* Selector de tipo de botón */}

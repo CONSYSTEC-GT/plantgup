@@ -358,6 +358,7 @@ const TemplateForm = () => {
       title: 'Utilidad',
       description: 'Envía actualizaciones de cuenta, actualizaciones de pedidos, alertas y más para compartir información importante.',
       icon: <NotificationsNoneOutlinedIcon />,
+      disabled: true
     },
     {
       id: 'authentication',
