@@ -1189,13 +1189,14 @@ const TemplateFormCarousel = () => {
   // Inicializar botones basado en la cantidad seleccionada
   // Efecto para inicializar botones
   useEffect(() => {
+    console.log("Inicializando tarjetas con botones...");
     const count = parseInt(cantidadBotones, 10);
-
-    setCards(prevCards =>
-      prevCards.map(card => {
+  
+    setCards(prevCards => {
+      return prevCards.map(card => {
         const newButtons = [];
         
-        // Primer botón (siempre existe cuando count >= 1)
+        // Primer botón
         if (count >= 1) {
           newButtons.push({
             id: generateId(),
@@ -1205,42 +1206,77 @@ const TemplateFormCarousel = () => {
             ...(tipoBoton === 'PHONE_NUMBER' && { phoneNumber: '' })
           });
         }
-
-        // Segundo botón (solo si count === 2)
+        
+        // Segundo botón
         if (count === 2) {
           newButtons.push({
             id: generateId(),
             title: `Botón 2`,
-            type: tipoBoton2, // Usamos el tipo del segundo botón
+            type: tipoBoton2,
             ...(tipoBoton2 === 'URL' && { url: '' }),
             ...(tipoBoton2 === 'PHONE_NUMBER' && { phoneNumber: '' })
           });
         }
-
+        
+        console.log("Botones inicializados para tarjeta:", newButtons);
         return {
           ...card,
           buttons: newButtons
         };
-      })
-    );
-  }, [cantidadBotones, tipoBoton, tipoBoton2]); // Añadimos tipoBoton2 como dependencia
+      });
+    });
+  }, [cantidadBotones, tipoBoton, tipoBoton2]);
 
-  // Validación para URLs
-  const updateButtonWithValidation = (id, field, value, setButtons, setValidationErrors) => {
-    // Validación simple de URL
-    const isValid = value === '' || /^(ftp|http|https):\/\/[^ "]+$/.test(value);
 
-    setButtons(prevButtons =>
-      prevButtons.map(button =>
-        button.id === id ? { ...button, [field]: value } : button
-      )
-    );
-
-    setValidationErrors(prevErrors => ({
-      ...prevErrors,
-      [id]: isValid ? undefined : 'URL no válida'
-    }));
-  };
+// Validación mejorada para URLs
+const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, setValidationErrors) => {
+  console.log(`Actualizando botón ${buttonId} en tarjeta ${cardId}, campo ${field} con valor: ${value}`);
+  
+  // Actualiza la tarjeta y sus botones
+  setCards(prevCards => {
+    return prevCards.map(card => {
+      // Si no es la tarjeta que queremos actualizar, la dejamos igual
+      if (card.id !== cardId) return card;
+      
+      // Es la tarjeta correcta, actualizamos el botón específico
+      const updatedButtons = card.buttons.map(button => 
+        button.id === buttonId ? { ...button, [field]: value } : button
+      );
+      
+      console.log("Botones actualizados para tarjeta:", updatedButtons);
+      return {
+        ...card,
+        buttons: updatedButtons
+      };
+    });
+  });
+  
+  // Lógica de validación
+  if (field === "url") {
+    if (value.trim() === '') {
+      setValidationErrors(prev => {
+        const newErrors = {...prev};
+        delete newErrors[buttonId];
+        return newErrors;
+      });
+    } else if (value.length > 5) {
+      const isValid = /^(ftp|http|https):\/\/[^ "]+$/.test(value);
+      
+      if (!isValid) {
+        setValidationErrors(prev => ({
+          ...prev,
+          [buttonId]: 'URL no válida. Debe comenzar con http://, https:// o ftp://'
+        }));
+      } else {
+        setValidationErrors(prev => {
+          const newErrors = {...prev};
+          delete newErrors[buttonId];
+          return newErrors;
+        });
+      }
+    }
+  }
+};
 
 
   const formatCardsForGupshup = (cards) => {
@@ -2153,19 +2189,24 @@ const TemplateFormCarousel = () => {
                                       {/* Campo adicional según el tipo de botón */}
                                       {button.type === "URL" && (
                                         <TextField
-                                          label="URL"
-                                          value={button.url || ''}
-                                          onChange={(e) => updateButtonWithValidation(
-                                            button.id,
-                                            "url",
-                                            e.target.value,
-                                            setButtons,
+                                        label="URL"
+                                        value={button.url || ''}
+                                        onChange={(e) => {
+                                          console.log("Evento onChange - Valor ingresado:", e.target.value);
+                                          // Asumiendo que tiene acceso al cardId actual
+                                          updateButtonWithValidation(
+                                            card.id,           // ID de la tarjeta actual
+                                            button.id,         // ID del botón
+                                            "url",             // Campo a actualizar
+                                            e.target.value,    // Nuevo valor
+                                            setCards,          // Función para actualizar tarjetas
                                             setValidationErrors
-                                          )}
-                                          fullWidth
-                                          error={validationErrors[button.id] !== undefined}
-                                          helperText={validationErrors[button.id]}
-                                        />
+                                          );
+                                        }}
+                                        fullWidth
+                                        error={validationErrors[button.id] !== undefined}
+                                        helperText={validationErrors[button.id]}
+                                      />
                                       )}
 
                                       {button.type === "PHONE_NUMBER" && (
