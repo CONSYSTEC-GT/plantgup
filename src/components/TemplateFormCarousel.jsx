@@ -59,6 +59,7 @@ const TemplateFormCarousel = () => {
   const messageCardRefs = useRef({});
   const [cantidadBotones, setCantidadBotones] = useState("1");
   const [tipoBoton, setTipoBoton] = useState("QUICK_REPLY")
+  const [tipoBoton2, setTipoBoton2] = useState("QUICK_REPLY")
 
   const [cantidadBotonesError, setcantidadBotonesError] = useState();
 
@@ -1192,15 +1193,27 @@ const TemplateFormCarousel = () => {
 
     setCards(prevCards =>
       prevCards.map(card => {
-        // Crear nuevos botones específicos para esta card
         const newButtons = [];
-        for (let i = 0; i < count; i++) {
+        
+        // Primer botón (siempre existe cuando count >= 1)
+        if (count >= 1) {
           newButtons.push({
-            id: generateId(), // Asegúrate de que generateId() produzca IDs únicos
-            title: `Botón ${i + 1}`,
+            id: generateId(),
+            title: `Botón 1`,
             type: tipoBoton,
             ...(tipoBoton === 'URL' && { url: '' }),
             ...(tipoBoton === 'PHONE_NUMBER' && { phoneNumber: '' })
+          });
+        }
+
+        // Segundo botón (solo si count === 2)
+        if (count === 2) {
+          newButtons.push({
+            id: generateId(),
+            title: `Botón 2`,
+            type: tipoBoton2, // Usamos el tipo del segundo botón
+            ...(tipoBoton2 === 'URL' && { url: '' }),
+            ...(tipoBoton2 === 'PHONE_NUMBER' && { phoneNumber: '' })
           });
         }
 
@@ -1210,7 +1223,7 @@ const TemplateFormCarousel = () => {
         };
       })
     );
-  }, [cantidadBotones, tipoBoton]);
+  }, [cantidadBotones, tipoBoton, tipoBoton2]); // Añadimos tipoBoton2 como dependencia
 
   // Validación para URLs
   const updateButtonWithValidation = (id, field, value, setButtons, setValidationErrors) => {
@@ -1309,16 +1322,47 @@ const TemplateFormCarousel = () => {
   const addAccordion = () => {
     // Verificar si ya hay 10 acordeones
     if (cards.length >= 10) {
-      alert("No puedes tener más de 10 acordeones"); // Opcional: mostrar mensaje al usuario
-      return; // Salir de la función sin agregar más
+      alert("No puedes tener más de 10 acordeones");
+      return;
     }
-
+  
     const cantidad = parseInt(cantidadBotones, 10);
+    
+    // Función auxiliar para generar los botones según la cantidad
+    const generarBotones = (cantidad) => {
+      const botones = [];
+      
+      // Primer botón (siempre que cantidad >= 1)
+      if (cantidad >= 1) {
+        botones.push({
+          id: uuidv4(),
+          title: "Botón 1",
+          type: tipoBoton,
+          ...(tipoBoton === 'URL' && { url: '' }),
+          ...(tipoBoton === 'PHONE_NUMBER' && { phoneNumber: '' })
+        });
+      }
+      
+      // Segundo botón (solo si cantidad === 2)
+      if (cantidad === 2) {
+        botones.push({
+          id: uuidv4(),
+          title: "Botón 2",
+          type: tipoBoton2,
+          ...(tipoBoton2 === 'URL' && { url: '' }),
+          ...(tipoBoton2 === 'PHONE_NUMBER' && { phoneNumber: '' })
+        });
+      }
+      
+      return botones;
+    };
+  
     const nuevaCard = {
       ...initialCardState,
       id: uuidv4(),
-      buttons: generarBotones(cantidad, tipoBoton)
+      buttons: generarBotones(cantidad)
     };
+    
     setCards([...cards, nuevaCard]);
   };
 
@@ -1808,7 +1852,7 @@ const TemplateFormCarousel = () => {
               <TextField
                 id="carousel-animation"
                 select
-                label="Tipo de botones"
+                label="Tipo de botón 1"
                 fullWidth
                 value={tipoBoton}
                 onChange={(e) => setTipoBoton(e.target.value)}
@@ -1817,6 +1861,24 @@ const TemplateFormCarousel = () => {
                 <MenuItem value="URL">Link</MenuItem>
                 <MenuItem value="PHONE_NUMBER">Teléfono</MenuItem>
               </TextField>
+
+              {/* Cuarto Select TIPO DE BOTONES 2 - Solo se muestra si hay 2 botones */}
+              {cantidadBotones === "2" && (
+                <TextField
+                  id="carousel-animation-2"
+                  select
+                  label="Tipo de botón 2"
+                  fullWidth
+                  value={tipoBoton2} 
+                  onChange={(e) => setTipoBoton2(e.target.value)}
+                >
+                  <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
+                  <MenuItem value="URL">Link</MenuItem>
+                  <MenuItem value="PHONE_NUMBER">Teléfono</MenuItem>
+                </TextField>
+              )}
+
+
 
 
             </Box>
