@@ -277,7 +277,7 @@ const TemplateForm = () => {
 
   // Decodifica el token para obtener appId y authCode
   //
-  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
+  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot;
   if (token) {
     try {
       const decoded = jwtDecode(token);
