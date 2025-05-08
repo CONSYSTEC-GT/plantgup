@@ -286,7 +286,10 @@ const TemplateForm = () => {
       idUsuarioTalkMe = decoded.id_usuario;
       idNombreUsuarioTalkMe = decoded.nombre_usuario;
       empresaTalkMe = decoded.empresa;
-      //console.log('appId:', appId);
+      idBotRedes = decoded.id_bot_redes;
+      idBot = decoded.id_bot;
+      console.log('idBot:', idBot);
+      console.log('idBotRedes:', idBotRedes);
       //console.log('authCode:', authCode);
       //console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
       //console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
@@ -312,7 +315,7 @@ const TemplateForm = () => {
 
   const iniciarRequest = async () => {
     try {
-      /*
+      //
       // Hacer el primer request a GupShup API
       const result = await createTemplateGupshup(
         appId,
@@ -340,7 +343,7 @@ const TemplateForm = () => {
       if (result && result.status === "success") {
         // Extraer el valor de `id` del objeto `template`
         const templateId = result.template.id;
-        */
+        /*
        // Simulamos un resultado exitoso con un templateId hardcodeado para pruebas
       const mockResult = {
         status: "success",
@@ -354,7 +357,7 @@ const TemplateForm = () => {
         // Extraer el valor de `id` del objeto `template`
         const templateId = mockResult.template.id;
 
-        //
+        */
 
         // Hacer el segundo request a TalkMe API
         const result2 = await saveTemplateToTalkMe(
