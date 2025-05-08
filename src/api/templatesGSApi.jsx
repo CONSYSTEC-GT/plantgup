@@ -134,7 +134,7 @@ const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTa
 
 /* Guardo la información de la plantilla*/
 export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}, cards = []) => {
-  const { templateName, selectedCategory, message, uploadedUrl, templateType } = templateData;
+  const { templateName, selectedCategory, message, uploadedUrl, templateType, pantallas } = templateData;
 
   const url = 'https://certificacion.talkme.pro/templatesGS/api/plantillas/';
   const headers = {
@@ -153,13 +153,10 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   }
 
   let TIPO_PLANTILLA;
-  let PANTALLAS;
   if (templateType === "CAROUSEL"){
     TIPO_PLANTILLA = 1;
-    PANTALLAS = 4;
   } else {
     TIPO_PLANTILLA = 0;
-    PANTALLAS = 0;
   }
 
   console.log("TEMPLATE TYPE:", templateType);
@@ -182,7 +179,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     TIPO_PLANTILLA: TIPO_PLANTILLA,
     MEDIA: MEDIA,
     URL: uploadedUrl,
-    PANTALLAS: PANTALLAS,
+    PANTALLAS: pantallas,
     ESTADO: 1,
     AUTORIZADO: 1,
     ELIMINADO: 0,

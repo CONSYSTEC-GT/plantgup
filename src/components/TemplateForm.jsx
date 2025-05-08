@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Alert, Box, Button, Chip, Container, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
+import { Alert, Box, Button, Checkbox, Chip, Container, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
-
 import { Smile } from "react-feather"; // Icono para emojis
 import EmojiPicker from "emoji-picker-react"; // Selector de emojis
 
@@ -30,6 +29,8 @@ const TemplateForm = () => {
   const [templateName, setTemplateName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [templateType, setTemplateType] = useState("text");
+  const [pantallas, setPantallas] = useState([]);
+  const [displayPantallas, setDisplayPantallas] = useState([]);
   const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al texto de su plantilla.");
   const [templateNameError, setTemplateNameError] = useState(false);
   const [vertical, setVertical] = useState("");
@@ -311,7 +312,7 @@ const TemplateForm = () => {
 
   const iniciarRequest = async () => {
     try {
-      //
+      /*
       // Hacer el primer request a GupShup API
       const result = await createTemplateGupshup(
         appId,
@@ -339,12 +340,12 @@ const TemplateForm = () => {
       if (result && result.status === "success") {
         // Extraer el valor de `id` del objeto `template`
         const templateId = result.template.id;
-        //
-       /* Simulamos un resultado exitoso con un templateId hardcodeado para pruebas
+        */
+       // Simulamos un resultado exitoso con un templateId hardcodeado para pruebas
       const mockResult = {
         status: "success",
         template: {
-          id: "ID_DE_PRUEBA_1234" // Usa un ID de prueba aquí
+          id: "ID_PRUEBA_LOCAL1" // Usa un ID de prueba aquí
         }
       };
 
@@ -353,7 +354,7 @@ const TemplateForm = () => {
         // Extraer el valor de `id` del objeto `template`
         const templateId = mockResult.template.id;
 
-        */
+        //
 
         // Hacer el segundo request a TalkMe API
         const result2 = await saveTemplateToTalkMe(
@@ -361,6 +362,7 @@ const TemplateForm = () => {
           {
             templateName,
             templateType,
+            pantallas,
             selectedCategory,
             message,
             uploadedUrl
@@ -393,6 +395,15 @@ const TemplateForm = () => {
     // Mostrar mensaje de éxito
     showSnackbar("✅ Archivo subido exitosamente", "success");
   };
+
+  // PANTALLAS
+  const pantallasTalkMe = [
+    '1 - Contactos',
+    '2 - Recontacto',
+    '3 - Historial',
+    '4 - Broadcast',
+    '5 - Operador/Supervisor'
+  ];
 
   // CATEGORIAS
   const categories = [
@@ -807,6 +818,24 @@ const TemplateForm = () => {
     return result;
   };
 
+  const handlePantallas = (event) => {
+    const { target: { value } } = event;
+  
+    // Procesar los valores seleccionados
+    const selectedOptions = typeof value === 'string' ? value.split(',') : value;
+  
+    // Extraer solo los números
+    const numericValues = selectedOptions.map(option => {
+      return option.split(' - ')[0].trim();
+    });
+    
+    // Guardar como string con comas para la API
+    setPantallas(numericValues.join(','));
+  
+    // Guardar el texto completo para mostrar (displayPantallas)
+    setDisplayPantallas(selectedOptions);
+  };
+
 
 
 
@@ -927,6 +956,33 @@ const TemplateForm = () => {
             <FormHelperText>
               Escoge el tipo de plantilla que se va a crear
             </FormHelperText>
+          </FormControl>
+        </Box>
+
+        {/* Selección de pantallas TalkMe */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+          <FormControl fullWidth>
+            <FormLabel>
+              Aplicar en estas pantallas
+            </FormLabel>
+          </FormControl>
+          <FormControl fullWidth sx={{ m: 1 }}>
+            <InputLabel id="demo-multiple-checkbox-label">Selecciona una o más opciones</InputLabel>
+            <Select
+              labelId="demo-multiple-checkbox-label"
+              id="demo-multiple-checkbox"
+              multiple
+              value={displayPantallas} 
+              onChange={handlePantallas}
+              input={<OutlinedInput label="Selecciona una o más opciones" />}
+              renderValue={(selected) => selected.join(', ')}
+            >
+              {pantallasTalkMe.map((name) => (
+                <MenuItem key={name} value={name}>
+                  <Checkbox checked={displayPantallas.indexOf(name) > -1} />
+                  <ListItemText primary={name} />
+                </MenuItem>
+              ))}
+            </Select>
           </FormControl>
         </Box>
 
