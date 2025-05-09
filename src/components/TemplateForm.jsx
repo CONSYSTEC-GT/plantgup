@@ -375,8 +375,9 @@ const TemplateForm = () => {
           idNombreUsuarioTalkMe || "Sistema.TalkMe",
           variables,
           variableDescriptions,
-          idBotRedes,
-          urlTemplatesGS
+          [], 
+          idBotRedes, 
+          urlTemplatesGS 
         );
 
         // Limpia todos los campos si todo fue bien
