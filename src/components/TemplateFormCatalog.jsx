@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Alert, Box, Button, Chip, Container, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
+import { Alert, Box, Button, Checkbox, Chip, Container, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 
 import { Smile } from "react-feather"; // Icono para emojis
@@ -33,6 +33,8 @@ const TemplateForm = () => {
   const [templateType, setTemplateType] = useState("CATALOG");
   const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al texto de su plantilla.");
   const [templateNameError, setTemplateNameError] = useState(false);
+  const [pantallas, setPantallas] = useState([]);
+  const [displayPantallas, setDisplayPantallas] = useState([]);
   const [vertical, setVertical] = useState("");
   const [message, setMessage] = useState("");
   const [header, setHeader] = useState("");
@@ -318,7 +320,10 @@ const TemplateForm = () => {
           },
           idNombreUsuarioTalkMe || "Sistema.TalkMe",
           variables,
-          variableDescriptions
+          variableDescriptions,
+          [], 
+          idBotRedes, 
+          urlTemplatesGS 
         );
 
         // Limpia todos los campos si todo fue bien
@@ -344,6 +349,15 @@ const TemplateForm = () => {
     // Mostrar mensaje de éxito
     showSnackbar("✅ Archivo subido exitosamente", "success");
   };
+
+    // PANTALLAS
+    const pantallasTalkMe = [
+      '1 - Contactos',
+      '2 - Recontacto',
+      '3 - Historial',
+      '4 - Broadcast',
+      '5 - Operador/Supervisor'
+    ];
 
   // CATEGORIAS
   const categories = [
@@ -749,6 +763,23 @@ const TemplateForm = () => {
     return result;
   };
 
+  const handlePantallas = (event) => {
+    const { target: { value } } = event;
+  
+    // Procesar los valores seleccionados
+    const selectedOptions = typeof value === 'string' ? value.split(',') : value;
+  
+    // Extraer solo los números
+    const numericValues = selectedOptions.map(option => {
+      return option.split(' - ')[0].trim();
+    });
+    
+    // Guardar como string con comas para la API
+    setPantallas(numericValues.join(','));
+  
+    // Guardar el texto completo para mostrar (displayPantallas)
+    setDisplayPantallas(selectedOptions);
+  };
 
 
 
@@ -876,6 +907,32 @@ const TemplateForm = () => {
           </FormControl>
         </Box>
 
+        {/* Selección de pantallas TalkMe */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+        <FormControl fullWidth>
+            <FormLabel>
+              Aplicar en estas pantallas
+            </FormLabel>
+          </FormControl>
+          <FormControl fullWidth sx={{ m: 1 }}>
+            <InputLabel id="demo-multiple-checkbox-label">Selecciona una o más opciones</InputLabel>
+            <Select
+              labelId="demo-multiple-checkbox-label"
+              id="demo-multiple-checkbox"
+              multiple
+              value={displayPantallas} 
+              onChange={handlePantallas}
+              input={<OutlinedInput label="Selecciona una o más opciones" />}
+              renderValue={(selected) => selected.join(', ')}
+            >
+              {pantallasTalkMe.map((name) => (
+                <MenuItem key={name} value={name}>
+                  <Checkbox checked={displayPantallas.indexOf(name) > -1} />
+                  <ListItemText primary={name} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
 
         {/*Idioma --data-urlencodeo languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
