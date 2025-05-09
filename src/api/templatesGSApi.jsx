@@ -3,7 +3,7 @@ import { showSnackbar } from '../utils/Snackbar';
 import { getMediaType } from '../utils/validarUrl';
 
 /* Guardo la información de los parametros de la plantilla */
-const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions) => {
+const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions, url) => {
   const tipoDatoId = 1;
 
   try {
@@ -19,7 +19,7 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions)
       };
 
 
-      const response = await fetch('https://certificacion.talkme.pro/templatesGS/api/parametros/', {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,9 +74,9 @@ const deleteTemplateParams = async (ID_PLANTILLA) => {
   }
 };
 
-const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTalkMe) => {
+const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTalkMe, url) => {
   console.log("Entrando a saveCardsTemplate con:", cards.length, "tarjetas");
-  const url = 'https://certificacion.talkme.pro/templatesGS/api/tarjetas/';
+  //const url = 'https://certificacion.talkme.pro/templatesGS/api/tarjetas/';
   const headers = {
     "Content-Type": "application/json",
   };
@@ -133,10 +133,11 @@ const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTa
 };
 
 /* Guardo la información de la plantilla*/
-export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}, cards = []) => {
+export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}, cards = [],idBot, idBotRedes, urlTemplatesGS) => {
   const { templateName, selectedCategory, message, uploadedUrl, templateType, pantallas } = templateData;
 
-  const url = 'https://certificacion.talkme.pro/templatesGS/api/plantillas/';
+  //const url = 'https://certificacion.talkme.pro/templatesGS/api/plantillas/';
+  const url = urlTemplatesGS;
   const headers = {
     "Content-Type": "application/json",
   };
@@ -172,7 +173,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   const data = {
     ID_PLANTILLA: null,
     ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
-    ID_BOT_REDES: 149,
+    ID_BOT_REDES: idBotRedes,
     ID_INTERNO: templateId,
     NOMBRE: templateName,
     MENSAJE: message,
@@ -214,7 +215,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
 
     // Si tenemos variables, hacer el tercer request
     if (result && result.ID_PLANTILLA && variables && variables.length > 0) {
-      await saveTemplateParams(result.ID_PLANTILLA, variables, variableDescriptions);
+      await saveTemplateParams(result.ID_PLANTILLA, variables, variableDescriptions, url);
     }
 
     if (result && result.ID_PLANTILLA && cards  && cards.length > 0) {

@@ -277,7 +277,7 @@ const TemplateForm = () => {
 
   // Decodifica el token para obtener appId y authCode
   //
-  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot;
+  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS;
   if (token) {
     try {
       const decoded = jwtDecode(token);
@@ -288,6 +288,7 @@ const TemplateForm = () => {
       empresaTalkMe = decoded.empresa;
       idBotRedes = decoded.id_bot_redes;
       idBot = decoded.id_bot;
+      urlTemplatesGS = decoded.urlTemplatesGS
       console.log('idBot:', idBot);
       console.log('idBotRedes:', idBotRedes);
       //console.log('authCode:', authCode);
@@ -372,7 +373,10 @@ const TemplateForm = () => {
           },
           idNombreUsuarioTalkMe || "Sistema.TalkMe",
           variables,
-          variableDescriptions
+          variableDescriptions,
+          idBot,
+          idBotRedes,
+          urlTemplatesGS
         );
 
         // Limpia todos los campos si todo fue bien
