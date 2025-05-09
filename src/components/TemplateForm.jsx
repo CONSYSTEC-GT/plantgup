@@ -291,6 +291,7 @@ const TemplateForm = () => {
       urlTemplatesGS = decoded.urlTemplatesGS
       console.log('idBot:', idBot);
       console.log('idBotRedes:', idBotRedes);
+      console.log('urlTemplatesGS', urlTemplatesGS);
       //console.log('authCode:', authCode);
       //console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
       //console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
@@ -374,7 +375,6 @@ const TemplateForm = () => {
           idNombreUsuarioTalkMe || "Sistema.TalkMe",
           variables,
           variableDescriptions,
-          idBot,
           idBotRedes,
           urlTemplatesGS
         );

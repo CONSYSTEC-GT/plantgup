@@ -86,7 +86,7 @@ const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTa
     const mediaUrl = card?.fileData?.url || null;
     const body = card.messageCard;
     const buttons = card.buttons || [];
-    
+
 
     if (!mediaUrl && !body) {
       console.warn("Tarjeta ignorada: no tiene contenido (mediaUrl o body)");
@@ -133,7 +133,7 @@ const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTa
 };
 
 /* Guardo la información de la plantilla*/
-export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}, cards = [],idBot, idBotRedes, urlTemplatesGS) => {
+export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}, cards = [], idBotRedes, urlTemplatesGS) => {
   const { templateName, selectedCategory, message, uploadedUrl, templateType, pantallas } = templateData;
 
   //const url = 'https://certificacion.talkme.pro/templatesGS/api/plantillas/';
@@ -154,7 +154,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   }
 
   let TIPO_PLANTILLA;
-  if (templateType === "CAROUSEL"){
+  if (templateType === "CAROUSEL") {
     TIPO_PLANTILLA = 1;
   } else {
     TIPO_PLANTILLA = 0;
@@ -167,9 +167,9 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     document: "document",
     carousel: "image"
   };
-  
+
   const MEDIA = mediaMap[templateType] || null;
-  
+
   const data = {
     ID_PLANTILLA: null,
     ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
@@ -218,11 +218,11 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
       await saveTemplateParams(result.ID_PLANTILLA, variables, variableDescriptions, url);
     }
 
-    if (result && result.ID_PLANTILLA && cards  && cards.length > 0) {
+    if (result && result.ID_PLANTILLA && cards && cards.length > 0) {
       await saveCardsTemplate(
         {
           ID_PLANTILLA: result.ID_PLANTILLA,
-          cards: cards 
+          cards: cards
         },
         idNombreUsuarioTalkMe
       );
@@ -276,9 +276,9 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
     CAROUSEL: "image",
     CATALOG: "image"
   };
-  
+
   const MEDIA = mediaMap[templateType] || null;
-  
+
   // Crear un objeto con los datos actualizados
   const data = {
     ID_INTERNO: idTemplate, // ID de la plantilla de GupShup
@@ -352,12 +352,12 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
         console.log("Número de tarjetas ELIMINADAS:", cards.length);
         console.log("Contenido de cards:", cards);
 
-    
+
         // Solo lanzamos error si la respuesta no es exitosa Y no es un 404 (no encontrado)
         if (!deleteResponse.ok && deleteResponse.status !== 404) {
           throw new Error("No se pudieron eliminar las tarjetas existentes");
         }
-    
+
         // 2. Agregar las nuevas tarjetas
         for (const card of cards) {
           console.log("Guardando tarjeta:", card);
@@ -366,8 +366,8 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
             cards: [card]  // <- Esta es la clave
           }, idNombreUsuarioTalkMe);
         }
-        
-    
+
+
       } catch (error) {
         console.error("Error al gestionar las tarjetas:", error);
         showSnackbar("⚠️ La plantilla se actualizó pero hubo un problema con las tarjetas", "warning");
