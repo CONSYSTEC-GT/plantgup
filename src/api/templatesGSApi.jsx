@@ -2,9 +2,10 @@
 import { showSnackbar } from '../utils/Snackbar';
 import { getMediaType } from '../utils/validarUrl';
 
-/* Guardo la información de los parametros de la plantilla */
-const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions, url) => {
+const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions, urlTemplatesGS) => {
   const tipoDatoId = 1;
+  const url = urlTemplatesGS + 'parametros'
+  console.log(url);
 
   try {
     const results = [];
@@ -74,9 +75,9 @@ const deleteTemplateParams = async (ID_PLANTILLA) => {
   }
 };
 
-const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTalkMe, url) => {
+const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTalkMe, urlTemplatesGS) => {
   console.log("Entrando a saveCardsTemplate con:", cards.length, "tarjetas");
-  //const url = 'https://certificacion.talkme.pro/templatesGS/api/tarjetas/';
+  const url = urlTemplatesGS + '/tarjetas/';
   const headers = {
     "Content-Type": "application/json",
   };
@@ -132,12 +133,11 @@ const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTa
   }
 };
 
-/* Guardo la información de la plantilla*/
 export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsuarioTalkMe, variables = [], variableDescriptions = {}, cards = [], idBotRedes, urlTemplatesGS) => {
   const { templateName, selectedCategory, message, uploadedUrl, templateType, pantallas } = templateData;
 
   //const url = 'https://certificacion.talkme.pro/templatesGS/api/plantillas/';
-  const url = urlTemplatesGS;
+  const url = urlTemplatesGS + 'plantillas';
   const headers = {
     "Content-Type": "application/json",
   };
@@ -215,7 +215,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
 
     // Si tenemos variables, hacer el tercer request
     if (result && result.ID_PLANTILLA && variables && variables.length > 0) {
-      await saveTemplateParams(result.ID_PLANTILLA, variables, variableDescriptions, url);
+      await saveTemplateParams(result.ID_PLANTILLA, variables, variableDescriptions, urlTemplatesGS);
     }
 
     if (result && result.ID_PLANTILLA && cards && cards.length > 0) {
@@ -224,7 +224,8 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
           ID_PLANTILLA: result.ID_PLANTILLA,
           cards: cards
         },
-        idNombreUsuarioTalkMe
+        idNombreUsuarioTalkMe,
+        urlTemplatesGS
       );
     }
 
