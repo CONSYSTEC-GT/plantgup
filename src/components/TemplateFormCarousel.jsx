@@ -343,6 +343,9 @@ const TemplateFormCarousel = () => {
       idUsuarioTalkMe = decoded.id_usuario;
       idNombreUsuarioTalkMe = decoded.nombre_usuario;
       empresaTalkMe = decoded.empresa;
+      idBotRedes = decoded.id_bot_redes;
+      idBot = decoded.id_bot;
+      urlTemplatesGS = decoded.urlTemplatesGS
       //console.log('appId:', appId);
       //console.log('authCode:', authCode);
       //console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
