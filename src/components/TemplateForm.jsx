@@ -3,6 +3,7 @@ import { Alert, Box, Button, Checkbox, Chip, Container, Divider, FormControl, Fo
 import { jwtDecode } from 'jwt-decode';
 import { Smile } from "react-feather"; // Icono para emojis
 import EmojiPicker from "emoji-picker-react"; // Selector de emojis
+import Swal from 'sweetalert2'
 
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
@@ -382,17 +383,32 @@ const TemplateForm = () => {
 
         // Limpia todos los campos si todo fue bien
         resetForm();
-        setShowSuccessModal(true);
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'La plantilla fue creada correctamente.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
 
         // El tercer request se maneja dentro de saveTemplateToTalkMe
       } else {
         setErrorMessageGupshup(result?.message || "La plantilla no pudo ser creada.");
-        setShowErrorModal(true);
+        Swal.fire({
+          title: 'Error',
+          text: result?.message || 'La plantilla no pudo ser creada.',
+          icon: 'error',
+          confirmButtonText: 'Cerrar'
+        });
         console.error("El primer request no fue exitoso o no tiene el formato esperado.");
         console.error("Resultado del primer request:", result);
       }
     } catch (error) {
-      console.error("Ocurrió un error:", error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Ocurrió un error inesperado.',
+        icon: 'error',
+        confirmButtonText: 'Cerrar'
+      });
     }
   };
 
