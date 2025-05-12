@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Alert, Box, Button, Checkbox, Card, CardActions, CardContent, CardMedia, Chip, Container, Dialog, DialogTitle, DialogContent, DialogActions, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import { v4 as uuidv4 } from 'uuid';
+import Swal from 'sweetalert2';
 
 
 
@@ -385,12 +386,19 @@ const TemplateFormCarousel = () => {
 
 
       const isValid = formattedCards.every(card =>
-        card.mediaUrl && card.body // Añade aquí más validaciones si son necesarias
+        card.mediaUrl && card.body
       );
       if (!isValid) {
         console.error("No vienen completas las cards");
         console.error(formattedCards);
-        setShowErrorModalTarjetas(true);
+        Swal.fire({
+          title: 'Advertencia',
+          text: 'La información de las tarjetas no está completa',
+          footer: 'Las tarjetas deben incluir imagen y contenido',
+          icon: 'warning',
+          confirmButtonText: 'Cerrar',
+          confirmButtonColor: '#00c3ff'
+        });
         return;
       }
       //
@@ -458,12 +466,24 @@ const TemplateFormCarousel = () => {
 
         // Limpia todos los campos si todo fue bien
         resetForm();
-        setShowSuccessModal(true);
+        Swal.fire({
+                  title: '¡Éxito!',
+                  text: 'La plantilla fue creada correctamente.',
+                  icon: 'success',
+                  confirmButtonText: 'Aceptar',
+                  confirmButtonColor: '#00c3ff'
+                });
 
       } else {
         console.error("El primer request no fue exitoso o no tiene el formato esperado.");
         setErrorMessageGupshup(result?.message || "La plantilla no pudo ser creada.");
-        setShowErrorModal(true);
+        Swal.fire({
+                  title: 'Error',
+                  text: result?.message || 'La plantilla no pudo ser creada.',
+                  icon: 'error',
+                  confirmButtonText: 'Cerrar',
+                  confirmButtonColor: '#00c3ff'
+                });
 
       }
     } catch (error) {

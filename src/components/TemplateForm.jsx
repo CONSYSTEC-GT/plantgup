@@ -194,18 +194,6 @@ const TemplateForm = () => {
       console.log("message es válido.");
     }
 
-    if (!example || example.trim() === "") {
-      console.log("Error: example está vacío o no es válido.");
-      setejemploPlantillaError(true);
-      setejemploPlantillaHelperText("Este campo es requerido");
-      isValid = false;
-      if (exampleRef.current) exampleRef.current.focus();
-      console.log("Estado de isValid después de validar example:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("example es válido.");
-    }
-
     if (!selectedCategory || selectedCategory.trim() === "") {
       console.log("Error: selectedCategory está vacío o no es válido.");
       setcategoriaPlantillaError(true);
@@ -387,7 +375,8 @@ const TemplateForm = () => {
           title: '¡Éxito!',
           text: 'La plantilla fue creada correctamente.',
           icon: 'success',
-          confirmButtonText: 'Aceptar'
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#00c3ff'
         });
 
         // El tercer request se maneja dentro de saveTemplateToTalkMe
@@ -397,7 +386,8 @@ const TemplateForm = () => {
           title: 'Error',
           text: result?.message || 'La plantilla no pudo ser creada.',
           icon: 'error',
-          confirmButtonText: 'Cerrar'
+          confirmButtonText: 'Cerrar',
+          confirmButtonColor: '#00c3ff'
         });
         console.error("El primer request no fue exitoso o no tiene el formato esperado.");
         console.error("Resultado del primer request:", result);
@@ -407,7 +397,8 @@ const TemplateForm = () => {
         title: 'Error',
         text: 'Ocurrió un error inesperado.',
         icon: 'error',
-        confirmButtonText: 'Cerrar'
+        confirmButtonText: 'Cerrar',
+        confirmButtonColor: '#00c3ff'
       });
     }
   };

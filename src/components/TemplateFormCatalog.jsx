@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Alert, Box, Button, Checkbox, Chip, Container, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
+import Swal from 'sweetalert2';
 
 import { Smile } from "react-feather"; // Icono para emojis
 import EmojiPicker from "emoji-picker-react"; // Selector de emojis
@@ -133,9 +134,9 @@ const TemplateForm = () => {
   const validateFields = () => {
     let isValid = true;
     let firstErrorFieldRef = null;
-  
+
     console.log("Iniciando validación de campos...");
-  
+
     // Validación de templateName
     if (!templateName || templateName.trim() === "") {
       console.log("Error: templateName está vacío o no es válido.");
@@ -146,7 +147,7 @@ const TemplateForm = () => {
         firstErrorFieldRef = templateNameRef;
       }
     }
-  
+
     // Validación de templateType
     if (!templateType || templateType.trim() === "") {
       console.log("Error: templateType está vacío o no es válido.");
@@ -157,7 +158,7 @@ const TemplateForm = () => {
         firstErrorFieldRef = templateTypeRef;
       }
     }
-  
+
     // Validación de languageCode
     if (!languageCode || languageCode.trim() === "") {
       console.log("Error: languageCode está vacío o no es válido.");
@@ -168,7 +169,7 @@ const TemplateForm = () => {
         firstErrorFieldRef = languageCodeRef;
       }
     }
-  
+
     // Validación de vertical
     if (!vertical || vertical.trim() === "") {
       console.log("Error: vertical está vacío o no es válido.");
@@ -178,7 +179,7 @@ const TemplateForm = () => {
         firstErrorFieldRef = verticalRef;
       }
     }
-  
+
     // Validación de message
     if (!message || message.trim() === "") {
       console.log("Error: message está vacío o no es válido.");
@@ -189,7 +190,7 @@ const TemplateForm = () => {
         firstErrorFieldRef = messageRef;
       }
     }
-  
+
     // Validación de example
     if (!example || example.trim() === "") {
       console.log("Error: example está vacío o no es válido.");
@@ -200,7 +201,7 @@ const TemplateForm = () => {
         firstErrorFieldRef = exampleRef;
       }
     }
-  
+
     // Validación de selectedCategory
     if (!selectedCategory || selectedCategory.trim() === "") {
       console.log("Error: selectedCategory está vacío o no es válido.");
@@ -211,18 +212,18 @@ const TemplateForm = () => {
         firstErrorFieldRef = selectedCategoryRef;
       }
     }
-  
+
     // Validación de variables
     if (variables.length > 0) {
       console.log("Validando variables...");
       const newErrors = {};
-  
+
       for (const variable of variables) {
         if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
           console.log(`Error: La variable ${variable} no tiene un ejemplo válido.`);
           isValid = false;
           newErrors[variable] = "Este campo es requerido";
-  
+
           // Solo establece el primer error de variable si no hay otro error antes
           if (exampleRefs.current[variable] && !firstErrorFieldRef) {
             firstErrorFieldRef = { current: exampleRefs.current[variable] };
@@ -231,16 +232,16 @@ const TemplateForm = () => {
           newErrors[variable] = "";
         }
       }
-  
+
       setVariableErrors(newErrors);
     }
-  
+
     // Enfocar el primer campo con error encontrado
     if (!isValid && firstErrorFieldRef && firstErrorFieldRef.current) {
       console.log("Enfocando el primer campo con error:", firstErrorFieldRef);
       firstErrorFieldRef.current.focus();
     }
-  
+
     console.log("Validación completada. isValid:", isValid);
     return isValid;
   };
@@ -321,24 +322,43 @@ const TemplateForm = () => {
           idNombreUsuarioTalkMe || "Sistema.TalkMe",
           variables,
           variableDescriptions,
-          [], 
-          idBotRedes, 
-          urlTemplatesGS 
+          [],
+          idBotRedes,
+          urlTemplatesGS
         );
 
         // Limpia todos los campos si todo fue bien
         resetForm();
-        setShowSuccessModal(true);
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'La plantilla fue creada correctamente.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#00c3ff'
+        });
 
         // El tercer request se maneja dentro de saveTemplateToTalkMe
       } else {
         setErrorMessageGupshup(result?.message || "La plantilla no pudo ser creada.");
-        setShowErrorModal(true);
+        Swal.fire({
+          title: 'Error',
+          text: result?.message || 'La plantilla no pudo ser creada.',
+          icon: 'error',
+          confirmButtonText: 'Cerrar',
+          confirmButtonColor: '#00c3ff'
+        });
         console.error("El primer request no fue exitoso o no tiene el formato esperado.");
         console.error("Resultado del primer request:", result);
       }
     } catch (error) {
       console.error("Ocurrió un error:", error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Ocurrió un error inesperado.',
+        icon: 'error',
+        confirmButtonText: 'Cerrar',
+        confirmButtonColor: '#00c3ff'
+      });
     }
   };
 
@@ -350,14 +370,14 @@ const TemplateForm = () => {
     showSnackbar("✅ Archivo subido exitosamente", "success");
   };
 
-    // PANTALLAS
-    const pantallasTalkMe = [
-      '1 - Contactos',
-      '2 - Recontacto',
-      '3 - Historial',
-      '4 - Broadcast',
-      '5 - Operador/Supervisor'
-    ];
+  // PANTALLAS
+  const pantallasTalkMe = [
+    '1 - Contactos',
+    '2 - Recontacto',
+    '3 - Historial',
+    '4 - Broadcast',
+    '5 - Operador/Supervisor'
+  ];
 
   // CATEGORIAS
   const categories = [
@@ -765,18 +785,18 @@ const TemplateForm = () => {
 
   const handlePantallas = (event) => {
     const { target: { value } } = event;
-  
+
     // Procesar los valores seleccionados
     const selectedOptions = typeof value === 'string' ? value.split(',') : value;
-  
+
     // Extraer solo los números
     const numericValues = selectedOptions.map(option => {
       return option.split(' - ')[0].trim();
     });
-    
+
     // Guardar como string con comas para la API
     setPantallas(numericValues.join(','));
-  
+
     // Guardar el texto completo para mostrar (displayPantallas)
     setDisplayPantallas(selectedOptions);
   };
@@ -908,7 +928,7 @@ const TemplateForm = () => {
         </Box>
 
         {/* Selección de pantallas TalkMe */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-        <FormControl fullWidth>
+          <FormControl fullWidth>
             <FormLabel>
               Aplicar en estas pantallas
             </FormLabel>
@@ -919,7 +939,7 @@ const TemplateForm = () => {
               labelId="demo-multiple-checkbox-label"
               id="demo-multiple-checkbox"
               multiple
-              value={displayPantallas} 
+              value={displayPantallas}
               onChange={handlePantallas}
               input={<OutlinedInput label="Selecciona una o más opciones" />}
               renderValue={(selected) => selected.join(', ')}
