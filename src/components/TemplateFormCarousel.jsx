@@ -456,15 +456,18 @@ const TemplateFormCarousel = () => {
           templateId,
           {
             templateName,
+            templateType,
+            pantallas,
             selectedCategory,
             message,
-            uploadedUrl,
-            templateType
+            uploadedUrl
           },
           idNombreUsuarioTalkMe || "Sistema.TalkMe",
           variables,
           variableDescriptions,
-          cardsToSendArray
+          cardsToSendArray,
+          idBotRedes,
+          urlTemplatesGS
         );
 
         // Limpia todos los campos si todo fue bien

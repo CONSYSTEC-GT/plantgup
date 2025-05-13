@@ -318,6 +318,8 @@ const TemplateForm = () => {
           templateId,
           {
             templateName,
+            templateType,
+            pantallas,
             selectedCategory,
             message,
             uploadedUrl
