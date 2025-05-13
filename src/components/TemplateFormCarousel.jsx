@@ -499,11 +499,7 @@ const TemplateFormCarousel = () => {
 
     // PANTALLAS
     const pantallasTalkMe = [
-      '1 - Contactos',
-      '2 - Recontacto',
-      '3 - Historial',
-      '4 - Broadcast',
-      '5 - Operador/Supervisor'
+      '4 - Broadcast'
     ];
 
 
