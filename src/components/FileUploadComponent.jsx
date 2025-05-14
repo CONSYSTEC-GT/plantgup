@@ -53,6 +53,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
   const [imagePreview, setImagePreview] = useState(null); // Estado para la vista previa de la imagen
   const [uploadedUrl, setUploadedUrl] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
 
   // Manejadores de eventos
@@ -119,6 +120,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
     try {
       console.log('Iniciando proceso de subida de archivo...');
+      setIsLoading(true);
 
       // Subir archivo a Gupshup
       const gupshupFormData = new FormData();
@@ -225,6 +227,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       if (onUploadSuccess) {
         console.log('Notificando al componente padre con el mediaId y la URL...');
         onUploadSuccess(mediaId, ownServiceData.url); // Pasar ambos valores
+        setIsLoading(false);
       }
 
       console.log('Proceso de subida completado exitosamente.');
@@ -243,6 +246,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       }
 
       setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
+      setIsLoading(false);
       //setUploadStatus('Error al subir el archivo');
     }
   };
@@ -332,7 +336,8 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
           </Box>
 
           <Button
-            loading loadingPosition="end" 
+            loading={isLoading}
+            loadingPosition="end" 
             startIcon={<SaveIcon />}
             variant="contained"
             onClick={handleUpload}
