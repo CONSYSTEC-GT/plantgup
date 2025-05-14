@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import Swal from 'sweetalert2';
 import {
   Box,
   Typography,
@@ -22,7 +23,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
-  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
+  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS;
   if (token) {
     try {
       const decoded = jwtDecode(token);
@@ -31,6 +32,12 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       idUsuarioTalkMe = decoded.id_usuario;
       idNombreUsuarioTalkMe = decoded.nombre_usuario;
       empresaTalkMe = decoded.empresa;
+      idBotRedes = decoded.id_bot_redes;
+      idBot = decoded.id_bot;
+      urlTemplatesGS = decoded.urlTemplatesGS
+      console.log('idBot:', idBot);
+      console.log('idBotRedes:', idBotRedes);
+      console.log('urlTemplatesGS', urlTemplatesGS);
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
@@ -123,9 +130,11 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       setIsLoading(true);
 
       // Subir archivo a Gupshup
+      /*
       const gupshupFormData = new FormData();
       gupshupFormData.append('file', selectedFile);
       gupshupFormData.append('file_type', selectedFile.type);
+      console.log('filetype', setSelectedFile.type);
 
       const gupshupUrl = `https://partner.gupshup.io/partner/app/${appId}/upload/media`;
 
@@ -168,6 +177,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
       const mediaId = gupshupData.handleId.message;
       console.log('Media ID obtenido de Gupshup:', mediaId);
+      */
 
       // Subir archivo al servicio propio
       console.log('Convirtiendo archivo a Base64...');
@@ -176,8 +186,8 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
       const payload = {
         idEmpresa: empresaTalkMe,
-        idBot: 54,
-        idBotRedes: 149,
+        idBot: idBot,
+        idBotRedes: idBotRedes,
         idUsuario: idUsuarioTalkMe,
         tipoCarga: 3,
         nombreArchivo: selectedFile.name,
@@ -217,6 +227,15 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
           statusText: ownServiceResponse.statusText,
           errorDetails: ownServiceResponse.data,
         });
+
+        // Mostrar SweetAlert de error
+        await Swal.fire({
+          icon: 'error',
+          title: 'Error en la subida',
+          text: 'Hubo un problema con la respuesta del servidor',
+          footer: `Código de estado: ${ownServiceResponse.status}`,
+        });
+
         throw new Error('Error en la respuesta del servicio propio');
       }
 
@@ -231,7 +250,15 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       }
 
       console.log('Proceso de subida completado exitosamente.');
-      //setUploadStatus('¡Archivo subido exitosamente!');
+
+      // Mostrar SweetAlert de éxito
+      await Swal.fire({
+        icon: 'success',
+        title: '¡Archivo subido!',
+        text: 'El archivo se ha subido correctamente',
+        timer: 3000,
+        showConfirmButton: false
+      });
     } catch (error) {
       console.error('Error en el proceso de subida:', error);
 
@@ -248,17 +275,28 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
       setIsLoading(false);
       //setUploadStatus('Error al subir el archivo');
+      // Mostrar SweetAlert de error detallado
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error en la subida',
+        html: `
+      <p>No se pudo subir el archivo.</p>
+      <p><strong>Razón:</strong> ${error.message || 'Error desconocido'}</p>
+      ${error.response?.data ? `<p><small>${JSON.stringify(error.response.data)}</small></p>` : ''}
+    `,
+        confirmButtonText: 'Entendido'
+      });
+
     }
   };
 
   const getAcceptedFileTypes = () => {
     const types = {
-      image: '.jpeg, .png',
-      video: '.mp4, .3gp',
-      document: '.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt'
+      image: '.jpeg, .jpg, .png',  // Formatos de imagen
+      video: '.mp4, .3gp',         // Formatos de video
+      document: '.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt'  // Formatos de documentos
     };
-    //console.log('Tipos de archivo aceptados:', types[mediaType] || '');
-    return types[mediaType] || '';
+    return types[templateType] || '';  // Usamos templateType en lugar de mediaType
   };
 
   const convertToBase64 = (file) => {
@@ -272,129 +310,113 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
   return (
     <Box>
-  {templateType === "text" ? (
-    <>
-      <TextField
-        fullWidth
-        label="Header"
-        value={header}
-        onChange={handleHeaderChange}
-        helperText={`${header.length} / ${charLimit} caracteres`}
-        sx={{ mb: 3 }}
-      />
-    </>
-  ) : (
-    <>
-      <FormControl fullWidth>
-        <FormLabel>Archivos</FormLabel>
-      </FormControl>
-      <Typography variant="body2" color="text.secondary" gutterBottom>
-        Seleccione el tipo de media y cargue un archivo.
-      </Typography>
-
-      {templateType !== "text" && (
-        <Box sx={{ mt: 2 }}>
-          <input
-            accept={getAcceptedFileTypes()}
-            style={{ display: 'none' }}
-            id="file-upload"
-            type="file"
-            onChange={handleFileChange}
+      {templateType === "text" ? (
+        <>
+          <TextField
+            fullWidth
+            label="Header"
+            value={header}
+            onChange={handleHeaderChange}
+            helperText={`${header.length} / ${charLimit} caracteres`}
+            sx={{ mb: 3 }}
           />
-          
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {/* Botón Agregar/Cambiar imagen */}
-            <label htmlFor="file-upload">
-              <Button 
-                variant="contained" 
-                component="span"
-                sx={{ height: '100%' }}
+        </>
+      ) : (
+        <>
+          <FormControl fullWidth>
+            <FormLabel>Archivos</FormLabel>
+          </FormControl>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            Seleccione el tipo de media y cargue un archivo.
+          </Typography>
+
+          {templateType !== "text" && (
+            <Box sx={{ mt: 2 }}>
+              <input
+                accept={getAcceptedFileTypes()}
+                style={{ display: 'none' }}
+                id="file-upload"
+                type="file"
+                onChange={handleFileChange}
+              />
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {/* Botón Agregar/Cambiar imagen */}
+                <label htmlFor="file-upload">
+                  <Button
+                    variant="contained"
+                    component="span"
+                    sx={{ height: '100%' }}
+                  >
+                    {selectedFile ? 'Cambiar imagen' : 'Agregar imagen'}
+                  </Button>
+                </label>
+                {/* Área de dropzone */}
+                <label htmlFor="file-upload" style={{
+                  flex: 1,
+                  display: 'block',
+                  padding: '10px 15px',
+                  border: '1px dashed #ccc',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    borderColor: '#666'
+                  }
+                }}>
+                  {selectedFile ? (
+                    <Typography variant="body1">{selectedFile.name}</Typography>
+                  ) : (
+                    <Typography variant="body1">Haz clic o arrastra un archivo aquí</Typography>
+                  )}
+                </label>
+
+
+              </Box>
+
+              <Button
+                loading={isLoading}
+                loadingPosition="end"
+                startIcon={<SaveIcon />}
+                variant="contained"
+                onClick={handleUpload}
+                disabled={!selectedFile}
+                sx={{ mt: 2 }}
               >
-                {selectedFile ? 'Cambiar imagen' : 'Agregar imagen'}
+                Subir Archivo
               </Button>
-            </label>
-            {/* Área de dropzone */}
-            <label htmlFor="file-upload" style={{ 
-              flex: 1,
-              display: 'block',
-              padding: '10px 15px',
-              border: '1px dashed #ccc',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              '&:hover': {
-                borderColor: '#666'
-              }
-            }}>
-              {selectedFile ? (
-                <Typography variant="body1">{selectedFile.name}</Typography>
-              ) : (
-                <Typography variant="body1">Haz clic o arrastra un archivo aquí</Typography>
+
+              {/* Barra de progreso */}
+              {uploadProgress > 0 && uploadProgress < 100 && (
+                <Box sx={{ width: '100%', mt: 2 }}>
+                  <LinearProgress variant="determinate" value={uploadProgress} />
+                  <Typography variant="caption" display="block" textAlign="center">
+                    {uploadProgress}% completado
+                  </Typography>
+                </Box>
               )}
-            </label>
 
-            
-          </Box>
+              {imagePreview && mediaType === 'image' && (
+                <Box sx={{ mt: 2 }}>
+                  <img src={imagePreview} alt="Vista previa" style={{ width: '100%', borderRadius: 2 }} />
+                </Box>
+              )}
 
-          <Button
-            loading={isLoading}
-            loadingPosition="end" 
-            startIcon={<SaveIcon />}
-            variant="contained"
-            onClick={handleUpload}
-            disabled={!selectedFile}
-            sx={{ mt: 2 }}
-          >
-            Subir Archivo
-          </Button>
-
-          {/* Barra de progreso */}
-          {uploadProgress > 0 && uploadProgress < 100 && (
-            <Box sx={{ width: '100%', mt: 2 }}>
-              <LinearProgress variant="determinate" value={uploadProgress} />
-              <Typography variant="caption" display="block" textAlign="center">
-                {uploadProgress}% completado
-              </Typography>
+              {mediaId && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="body2">
+                    Media ID: {mediaId}
+                  </Typography>
+                </Box>
+              )}
             </Box>
           )}
-
-          {imagePreview && mediaType === 'image' && (
-            <Box sx={{ mt: 2 }}>
-              <img src={imagePreview} alt="Vista previa" style={{ width: '100%', borderRadius: 2 }} />
-            </Box>
-          )}
-
-          {mediaId && (
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="body2">
-                Media ID: {mediaId}
-              </Typography>
-            </Box>
-          )}
-        </Box>
+        </>
       )}
-    </>
-  )}
 
-  {/* Mensajes de estado */}
-  <Snackbar
-    open={!!error}
-    autoHideDuration={6000}
-    onClose={() => setError('')}
-  >
-    <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
-      {error}
-    </Alert>
-  </Snackbar>
+      {/* Mensajes de estado */}
 
-  {uploadStatus && (
-    <Alert 
-      severity={uploadStatus.includes('Error') ? 'error' : 'success'} 
-      sx={{ mt: 2 }}
-    >
-      {uploadStatus}
-    </Alert>
-  )}
-</Box>
+
+    </Box>
   );
 };
 
