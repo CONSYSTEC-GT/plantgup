@@ -14,6 +14,7 @@ import {
   Snackbar,
   Alert
 } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
 
 const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImagePreview, onHeaderChange }) => {
 
@@ -51,18 +52,19 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
   const [uploadStatus, setUploadStatus] = useState('');
   const [imagePreview, setImagePreview] = useState(null); // Estado para la vista previa de la imagen
   const [uploadedUrl, setUploadedUrl] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
 
 
   // Manejadores de eventos
-  
+
   const handleHeaderChange = (e) => {
     const newHeader = e.target.value;
     setHeader(newHeader);
-    
+
     // Añade esta línea para notificar al componente padre
     if (onHeaderChange) onHeaderChange(newHeader);
   };
-  
+
 
   const handleMediaTypeChange = (event) => {
     console.log('Tipo de medio cambiado a:', event.target.value);
@@ -266,94 +268,128 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
   return (
     <Box>
-      {templateType === "text" ? (
-        <>
-          <TextField
-            fullWidth
-            label="Header"
-            value={header}
-            onChange={handleHeaderChange}
-            helperText={`${header.length} / ${charLimit} caracteres`}
-            sx={{ mb: 3 }}
+  {templateType === "text" ? (
+    <>
+      <TextField
+        fullWidth
+        label="Header"
+        value={header}
+        onChange={handleHeaderChange}
+        helperText={`${header.length} / ${charLimit} caracteres`}
+        sx={{ mb: 3 }}
+      />
+    </>
+  ) : (
+    <>
+      <FormControl fullWidth>
+        <FormLabel>Archivos</FormLabel>
+      </FormControl>
+      <Typography variant="body2" color="text.secondary" gutterBottom>
+        Seleccione el tipo de media y cargue un archivo.
+      </Typography>
+
+      {templateType !== "text" && (
+        <Box sx={{ mt: 2 }}>
+          <input
+            accept={getAcceptedFileTypes()}
+            style={{ display: 'none' }}
+            id="file-upload"
+            type="file"
+            onChange={handleFileChange}
           />
-        </>
-      ) : (
-        <>
-          <FormControl fullWidth>
-            <FormLabel>
-              Archivos
-            </FormLabel>
-          </FormControl>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            Seleccione el tipo de media y cargue un archivo.
-          </Typography>
-
-          {templateType !== "text" && (
-            <Box sx={{ mt: 2 }}>
-              <input
-                accept={getAcceptedFileTypes()}
-                style={{ display: 'none' }}
-                id="file-upload"
-                type="file"
-                onChange={handleFileChange}
-              />
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                <label htmlFor="file-upload">
-                  <Button variant="contained" component="span">
-                    Seleccionar Archivo
-                  </Button>
-                </label>
-                <Button
-                  variant="contained"
-                  onClick={handleUpload}
-                  disabled={!selectedFile}
-                >
-                  Subir Archivo
-                </Button>
-              </Box>
-
-              {selectedFile && (
-                <Typography variant="body2" sx={{ mt: 2 }}>
-                  Archivo seleccionado: {selectedFile.name}
-                </Typography>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* Botón Agregar/Cambiar imagen */}
+            <label htmlFor="file-upload">
+              <Button 
+                variant="contained" 
+                component="span"
+                sx={{ height: '100%' }}
+              >
+                {selectedFile ? 'Cambiar imagen' : 'Agregar imagen'}
+              </Button>
+            </label>
+            {/* Área de dropzone */}
+            <label htmlFor="file-upload" style={{ 
+              flex: 1,
+              display: 'block',
+              padding: '10px 15px',
+              border: '1px dashed #ccc',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              '&:hover': {
+                borderColor: '#666'
+              }
+            }}>
+              {selectedFile ? (
+                <Typography variant="body1">{selectedFile.name}</Typography>
+              ) : (
+                <Typography variant="body1">Haz clic o arrastra un archivo aquí</Typography>
               )}
+            </label>
 
-              {imagePreview && mediaType === 'image' && (
-                <Box sx={{ mt: 2 }}>
-                  <img src={imagePreview} alt="Vista previa" style={{ width: '100%', borderRadius: 2 }} />
-                </Box>
-              )}
+            
+          </Box>
 
-              {mediaId && (
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="body2">
-                    Media ID: {mediaId}
-                  </Typography>
-                </Box>
-              )}
+          <Button
+            loading loadingPosition="end" 
+            startIcon={<SaveIcon />}
+            variant="contained"
+            onClick={handleUpload}
+            disabled={!selectedFile}
+            sx={{ mt: 2 }}
+          >
+            Subir Archivo
+          </Button>
+
+          {/* Barra de progreso */}
+          {uploadProgress > 0 && uploadProgress < 100 && (
+            <Box sx={{ width: '100%', mt: 2 }}>
+              <LinearProgress variant="determinate" value={uploadProgress} />
+              <Typography variant="caption" display="block" textAlign="center">
+                {uploadProgress}% completado
+              </Typography>
             </Box>
           )}
-        </>
+
+          {imagePreview && mediaType === 'image' && (
+            <Box sx={{ mt: 2 }}>
+              <img src={imagePreview} alt="Vista previa" style={{ width: '100%', borderRadius: 2 }} />
+            </Box>
+          )}
+
+          {mediaId && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body2">
+                Media ID: {mediaId}
+              </Typography>
+            </Box>
+          )}
+        </Box>
       )}
+    </>
+  )}
 
-      <Snackbar
-        open={!!error}
-        autoHideDuration={6000}
-        onClose={() => setError('')}
-      >
-        <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
-          {error}
-        </Alert>
-      </Snackbar>
+  {/* Mensajes de estado */}
+  <Snackbar
+    open={!!error}
+    autoHideDuration={6000}
+    onClose={() => setError('')}
+  >
+    <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
+      {error}
+    </Alert>
+  </Snackbar>
 
-      <div className="space-y-4">
-        {uploadStatus && (
-          <div className={`mt-2 p-2 rounded ${uploadStatus.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-            {uploadStatus}
-          </div>
-        )}
-      </div>
-    </Box>
+  {uploadStatus && (
+    <Alert 
+      severity={uploadStatus.includes('Error') ? 'error' : 'success'} 
+      sx={{ mt: 2 }}
+    >
+      {uploadStatus}
+    </Alert>
+  )}
+</Box>
   );
 };
 
