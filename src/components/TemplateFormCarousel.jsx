@@ -152,6 +152,7 @@ const TemplateFormCarousel = () => {
   const emojiPickerCardRef = useRef(null);
   const emojiPickerButtonRef = useRef(null); // Para el botón
   const emojiPickerComponentRef = useRef(null); // Para el componente del picker
+  const [emojiCount, setEmojiCount] = useState(0);
 
   const resetForm = () => {
     setTemplateName("");
@@ -730,11 +731,29 @@ const TemplateFormCarousel = () => {
 
 
     const newText = e.target.value;
-    const maxLength = 1024;
+    const maxLength = 550;
+    const emojiCount = countEmojis(newText);
+    const maxEmojis = 10;
+
+    // Verificar si se excede el límite de emojis
+    if (emojiCount > maxEmojis) {
+      // Opcional: Mostrar una alerta solo cuando se supera el límite por primera vez
+      if (countEmojis(message) <= maxEmojis) {
+        Swal.fire({
+          title: 'Límite de emojis',
+          text: 'Solo puedes incluir un máximo de 10 emojis',
+          icon: 'warning',
+          confirmButtonText: 'Entendido'
+        });
+      }
+      return; // No actualizar el texto si excede el límite de emojis
+    }
 
     if (newText.length <= maxLength) {
       // Guardar el nuevo texto
       setMessage(newText);
+      // Actualizar el contador de emojis (necesitas agregar este estado)
+      setEmojiCount(emojiCount);
 
       // Verificar qué variables se han eliminado del texto
       const deletedVariables = [];
@@ -872,21 +891,49 @@ const TemplateFormCarousel = () => {
 
 
 
-  const handleEmojiClick = (emojiObject) => {
-    const cursor = messageRef.current.selectionStart;
-    const newText = message.slice(0, cursor) + emojiObject.emoji + message.slice(cursor);
-
-    setMessage(newText);
+const handleEmojiClick = (emojiObject) => {
+  const cursor = messageRef.current.selectionStart;
+  const newText = message.slice(0, cursor) + emojiObject.emoji + message.slice(cursor);
+  
+  // Contar los emojis en el nuevo texto
+  const newEmojiCount = countEmojis(newText);
+  
+  // Verificar si excedería el límite de 10 emojis
+  if (newEmojiCount > 10) {
+    // Mostrar alerta
+    Swal.fire({
+      title: 'Límite de emojis',
+      text: 'Solo puedes incluir un máximo de 10 emojis',
+      icon: 'warning',
+      confirmButtonText: 'Entendido'
+    });
     setShowEmojiPicker(false);
-
-    // Aumenta el tiempo de espera para asegurar que el estado se actualiza
+    
+    // Mantener el foco en el campo de texto
     setTimeout(() => {
       if (messageRef.current) {
         messageRef.current.focus();
-        messageRef.current.setSelectionRange(cursor + emojiObject.emoji.length, cursor + emojiObject.emoji.length);
+        messageRef.current.setSelectionRange(cursor, cursor);
       }
     }, 100);
-  };
+    
+    return; // No actualizar el texto
+  }
+  
+  // Si está dentro del límite, actualizar el mensaje
+  setMessage(newText);
+  // Actualizar el contador de emojis
+  setEmojiCount(newEmojiCount);
+  setShowEmojiPicker(false);
+
+  // Mantener el foco y posicionar el cursor después del emoji insertado
+  setTimeout(() => {
+    if (messageRef.current) {
+      messageRef.current.focus();
+      messageRef.current.setSelectionRange(cursor + emojiObject.emoji.length, cursor + emojiObject.emoji.length);
+    }
+  }, 100);
+};
 
   const handleEmojiClickCarousel = (emojiObject, cardId) => {
     const input = messageCardRefs.current[cardId];
@@ -1544,7 +1591,13 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
     }
   };
 
-
+    // Función para contar emojis en un texto
+  const countEmojis = (text) => {
+    // Esta regex detecta la mayoría de los emojis, incluyendo emojis con modificadores
+    const emojiRegex = /\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu;
+    const matches = text.match(emojiRegex);
+    return matches ? matches.length : 0;
+  };
 
   return (
     <Grid container sx={{ height: 'calc(100vh - 16px)' }}>
@@ -1771,13 +1824,13 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                 }}
                 inputRef={messageRef}
                 inputProps={{
-                  maxLength: 1024, // Esto limita físicamente la entrada
+                  maxLength: 550, // Esto limita físicamente la entrada
                 }}
-                helperText={`${message.length}/1024 caracteres`} // Muestra el contador
+                helperText={`${message.length}/550 caracteres | ${emojiCount}/10 emojis`}
                 FormHelperTextProps={{
                   sx: {
-                    textAlign: 'right', // Alinea el contador a la derecha
-                    color: message.length === 1024 ? 'error.main' : 'text.secondary' // Cambia color si llega al límite
+                    textAlign: 'right',
+                    color: message.length === 550 || emojiCount >= 10 ? 'error.main' : 'text.secondary'
                   }
                 }}
               />
