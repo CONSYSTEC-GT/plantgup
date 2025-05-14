@@ -153,6 +153,7 @@ const TemplateFormCarousel = () => {
   const emojiPickerButtonRef = useRef(null); // Para el botón
   const emojiPickerComponentRef = useRef(null); // Para el componente del picker
   const [emojiCount, setEmojiCount] = useState(0);
+  const [emojiCountCard, setEmojiCountCard] = useState(0);
 
   const resetForm = () => {
     setTemplateName("");
@@ -935,6 +936,7 @@ const handleEmojiClick = (emojiObject) => {
   }, 100);
 };
 
+
   const handleEmojiClickCarousel = (emojiObject, cardId) => {
     const input = messageCardRefs.current[cardId];
     const cursor = input?.selectionStart || 0;
@@ -948,7 +950,37 @@ const handleEmojiClick = (emojiObject) => {
           emojiObject.emoji +
           card.messageCard.slice(cursor);
 
-        return { ...card, messageCard: newText };
+        // Contar los emojis en el nuevo texto
+        const newEmojiCountCard = countEmojis(newText);
+        
+        // Verificar si excedería el límite de 10 emojis
+        if (newEmojiCountCard > 10) {
+          // Mostrar alerta
+          Swal.fire({
+            title: 'Límite de emojis',
+            text: 'Solo puedes incluir un máximo de 10 emojis',
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+          });
+          setShowEmojiPickerCards(false);
+          
+          // Mantener el foco en el campo de texto
+          setTimeout(() => {
+            if (input) {
+              input.focus();
+              input.setSelectionRange(cursor, cursor);
+            }
+          }, 100);
+          
+          return card; // No actualizar el texto
+        }
+
+        // Si está dentro del límite, actualizar el mensaje
+        return { 
+          ...card, 
+          messageCard: newText,
+          emojiCountCard: newEmojiCountCard // Asumiendo que tienes este campo en el objeto card
+        };
       })
     );
 
@@ -961,7 +993,7 @@ const handleEmojiClick = (emojiObject) => {
         input.setSelectionRange(newPos, newPos);
       }
     }, 100);
-  };
+};
 
 
 
@@ -2130,12 +2162,12 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                                       onChange={(e) => handleBodyMessageCardChange(e, card.id)}
                                       inputRef={(el) => (messageCardRefs.current[card.id] = el)}
                                       inputProps={{ maxLength: 280 }}
-                                      helperText={`${card.messageCard.length}/280 caracteres`}
+                                      helperText={`${card.messageCard.length}/280 caracteres | ${card.emojiCountCard || 0}/10 emojis`}
                                       error={Boolean(cardErrors[card.id]?.messageCard)}
                                       FormHelperTextProps={{
                                         sx: {
                                           textAlign: 'right',
-                                          color: card.messageCard.length === 280 ? 'error.main' : 'text.secondary'
+                                          color: card.messageCard.length === 280 || emojiCountCard >= 10 ? 'error.main' : 'text.secondary'
                                         }
                                       }}
                                       sx={{

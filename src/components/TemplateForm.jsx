@@ -1385,6 +1385,8 @@ const handleEmojiClick = (emojiObject) => {
                   value={button.title}
                   onChange={(e) => updateButton(button.id, "title", e.target.value)}
                   fullWidth
+                  inputProps={{ maxLength: 25 }}
+                  helperText={`${button.title.length}/25 caracteres` || validationErrors[button.id]}
                 />
 
                 {/* Selector de tipo de botón */}
