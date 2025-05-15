@@ -744,7 +744,10 @@ const TemplateFormCarousel = () => {
           title: 'Límite de emojis',
           text: 'Solo puedes incluir un máximo de 10 emojis',
           icon: 'warning',
-          confirmButtonText: 'Entendido'
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#00c3ff'
+
+
         });
       }
       return; // No actualizar el texto si excede el límite de emojis
@@ -906,7 +909,8 @@ const handleEmojiClick = (emojiObject) => {
       title: 'Límite de emojis',
       text: 'Solo puedes incluir un máximo de 10 emojis',
       icon: 'warning',
-      confirmButtonText: 'Entendido'
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#00c3ff'
     });
     setShowEmojiPicker(false);
     

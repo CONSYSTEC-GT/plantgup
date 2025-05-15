@@ -579,12 +579,31 @@ const TemplateForm = () => {
 
     // Verificar si se excede el límite de emojis
     if (emojiCount > maxEmojis) {
-        // Opcional: Mostrar una alerta solo cuando se supera el límite por primera vez
-        if (countEmojis(message) <= maxEmojis) {
-            alert("Solo puedes incluir un máximo de 10 emojis");
+      // Opcional: Mostrar una alerta solo cuando se supera el límite por primera vez
+      if (countEmojis(message) <= maxEmojis) {
+        Swal.fire({
+          title: 'Límite de emojis',
+          text: 'Solo puedes incluir un máximo de 10 emojis',
+          icon: 'warning',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#00c3ff'
+
+        });
+        setShowEmojiPicker(false);
         }
         return; // No actualizar el texto si excede el límite de emojis
     }
+
+    if (newText.length > maxLength) {
+          Swal.fire({
+            title: 'Limite de caracteres',
+            text: 'Solo puedes incluir un máximo de 550 caracteres',
+            icon: 'warning',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#00c3ff'
+          });
+          return;
+        }
 
     if (newText.length <= maxLength) {
       // Guardar el nuevo texto
@@ -667,7 +686,8 @@ const handleEmojiClick = (emojiObject) => {
       title: 'Límite de emojis',
       text: 'Solo puedes incluir un máximo de 10 emojis',
       icon: 'warning',
-      confirmButtonText: 'Entendido'
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#00c3ff'
     });
     setShowEmojiPicker(false);
     
@@ -1097,9 +1117,6 @@ const handleEmojiClick = (emojiObject) => {
                 }
               }}
               inputRef={messageRef}
-              inputProps={{
-                maxLength: 550, // Esto limita físicamente la entrada
-              }}
               helperText={`${message.length}/550 caracteres | ${emojiCount}/10 emojis`}
               FormHelperTextProps={{
                 sx: {
