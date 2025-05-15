@@ -20,6 +20,12 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       idUsuarioTalkMe = decoded.id_usuario;
       idNombreUsuarioTalkMe = decoded.nombre_usuario;
       empresaTalkMe = decoded.empresa;
+      idBotRedes = decoded.id_bot_redes;
+      idBot = decoded.id_bot;
+      urlTemplatesGS = decoded.urlTemplatesGS
+      console.log('idBot:', idBot);
+      console.log('idBotRedes:', idBotRedes);
+      console.log('urlTemplatesGS', urlTemplatesGS);
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
