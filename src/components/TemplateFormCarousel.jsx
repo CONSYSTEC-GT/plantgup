@@ -732,7 +732,7 @@ const TemplateFormCarousel = () => {
 
 
     const newText = e.target.value;
-    const maxLength = 550;
+    const maxLength = 549;
     const emojiCount = countEmojis(newText);
     const maxEmojis = 10;
 
@@ -746,12 +746,21 @@ const TemplateFormCarousel = () => {
           icon: 'warning',
           confirmButtonText: 'Entendido',
           confirmButtonColor: '#00c3ff'
-
-
         });
       }
       return; // No actualizar el texto si excede el límite de emojis
     }
+
+    if (newText.length > maxLength) {
+              Swal.fire({
+                title: 'Limite de caracteres',
+                text: 'Solo puedes incluir un máximo de 550 caracteres',
+                icon: 'warning',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#00c3ff'
+              });
+              return;
+            }
 
     if (newText.length <= maxLength) {
       // Guardar el nuevo texto
@@ -799,6 +808,34 @@ const TemplateFormCarousel = () => {
 
     const newText = e.target.value;
     const maxLength = 280;
+    const newEmojiCount = countEmojis(newText);
+    const maxEmojis = 10;
+
+    // Verificar si se excede el límite de emojis
+    if (newEmojiCount > maxEmojis) {
+      // Opcional: Mostrar una alerta solo cuando se supera el límite por primera vez
+      if (countEmojis(message) > maxEmojis) {
+        Swal.fire({
+          title: 'Límite de emojis',
+          text: 'Solo puedes incluir un máximo de 10 emojis',
+          icon: 'warning',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#00c3ff'
+        });
+      }
+      return; // No actualizar el texto si excede el límite de emojis
+    }
+
+    if (newText.length > maxLength) {
+              Swal.fire({
+                title: 'Limite de caracteres',
+                text: 'Solo puedes incluir un máximo de 550 caracteres',
+                icon: 'warning',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#00c3ff'
+              });
+              return;
+            }
 
     setCards(prevCards =>
       prevCards.map(card => {
@@ -830,7 +867,8 @@ const TemplateFormCarousel = () => {
           messageCard: newText,
           variablesCard: remainingVariables,
           variableDescriptionsCard: updatedDescriptions,
-          variableExamples: updatedExamples
+          variableExamples: updatedExamples,
+          emojiCountCard: newEmojiCount
         };
       })
     );
@@ -1859,10 +1897,10 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                   }
                 }}
                 inputRef={messageRef}
+                helperText={`${message.length}/550 caracteres | ${emojiCount}/10 emojis`}
                 inputProps={{
                   maxLength: 550, // Esto limita físicamente la entrada
                 }}
-                helperText={`${message.length}/550 caracteres | ${emojiCount}/10 emojis`}
                 FormHelperTextProps={{
                   sx: {
                     textAlign: 'right',
@@ -2165,7 +2203,7 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                                       value={card.messageCard}
                                       onChange={(e) => handleBodyMessageCardChange(e, card.id)}
                                       inputRef={(el) => (messageCardRefs.current[card.id] = el)}
-                                      inputProps={{ maxLength: 280 }}
+                                      //inputProps={{ maxLength: 280 }}
                                       helperText={`${card.messageCard.length}/280 caracteres | ${card.emojiCountCard || 0}/10 emojis`}
                                       error={Boolean(cardErrors[card.id]?.messageCard)}
                                       FormHelperTextProps={{
