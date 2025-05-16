@@ -278,7 +278,7 @@ const TemplateForm = () => {
       empresaTalkMe = decoded.empresa;
       idBotRedes = decoded.id_bot_redes;
       idBot = decoded.id_bot;
-      urlTemplatesGS = decoded.urlTemplatesGS
+      urlTemplatesGS = decoded.urlTemplatesGS;
       console.log('idBot:', idBot);
       console.log('idBotRedes:', idBotRedes);
       console.log('urlTemplatesGS', urlTemplatesGS);
@@ -651,7 +651,7 @@ const TemplateForm = () => {
     if (newText.length <= maxLength) {
       // Guardar el nuevo texto
       setMessage(newText);
-      
+
       // Actualizar el contador de emojis (necesitas agregar este estado)
       setEmojiCount(emojiCount);
 
@@ -687,11 +687,24 @@ const TemplateForm = () => {
         setVariableErrors(newErrors);
       }
     }
-};
+  };
 
   // VARIABLES DEL BODY MESSAGE
   const handleAddVariable = () => {
     const newVariable = `{{${variables.length + 1}}}`;
+
+    // Verificar si al añadir la variable se superaría el límite de caracteres
+  if (message.length + newVariable.length > 550) {
+    // Puedes mostrar un mensaje de error o simplemente no hacer nada
+    Swal.fire({
+        title: 'Limite de caracteres',
+        text: 'No se pueden agregar más variables porque excede el máximo de 550 caracteres',
+        icon: 'warning',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#00c3ff'
+      });
+    return;
+  }
 
     // Obtener la posición actual del cursor
     const cursorPosition = messageRef.current.selectionStart;
@@ -734,6 +747,28 @@ const handleEmojiClick = (emojiObject) => {
     });
     setShowEmojiPicker(false);
     
+    // Mantener el foco en el campo de texto
+    setTimeout(() => {
+      if (messageRef.current) {
+        messageRef.current.focus();
+        messageRef.current.setSelectionRange(cursor, cursor);
+      }
+    }, 100);
+    
+    return; // No actualizar el texto
+  }
+
+  // Verificar si excedería el límite de 550 caracteres
+  if (newText.length > 550) {
+    Swal.fire({
+      title: 'Límite de caracteres',
+      text: 'Solo puedes incluir un máximo de 550 caracteres',
+      icon: 'warning',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#00c3ff'
+    });
+    setShowEmojiPicker(false);
+
     // Mantener el foco en el campo de texto
     setTimeout(() => {
       if (messageRef.current) {
