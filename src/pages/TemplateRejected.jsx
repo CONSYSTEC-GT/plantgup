@@ -173,7 +173,13 @@ const TemplateAproved = () => {
       navigate('/modify-template', { state: { template } });
     } else {
       // Si el estado no es válido, mostrar un mensaje de error
-      alert('No se puede editar el template porque su estado no es "APPROVED", "REJECTED" o "PAUSED".');
+      Swal.fire({
+                      title: 'La plantilla no puede ser editada.',
+                      text: 'No se puede editar la plantilla porque su estado no es "APPROVED", "REJECTED" o "PAUSED".',
+                      icon: 'error',
+                      confirmButtonText: 'Cerrar',
+                      confirmButtonColor: '#00c3ff'
+                    });
     }
   };
 

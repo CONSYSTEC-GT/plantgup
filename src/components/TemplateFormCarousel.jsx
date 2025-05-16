@@ -2364,7 +2364,7 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                                       key={button.id}
                                       sx={{
                                         display: "flex",
-                                        alignItems: "center",
+                                        alignItems: "flex-start",
                                         gap: 2,
                                         border: "1px solid #ccc",
                                         borderRadius: 2,

@@ -3,6 +3,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { motion } from 'framer-motion';
+import Swal from 'sweetalert2'
 
 import LoginRequired from './LoginRequired';
 
@@ -90,7 +91,7 @@ export default function BasicCard() {
   // Recupera el token del localStorage
   const token = localStorage.getItem('authToken');
 
-   // Decodifica el token para obtener appId y authCode
+   /* Decodifica el token para obtener appId y authCode
   let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
   if (token) {
     try {
@@ -106,7 +107,7 @@ export default function BasicCard() {
     }
   }
   
- /*
+ */
   let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
 
   appId = '1fbd9a1e-074c-4e1e-801c-b25a0fcc9487'; // Extrae appId del token
@@ -115,7 +116,7 @@ export default function BasicCard() {
   idUsuarioTalkMe = 78;  // Cambiado de idUsuario a id_usuario
   idNombreUsuarioTalkMe = 'javier.colocho';  // Cambiado de nombreUsuario a nombre_usuario
   empresaTalkMe = 2;
-*/
+//
 
 
   // Función para obtener las plantillas
@@ -223,7 +224,14 @@ export default function BasicCard() {
       }
     } else {
       // Si el estado no es válido, mostrar un mensaje de error
-      alert('No se puede editar el template porque su estado no es "APPROVED", "REJECTED" o "PAUSED".');
+      Swal.fire({
+                title: 'La plantilla no puede ser editada.',
+                text: 'No se puede editar la plantilla porque su estado no es "APPROVED", "REJECTED" o "PAUSED".',
+                icon: 'error',
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#00c3ff'
+              });
+      
     }
   };
 
