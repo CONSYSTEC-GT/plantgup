@@ -537,11 +537,13 @@ const TemplateAproved = () => {
                             p: 1,
                             mt: 1,
                             borderRadius: 4,
-                            width: 284, // Ancho fijo
-                            maxWidth: '100%', // Ensure it doesn't overflow the parent
-                            display: 'inline-flex', // Use inline-flex to wrap content
+                            width: 284,
+                            maxWidth: '100%',
+                            display: 'inline-flex',
                             flexDirection: 'column',
-                            alignSelf: 'center', // Center the white box horizontally
+                            alignSelf: 'center',
+                            height: 298,
+                            overflowY: 'auto'
                           }}
                         >
                           <Typography
@@ -550,6 +552,8 @@ const TemplateAproved = () => {
                             sx={{
                               width: 'fit-content', // Ensure typography width fits content
                               whiteSpace: 'normal', // Allow text to wrap
+                              wordBreak: 'break-word', // Añadir esta propiedad para forzar el quiebre de palabras largas
+                              overflowWrap: 'break-word' // Asegurar que las palabras largas se quiebren
                             }}
                           >
                             {parseTemplateContent(template.data).text}

@@ -174,12 +174,12 @@ const TemplateAproved = () => {
     } else {
       // Si el estado no es válido, mostrar un mensaje de error
       Swal.fire({
-                      title: 'La plantilla no puede ser editada.',
-                      text: 'No se puede editar la plantilla porque su estado no es "APPROVED", "REJECTED" o "PAUSED".',
-                      icon: 'error',
-                      confirmButtonText: 'Cerrar',
-                      confirmButtonColor: '#00c3ff'
-                    });
+        title: 'La plantilla no puede ser editada.',
+        text: 'No se puede editar la plantilla porque su estado no es "APPROVED", "REJECTED" o "PAUSED".',
+        icon: 'error',
+        confirmButtonText: 'Cerrar',
+        confirmButtonColor: '#00c3ff'
+      });
     }
   };
 
@@ -499,7 +499,7 @@ const TemplateAproved = () => {
                           mx: 1,
                           my: 1,
                           borderRadius: 2,
-                          minHeight: 302, // Altura mínima en lugar de fija AMARILLA
+                          height: 302, // Altura mínima en lugar de fija AMARILLA
                           width: 286,
                           display: 'flex',
                           flexDirection: 'column', // Ajusta la dirección del contenido a columna
@@ -513,11 +513,13 @@ const TemplateAproved = () => {
                             p: 1,
                             mt: 1,
                             borderRadius: 4,
-                            width: 284, // Ancho fijo
-                            maxWidth: '100%', // Ensure it doesn't overflow the parent
-                            display: 'inline-flex', // Use inline-flex to wrap content
+                            width: 284,
+                            maxWidth: '100%',
+                            display: 'inline-flex',
                             flexDirection: 'column',
-                            alignSelf: 'center', // Center the white box horizontally
+                            alignSelf: 'center',
+                            height: 298,
+                            overflowY: 'auto'
                           }}
                         >
                           {/* Imagen para plantillas tipo CAROUSEL o IMAGE */}
@@ -542,6 +544,8 @@ const TemplateAproved = () => {
                             sx={{
                               width: 'fit-content', // Ensure typography width fits content
                               whiteSpace: 'normal', // Allow text to wrap
+                              wordBreak: 'break-word', // Añadir esta propiedad para forzar el quiebre de palabras largas
+                              overflowWrap: 'break-word' // Asegurar que las palabras largas se quiebren
                             }}
                           >
                             {parseTemplateContent(template.data).text}
