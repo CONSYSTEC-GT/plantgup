@@ -650,6 +650,19 @@ const TemplateForm = () => {
   const handleAddVariable = () => {
     const newVariable = `{{${variables.length + 1}}}`;
 
+       // Verificar si al añadir la variable se superaría el límite de caracteres
+      if (message.length + newVariable.length > 550) {
+        // Puedes mostrar un mensaje de error o simplemente no hacer nada
+        Swal.fire({
+            title: 'Limite de caracteres',
+            text: 'No se pueden agregar más variables porque excede el máximo de 550 caracteres',
+            icon: 'warning',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#00c3ff'
+          });
+        return;
+      }
+
     // Obtener la posición actual del cursor
     const cursorPosition = messageRef.current.selectionStart;
 

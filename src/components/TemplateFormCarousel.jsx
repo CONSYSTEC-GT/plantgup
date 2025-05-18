@@ -878,7 +878,19 @@ const TemplateFormCarousel = () => {
   // VARIABLES DEL BODY MESSAGE
   const handleAddVariable = () => {
     const newVariable = `{{${variables.length + 1}}}`;
-
+    
+       // Verificar si al añadir la variable se superaría el límite de caracteres
+      if (message.length + newVariable.length > 550) {
+        // Puedes mostrar un mensaje de error o simplemente no hacer nada
+        Swal.fire({
+            title: 'Limite de caracteres',
+            text: 'No se pueden agregar más variables porque excede el máximo de 550 caracteres',
+            icon: 'warning',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#00c3ff'
+          });
+        return;
+      }
     // Obtener la posición actual del cursor
     const cursorPosition = messageRef.current.selectionStart;
 
@@ -902,34 +914,57 @@ const TemplateFormCarousel = () => {
   };
 
   const handleAddVariableCard = (cardId) => {
-    setCards(prevCards =>
-      prevCards.map(card => {
-        if (card.id !== cardId) return card;
+  setCards(prevCards =>
+    prevCards.map(card => {
+      if (card.id !== cardId) return card;
 
-        const newVariable = `{{${card.variablesCard.length + 1}}}`;
-        // Usa la referencia específica de esta tarjeta
-        const textFieldRef = messageCardRefs.current[cardId];
-        const cursorPosition = textFieldRef?.selectionStart || 0;
+      const newVariable = `{{${card.variablesCard.length + 1}}}`;
+      
+      // Verificar si al añadir la variable se superaría el límite de caracteres
+      if (card.messageCard.length + newVariable.length > 280) {
+        // Mostrar alerta de límite excedido
+        Swal.fire({
+          title: 'Limite de caracteres',
+          text: 'No se pueden agregar más variables porque excede el máximo de 550 caracteres',
+          icon: 'warning',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#00c3ff'
+        });
+        return card; // Retornar la tarjeta sin cambios
+      }
+      
+      // Usa la referencia específica de esta tarjeta
+      const textFieldRef = messageCardRefs.current[cardId];
+      const cursorPosition = textFieldRef?.selectionStart || 0;
 
-        const textBefore = card.messageCard.substring(0, cursorPosition);
-        const textAfter = card.messageCard.substring(cursorPosition);
+      const textBefore = card.messageCard.substring(0, cursorPosition);
+      const textAfter = card.messageCard.substring(cursorPosition);
 
-        const newMessageCard = `${textBefore}${newVariable}${textAfter}`;
+      const newMessageCard = `${textBefore}${newVariable}${textAfter}`;
 
-        // OPCIONAL: Actualizar descripción y ejemplos también
-        const updatedDescriptions = { ...card.variableDescriptionsCard, [newVariable]: "" };
-        const updatedExamples = { ...card.variableExamples, [newVariable]: "" };
+      // OPCIONAL: Actualizar descripción y ejemplos también
+      const updatedDescriptions = { ...card.variableDescriptionsCard, [newVariable]: "" };
+      const updatedExamples = { ...card.variableExamples, [newVariable]: "" };
 
-        return {
-          ...card,
-          messageCard: newMessageCard,
-          variablesCard: [...card.variablesCard, newVariable],
-          variableDescriptionsCard: updatedDescriptions,
-          variableExamples: updatedExamples
-        };
-      })
-    );
-  };
+      // OPCIONAL: Colocar el cursor después de la variable insertada
+      setTimeout(() => {
+        if (textFieldRef) {
+          const newPosition = cursorPosition + newVariable.length;
+          textFieldRef.focus();
+          textFieldRef.setSelectionRange(newPosition, newPosition);
+        }
+      }, 0);
+
+      return {
+        ...card,
+        messageCard: newMessageCard,
+        variablesCard: [...card.variablesCard, newVariable],
+        variableDescriptionsCard: updatedDescriptions,
+        variableExamples: updatedExamples
+      };
+    })
+  );
+};
 
 
 
