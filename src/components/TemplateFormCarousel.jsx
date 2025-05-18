@@ -2397,24 +2397,24 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                                       {/* Campo adicional según el tipo de botón */}
                                       {button.type === "URL" && (
                                         <TextField
-                                        label="URL"
-                                        value={button.url || ''}
-                                        onChange={(e) => {
-                                          console.log("Evento onChange - Valor ingresado:", e.target.value);
-                                          // Asumiendo que tiene acceso al cardId actual
-                                          updateButtonWithValidation(
-                                            card.id,           // ID de la tarjeta actual
-                                            button.id,         // ID del botón
-                                            "url",             // Campo a actualizar
-                                            e.target.value,    // Nuevo valor
-                                            setCards,          // Función para actualizar tarjetas
-                                            setValidationErrors
-                                          );
-                                        }}
-                                        fullWidth
-                                        error={validationErrors[button.id] !== undefined}
-                                        helperText={validationErrors[button.id]}
-                                      />
+                                          label="URL"
+                                          value={button.url || ''}
+                                          onChange={(e) => {
+                                            console.log("Evento onChange - Valor ingresado:", e.target.value);
+                                            // Asumiendo que tiene acceso al cardId actual
+                                            updateButtonWithValidation(
+                                              card.id,           // ID de la tarjeta actual
+                                              button.id,         // ID del botón
+                                              "url",             // Campo a actualizar
+                                              e.target.value,    // Nuevo valor
+                                              setCards,          // Función para actualizar tarjetas
+                                              setValidationErrors
+                                            );
+                                          }}
+                                          fullWidth
+                                          error={validationErrors[button.id] !== undefined}
+                                          helperText={validationErrors[button.id]}
+                                        />
                                       )}
 
                                       {button.type === "PHONE_NUMBER" && (
@@ -2426,13 +2426,19 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                                         />
                                       )}
 
-                                      {/* Icono según el tipo de botón */}
-                                      {button.type === "QUICK_REPLY" && <ArrowForward />}
-                                      {button.type === "URL" && <Link />}
-                                      {button.type === "PHONE_NUMBER" && <Phone />}
+                                      {/* Icono según el tipo de botón - Ahora con alineación vertical */}
+                                      <Box sx={{ display: "flex", alignItems: "center", pt:3 }}>
+                                        {button.type === "QUICK_REPLY" && <ArrowForward />}
+                                        {button.type === "URL" && <Link />}
+                                        {button.type === "PHONE_NUMBER" && <Phone />}
+                                      </Box>
 
-                                      {/* Botón para eliminar */}
-                                      <IconButton color="error" onClick={() => removeButton(button.id)}>
+                                      {/* Botón para eliminar - Ahora con alineación vertical */}
+                                      <IconButton
+                                        color="error"
+                                        onClick={() => removeButton(button.id)}
+                                        sx={{ alignSelf: "center" }}
+                                      >
                                         <Delete />
                                       </IconButton>
                                     </Box>
