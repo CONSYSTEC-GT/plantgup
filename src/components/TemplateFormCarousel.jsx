@@ -2463,7 +2463,7 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                                       )}
 
                                       {/* Icono según el tipo de botón - Ahora con alineación vertical */}
-                                      <Box sx={{ display: "flex", alignItems: "center", pt:3 }}>
+                                      <Box sx={{ display: "flex", alignItems: "center", pt:2 }}>
                                         {button.type === "QUICK_REPLY" && <ArrowForward />}
                                         {button.type === "URL" && <Link />}
                                         {button.type === "PHONE_NUMBER" && <Phone />}
@@ -2473,7 +2473,7 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                                       <IconButton
                                         color="error"
                                         onClick={() => removeButton(button.id)}
-                                        sx={{ alignSelf: "center" }}
+                                        sx={{ alignSelf: "center", pb: 4 }}
                                       >
                                         <Delete />
                                       </IconButton>
