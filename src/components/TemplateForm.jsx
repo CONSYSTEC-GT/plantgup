@@ -1425,7 +1425,7 @@ const handleEmojiClick = (emojiObject) => {
                 key={button.id}
                 sx={{
                   display: "flex",
-                  alignItems: "center",
+                  alignItems: "flex-start",
                   gap: 2,
                   border: "1px solid #ccc",
                   borderRadius: 2,
@@ -1482,12 +1482,15 @@ const handleEmojiClick = (emojiObject) => {
                 )}
 
                 {/* Icono según el tipo de botón */}
+                <Box sx={{ display: "flex", alignItems: "center", pt:2 }}>
                 {button.type === "QUICK_REPLY" && <ArrowForward />}
                 {button.type === "URL" && <Link />}
                 {button.type === "PHONE_NUMBER" && <Phone />}
+                </Box>
 
                 {/* Botón para eliminar */}
-                <IconButton color="error" onClick={() => removeButton(button.id)}>
+                <IconButton color="error" onClick={() => removeButton(button.id)}
+                  sx={{ alignSelf: "center", pb: 4 }}>
                   <Delete />
                 </IconButton>
               </Box>
