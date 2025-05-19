@@ -1917,7 +1917,7 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                 multiline
                 aria-required="true"
                 error={contenidoPlantillaTypeError}
-                rows={4}
+                rows={7}
                 label="Escribe"
                 placeholder="Ingresa el contenido de tu mensaje aquí..."
                 value={message}
