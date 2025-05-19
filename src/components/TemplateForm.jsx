@@ -32,7 +32,7 @@ const TemplateForm = () => {
   const [templateType, setTemplateType] = useState("text");
   const [pantallas, setPantallas] = useState([]);
   const [displayPantallas, setDisplayPantallas] = useState([]);
-  const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al texto de su plantilla.");
+  const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al contenido de la plantilla. No se permite el uso de letras mayúsculas ni espacios en blanco.");
   const [templateNameError, setTemplateNameError] = useState(false);
   const [vertical, setVertical] = useState("");
   const [message, setMessage] = useState("");
@@ -451,21 +451,22 @@ const TemplateForm = () => {
 
   //NOMBRE PLANTILLA
   const handleTemplateNameChange = (event) => {
-    // Reemplazar espacios con guiones bajos
-    const newValue = event.target.value.replace(/\s+/g, '_');
+  const inputValue = event.target.value;
+  const hasUpperCase = /[A-Z]/.test(inputValue);
+  
+  const newValue = inputValue.toLowerCase().replace(/\s+/g, '_');
+  setTemplateName(newValue);
 
-    // Actualizar el estado con el nuevo valor
-    setTemplateName(newValue);
-
-    // Validar si el campo está vacío
-    if (newValue.trim() === "") {
-      setTemplateNameError(true);
-      setTemplateNameHelperText("Este campo es requerido");
-    } else {
-      setTemplateNameError(false);
-      setTemplateNameHelperText("");
-    }
-  };
+  if (hasUpperCase) {
+    setTemplateNameHelperText("Las mayúsculas fueron convertidas a minúsculas");
+  } else if (newValue.trim() === "") {
+    setTemplateNameError(true);
+    setTemplateNameHelperText("Este campo es requerido");
+  } else {
+    setTemplateNameError(false);
+    setTemplateNameHelperText("");
+  }
+};
 
   //IDIOMA PLANTILLA
   const handleLanguageCodeChange = (event) => {
