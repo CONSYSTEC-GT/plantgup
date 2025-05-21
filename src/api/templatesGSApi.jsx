@@ -137,7 +137,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   const { templateName, selectedCategory, message, uploadedUrl, templateType, pantallas } = templateData;
 
   //const url = 'https://certificacion.talkme.pro/templatesGS/api/plantillas/';
-  const url = urlTemplatesGS + 'plantillas';
+  const url = urlTemplatesGS;
   const headers = {
     "Content-Type": "application/json",
   };
