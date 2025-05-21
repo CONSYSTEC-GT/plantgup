@@ -279,11 +279,11 @@ const TemplateForm = () => {
       idBotRedes = decoded.id_bot_redes;
       idBot = decoded.id_bot;
       urlTemplatesGS = decoded.urlTemplatesGS;
-      urlWsFTP = decoded.urlWsFTP;
+      //urlWsFTP = decoded.urlWsFTP;
       console.log('idBot:', idBot);
       console.log('idBotRedes:', idBotRedes);
       console.log('urlTemplatesGS', urlTemplatesGS);
-      console.log('urlWsFTP', urlWsFTP)
+      //console.log('urlWsFTP', urlWsFTP)
       //console.log('authCode:', authCode);
       //console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
       //console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
