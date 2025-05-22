@@ -267,7 +267,7 @@ const TemplateForm = () => {
 
   // Decodifica el token para obtener appId y authCode
   //
-  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS;
+  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken;
   if (token) {
     try {
       const decoded = jwtDecode(token);
@@ -279,10 +279,12 @@ const TemplateForm = () => {
       idBotRedes = decoded.id_bot_redes;
       idBot = decoded.id_bot;
       urlTemplatesGS = decoded.urlTemplatesGS;
+      apiToken = decoded.apiToken;
       //urlWsFTP = decoded.urlWsFTP;
       console.log('idBot:', idBot);
       console.log('idBotRedes:', idBotRedes);
       console.log('urlTemplatesGS', urlTemplatesGS);
+      console.log('apiToken', apiToken);
       //console.log('urlWsFTP', urlWsFTP)
       //console.log('authCode:', authCode);
       //console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
