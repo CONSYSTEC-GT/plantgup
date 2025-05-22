@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Alert, Box, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, FormLabel, Typography, TextField, Snackbar, } from '@mui/material';
+import Swal from 'sweetalert2';
 
 import { CustomDialog } from '../utils/CustomDialog';
 
@@ -152,13 +153,21 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       setShowSuccessModal(true);
       
     } catch (error) {
-      console.error('Error en el proceso de subida:', error);
-      setShowErrorModal(true);
-      setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
-    } finally {
-      setIsUploading(false);
-    }
-  };
+    console.error('Error en el proceso de subida:', error);
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Error al subir archivo',
+      text: error?.response?.data?.message || error.message || 'Por favor, intenta nuevamente.',
+      footer: '<a href="#">¿Necesitas ayuda?</a>'
+    });
+
+    setShowErrorModal(true);
+    setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
+  } finally {
+    setIsUploading(false);
+  }
+};
 
   // Función para resetear completamente el componente
   const resetComponent = () => {
