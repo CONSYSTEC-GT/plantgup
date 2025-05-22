@@ -101,64 +101,86 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) {
-      setError('Por favor, selecciona un archivo.');
-      return;
+  if (!selectedFile) {
+    setError('Por favor, selecciona un archivo.');
+    Swal.fire({
+      icon: 'warning',
+      title: 'Archivo no seleccionado',
+      text: 'Por favor, selecciona un archivo antes de subir.',
+    });
+    return;
+  }
+
+  setIsUploading(true);
+
+  try {
+    const base64Content = await convertToBase64(selectedFile);
+
+    const payload = {
+      idEmpresa: empresaTalkMe,
+      idBot: 54,
+      idBotRedes: 149,
+      idUsuario: idUsuarioTalkMe || 48,
+      tipoCarga: 3,
+      nombreArchivo: selectedFile.name,
+      contenidoArchivo: base64Content.split(',')[1],
+    };
+
+    console.log('📤 Payload enviado:', payload);
+
+    const response = await axios.post(
+      urlWsFTP,
+      payload,
+      {
+        headers: {
+          'x-api-token': 'hHbL6yxW3EZGgWJhFTY3SLd7aZsPuPWdpefjBjHrkhP4x8NF9v',
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log('📥 Respuesta recibida:', response);
+
+    if (response.status !== 200 || !response.data) {
+      throw new Error('Error en la respuesta del servicio');
     }
 
-    setIsUploading(true);
+    const mediaId = response.data.mediaId || response.data.id || `media-${Date.now()}`;
 
-    try {
-      const base64Content = await convertToBase64(selectedFile);
-      
-      const payload = {
-        idEmpresa: empresaTalkMe,
-        idBot: 54,
-        idBotRedes: 149,
-        idUsuario: idUsuarioTalkMe || 48,
-        tipoCarga: 3,
-        nombreArchivo: selectedFile.name,
-        contenidoArchivo: base64Content.split(',')[1],
-      };
+    onUploadSuccess({
+      mediaId: mediaId,
+      url: response.data.url,
+      type: selectedFile.type.includes('image') ? 'image' : 'video'
+    });
 
-      const response = await axios.post(
-        urlWsFTP,
-        payload,
-        {
-          headers: {
-            'x-api-token': 'hHbL6yxW3EZGgWJhFTY3SLd7aZsPuPWdpefjBjHrkhP4x8NF9v',
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+    // Mostrar respuesta exitosa en alerta (opcional)
+    Swal.fire({
+      icon: 'success',
+      title: 'Archivo subido exitosamente',
+      html: `
+        <p><strong>ID:</strong> ${mediaId}</p>
+        <p><strong>URL:</strong> ${response.data.url || 'No proporcionada'}</p>
+      `
+    });
 
-      if (response.status !== 200 || !response.data) {
-        throw new Error('Error en la respuesta del servicio');
-      }
+    // Limpieza
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    setFileInputKey(prev => prev + 1);
+    setShowSuccessModal(true);
 
-      const mediaId = response.data.mediaId || response.data.id || `media-${Date.now()}`;
-      
-      onUploadSuccess({
-        mediaId: mediaId,
-        url: response.data.url,
-        type: selectedFile.type.includes('image') ? 'image' : 'video'
-      });
-
-      // Limpieza parcial - mantener el preview del nuevo archivo subido
-      setSelectedFile(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-      setFileInputKey(prev => prev + 1);
-      setShowSuccessModal(true);
-      
-    } catch (error) {
-    console.error('Error en el proceso de subida:', error);
+  } catch (error) {
+    console.error('❌ Error en el proceso de subida:', error);
 
     Swal.fire({
       icon: 'error',
       title: 'Error al subir archivo',
-      text: error?.response?.data?.message || error.message || 'Por favor, intenta nuevamente.',
+      html: `
+        <p>${error?.response?.data?.message || error.message || 'Por favor, intenta nuevamente.'}</p>
+        <pre style="text-align:left; max-height: 200px; overflow:auto;">${JSON.stringify(error?.response?.data || {}, null, 2)}</pre>
+      `,
       footer: '<a href="#">¿Necesitas ayuda?</a>'
     });
 
