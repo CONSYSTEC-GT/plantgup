@@ -205,7 +205,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         payload,
         {
           headers: {
-            'x-api-token': apiToken,
+            'x-api-token': 'hHbL6yxW3EZGgWJhFTY3SLd7aZsPuPWdpefjBjHrkhP4x8NF9v',
             'Content-Type': 'application/json',
           },
         }
