@@ -11,7 +11,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
-  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, urlWsFTP;
+  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, urlWsFTP, apiToken;
   if (token) {
     try {
       const decoded = jwtDecode(token);
@@ -22,10 +22,13 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       empresaTalkMe = decoded.empresa;
       idBotRedes = decoded.id_bot_redes;
       idBot = decoded.id_bot;
-      urlTemplatesGS = decoded.urlTemplatesGS
+      urlTemplatesGS = decoded.urlTemplatesGS;
+      urlWsFTP = decoded.urlWsFTP;
+      apiToken = decoded.apiToken;
       console.log('idBot:', idBot);
       console.log('idBotRedes:', idBotRedes);
       console.log('urlTemplatesGS', urlTemplatesGS);
+      console.log('apiToken', apiToken);
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
@@ -118,11 +121,11 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       };
 
       const response = await axios.post(
-        'https://certificacion.talkme.pro/WsFTP/api/ftp/upload',
+        urlWsFTP,
         payload,
         {
           headers: {
-            'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
+            'x-api-token': apiToken,
             'Content-Type': 'application/json',
           },
         }
