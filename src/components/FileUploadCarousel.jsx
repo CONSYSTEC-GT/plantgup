@@ -118,9 +118,9 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
 
     const payload = {
       idEmpresa: empresaTalkMe,
-      idBot: 54,
-      idBotRedes: 149,
-      idUsuario: idUsuarioTalkMe || 48,
+      idBot: idBot,
+      idBotRedes: idBotRedes,
+      idUsuario: idUsuarioTalkMe,
       tipoCarga: 3,
       nombreArchivo: selectedFile.name,
       contenidoArchivo: base64Content.split(',')[1],
