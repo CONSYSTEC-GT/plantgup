@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Alert, Box, Button, Checkbox, Chip, Container, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
+import Swal from 'sweetalert2';
+
 import { Smile } from "react-feather"; // Icono para emojis
 import EmojiPicker from "emoji-picker-react"; // Selector de emojis
-import Swal from 'sweetalert2'
 
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
@@ -20,8 +21,9 @@ import AddIcon from '@mui/icons-material/Add';
 
 import FileUploadComponent from './FileUploadComponent';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
-import { createTemplateGupshup } from '../api/gupshupApi';
+import { createTemplateCatalogGupshup } from '../api/gupshupApi';
 import { saveTemplateToTalkMe } from '../api/templatesGSApi';
+
 import { CustomDialog } from '../utils/CustomDialog';
 
 const TemplateForm = () => {
@@ -29,11 +31,11 @@ const TemplateForm = () => {
   //CAMPOS DEL FORMULARIO PARA EL REQUEST
   const [templateName, setTemplateName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [templateType, setTemplateType] = useState("text");
-  const [pantallas, setPantallas] = useState([]);
-  const [displayPantallas, setDisplayPantallas] = useState([]);
+  const [templateType, setTemplateType] = useState("CATALOG");
   const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al contenido de la plantilla. No se permite el uso de letras mayúsculas ni espacios en blanco.");
   const [templateNameError, setTemplateNameError] = useState(false);
+  const [pantallas, setPantallas] = useState([]);
+  const [displayPantallas, setDisplayPantallas] = useState([]);
   const [vertical, setVertical] = useState("");
   const [message, setMessage] = useState("");
   const [header, setHeader] = useState("");
@@ -42,7 +44,6 @@ const TemplateForm = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [example, setExample] = useState("");
   const [exampleMedia, setExampleMedia] = useState("");
-  const [exampleHeader, setExampleHeader] = useState("");
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -133,116 +134,117 @@ const TemplateForm = () => {
 
   const validateFields = () => {
     let isValid = true;
+    let firstErrorFieldRef = null;
 
     console.log("Iniciando validación de campos...");
 
+    // Validación de templateName
     if (!templateName || templateName.trim() === "") {
       console.log("Error: templateName está vacío o no es válido.");
       setTemplateNameError(true);
       setTemplateNameHelperText("Este campo es requerido");
       isValid = false;
-      if (templateNameRef.current) templateNameRef.current.focus();
-      console.log("Estado de isValid después de validar templateName:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("templateName es válido.");
+      if (templateNameRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = templateNameRef;
+      }
     }
 
+    // Validación de templateType
     if (!templateType || templateType.trim() === "") {
       console.log("Error: templateType está vacío o no es válido.");
       setTemplateTypeError(true);
       setTemplateTypeHelperText("Este campo es requerido");
       isValid = false;
-      if (templateTypeRef.current) templateTypeRef.current.focus();
-      console.log("Estado de isValid después de validar templateType:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("templateType es válido.");
+      if (templateTypeRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = templateTypeRef;
+      }
     }
 
+    // Validación de languageCode
     if (!languageCode || languageCode.trim() === "") {
       console.log("Error: languageCode está vacío o no es válido.");
       setLanguageTypeError(true);
       setLanguageTypeHelperText("Este campo es requerido");
       isValid = false;
-      if (languageCodeRef.current) languageCodeRef.current.focus();
-      console.log("Estado de isValid después de validar languageCode:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("languageCode es válido.");
+      if (languageCodeRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = languageCodeRef;
+      }
     }
 
+    // Validación de vertical
     if (!vertical || vertical.trim() === "") {
       console.log("Error: vertical está vacío o no es válido.");
       setetiquetaPlantillaError(true);
       isValid = false;
-      if (verticalRef.current) verticalRef.current.focus();
-      console.log("Estado de isValid después de validar vertical:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("vertical es válido.");
+      if (verticalRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = verticalRef;
+      }
     }
 
+    // Validación de message
     if (!message || message.trim() === "") {
       console.log("Error: message está vacío o no es válido.");
       setcontenidoPlantillaTypeError(true);
       setcontenidoPlantillaTypeHelperText("Este campo es requerido");
       isValid = false;
-      if (messageRef.current) messageRef.current.focus();
-      console.log("Estado de isValid después de validar message:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("message es válido.");
+      if (messageRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = messageRef;
+      }
     }
 
+    // Validación de example
+    if (!example || example.trim() === "") {
+      console.log("Error: example está vacío o no es válido.");
+      setejemploPlantillaError(true);
+      setejemploPlantillaHelperText("Este campo es requerido");
+      isValid = false;
+      if (exampleRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = exampleRef;
+      }
+    }
+
+    // Validación de selectedCategory
     if (!selectedCategory || selectedCategory.trim() === "") {
       console.log("Error: selectedCategory está vacío o no es válido.");
       setcategoriaPlantillaError(true);
       setcategoriaPlantillaHelperText("Este campo es requerido");
       isValid = false;
-      if (selectedCategoryRef.current) selectedCategoryRef.current.focus();
-      console.log("Estado de isValid después de validar selectedCategory:", isValid);
-      // No retornar aquí, continuar con la validación de otros campos
-    } else {
-      console.log("selectedCategory es válido.");
+      if (selectedCategoryRef.current && !firstErrorFieldRef) {
+        firstErrorFieldRef = selectedCategoryRef;
+      }
     }
 
-    // Validar que todas las variables tengan un texto de ejemplo
+    // Validación de variables
     if (variables.length > 0) {
       console.log("Validando variables...");
-      const newErrors = {}; // Objeto para almacenar los errores
+      const newErrors = {};
 
       for (const variable of variables) {
         if (!variableExamples[variable] || variableExamples[variable].trim() === "") {
           console.log(`Error: La variable ${variable} no tiene un ejemplo válido.`);
           isValid = false;
-          newErrors[variable] = "Este campo es requerido"; // Asignar mensaje de error
+          newErrors[variable] = "Este campo es requerido";
 
-          // Colocar el foco en el campo de texto de ejemplo vacío
-          if (exampleRefs.current[variable]) {
-            exampleRefs.current[variable].focus();
+          // Solo establece el primer error de variable si no hay otro error antes
+          if (exampleRefs.current[variable] && !firstErrorFieldRef) {
+            firstErrorFieldRef = { current: exampleRefs.current[variable] };
           }
         } else {
-          console.log(`La variable ${variable} es válida.`);
-          newErrors[variable] = ""; // Sin error
+          newErrors[variable] = "";
         }
       }
 
-      // Actualizar el estado de errores
       setVariableErrors(newErrors);
+    }
 
-      // Si hay errores, no retornar aquí, continuar con el flujo
-      if (!isValid) {
-        console.log("Errores encontrados en las variables. isValid:", isValid);
-      } else {
-        console.log("Todas las variables son válidas.");
-      }
-    } else {
-      console.log("No hay variables para validar.");
+    // Enfocar el primer campo con error encontrado
+    if (!isValid && firstErrorFieldRef && firstErrorFieldRef.current) {
+      console.log("Enfocando el primer campo con error:", firstErrorFieldRef);
+      firstErrorFieldRef.current.focus();
     }
 
     console.log("Validación completada. isValid:", isValid);
-    return isValid; // Retornar el valor final de isValid
+    return isValid;
   };
 
   // Función para determinar el tipo de archivo basado en la extensión
@@ -266,8 +268,7 @@ const TemplateForm = () => {
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
-  //
-  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken;
+  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS;
   if (token) {
     try {
       const decoded = jwtDecode(token);
@@ -278,42 +279,22 @@ const TemplateForm = () => {
       empresaTalkMe = decoded.empresa;
       idBotRedes = decoded.id_bot_redes;
       idBot = decoded.id_bot;
-      urlTemplatesGS = decoded.urlTemplatesGS;
-      apiToken = decoded.apiToken;
-      //urlWsFTP = decoded.urlWsFTP;
-      console.log('idBot:', idBot);
-      console.log('idBotRedes:', idBotRedes);
-      console.log('urlTemplatesGS', urlTemplatesGS);
-      console.log('apiToken', apiToken);
-      //console.log('urlWsFTP', urlWsFTP)
-      //console.log('authCode:', authCode);
-      //console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
-      //console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
-      //console.log('empresaTalkMe:', empresaTalkMe);
+      urlTemplatesGS = decoded.urlTemplatesGS
+      console.log('appId:', appId);
+      console.log('authCode:', authCode);
+      console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
+      console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
+      console.log('empresaTalkMe:', empresaTalkMe);
 
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
-  } //
-
-
-
-  /*
-  let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
-
-  appId = 'f63360ab-87b0-44da-9790-63a0d524f9dd'; // Extrae appId del token
-  authCode = 'sk_2662b472ec0f4eeebd664238d72b61da'; // Extrae authCode del token
-  appName = 'DemosTalkMe56'; // Extrae el nombre de la aplicación
-  idUsuarioTalkMe = 78;  // Cambiado de idUsuario a id_usuario
-  idNombreUsuarioTalkMe = 'javier.colocho';  // Cambiado de nombreUsuario a nombre_usuario
-  empresaTalkMe = 2;
-  */
+  }
 
   const iniciarRequest = async () => {
     try {
-      //
       // Hacer el primer request a GupShup API
-      const result = await createTemplateGupshup(
+      const result = await createTemplateCatalogGupshup(
         appId,
         authCode,
         {
@@ -323,37 +304,15 @@ const TemplateForm = () => {
           templateType,
           vertical,
           message,
-          header,
-          footer,
-          mediaId,
-          buttons,
-          example,
-          exampleHeader
+          example
         },
         validateFields
       );
-      //
 
-      //
       // Verificar si el primer request fue exitoso
       if (result && result.status === "success") {
         // Extraer el valor de `id` del objeto `template`
         const templateId = result.template.id;
-        /*
-       // Simulamos un resultado exitoso con un templateId hardcodeado para pruebas
-      const mockResult = {
-        status: "success",
-        template: {
-          id: "ID_PRUEBA_LOCAL1" // Usa un ID de prueba aquí
-        }
-      };
-
-      // Verificar si el primer request fue exitoso (ahora usando el mock)
-      if (mockResult && mockResult.status === "success") {
-        // Extraer el valor de `id` del objeto `template`
-        const templateId = mockResult.template.id;
-
-        */
 
         // Hacer el segundo request a TalkMe API
         const result2 = await saveTemplateToTalkMe(
@@ -369,9 +328,9 @@ const TemplateForm = () => {
           idNombreUsuarioTalkMe || "Sistema.TalkMe",
           variables,
           variableDescriptions,
-          [], 
-          idBotRedes, 
-          urlTemplatesGS 
+          [],
+          idBotRedes,
+          urlTemplatesGS
         );
 
         // Limpia todos los campos si todo fue bien
@@ -398,6 +357,7 @@ const TemplateForm = () => {
         console.error("Resultado del primer request:", result);
       }
     } catch (error) {
+      console.error("Ocurrió un error:", error);
       Swal.fire({
         title: 'Error',
         text: 'Ocurrió un error inesperado.',
@@ -438,6 +398,7 @@ const TemplateForm = () => {
       title: 'Utilidad',
       description: 'Envía actualizaciones de cuenta, actualizaciones de pedidos, alertas y más para compartir información importante.',
       icon: <NotificationsNoneOutlinedIcon />,
+      disabled: true
     },
     {
       id: 'authentication',
@@ -530,14 +491,12 @@ const TemplateForm = () => {
     setHeader(''); // Resetear el header al cambiar el tipo
   };
 
-  /*
   const handleHeaderTypeChange = (event) => {
     const value = event.target.value;
     if (value.length <= charLimit) {
       setHeader(value);
     }
   };
-  */
 
   //HEADER PLANTILLA
   const [mediaType, setMediaType] = useState(""); // Tipo de media (image, video, etc.)
@@ -574,17 +533,12 @@ const TemplateForm = () => {
     }
   };
 
-  
   const handleHeaderChange = (e) => {
     if (e.target.value.length <= charLimit) {
       setHeader(e.target.value)
-      console.log("Valor del header", header);
-      setExampleHeader(e.target.value);
-      console.log("Valor del exampleHeader", exampleHeader);
     }
-    console.log("Nuevo valor de header:", e.target.value);
+    console.log("Nuevo valor de header:", event.target.value);
   };
-  
 
   //FOOTER PLANTILLA
   const handleFooterChange = (e) => {
@@ -618,7 +572,6 @@ const TemplateForm = () => {
     setButtons(buttons.filter((button) => button.id !== id));
   };
 
-  // Función actualizada con límite de emojis
   const handleBodyMessageChange = (e) => {
     const newText = e.target.value;
     const maxLength = 550;
@@ -635,24 +588,24 @@ const TemplateForm = () => {
           icon: 'warning',
           confirmButtonText: 'Entendido',
           confirmButtonColor: '#00c3ff'
+
         });
-      }
-      return; // No actualizar el texto si excede el límite de emojis
+        setShowEmojiPicker(false);
+        }
+        return; // No actualizar el texto si excede el límite de emojis
     }
 
     if (newText.length > maxLength) {
-      Swal.fire({
-        title: 'Limite de caracteres',
-        text: 'Solo puedes incluir un máximo de 550 caracteres',
-        icon: 'warning',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#00c3ff'
-      });
-      return;
-    }
+          Swal.fire({
+            title: 'Limite de caracteres',
+            text: 'Solo puedes incluir un máximo de 550 caracteres',
+            icon: 'warning',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#00c3ff'
+          });
+          return;
+        }
 
-
-    // Continuar con tu lógica existente si está dentro del límite de caracteres
     if (newText.length <= maxLength) {
       // Guardar el nuevo texto
       setMessage(newText);
@@ -698,18 +651,18 @@ const TemplateForm = () => {
   const handleAddVariable = () => {
     const newVariable = `{{${variables.length + 1}}}`;
 
-    // Verificar si al añadir la variable se superaría el límite de caracteres
-  if (message.length + newVariable.length > 550) {
-    // Puedes mostrar un mensaje de error o simplemente no hacer nada
-    Swal.fire({
-        title: 'Limite de caracteres',
-        text: 'No se pueden agregar más variables porque excede el máximo de 550 caracteres',
-        icon: 'warning',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#00c3ff'
-      });
-    return;
-  }
+       // Verificar si al añadir la variable se superaría el límite de caracteres
+      if (message.length + newVariable.length > 550) {
+        // Puedes mostrar un mensaje de error o simplemente no hacer nada
+        Swal.fire({
+            title: 'Limite de caracteres',
+            text: 'No se pueden agregar más variables porque excede el máximo de 550 caracteres',
+            icon: 'warning',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#00c3ff'
+          });
+        return;
+      }
 
     // Obtener la posición actual del cursor
     const cursorPosition = messageRef.current.selectionStart;
@@ -752,28 +705,6 @@ const handleEmojiClick = (emojiObject) => {
     });
     setShowEmojiPicker(false);
     
-    // Mantener el foco en el campo de texto
-    setTimeout(() => {
-      if (messageRef.current) {
-        messageRef.current.focus();
-        messageRef.current.setSelectionRange(cursor, cursor);
-      }
-    }, 100);
-    
-    return; // No actualizar el texto
-  }
-
-  // Verificar si excedería el límite de 550 caracteres
-  if (newText.length > 550) {
-    Swal.fire({
-      title: 'Límite de caracteres',
-      text: 'Solo puedes incluir un máximo de 550 caracteres',
-      icon: 'warning',
-      confirmButtonText: 'Entendido',
-      confirmButtonColor: '#00c3ff'
-    });
-    setShowEmojiPicker(false);
-
     // Mantener el foco en el campo de texto
     setTimeout(() => {
       if (messageRef.current) {
@@ -882,7 +813,7 @@ const handleEmojiClick = (emojiObject) => {
     messageRef.current?.focus();
   };
 
-  /* Función para previsualizar el mensaje con ejemplos aplicados
+  // Función para previsualizar el mensaje con ejemplos aplicados
   const previewMessage = () => {
     let previewHeader = header;
     let previewFooter = footer;
@@ -893,7 +824,6 @@ const handleEmojiClick = (emojiObject) => {
       previewText = previewText.replaceAll(variable, example);
     });
   }
-    */
 
   const handleUpdateExample = (variable, value) => {
     setVariableExamples(prevExamples => {
@@ -910,8 +840,6 @@ const handleEmojiClick = (emojiObject) => {
       [variable]: newValue
     }));
   };
-  
-  
 
   // Función para generar el ejemplo combinando el mensaje y los valores de las variables
   const generateExample = () => {
@@ -925,7 +853,7 @@ const handleEmojiClick = (emojiObject) => {
   // Función para reemplazar las variables en el mensaje con sus ejemplos
   const replaceVariables = (text, variables) => {
     let result = text;
-    
+    console.log("Texto antes de reemplazar:", text);
 
     Object.keys(variables).forEach(variable => {
       const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // 🔥 Búsqueda exacta de {{variable}}
@@ -933,29 +861,29 @@ const handleEmojiClick = (emojiObject) => {
       result = result.replace(regex, variables[variable]);
     });
 
-    
+    console.log("Texto después de reemplazar:", result);
     return result;
   };
 
   const handlePantallas = (event) => {
     const { target: { value } } = event;
-  
+
     // Procesar los valores seleccionados
     const selectedOptions = typeof value === 'string' ? value.split(',') : value;
-  
+
     // Extraer solo los números
     const numericValues = selectedOptions.map(option => {
       return option.split(' - ')[0].trim();
     });
-    
+
     // Guardar como string con comas para la API
     setPantallas(numericValues.join(','));
-  
+
     // Guardar el texto completo para mostrar (displayPantallas)
     setDisplayPantallas(selectedOptions);
   };
 
-  // Función para contar emojis en un texto
+    // Función para contar emojis en un texto
   const countEmojis = (text) => {
     // Esta regex detecta la mayoría de los emojis, incluyendo emojis con modificadores
     const emojiRegex = /\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu;
@@ -966,12 +894,18 @@ const handleEmojiClick = (emojiObject) => {
 
 
 
-
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
   useEffect(() => {
+    console.log("Mensaje original:", message);
+    console.log("Variables y ejemplos:", variableExamples);
+
     const newExample = replaceVariables(message, variableExamples);
+
+    console.log("Mensaje después de reemplazo:", newExample);
+
     setExample(newExample);
   }, [message, variableExamples]);
+
 
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
@@ -1075,10 +1009,7 @@ const handleEmojiClick = (emojiObject) => {
 
           <FormControl fullWidth>
             <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
-              <MenuItem value="text">TEXTO</MenuItem>
-              <MenuItem value="image">IMAGEN</MenuItem>
-              <MenuItem value="video">VIDEO</MenuItem>
-              <MenuItem value="document">DOCUMENTO</MenuItem>
+              <MenuItem value="CATALOG">CATALOGO</MenuItem>
             </Select>
             <FormHelperText>
               Escoge el tipo de plantilla que se va a crear
@@ -1098,7 +1029,7 @@ const handleEmojiClick = (emojiObject) => {
               labelId="demo-multiple-checkbox-label"
               id="demo-multiple-checkbox"
               multiple
-              value={displayPantallas} 
+              value={displayPantallas}
               onChange={handlePantallas}
               input={<OutlinedInput label="Selecciona una o más opciones" />}
               renderValue={(selected) => selected.join(', ')}
@@ -1112,48 +1043,6 @@ const handleEmojiClick = (emojiObject) => {
             </Select>
           </FormControl>
         </Box>
-
-        {/* Header*/} {templateType === 'text' ? (
-          <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                Encabezado
-              </FormLabel>
-            </FormControl>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
-            </Typography>
-            <TextField
-              fullWidth
-              label="Escribe el encabezado"
-              value={header}
-              onChange={handleHeaderChange}
-              helperText={`${header.length} / ${charLimit} caracteres`}
-              sx={{ mb: 3 }}
-              error={header.length === charLimit}
-            />
-          </Box>
-        ) : (
-          <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                Encabezado
-              </FormLabel>
-            </FormControl>
-
-            {/* Componente para subir archivos */}
-            <FileUploadComponent
-              templateType={templateType}
-              onUploadSuccess={(mediaId, uploadedUrl) => {
-                setMediaId(mediaId); // Guarda el mediaId
-                setUploadedUrl(uploadedUrl); // Guarda la URL
-                //setUploadStatus("¡Archivo subido exitosamente!");
-              }}
-              onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
-              onHeaderChange={(newHeader) => setHeader(newHeader)} // Nueva prop
-            />
-          </Box>
-        )}
 
         {/*Idioma --data-urlencodeo languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
@@ -1382,128 +1271,6 @@ const handleEmojiClick = (emojiObject) => {
           </Box>
         </Box>
 
-        {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              Pie de página
-            </FormLabel>
-          </FormControl>
-          <TextField
-            fullWidth
-            value={footer}
-            onChange={handleFooterChange}
-            helperText={`${footer.length} / ${charLimit} caracteres`}
-            sx={{ mb: 3 }}
-          />
-          <FormHelperText>
-            Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el encabezado.
-          </FormHelperText>
-        </Box>
-
-        {/* Botones --data-urlencode 'buttons*/}<Box sx={{ width: "100%", marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              Botones
-            </FormLabel>
-          </FormControl>
-
-          <FormHelperText>
-            Elija los botones que se agregarán a la plantilla. Puede elegir hasta 10 botones.
-          </FormHelperText>
-
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={addButton}
-            disabled={buttons.length >= maxButtons || Object.keys(validationErrors).length > 0}
-            sx={{ mt: 3, mb: 3 }}
-          >
-            Agregar botón
-          </Button>
-
-          <Stack spacing={2}>
-            {buttons.map((button, index) => (
-              <Box
-                key={button.id}
-                sx={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 2,
-                  border: "1px solid #ccc",
-                  borderRadius: 2,
-                  p: 2,
-                  backgroundColor: "#f9f9f9",
-                }}
-              >
-                {/* Campo de texto para el título del botón */}
-                <TextField
-                  label="Titulo del botón"
-                  value={button.title}
-                  onChange={(e) => updateButton(button.id, "title", e.target.value)}
-                  fullWidth
-                  inputProps={{ maxLength: 25 }}
-                  helperText={`${button.title.length}/25 caracteres` || validationErrors[button.id]}
-                />
-
-                {/* Selector de tipo de botón */}
-                <Select
-                  value={button.type}
-                  onChange={(e) => updateButton(button.id, "type", e.target.value)}
-                  sx={{ minWidth: 150 }}
-                >
-                  <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
-                  <MenuItem value="URL">URL</MenuItem>
-                  <MenuItem value="PHONE_NUMBER">Número de teléfono</MenuItem>
-                </Select>
-
-                {/* Campo adicional según el tipo de botón */}
-                {button.type === "URL" && (
-                  <TextField
-                    label="URL"
-                    value={button.url || ''}
-                    onChange={(e) => updateButtonWithValidation(
-                      button.id,
-                      "url",
-                      e.target.value,
-                      setButtons,
-                      setValidationErrors
-                    )}
-                    fullWidth
-                    error={validationErrors[button.id] !== undefined}
-                    helperText={validationErrors[button.id]}
-                  />
-                )}
-
-                {button.type === "PHONE_NUMBER" && (
-                  <TextField
-                    label="Phone Number"
-                    value={button.phoneNumber}
-                    onChange={(e) => updateButton(button.id, "phoneNumber", e.target.value)}
-                    fullWidth
-                  />
-                )}
-
-                {/* Icono según el tipo de botón */}
-                <Box sx={{ display: "flex", alignItems: "center", pt:2 }}>
-                {button.type === "QUICK_REPLY" && <ArrowForward />}
-                {button.type === "URL" && <Link />}
-                {button.type === "PHONE_NUMBER" && <Phone />}
-                </Box>
-
-                {/* Botón para eliminar */}
-                <IconButton color="error" onClick={() => removeButton(button.id)}
-                  sx={{ alignSelf: "center", pb: 4 }}>
-                  <Delete />
-                </IconButton>
-              </Box>
-            ))}
-          </Stack>
-
-          <Typography variant="body2" color={buttons.length >= maxButtons ? "error" : "text.secondary"} sx={{ mt: 2 }}>
-            {buttons.length} / {maxButtons} botones agregados
-          </Typography>
-        </Box>
-
         {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2, display: 'none' }}>
           <FormControl fullWidth>
             <FormLabel>
@@ -1553,7 +1320,6 @@ const handleEmojiClick = (emojiObject) => {
           buttonVariant="contained"
         />
 
-
       </Box>
       </Grid>
 
@@ -1575,28 +1341,6 @@ const handleEmojiClick = (emojiObject) => {
               Vista previa
             </Typography>
 
-            {/* Vista previa de la imagen */}
-            {imagePreview && (
-              <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
-                {typeof imagePreview === "string" && imagePreview.startsWith("data:image") ? (
-                  <img
-                    src={imagePreview}
-                    alt="Vista previa"
-                    style={{ width: "100%", borderRadius: 2, display: "block" }}
-                  />
-                ) : imagePreview.includes("video") ? (
-                  <video controls width="100%">
-                    <source src={imagePreview} />
-                    Tu navegador no soporta este formato de video.
-                  </video>
-                ) : imagePreview.includes("pdf") ? (
-                  <iframe src={imagePreview} width="100%" height="500px"></iframe>
-                ) : null}
-              </Box>
-            )}
-            {/* Muestra el estado de la subida */}
-            {uploadStatus && <p>{uploadStatus}</p>}
-
             {/* Mensaje de WhatsApp */}
             <Box
               sx={{
@@ -1612,24 +1356,8 @@ const handleEmojiClick = (emojiObject) => {
                 boxShadow: 1,
               }}
             >
-
-              <Typography variant="body1" color="text.primary">
-                {header}
-              </Typography>
-              
-              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line", overflowWrap: "break-word" }}>
+              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {example}
-              </Typography>
-
-              <Typography
-                variant="body1"
-                color="text.secondary" // Cambia a un color gris más claro
-                sx={{
-                  fontFamily: "Helvetica Neue, Arial, sans-serif",
-                  whiteSpace: "pre-line"
-                }}
-              >
-                {footer}
               </Typography>
 
               <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
@@ -1637,40 +1365,30 @@ const handleEmojiClick = (emojiObject) => {
               </Typography>
             </Box>
 
-            {/* Botones */}<Stack spacing={1} sx={{ mt: 0 }}>
-              {buttons.map((button) => (
-                <Box
-                  key={button.id}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    gap: 1,
-                    border: "1px solid #ccc",
-                    borderRadius: "20px",
-                    p: 1,
-                    backgroundColor: "#ffffff",
-                    boxShadow: 1,
-                    cursor: "pointer",
-                    "&:hover": {
-                      backgroundColor: "#f5f5f5",
-                    },
-                  }}
-                >
-                  {button.type === "QUICK_REPLY" && (
-                    <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
-                  )}
-                  {button.type === "URL" && (
-                    <Link sx={{ fontSize: "16px", color: "#075e54" }} />
-                  )}
-                  {button.type === "PHONE_NUMBER" && (
-                    <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
-                  )}
-                  <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
-                    {button.title}
-                  </Typography>
-                </Box>
-              ))}
+            {/* Botones */}{/* Botón de Quick Reply "CATÁLOGO" */}
+            <Stack spacing={1} sx={{ mt: 0 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  gap: 1,
+                  border: "1px solid #ccc",
+                  borderRadius: "20px",
+                  p: 1,
+                  backgroundColor: "#ffffff",
+                  boxShadow: 1,
+                  cursor: "pointer",
+                  "&:hover": {
+                    backgroundColor: "#f5f5f5",
+                  },
+                }}
+              >
+                <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
+                <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
+                  CATÁLOGO
+                </Typography>
+              </Box>
             </Stack>
           </Box>
         </Box>

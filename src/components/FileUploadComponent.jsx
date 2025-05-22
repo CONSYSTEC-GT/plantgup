@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import Swal from 'sweetalert2';
 import {
   Box,
   Typography,
@@ -14,6 +15,7 @@ import {
   Snackbar,
   Alert
 } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
 
 const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImagePreview, onHeaderChange }) => {
 
@@ -21,7 +23,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
-  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
+  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, urlWsFTP, apiToken;
   if (token) {
     try {
       const decoded = jwtDecode(token);
@@ -30,6 +32,15 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       idUsuarioTalkMe = decoded.id_usuario;
       idNombreUsuarioTalkMe = decoded.nombre_usuario;
       empresaTalkMe = decoded.empresa;
+      idBotRedes = decoded.id_bot_redes;
+      idBot = decoded.id_bot;
+      urlTemplatesGS = decoded.urlTemplatesGS;
+      urlWsFTP = decoded.urlWsFTP;
+      apiToken = decoded.apiToken;
+      console.log('idBot:', idBot);
+      console.log('idBotRedes:', idBotRedes);
+      console.log('urlTemplatesGS', urlTemplatesGS);
+      console.log('apiToken', apiToken);
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
@@ -51,16 +62,20 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
   const [uploadStatus, setUploadStatus] = useState('');
   const [imagePreview, setImagePreview] = useState(null); // Estado para la vista previa de la imagen
   const [uploadedUrl, setUploadedUrl] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
 
   // Manejadores de eventos
+
   const handleHeaderChange = (e) => {
     const newHeader = e.target.value;
     setHeader(newHeader);
-    
+
     // Añade esta línea para notificar al componente padre
     if (onHeaderChange) onHeaderChange(newHeader);
   };
+
 
   const handleMediaTypeChange = (event) => {
     console.log('Tipo de medio cambiado a:', event.target.value);
@@ -115,11 +130,14 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
     try {
       console.log('Iniciando proceso de subida de archivo...');
+      setIsLoading(true);
 
       // Subir archivo a Gupshup
+      /*
       const gupshupFormData = new FormData();
       gupshupFormData.append('file', selectedFile);
       gupshupFormData.append('file_type', selectedFile.type);
+      console.log('filetype', setSelectedFile.type);
 
       const gupshupUrl = `https://partner.gupshup.io/partner/app/${appId}/upload/media`;
 
@@ -162,6 +180,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
       const mediaId = gupshupData.handleId.message;
       console.log('Media ID obtenido de Gupshup:', mediaId);
+      */
 
       // Subir archivo al servicio propio
       console.log('Convirtiendo archivo a Base64...');
@@ -170,8 +189,8 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
       const payload = {
         idEmpresa: empresaTalkMe,
-        idBot: 54,
-        idBotRedes: 149,
+        idBot: idBot,
+        idBotRedes: idBotRedes,
         idUsuario: idUsuarioTalkMe,
         tipoCarga: 3,
         nombreArchivo: selectedFile.name,
@@ -182,18 +201,18 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       setUploadStatus('Subiendo archivo al servicio propio...');
 
       const ownServiceResponse = await axios.post(
-        'https://certificacion.talkme.pro/WsFTP/api/ftp/upload',
+        urlWsFTP,
         payload,
         {
           headers: {
-            'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
+            'x-api-token': 'hHbL6yxW3EZGgWJhFTY3SLd7aZsPuPWdpefjBjHrkhP4x8NF9v',
             'Content-Type': 'application/json',
           },
         }
       );
 
       console.log('Request completo al servicio propio:', {
-        url: 'https://certificacion.talkme.pro/WsFTP/api/ftp/upload',
+        url: urlWsFTP,
         method: 'POST',
         headers: {
           'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
@@ -211,6 +230,15 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
           statusText: ownServiceResponse.statusText,
           errorDetails: ownServiceResponse.data,
         });
+
+        // Mostrar SweetAlert de error
+        await Swal.fire({
+          icon: 'error',
+          title: 'Error en la subida',
+          text: 'Hubo un problema con la respuesta del servidor',
+          footer: `Código de estado: ${ownServiceResponse.status}`,
+        });
+
         throw new Error('Error en la respuesta del servicio propio');
       }
 
@@ -221,10 +249,19 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       if (onUploadSuccess) {
         console.log('Notificando al componente padre con el mediaId y la URL...');
         onUploadSuccess(mediaId, ownServiceData.url); // Pasar ambos valores
+        setIsLoading(false);
       }
 
       console.log('Proceso de subida completado exitosamente.');
-      //setUploadStatus('¡Archivo subido exitosamente!');
+
+      // Mostrar SweetAlert de éxito
+      await Swal.fire({
+        icon: 'success',
+        title: '¡Archivo subido!',
+        text: 'El archivo se ha subido correctamente',
+        timer: 3000,
+        showConfirmButton: false
+      });
     } catch (error) {
       console.error('Error en el proceso de subida:', error);
 
@@ -239,18 +276,30 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       }
 
       setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
+      setIsLoading(false);
       //setUploadStatus('Error al subir el archivo');
+      // Mostrar SweetAlert de error detallado
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error en la subida',
+        html: `
+      <p>No se pudo subir el archivo.</p>
+      <p><strong>Razón:</strong> ${error.message || 'Error desconocido'}</p>
+      ${error.response?.data ? `<p><small>${JSON.stringify(error.response.data)}</small></p>` : ''}
+    `,
+        confirmButtonText: 'Entendido'
+      });
+
     }
   };
 
   const getAcceptedFileTypes = () => {
     const types = {
-      image: '.jpeg, .png',
-      video: '.mp4, .3gp',
-      document: '.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt'
+      image: '.jpeg, .jpg, .png',  // Formatos de imagen
+      video: '.mp4, .3gp',         // Formatos de video
+      document: '.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt'  // Formatos de documentos
     };
-    //console.log('Tipos de archivo aceptados:', types[mediaType] || '');
-    return types[mediaType] || '';
+    return types[templateType] || '';  // Usamos templateType en lugar de mediaType
   };
 
   const convertToBase64 = (file) => {
@@ -278,9 +327,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       ) : (
         <>
           <FormControl fullWidth>
-            <FormLabel>
-              Archivos
-            </FormLabel>
+            <FormLabel>Archivos</FormLabel>
           </FormControl>
           <Typography variant="body2" color="text.secondary" gutterBottom>
             Seleccione el tipo de media y cargue un archivo.
@@ -295,25 +342,60 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
                 type="file"
                 onChange={handleFileChange}
               />
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {/* Botón Agregar/Cambiar imagen */}
                 <label htmlFor="file-upload">
-                  <Button variant="contained" component="span">
-                    Seleccionar Archivo
+                  <Button
+                    variant="contained"
+                    component="span"
+                    sx={{ height: '100%' }}
+                  >
+                    {selectedFile ? 'Cambiar imagen' : 'Agregar imagen'}
                   </Button>
                 </label>
-                <Button
-                  variant="contained"
-                  onClick={handleUpload}
-                  disabled={!selectedFile}
-                >
-                  Subir Archivo
-                </Button>
+                {/* Área de dropzone */}
+                <label htmlFor="file-upload" style={{
+                  flex: 1,
+                  display: 'block',
+                  padding: '10px 15px',
+                  border: '1px dashed #ccc',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    borderColor: '#666'
+                  }
+                }}>
+                  {selectedFile ? (
+                    <Typography variant="body1">{selectedFile.name}</Typography>
+                  ) : (
+                    <Typography variant="body1">Haz clic o arrastra un archivo aquí</Typography>
+                  )}
+                </label>
+
+
               </Box>
 
-              {selectedFile && (
-                <Typography variant="body2" sx={{ mt: 2 }}>
-                  Archivo seleccionado: {selectedFile.name}
-                </Typography>
+              <Button
+                loading={isLoading}
+                loadingPosition="end"
+                startIcon={<SaveIcon />}
+                variant="contained"
+                onClick={handleUpload}
+                disabled={!selectedFile}
+                sx={{ mt: 2 }}
+              >
+                Subir Archivo
+              </Button>
+
+              {/* Barra de progreso */}
+              {uploadProgress > 0 && uploadProgress < 100 && (
+                <Box sx={{ width: '100%', mt: 2 }}>
+                  <LinearProgress variant="determinate" value={uploadProgress} />
+                  <Typography variant="caption" display="block" textAlign="center">
+                    {uploadProgress}% completado
+                  </Typography>
+                </Box>
               )}
 
               {imagePreview && mediaType === 'image' && (
@@ -334,23 +416,9 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         </>
       )}
 
-      <Snackbar
-        open={!!error}
-        autoHideDuration={6000}
-        onClose={() => setError('')}
-      >
-        <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
-          {error}
-        </Alert>
-      </Snackbar>
+      {/* Mensajes de estado */}
 
-      <div className="space-y-4">
-        {uploadStatus && (
-          <div className={`mt-2 p-2 rounded ${uploadStatus.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-            {uploadStatus}
-          </div>
-        )}
-      </div>
+
     </Box>
   );
 };

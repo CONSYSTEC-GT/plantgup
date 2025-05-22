@@ -5,7 +5,7 @@ import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useTheme } from '@mui/material/styles';
 
-//iconos
+// Iconos
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import CreateIcon from '@mui/icons-material/Create';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -13,6 +13,11 @@ import CheckIcon from '@mui/icons-material/Check';
 import SendIcon from '@mui/icons-material/Send';
 import SmsFailedIcon from '@mui/icons-material/SmsFailed';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import EmailIcon from '@mui/icons-material/Email';
+import ForumIcon from '@mui/icons-material/Forum';
+import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
+import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 
 const NAVIGATION = [
   {
@@ -23,7 +28,24 @@ const NAVIGATION = [
   {
     segment: 'CreateTemplatePage',
     title: 'Crear Plantillas',
-    icon: <CreateIcon />,
+    icon: <WhatsAppIcon />,
+    children: [
+      {
+        segment: 'CreateTemplatePage',
+        title: 'Texto, imagen y documento',
+        icon: <CreateIcon />,
+      },
+      {
+        segment: 'CreateTemplateCatalog',
+        title: 'Cátalogo',
+        icon: <AutoAwesomeMosaicIcon />,
+      },
+      {
+        segment: 'CreateTemplateCarousel',
+        title: 'Carrusel',
+        icon: <ViewCarouselIcon />,
+      }
+    ]
   },
   {
     kind: 'divider',
@@ -89,28 +111,43 @@ export default function Sidebar(props) {
     return location.pathname.includes(segment);
   };
 
-  return (
-    <AppProvider
-      navigation={NAVIGATION.map((item) => {
-        if (item.kind === 'divider' || item.kind === 'header') {
-          return item;
-        }
+  // Función para aplicar el estilo de color a los iconos
+  const applyIconStyles = (item) => {
+    if (item.kind === 'divider' || item.kind === 'header') {
+      return item;
+    }
 
-        const clonedIcon = React.cloneElement(item.icon, {
-          style: {
-            color: isSelected(item.segment) ? theme.palette.primary.main : theme.palette.text.primary,
-          },
-        });
+    const styledIcon = React.cloneElement(item.icon, {
+      style: {
+        color: isSelected(item.segment) ? theme.palette.primary.main : theme.palette.text.primary,
+      },
+    });
 
+    const result = {
+      ...item,
+      icon: styledIcon,
+    };
+
+    // Si el elemento tiene hijos, aplicamos el estilo también a ellos
+    if (item.children && Array.isArray(item.children)) {
+      result.children = item.children.map(child => {
         return {
-          ...item,
-          icon: React.cloneElement(item.icon, {
+          ...child,
+          icon: React.cloneElement(child.icon, {
             style: {
-              color: isSelected(item.segment) ? theme.palette.primary.main : theme.palette.text.primary,
+              color: isSelected(child.segment) ? theme.palette.primary.main : theme.palette.text.primary,
             },
           }),
         };
-      })}
+      });
+    }
+
+    return result;
+  };
+
+  return (
+    <AppProvider
+      navigation={NAVIGATION.map(applyIconStyles)}
       theme={theme}
       branding={{
         title: 'TalkMe',

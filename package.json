@@ -21,15 +21,20 @@
     "aws-amplify": "^6.13.1",
     "axios": "^1.8.1",
     "emoji-picker-react": "^4.12.0",
+    "framer-motion": "^12.6.2",
     "jquery": "^3.7.1",
     "jwt-decode": "^4.0.0",
     "quill": "^2.0.3",
     "react": "^18.3.1",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.3.1",
     "react-feather": "^2.0.10",
     "react-mui-sidebar": "^1.5.9",
     "react-quill": "^2.0.0",
-    "react-router-dom": "^7.1.1"
+    "react-router-dom": "^7.1.1",
+    "sweetalert2": "^11.21.0",
+    "swiper": "^11.2.6",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.14.1",

@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
 import { Alert, Box, Button, Checkbox, Chip, Container, Divider, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
+
 import { Smile } from "react-feather"; // Icono para emojis
 import EmojiPicker from "emoji-picker-react"; // Selector de emojis
-import Swal from 'sweetalert2'
 
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
@@ -20,19 +21,55 @@ import AddIcon from '@mui/icons-material/Add';
 
 import FileUploadComponent from './FileUploadComponent';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
-import { createTemplateGupshup } from '../api/gupshupApi';
+import { createTemplateCatalogGupshup } from '../api/gupshupApi';
 import { saveTemplateToTalkMe } from '../api/templatesGSApi';
+import { editTemplateCatalogGupshup } from '../api/gupshupApi';
+import { editTemplateToTalkMe } from '../api/templatesGSApi';
+
 import { CustomDialog } from '../utils/CustomDialog';
 
 const TemplateForm = () => {
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const templateData = location.state?.template || {}; // Datos del template
+
+  // Cargar los datos en el formulario al montar el componente
+  useEffect(() => {
+    if (templateData) {
+      setTemplateName(templateData.elementName || "");
+      setSelectedCategory(templateData.category || "");
+      setTemplateType(templateData.templateType || "");
+      setLanguageCode(templateData.languageCode || "");
+      setVertical(templateData.vertical || "");
+      setIdTemplate(templateData.id);
+
+      // Parsear containerMeta si existe
+      if (templateData.containerMeta) {
+        try {
+          const meta = JSON.parse(templateData.containerMeta);
+          const messageText = meta.data || "";
+
+          setMessage(messageText);
+          setExample(meta.sampleText || "");
+
+          // Extrae variables del mensaje y actualiza el estado
+          const extractedVariables = extractVariables(messageText);
+          setVariables(extractedVariables); // <- Aquí las guardas
+        } catch (error) {
+          console.error("Error al parsear containerMeta:", error);
+        }
+      }
+    }
+  }, [templateData]);
+
   //CAMPOS DEL FORMULARIO PARA EL REQUEST
   const [templateName, setTemplateName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [templateType, setTemplateType] = useState("text");
+  const [templateType, setTemplateType] = useState("CATALOG");
   const [pantallas, setPantallas] = useState([]);
   const [displayPantallas, setDisplayPantallas] = useState([]);
-  const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al contenido de la plantilla. No se permite el uso de letras mayúsculas ni espacios en blanco.");
+  const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al texto de su plantilla.");
   const [templateNameError, setTemplateNameError] = useState(false);
   const [vertical, setVertical] = useState("");
   const [message, setMessage] = useState("");
@@ -42,7 +79,6 @@ const TemplateForm = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [example, setExample] = useState("");
   const [exampleMedia, setExampleMedia] = useState("");
-  const [exampleHeader, setExampleHeader] = useState("");
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -71,7 +107,6 @@ const TemplateForm = () => {
   //const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [variables, setVariables] = useState([]);
-  const [emojiCount, setEmojiCount] = useState(0);
 
   // Estado para almacenar ejemplos de variables
   const [variableExamples, setVariableExamples] = useState({});
@@ -98,6 +133,8 @@ const TemplateForm = () => {
   const exampleRef = useRef(null);
   const selectedCategoryRef = useRef(null);
   const exampleRefs = useRef({});
+
+  const [idTemplate, setIdTemplate] = useState("");
 
   const resetForm = () => {
     setTemplateName("");
@@ -195,6 +232,18 @@ const TemplateForm = () => {
       console.log("message es válido.");
     }
 
+    if (!example || example.trim() === "") {
+      console.log("Error: example está vacío o no es válido.");
+      setejemploPlantillaError(true);
+      setejemploPlantillaHelperText("Este campo es requerido");
+      isValid = false;
+      if (exampleRef.current) exampleRef.current.focus();
+      console.log("Estado de isValid después de validar example:", isValid);
+      // No retornar aquí, continuar con la validación de otros campos
+    } else {
+      console.log("example es válido.");
+    }
+
     if (!selectedCategory || selectedCategory.trim() === "") {
       console.log("Error: selectedCategory está vacío o no es válido.");
       setcategoriaPlantillaError(true);
@@ -266,8 +315,7 @@ const TemplateForm = () => {
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
-  //
-  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken;
+  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
   if (token) {
     try {
       const decoded = jwtDecode(token);
@@ -276,44 +324,21 @@ const TemplateForm = () => {
       idUsuarioTalkMe = decoded.id_usuario;
       idNombreUsuarioTalkMe = decoded.nombre_usuario;
       empresaTalkMe = decoded.empresa;
-      idBotRedes = decoded.id_bot_redes;
-      idBot = decoded.id_bot;
-      urlTemplatesGS = decoded.urlTemplatesGS;
-      apiToken = decoded.apiToken;
-      //urlWsFTP = decoded.urlWsFTP;
-      console.log('idBot:', idBot);
-      console.log('idBotRedes:', idBotRedes);
-      console.log('urlTemplatesGS', urlTemplatesGS);
-      console.log('apiToken', apiToken);
-      //console.log('urlWsFTP', urlWsFTP)
-      //console.log('authCode:', authCode);
-      //console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
-      //console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
-      //console.log('empresaTalkMe:', empresaTalkMe);
+      console.log('appId:', appId);
+      console.log('authCode:', authCode);
+      console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
+      console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
+      console.log('empresaTalkMe:', empresaTalkMe);
 
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
-  } //
-
-
-
-  /*
-  let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
-
-  appId = 'f63360ab-87b0-44da-9790-63a0d524f9dd'; // Extrae appId del token
-  authCode = 'sk_2662b472ec0f4eeebd664238d72b61da'; // Extrae authCode del token
-  appName = 'DemosTalkMe56'; // Extrae el nombre de la aplicación
-  idUsuarioTalkMe = 78;  // Cambiado de idUsuario a id_usuario
-  idNombreUsuarioTalkMe = 'javier.colocho';  // Cambiado de nombreUsuario a nombre_usuario
-  empresaTalkMe = 2;
-  */
+  }
 
   const iniciarRequest = async () => {
     try {
-      //
       // Hacer el primer request a GupShup API
-      const result = await createTemplateGupshup(
+      const result = await editTemplateCatalogGupshup(
         appId,
         authCode,
         {
@@ -323,88 +348,39 @@ const TemplateForm = () => {
           templateType,
           vertical,
           message,
-          header,
-          footer,
-          mediaId,
-          buttons,
-          example,
-          exampleHeader
+          example
         },
+        idTemplate,
         validateFields
-      );
-      //
 
-      //
+      );
+
       // Verificar si el primer request fue exitoso
       if (result && result.status === "success") {
         // Extraer el valor de `id` del objeto `template`
         const templateId = result.template.id;
-        /*
-       // Simulamos un resultado exitoso con un templateId hardcodeado para pruebas
-      const mockResult = {
-        status: "success",
-        template: {
-          id: "ID_PRUEBA_LOCAL1" // Usa un ID de prueba aquí
-        }
-      };
-
-      // Verificar si el primer request fue exitoso (ahora usando el mock)
-      if (mockResult && mockResult.status === "success") {
-        // Extraer el valor de `id` del objeto `template`
-        const templateId = mockResult.template.id;
-
-        */
 
         // Hacer el segundo request a TalkMe API
-        const result2 = await saveTemplateToTalkMe(
+        const result2 = await editTemplateToTalkMe(
           templateId,
           {
             templateName,
-            templateType,
-            pantallas,
             selectedCategory,
             message,
             uploadedUrl
           },
           idNombreUsuarioTalkMe || "Sistema.TalkMe",
           variables,
-          variableDescriptions,
-          [], 
-          idBotRedes, 
-          urlTemplatesGS 
+          variableDescriptions
         );
-
-        // Limpia todos los campos si todo fue bien
-        resetForm();
-        Swal.fire({
-          title: '¡Éxito!',
-          text: 'La plantilla fue creada correctamente.',
-          icon: 'success',
-          confirmButtonText: 'Aceptar',
-          confirmButtonColor: '#00c3ff'
-        });
 
         // El tercer request se maneja dentro de saveTemplateToTalkMe
       } else {
-        setErrorMessageGupshup(result?.message || "La plantilla no pudo ser creada.");
-        Swal.fire({
-          title: 'Error',
-          text: result?.message || 'La plantilla no pudo ser creada.',
-          icon: 'error',
-          confirmButtonText: 'Cerrar',
-          confirmButtonColor: '#00c3ff'
-        });
         console.error("El primer request no fue exitoso o no tiene el formato esperado.");
         console.error("Resultado del primer request:", result);
       }
     } catch (error) {
-      Swal.fire({
-        title: 'Error',
-        text: 'Ocurrió un error inesperado.',
-        icon: 'error',
-        confirmButtonText: 'Cerrar',
-        confirmButtonColor: '#00c3ff'
-      });
+      console.error("Ocurrió un error:", error);
     }
   };
 
@@ -453,22 +429,21 @@ const TemplateForm = () => {
 
   //NOMBRE PLANTILLA
   const handleTemplateNameChange = (event) => {
-  const inputValue = event.target.value;
-  const hasUpperCase = /[A-Z]/.test(inputValue);
-  
-  const newValue = inputValue.toLowerCase().replace(/\s+/g, '_');
-  setTemplateName(newValue);
+    // Reemplazar espacios con guiones bajos
+    const newValue = event.target.value.replace(/\s+/g, '_');
 
-  if (hasUpperCase) {
-    setTemplateNameHelperText("Las mayúsculas fueron convertidas a minúsculas");
-  } else if (newValue.trim() === "") {
-    setTemplateNameError(true);
-    setTemplateNameHelperText("Este campo es requerido");
-  } else {
-    setTemplateNameError(false);
-    setTemplateNameHelperText("");
-  }
-};
+    // Actualizar el estado con el nuevo valor
+    setTemplateName(newValue);
+
+    // Validar si el campo está vacío
+    if (newValue.trim() === "") {
+      setTemplateNameError(true);
+      setTemplateNameHelperText("Este campo es requerido");
+    } else {
+      setTemplateNameError(false);
+      setTemplateNameHelperText("");
+    }
+  };
 
   //IDIOMA PLANTILLA
   const handleLanguageCodeChange = (event) => {
@@ -530,14 +505,12 @@ const TemplateForm = () => {
     setHeader(''); // Resetear el header al cambiar el tipo
   };
 
-  /*
   const handleHeaderTypeChange = (event) => {
     const value = event.target.value;
     if (value.length <= charLimit) {
       setHeader(value);
     }
   };
-  */
 
   //HEADER PLANTILLA
   const [mediaType, setMediaType] = useState(""); // Tipo de media (image, video, etc.)
@@ -574,17 +547,12 @@ const TemplateForm = () => {
     }
   };
 
-  
   const handleHeaderChange = (e) => {
     if (e.target.value.length <= charLimit) {
       setHeader(e.target.value)
-      console.log("Valor del header", header);
-      setExampleHeader(e.target.value);
-      console.log("Valor del exampleHeader", exampleHeader);
     }
-    console.log("Nuevo valor de header:", e.target.value);
+    console.log("Nuevo valor de header:", event.target.value);
   };
-  
 
   //FOOTER PLANTILLA
   const handleFooterChange = (e) => {
@@ -618,187 +586,23 @@ const TemplateForm = () => {
     setButtons(buttons.filter((button) => button.id !== id));
   };
 
-  // Función actualizada con límite de emojis
-  const handleBodyMessageChange = (e) => {
-    const newText = e.target.value;
-    const maxLength = 550;
-    const emojiCount = countEmojis(newText);
-    const maxEmojis = 10;
-
-    // Verificar si se excede el límite de emojis
-    if (emojiCount > maxEmojis) {
-      // Opcional: Mostrar una alerta solo cuando se supera el límite por primera vez
-      if (countEmojis(message) <= maxEmojis) {
-        Swal.fire({
-          title: 'Límite de emojis',
-          text: 'Solo puedes incluir un máximo de 10 emojis',
-          icon: 'warning',
-          confirmButtonText: 'Entendido',
-          confirmButtonColor: '#00c3ff'
-        });
-      }
-      return; // No actualizar el texto si excede el límite de emojis
-    }
-
-    if (newText.length > maxLength) {
-      Swal.fire({
-        title: 'Limite de caracteres',
-        text: 'Solo puedes incluir un máximo de 550 caracteres',
-        icon: 'warning',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#00c3ff'
-      });
-      return;
-    }
-
-
-    // Continuar con tu lógica existente si está dentro del límite de caracteres
-    if (newText.length <= maxLength) {
-      // Guardar el nuevo texto
-      setMessage(newText);
-
-      // Actualizar el contador de emojis (necesitas agregar este estado)
-      setEmojiCount(emojiCount);
-
-      // Verificar qué variables se han eliminado del texto
-      const deletedVariables = [];
-      variables.forEach(variable => {
-        if (!newText.includes(variable)) {
-          deletedVariables.push(variable);
-        }
-      });
-
-      // Si se eliminaron variables, actualiza el estado
-      if (deletedVariables.length > 0) {
-        // Filtrar las variables eliminadas
-        const remainingVariables = variables.filter(v => !deletedVariables.includes(v));
-
-        // Actualizar el estado de las variables
-        setVariables(remainingVariables);
-
-        // Actualizar las descripciones y ejemplos
-        const newDescriptions = { ...variableDescriptions };
-        const newExamples = { ...variableExamples };
-        const newErrors = { ...variableErrors };
-
-        deletedVariables.forEach(v => {
-          delete newDescriptions[v];
-          delete newExamples[v];
-          delete newErrors[v];
-        });
-
-        setVariableDescriptions(newDescriptions);
-        setVariableExamples(newExamples);
-        setVariableErrors(newErrors);
-      }
-    }
-  };
-
   // VARIABLES DEL BODY MESSAGE
   const handleAddVariable = () => {
     const newVariable = `{{${variables.length + 1}}}`;
-
-    // Verificar si al añadir la variable se superaría el límite de caracteres
-  if (message.length + newVariable.length > 550) {
-    // Puedes mostrar un mensaje de error o simplemente no hacer nada
-    Swal.fire({
-        title: 'Limite de caracteres',
-        text: 'No se pueden agregar más variables porque excede el máximo de 550 caracteres',
-        icon: 'warning',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#00c3ff'
-      });
-    return;
-  }
-
-    // Obtener la posición actual del cursor
-    const cursorPosition = messageRef.current.selectionStart;
-
-    // Dividir el texto en dos partes: antes y después del cursor
-    const textBeforeCursor = message.substring(0, cursorPosition);
-    const textAfterCursor = message.substring(cursorPosition);
-
-    // Insertar la variable en la posición del cursor
-    const newMessage = `${textBeforeCursor}${newVariable}${textAfterCursor}`;
-    setMessage(newMessage);
-
-    // Actualizar el array de variables
+    setMessage((prev) => `${prev} ${newVariable}`);
     setVariables([...variables, newVariable]);
-
-    // OPCIONAL: Colocar el cursor después de la variable insertada
-    setTimeout(() => {
-      const newPosition = cursorPosition + newVariable.length;
-      messageRef.current.focus();
-      messageRef.current.setSelectionRange(newPosition, newPosition);
-    }, 0);
   };
 
-const handleEmojiClick = (emojiObject) => {
-  const cursor = messageRef.current.selectionStart;
-  const newText = message.slice(0, cursor) + emojiObject.emoji + message.slice(cursor);
-  
-  // Contar los emojis en el nuevo texto
-  const newEmojiCount = countEmojis(newText);
-  
-  // Verificar si excedería el límite de 10 emojis
-  if (newEmojiCount > 10) {
-    // Mostrar alerta
-    Swal.fire({
-      title: 'Límite de emojis',
-      text: 'Solo puedes incluir un máximo de 10 emojis',
-      icon: 'warning',
-      confirmButtonText: 'Entendido',
-      confirmButtonColor: '#00c3ff'
-    });
+  // Función para extraer variables ({{1}}, {{2}}, etc.)
+  const extractVariables = (text) => {
+    const regex = /\{\{\d+\}\}/g;
+    return text.match(regex) || []; // Retorna un array (ej: ["{{1}}", "{{2}}"])
+  };
+
+  const handleEmojiClick = (emojiObject) => {
+    setMessage((prev) => `${prev} ${emojiObject.emoji}`);
     setShowEmojiPicker(false);
-    
-    // Mantener el foco en el campo de texto
-    setTimeout(() => {
-      if (messageRef.current) {
-        messageRef.current.focus();
-        messageRef.current.setSelectionRange(cursor, cursor);
-      }
-    }, 100);
-    
-    return; // No actualizar el texto
-  }
-
-  // Verificar si excedería el límite de 550 caracteres
-  if (newText.length > 550) {
-    Swal.fire({
-      title: 'Límite de caracteres',
-      text: 'Solo puedes incluir un máximo de 550 caracteres',
-      icon: 'warning',
-      confirmButtonText: 'Entendido',
-      confirmButtonColor: '#00c3ff'
-    });
-    setShowEmojiPicker(false);
-
-    // Mantener el foco en el campo de texto
-    setTimeout(() => {
-      if (messageRef.current) {
-        messageRef.current.focus();
-        messageRef.current.setSelectionRange(cursor, cursor);
-      }
-    }, 100);
-    
-    return; // No actualizar el texto
-  }
-  
-  // Si está dentro del límite, actualizar el mensaje
-  setMessage(newText);
-  // Actualizar el contador de emojis
-  setEmojiCount(newEmojiCount);
-  setShowEmojiPicker(false);
-
-  // Mantener el foco y posicionar el cursor después del emoji insertado
-  setTimeout(() => {
-    if (messageRef.current) {
-      messageRef.current.focus();
-      messageRef.current.setSelectionRange(cursor + emojiObject.emoji.length, cursor + emojiObject.emoji.length);
-    }
-  }, 100);
-};
+  };
 
   // Nueva función para borrar una variable específica
   const deleteVariable = (variableToDelete) => {
@@ -808,58 +612,7 @@ const handleEmojiClick = (emojiObject) => {
 
     // Eliminar la variable de la lista de variables
     const updatedVariables = variables.filter(v => v !== variableToDelete);
-
-    // Renumerar las variables restantes para mantener el orden secuencial
-    const renumberedVariables = [];
-    const variableMapping = {}; // Mapeo de variable antigua a nueva
-
-    updatedVariables.forEach((v, index) => {
-      const newVar = `{{${index + 1}}}`;
-      renumberedVariables.push(newVar);
-      variableMapping[v] = newVar;
-    });
-
-    // Actualizar el texto con las variables renumeradas
-    let updatedMessage = newMessage;
-    Object.entries(variableMapping).forEach(([oldVar, newVar]) => {
-      updatedMessage = updatedMessage.replaceAll(oldVar, newVar);
-    });
-
-    // Crear nuevos objetos para descripciones y ejemplos de variables
-    const newVariableDescriptions = {};
-    const newVariableExamples = {};
-    const newVariableErrors = { ...variableErrors };
-
-    // Eliminar la variable eliminada de los errores
-    delete newVariableErrors[variableToDelete];
-
-    // Copiar las descripciones y ejemplos con las nuevas claves
-    Object.entries(variableMapping).forEach(([oldVar, newVar]) => {
-      if (variableDescriptions[oldVar]) {
-        newVariableDescriptions[newVar] = variableDescriptions[oldVar];
-      }
-      if (variableExamples[oldVar]) {
-        newVariableExamples[newVar] = variableExamples[oldVar];
-      }
-      if (variableErrors[oldVar]) {
-        newVariableErrors[newVar] = variableErrors[oldVar];
-        delete newVariableErrors[oldVar];
-      }
-    });
-
-    // Actualizar todos los estados
-    setMessage(updatedMessage);
-    setVariables(renumberedVariables);
-    setVariableDescriptions(newVariableDescriptions);
-    setVariableExamples(newVariableExamples);
-    setVariableErrors(newVariableErrors);
-
-    // Actualizar las referencias
-    const newExampleRefs = {};
-    renumberedVariables.forEach(v => {
-      newExampleRefs[v] = exampleRefs.current[variableMapping[v]] || null;
-    });
-    exampleRefs.current = newExampleRefs;
+    setVariables(updatedVariables);
 
     messageRef.current?.focus();
   };
@@ -872,17 +625,10 @@ const handleEmojiClick = (emojiObject) => {
     });
     setMessage(newMessage);
     setVariables([]);
-
-    // Limpiar todos los estados relacionados con variables
-    setVariableDescriptions({});
-    setVariableExamples({});
-    setVariableErrors({});
-    exampleRefs.current = {};
-
     messageRef.current?.focus();
   };
 
-  /* Función para previsualizar el mensaje con ejemplos aplicados
+  // Función para previsualizar el mensaje con ejemplos aplicados
   const previewMessage = () => {
     let previewHeader = header;
     let previewFooter = footer;
@@ -893,7 +639,6 @@ const handleEmojiClick = (emojiObject) => {
       previewText = previewText.replaceAll(variable, example);
     });
   }
-    */
 
   const handleUpdateExample = (variable, value) => {
     setVariableExamples(prevExamples => {
@@ -903,15 +648,12 @@ const handleEmojiClick = (emojiObject) => {
     });
   };
 
-  const handleUpdateDescriptions = (variable, event) => {
-    const newValue = event.target.value.replace(/\s+/g, '_');
+  const handleUpdateDescriptions = (variable, value) => {
     setVariableDescriptions(prevDescriptions => ({
       ...prevDescriptions,
-      [variable]: newValue
+      [variable]: value
     }));
   };
-  
-  
 
   // Función para generar el ejemplo combinando el mensaje y los valores de las variables
   const generateExample = () => {
@@ -925,7 +667,7 @@ const handleEmojiClick = (emojiObject) => {
   // Función para reemplazar las variables en el mensaje con sus ejemplos
   const replaceVariables = (text, variables) => {
     let result = text;
-    
+    console.log("Texto antes de reemplazar:", text);
 
     Object.keys(variables).forEach(variable => {
       const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // 🔥 Búsqueda exacta de {{variable}}
@@ -933,34 +675,26 @@ const handleEmojiClick = (emojiObject) => {
       result = result.replace(regex, variables[variable]);
     });
 
-    
+    console.log("Texto después de reemplazar:", result);
     return result;
   };
 
   const handlePantallas = (event) => {
     const { target: { value } } = event;
-  
+
     // Procesar los valores seleccionados
     const selectedOptions = typeof value === 'string' ? value.split(',') : value;
-  
+
     // Extraer solo los números
     const numericValues = selectedOptions.map(option => {
       return option.split(' - ')[0].trim();
     });
-    
+
     // Guardar como string con comas para la API
     setPantallas(numericValues.join(','));
-  
+
     // Guardar el texto completo para mostrar (displayPantallas)
     setDisplayPantallas(selectedOptions);
-  };
-
-  // Función para contar emojis en un texto
-  const countEmojis = (text) => {
-    // Esta regex detecta la mayoría de los emojis, incluyendo emojis con modificadores
-    const emojiRegex = /\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu;
-    const matches = text.match(emojiRegex);
-    return matches ? matches.length : 0;
   };
 
 
@@ -969,9 +703,16 @@ const handleEmojiClick = (emojiObject) => {
 
   // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
   useEffect(() => {
+    console.log("Mensaje original:", message);
+    console.log("Variables y ejemplos:", variableExamples);
+
     const newExample = replaceVariables(message, variableExamples);
+
+    console.log("Mensaje después de reemplazo:", newExample);
+
     setExample(newExample);
   }, [message, variableExamples]);
+
 
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
@@ -1075,10 +816,7 @@ const handleEmojiClick = (emojiObject) => {
 
           <FormControl fullWidth>
             <Select labelId="template-type-label" id="template-type" value={templateType} onChange={handleTemplateTypeChange} label="Select" ref={templateTypeRef}>
-              <MenuItem value="text">TEXTO</MenuItem>
-              <MenuItem value="image">IMAGEN</MenuItem>
-              <MenuItem value="video">VIDEO</MenuItem>
-              <MenuItem value="document">DOCUMENTO</MenuItem>
+              <MenuItem value="CATALOG">CATALOGO</MenuItem>
             </Select>
             <FormHelperText>
               Escoge el tipo de plantilla que se va a crear
@@ -1098,7 +836,7 @@ const handleEmojiClick = (emojiObject) => {
               labelId="demo-multiple-checkbox-label"
               id="demo-multiple-checkbox"
               multiple
-              value={displayPantallas} 
+              value={displayPantallas}
               onChange={handlePantallas}
               input={<OutlinedInput label="Selecciona una o más opciones" />}
               renderValue={(selected) => selected.join(', ')}
@@ -1113,47 +851,6 @@ const handleEmojiClick = (emojiObject) => {
           </FormControl>
         </Box>
 
-        {/* Header*/} {templateType === 'text' ? (
-          <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                Encabezado
-              </FormLabel>
-            </FormControl>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el pie de página.
-            </Typography>
-            <TextField
-              fullWidth
-              label="Escribe el encabezado"
-              value={header}
-              onChange={handleHeaderChange}
-              helperText={`${header.length} / ${charLimit} caracteres`}
-              sx={{ mb: 3 }}
-              error={header.length === charLimit}
-            />
-          </Box>
-        ) : (
-          <Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel>
-                Encabezado
-              </FormLabel>
-            </FormControl>
-
-            {/* Componente para subir archivos */}
-            <FileUploadComponent
-              templateType={templateType}
-              onUploadSuccess={(mediaId, uploadedUrl) => {
-                setMediaId(mediaId); // Guarda el mediaId
-                setUploadedUrl(uploadedUrl); // Guarda la URL
-                //setUploadStatus("¡Archivo subido exitosamente!");
-              }}
-              onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
-              onHeaderChange={(newHeader) => setHeader(newHeader)} // Nueva prop
-            />
-          </Box>
-        )}
 
         {/*Idioma --data-urlencodeo languageCode */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
           <FormControl fullWidth>
@@ -1225,12 +922,11 @@ const handleEmojiClick = (emojiObject) => {
               multiline
               aria-required="true"
               error={contenidoPlantillaTypeError}
-              rows={7}
+              rows={4}
               label="Escribe"
               placeholder="Ingresa el contenido de tu mensaje aquí..."
               value={message}
-              onChange={handleBodyMessageChange}
-              //onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) => setMessage(e.target.value)}
               sx={{
                 mb: 3,
                 mt: 4,
@@ -1242,13 +938,6 @@ const handleEmojiClick = (emojiObject) => {
                 }
               }}
               inputRef={messageRef}
-              helperText={`${message.length}/550 caracteres | ${emojiCount}/10 emojis`}
-              FormHelperTextProps={{
-                sx: {
-                  textAlign: 'right',
-                  color: message.length === 550 || emojiCount >= 10 ? 'error.main' : 'text.secondary'
-                }
-              }}
             />
 
             {/* Botones de emojis y acciones en una barra de herramientas mejor diseñada */}
@@ -1359,7 +1048,7 @@ const handleEmojiClick = (emojiObject) => {
                         label="Descripción"
                         placeholder="¿Para qué sirve esta variable?"
                         value={variableDescriptions[variable] || ''}
-                        onChange={(e) => handleUpdateDescriptions(variable, e)}
+                        onChange={(e) => handleUpdateDescriptions(variable, e.target.value)}
                         sx={{ flexGrow: 1 }}
                       />
 
@@ -1380,128 +1069,6 @@ const handleEmojiClick = (emojiObject) => {
               </Paper>
             )}
           </Box>
-        </Box>
-
-        {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              Pie de página
-            </FormLabel>
-          </FormControl>
-          <TextField
-            fullWidth
-            value={footer}
-            onChange={handleFooterChange}
-            helperText={`${footer.length} / ${charLimit} caracteres`}
-            sx={{ mb: 3 }}
-          />
-          <FormHelperText>
-            Agregue un encabezado de página de 60 caracteres a su mensaje. Las variables no se admiten en el encabezado.
-          </FormHelperText>
-        </Box>
-
-        {/* Botones --data-urlencode 'buttons*/}<Box sx={{ width: "100%", marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
-          <FormControl fullWidth>
-            <FormLabel>
-              Botones
-            </FormLabel>
-          </FormControl>
-
-          <FormHelperText>
-            Elija los botones que se agregarán a la plantilla. Puede elegir hasta 10 botones.
-          </FormHelperText>
-
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={addButton}
-            disabled={buttons.length >= maxButtons || Object.keys(validationErrors).length > 0}
-            sx={{ mt: 3, mb: 3 }}
-          >
-            Agregar botón
-          </Button>
-
-          <Stack spacing={2}>
-            {buttons.map((button, index) => (
-              <Box
-                key={button.id}
-                sx={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 2,
-                  border: "1px solid #ccc",
-                  borderRadius: 2,
-                  p: 2,
-                  backgroundColor: "#f9f9f9",
-                }}
-              >
-                {/* Campo de texto para el título del botón */}
-                <TextField
-                  label="Titulo del botón"
-                  value={button.title}
-                  onChange={(e) => updateButton(button.id, "title", e.target.value)}
-                  fullWidth
-                  inputProps={{ maxLength: 25 }}
-                  helperText={`${button.title.length}/25 caracteres` || validationErrors[button.id]}
-                />
-
-                {/* Selector de tipo de botón */}
-                <Select
-                  value={button.type}
-                  onChange={(e) => updateButton(button.id, "type", e.target.value)}
-                  sx={{ minWidth: 150 }}
-                >
-                  <MenuItem value="QUICK_REPLY">Respuesta rápida</MenuItem>
-                  <MenuItem value="URL">URL</MenuItem>
-                  <MenuItem value="PHONE_NUMBER">Número de teléfono</MenuItem>
-                </Select>
-
-                {/* Campo adicional según el tipo de botón */}
-                {button.type === "URL" && (
-                  <TextField
-                    label="URL"
-                    value={button.url || ''}
-                    onChange={(e) => updateButtonWithValidation(
-                      button.id,
-                      "url",
-                      e.target.value,
-                      setButtons,
-                      setValidationErrors
-                    )}
-                    fullWidth
-                    error={validationErrors[button.id] !== undefined}
-                    helperText={validationErrors[button.id]}
-                  />
-                )}
-
-                {button.type === "PHONE_NUMBER" && (
-                  <TextField
-                    label="Phone Number"
-                    value={button.phoneNumber}
-                    onChange={(e) => updateButton(button.id, "phoneNumber", e.target.value)}
-                    fullWidth
-                  />
-                )}
-
-                {/* Icono según el tipo de botón */}
-                <Box sx={{ display: "flex", alignItems: "center", pt:2 }}>
-                {button.type === "QUICK_REPLY" && <ArrowForward />}
-                {button.type === "URL" && <Link />}
-                {button.type === "PHONE_NUMBER" && <Phone />}
-                </Box>
-
-                {/* Botón para eliminar */}
-                <IconButton color="error" onClick={() => removeButton(button.id)}
-                  sx={{ alignSelf: "center", pb: 4 }}>
-                  <Delete />
-                </IconButton>
-              </Box>
-            ))}
-          </Stack>
-
-          <Typography variant="body2" color={buttons.length >= maxButtons ? "error" : "text.secondary"} sx={{ mt: 2 }}>
-            {buttons.length} / {maxButtons} botones agregados
-          </Typography>
         </Box>
 
         {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2, display: 'none' }}>
@@ -1538,7 +1105,7 @@ const handleEmojiClick = (emojiObject) => {
           open={showSuccessModal}
           onClose={() => setShowSuccessModal(false)}
           title="¡Éxito!"
-          message="La plantilla fue creada correctamente."
+          message="La plantilla fue editada correctamente."
           severity="success"
           buttonVariant="contained"
         />
@@ -1552,7 +1119,6 @@ const handleEmojiClick = (emojiObject) => {
           severity="error"
           buttonVariant="contained"
         />
-
 
       </Box>
       </Grid>
@@ -1575,28 +1141,6 @@ const handleEmojiClick = (emojiObject) => {
               Vista previa
             </Typography>
 
-            {/* Vista previa de la imagen */}
-            {imagePreview && (
-              <Box sx={{ bgcolor: "#ffffff", p: 1, borderRadius: 2, boxShadow: 1, maxWidth: "100%" }}>
-                {typeof imagePreview === "string" && imagePreview.startsWith("data:image") ? (
-                  <img
-                    src={imagePreview}
-                    alt="Vista previa"
-                    style={{ width: "100%", borderRadius: 2, display: "block" }}
-                  />
-                ) : imagePreview.includes("video") ? (
-                  <video controls width="100%">
-                    <source src={imagePreview} />
-                    Tu navegador no soporta este formato de video.
-                  </video>
-                ) : imagePreview.includes("pdf") ? (
-                  <iframe src={imagePreview} width="100%" height="500px"></iframe>
-                ) : null}
-              </Box>
-            )}
-            {/* Muestra el estado de la subida */}
-            {uploadStatus && <p>{uploadStatus}</p>}
-
             {/* Mensaje de WhatsApp */}
             <Box
               sx={{
@@ -1612,24 +1156,8 @@ const handleEmojiClick = (emojiObject) => {
                 boxShadow: 1,
               }}
             >
-
-              <Typography variant="body1" color="text.primary">
-                {header}
-              </Typography>
-              
-              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line", overflowWrap: "break-word" }}>
+              <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line" }}>
                 {example}
-              </Typography>
-
-              <Typography
-                variant="body1"
-                color="text.secondary" // Cambia a un color gris más claro
-                sx={{
-                  fontFamily: "Helvetica Neue, Arial, sans-serif",
-                  whiteSpace: "pre-line"
-                }}
-              >
-                {footer}
               </Typography>
 
               <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
@@ -1637,40 +1165,30 @@ const handleEmojiClick = (emojiObject) => {
               </Typography>
             </Box>
 
-            {/* Botones */}<Stack spacing={1} sx={{ mt: 0 }}>
-              {buttons.map((button) => (
-                <Box
-                  key={button.id}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    gap: 1,
-                    border: "1px solid #ccc",
-                    borderRadius: "20px",
-                    p: 1,
-                    backgroundColor: "#ffffff",
-                    boxShadow: 1,
-                    cursor: "pointer",
-                    "&:hover": {
-                      backgroundColor: "#f5f5f5",
-                    },
-                  }}
-                >
-                  {button.type === "QUICK_REPLY" && (
-                    <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
-                  )}
-                  {button.type === "URL" && (
-                    <Link sx={{ fontSize: "16px", color: "#075e54" }} />
-                  )}
-                  {button.type === "PHONE_NUMBER" && (
-                    <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
-                  )}
-                  <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
-                    {button.title}
-                  </Typography>
-                </Box>
-              ))}
+            {/* Botones */}{/* Botón de Quick Reply "CATÁLOGO" */}
+            <Stack spacing={1} sx={{ mt: 0 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  gap: 1,
+                  border: "1px solid #ccc",
+                  borderRadius: "20px",
+                  p: 1,
+                  backgroundColor: "#ffffff",
+                  boxShadow: 1,
+                  cursor: "pointer",
+                  "&:hover": {
+                    backgroundColor: "#f5f5f5",
+                  },
+                }}
+              >
+                <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
+                <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
+                  CATÁLOGO
+                </Typography>
+              </Box>
             </Stack>
           </Box>
         </Box>

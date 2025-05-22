@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import { motion } from 'framer-motion';
+import Swal from 'sweetalert2'
 
 import LoginRequired from './LoginRequired';
 
 //componentes
-import { alpha, Card, CardContent, Typography, CardActions, Button, Grid, Box, Menu, MenuItem, Stack, TextField, Paper, styled } from '@mui/material';
+import { alpha, Card, CardContent, Typography, CardActions, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fade, Button, ListItemIcon, ListItemText, Grid, Box, Menu, MenuItem, Stack, TextField, Paper, styled } from '@mui/material';
 import { CircularProgress } from '@mui/material';
+
 //iconos
 import AddIcon from '@mui/icons-material/Add';
 import FindInPageIcon from '@mui/icons-material/FindInPage';
@@ -17,12 +20,18 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowForward from '@mui/icons-material/ArrowForward';
 import Link from '@mui/icons-material/Link';
 import Phone from '@mui/icons-material/Phone';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ErrorIcon from '@mui/icons-material/Error';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import CategoryIcon from '@mui/icons-material/Category';
+import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
+import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 
 // MODAL PARA ELIMINAR
 import DeleteModal from '../components/DeleteModal';
-import { parseTemplateContent } from "../utils/parseTemplateContent"; 
+import { parseTemplateContent } from "../utils/parseTemplateContent";
 
-
+import TemplateCardSkeleton from '../utils/SkeletonTemplates';
 
 // Componente reutilizable para las tarjetas
 const TemplateCard = ({ title, subtitle, description, onEdit, onDelete, whatsappStyle }) => (
@@ -76,14 +85,14 @@ export default function BasicCard() {
   const [tokenValid, setTokenValid] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const API_GUPSHUP_URL = process.env.API_GUPSHUP;
+  // const API_GUPSHUP_URL = process.env.API_GUPSHUP;
 
 
   // Recupera el token del localStorage
   const token = localStorage.getItem('authToken');
 
-  // Decodifica el token para obtener appId y authCode
-  let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
+   // Decodifica el token para obtener appId y authCode
+  let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, urlWsFTP;
   if (token) {
     try {
       const decoded = jwtDecode(token);
@@ -93,12 +102,30 @@ export default function BasicCard() {
       idUsuarioTalkMe = decoded.id_usuario;  // Cambiado de idUsuario a id_usuario
       idNombreUsuarioTalkMe = decoded.nombre_usuario;  // Cambiado de nombreUsuario a nombre_usuario
       empresaTalkMe = decoded.empresa;
+      idBotRedes = decoded.id_bot_redes;
+      idBot = decoded.id_bot;
+      urlTemplatesGS = decoded.urlTemplatesGS;
+      urlWsFTP = decoded.urlWsFTP;
     } catch (error) {
       console.error('Error decodificando el token:', error);
+      console.log('urlWsFTP', urlWsFTP);
     }
   }
+  
+ /*
 
-  //FETCH DE LAS PLANTILLAS
+  let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
+
+  appId = '1fbd9a1e-074c-4e1e-801c-b25a0fcc9487'; // Extrae appId del token
+  authCode = 'sk_d416c60960504bab8be8bc3fac11a358'; // Extrae authCode del token
+  appName = 'DemosTalkMe55'; // Extrae el nombre de la aplicación
+  idUsuarioTalkMe = 78;  // Cambiado de idUsuario a id_usuario
+  idNombreUsuarioTalkMe = 'javier.colocho';  // Cambiado de nombreUsuario a nombre_usuario
+  empresaTalkMe = 2;
+*/
+
+
+  // Función para obtener las plantillas
   const fetchTemplates = async (appId, authCode) => {
     try {
       const response = await fetch(`https://partner.gupshup.io/partner/app/${appId}/templates`, {
@@ -109,17 +136,24 @@ export default function BasicCard() {
       });
       const data = await response.json();
       if (data.status === 'success') {
-        setTemplates(data.templates.slice(0, 4));
+        return data.templates.slice(0, 4); // Retorna los datos en lugar de establecer el estado
       }
+      return []; // Retorna un array vacío si no hay éxito
     } catch (error) {
       console.error('Error fetching templates:', error);
+      return []; // Retorna un array vacío en caso de error
     }
   };
 
-  // Llama a fetchTemplates cuando el componente se monta
+  // useEffect para cargar datos
   useEffect(() => {
     if (appId && authCode) {
-      fetchTemplates(appId, authCode);
+      setLoading(true); // Asegúrate de que loading esté en true al inicio
+      fetchTemplates(appId, authCode)
+        .then(data => {
+          setTemplates(data);
+          setLoading(false);
+        });
     } else {
       console.error('No se encontró appId o authCode en el token');
     }
@@ -132,6 +166,8 @@ export default function BasicCard() {
         return '#ffebee';
       case 'FAILED':
         return '#fff3e0';
+      case 'APPROVED':
+        return '#C8E6C9';
       default:
         return '#f5f5f5';
     }
@@ -143,6 +179,8 @@ export default function BasicCard() {
         return '#d32f2f'; // Rojo oscuro para texto
       case 'FAILED':
         return '#e65100'; // Naranja oscuro para texto
+      case 'APPROVED':
+        return '#1B5E20';
       default:
         return '#616161'; // Gris oscuro para texto
     }
@@ -154,8 +192,10 @@ export default function BasicCard() {
         return '#EF4444'; // Rojo
       case 'FAILED':
         return '#FF9900'; // Naranja
-      default:
+      case 'APPROVED':
         return '#34C759'; // Verde
+      default:
+        return '#000000';
     }
   };
 
@@ -168,13 +208,36 @@ export default function BasicCard() {
   };
 
   const handleEdit = (template) => {
-    // Validar el estado del template
+    // Validar el estado del template primero
     if (template.status === "APPROVED" || template.status === "REJECTED" || template.status === "PAUSED") {
-      // Si el estado es válido, navegar a la página de edición
-      navigate('/modify-template', { state: { template } });
+      // Redirigir según el tipo de template
+      switch (template.templateType) {
+        case 'CAROUSEL':
+          navigate('/modify-template-carousel', { state: { template } });
+          break;
+        case 'CATALOG':
+          navigate('/modify-template-catalog', { state: { template } });
+          break;
+        case 'TEXT':
+        case 'IMAGE':
+        case 'DOCUMENT':
+        case 'VIDEO':
+          navigate('/modify-template', { state: { template } });
+          break;
+        default:
+          // Ruta por defecto si no coincide con ningún tipo conocido
+          navigate('/modify-template', { state: { template } });
+      }
     } else {
       // Si el estado no es válido, mostrar un mensaje de error
-      alert('No se puede editar el template porque su estado no es "APPROVED", "REJECTED" o "PAUSED".');
+      Swal.fire({
+                title: 'La plantilla no puede ser editada.',
+                text: 'No se puede editar la plantilla porque su estado no es "APPROVED", "REJECTED" o "PAUSED".',
+                icon: 'error',
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#00c3ff'
+              });
+      
     }
   };
 
@@ -218,53 +281,46 @@ export default function BasicCard() {
     }
   };
 
-  // Estilo personalizado para el menú
-  const StyledMenu = styled((props) => (
-    <Menu
-      elevation={0}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'right',
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      {...props}
-    />
-  ))(({ theme }) => ({
-    '& .MuiPaper-root': {
-      borderRadius: 6,
-      marginTop: theme.spacing(1),
-      minWidth: 180,
-      color: 'rgb(55, 65, 81)',
-      boxShadow:
-        'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-      '& .MuiMenu-list': {
-        padding: '4px 0',
-      },
-      '& .MuiMenuItem-root': {
-        '& .MuiSvgIcon-root': {
-          fontSize: 18,
-          color: theme.palette.text.secondary,
-          marginRight: theme.spacing(1.5),
-        },
-        '&:active': {
-          backgroundColor: alpha(
-            theme.palette.primary.main,
-            theme.palette.action.selectedOpacity,
-          ),
-        },
-      },
-    },
-  }));
+  const [openReasonDialog, setOpenReasonDialog] = React.useState(false);
+  const [selectedReason, setSelectedReason] = React.useState('');
+
+  const handleOpenReasonDialog = (reason) => {
+    setSelectedReason(reason);
+    setOpenReasonDialog(true);
+  };
+
+  const [anchorEl2, setAnchorEl2] = useState(null);
+  const open2 = Boolean(anchorEl2);
+
+  const handleClose2 = () => {
+    setAnchorEl2(null); // Cierra el menú
+  };
+
+  const handleCrearPlantilla = (event) => {
+    setAnchorEl2(event.currentTarget); // Abre el menú
+  };
+
+  const crearPlantillaTradicional = () => {
+    handleClose2(); // Cierra el menú antes de navegar
+    navigate("/CreateTemplatePage/CreateTemplatePage"); // Redirige a otra plantilla
+  };
+
+  const crearPlantillaCatalogo = () => {
+    handleClose2(); // Cierra el menú antes de navegar
+    navigate("/CreateTemplatePage/CreateTemplateCatalog"); // Redirige a otra plantilla
+  };
+
+  const crearPlantillaCarrusel = () => {
+    handleClose2(); // Cierra el menú antes de navegar
+    navigate("/CreateTemplatePage/CreateTemplateCarousel"); // Redirige a otra plantilla
+  };
 
   return (
     <Box sx={{ marginLeft: 2, marginRight: 2, marginTop: 3 }}>
 
       {/*TITULO PRIMER BLOQUE */}<Paper elevation={3} sx={{ padding: 3, borderRadius: 2 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Plantillas TalkMe
+          Plantillas TalkMe Desarrollo
         </Typography>
 
         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -277,9 +333,74 @@ export default function BasicCard() {
             </Typography>
           </Box>
 
-          <Button color="primary" variant="contained" size="large" onClick={handleCreateClick} endIcon={<AddIcon />} sx={{ borderRadius: 2 }}>
-            Crear plantilla
-          </Button>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            <Button
+              color="primary"
+              variant="contained"
+              size="large"
+              onClick={handleCrearPlantilla}
+              endIcon={<AddIcon />}
+              sx={{
+                borderRadius: 2,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-2px)'
+                }
+              }}
+            >
+              Crear plantilla
+            </Button>
+          </motion.div>
+          <Menu
+            anchorEl={anchorEl2}
+            open={open2}
+            onClose={handleClose2}
+            TransitionComponent={Fade}
+          >
+            {[
+              {
+                text: 'Texto, Imagén y Documento',
+                onClick: crearPlantillaTradicional,
+                icon: <InsertDriveFileIcon fontSize="small" />
+              },
+              {
+                text: 'Catalogo',
+                onClick: crearPlantillaCatalogo,
+                icon: <AutoAwesomeMosaicIcon fontSize="small" />
+              },
+              {
+                text: 'Carrusel',
+                onClick: crearPlantillaCarrusel,
+                icon: <ViewCarouselIcon fontSize="small" />
+              }
+            ].map((item, index) => (
+              <MenuItem
+                key={item.text}
+                onClick={item.onClick}
+                component={motion.div}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  delay: index * 0.1,
+                  type: "spring",
+                  stiffness: 300
+                }}
+                sx={{
+                  '&:hover': {
+                    transform: 'scale(1.02)',
+                    transition: 'all 0.2s ease'
+                  }
+                }}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText>{item.text}</ListItemText>
+              </MenuItem>
+            ))}
+          </Menu>
         </Box>
       </Paper>
 
@@ -305,252 +426,384 @@ export default function BasicCard() {
         </Box>
       </Box>
 
-      {/*BOTON VER PLANTILLAS*/}<Box display="flex" justifyContent="flex-end" sx={{ marginTop: 2, marginRight: 2 }}>
-        <Button color="primary" variant="contained" size="large" onClick={handleVerTemplates} endIcon={<FindInPageIcon />} sx={{ borderRadius: 2 }}>
-          Ver Todas
-        </Button>
-      </Box>
-
       {/* Lista de tarjetas */}<Box sx={{ p: 3 }}>
-        {/* TITULO */}<Typography variant="h5" fontWeight="bold" gutterBottom>
-          Últimas plantillas creadas
-        </Typography>
-
-        <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 3, justifyContent: "center" }}>
-          {templates.map((template) => (
-
-            <Card
-              key={template.id}
-              sx={{
-                maxWidth: 300,
-                height: 500, // Fija la altura a 480px
-                borderRadius: 3,
-                mt: 3, // Aumenta la separación superior
-                mx: 2, // Agrega margen a los lados
-                border: '1px solid #e0e0e0',
-                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
-                overflow: 'visible',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
+        {/* Encabezado con título y botón */}
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          mb: 3
+        }}>
+          <Typography variant="h5" fontWeight="bold">
+            Últimas plantillas creadas
+          </Typography>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            <Button
+              color="primary"
+              variant="contained"
+              size="large"
+              onClick={handleVerTemplates}
+              endIcon={<FindInPageIcon />}
+              sx={{ borderRadius: 2 }}
             >
-              <CardContent sx={{ p: 0 }}>
-                {/* Header Template Name */}
-                <Box sx={{ p: 2, pb: 0 }}>
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight={700}
-                    sx={{
-                      mb: 0,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2, // muestra máximo 2 líneas
-                      WebkitBoxOrient: 'vertical'
-                    }}
-                  >
-                    {template.elementName}
-                  </Typography>
+              Ver Todas
+            </Button>
+          </motion.div>
+        </Box>
 
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-                    {/* Status badge */}
-                    <Box
-                      sx={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        backgroundColor: getStatusColor(template.status),
-                        borderRadius: 1,
-                        px: 1,
-                        py: 0.5,
-                      }}
-                    >
-                      <Box
-                        component="span"
-                        sx={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: '50%',
-                          backgroundColor: getStatusDotColor(template.status),
-                          mr: 0.5
-                        }}
-                      />
-                      <Typography variant="caption" sx={{ color: getStatusTextColor(template.status), fontWeight: 500 }}>
-                        {template.status}
-                      </Typography>
-                    </Box>
+        {/* Grid de tarjetas */}
+        <Box sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          gap: 3,
+          justifyItems: "center" // Esto centrará las tarjetas en sus celdas de grid
+        }}>
+          {loading ?
+            // Mostrar skeletons mientras carga
+            Array.from(new Array(4)).map((_, index) => ( // Usamos 4 como en tu slice
+              <TemplateCardSkeleton key={index} />
+            ))
+            :
+            // Mostrar los datos reales cuando termine de cargar
+            templates.map((template) => (
 
-                    {/* Categoria badge */}
-                    <Box
-                      sx={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        backgroundColor: '#F3F4F6',
-                        borderRadius: 1,
-                        px: 1,
-                        py: 0.5,
-                      }}
-                    >
-                      <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
-                        {template.category}
-                      </Typography>
-                    </Box>
-
-                    {/* Tipo badge */}
-                    <Box
-                      sx={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        backgroundColor: '#F3F4F6',
-                        borderRadius: 1,
-                        px: 1,
-                        py: 0.5,
-                      }}
-                    >
-                      <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
-                        {template.templateType}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-
-                {/* Razón rechazo */}
-                {template.reason && (
-                  <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
-                    Razón: {template.reason}
-                  </Typography>
-                )}
-
-                {/* Content */}
-                <Box
-                  sx={{
-                    backgroundColor: '#FEF9F3', // Fondo amarillo
-                    p: 2, // Aumentar padding para dar más espacio alrededor de la caja blanca
-                    mx: 1,
-                    my: 1,
-                    borderRadius: 2,
-                    height: 302, // Altura fija para el fondo amarillo
-                    width: 286,
-                    display: 'flex',
-                    flexDirection: 'column', // Ajusta la dirección del contenido a columna
-                    alignItems: 'center', // Centra horizontalmente
-                  }}
-                >
-                  <Box
-                    sx={{
-                      backgroundColor: 'white', // Fondo blanco para el contenido
-                      p: 2, // Padding para separar el contenido del borde
-                      mt: 2,
-                      borderRadius: 4, // Bordes redondeados
-                      width: '100%', // Ajusta el ancho para que ocupe todo el contenedor
-                      overflowY: 'auto', // Permite desplazamiento vertical si el contenido supera la altura
-                      display: 'flex',
-                      flexDirection: 'column',
-                      flex: 1
-                    }}
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      {/* Render text content, replacing variables with placeholders */}
-                      {parseTemplateContent(template.data).text}
-                    </Typography>
-
-                    {/* Botones */}
-                    <Stack spacing={1} sx={{ mt: 2 }}>
-                      {parseTemplateContent(template.data).buttons.map((button, index) => (
-                        <Box
-                          key={index}
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "flex-start",
-                            gap: 1,
-                            border: "1px solid #ccc",
-                            borderRadius: "20px",
-                            p: 1,
-                            backgroundColor: "#ffffff",
-                            boxShadow: 1,
-                            cursor: "pointer",
-                            "&:hover": {
-                              backgroundColor: "#f5f5f5",
-                            },
-                          }}
-                        >
-                          {button.type === "QUICK_REPLY" && (
-                            <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
-                          )}
-                          {button.type === "URL" && (
-                            <Link sx={{ fontSize: "16px", color: "#075e54" }} />
-                          )}
-                          {button.type === "PHONE_NUMBER" && (
-                            <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
-                          )}
-                          <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
-                            {button.title}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </Stack>
-                  </Box>
-                </Box>
-              </CardContent>
-
-              {/* Acciones */}<CardActions
+              <Card
+                key={template.id}
                 sx={{
-                  mt: 'auto',           // Empuja el CardActions hacia abajo
-                  justifyContent: 'flex-start', // Alinea contenido a la izquierda
-                  padding: 2,           // Añade padding consistente
-                  position: 'relative', // Necesario para el posicionamiento
+                  maxWidth: 300,
+                  height: 500, // Fija la altura a 480px
+                  borderRadius: 3,
+                  mt: 3, // Aumenta la separación superior
+                  mx: 2, // Agrega margen a los lados
+                  border: '1px solid #e0e0e0',
+                  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
+                  overflow: 'visible',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
-                <Button
-                  id="manage-button"
-                  aria-controls={anchorEl ? 'manage-menu' : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={anchorEl ? 'true' : undefined}
-                  variant="outlined"
-                  disableElevation
-                  onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
-                  endIcon={<KeyboardArrowDownIcon />}
-                  sx={{
-                    borderRadius: 1,
-                    textTransform: 'none',
-                    color: '#00C3FF',
-                    borderColor: '#E0E7FF',
-                    '&:hover': {
-                      borderColor: '#C7D2FE',
-                      backgroundColor: '#F5F5FF'
-                    }
-                  }}
-                >
-                  Administrar
-                </Button>
+                <CardContent sx={{ p: 0 }}>
+                  {/* Header Template Name */}
+                  <Box sx={{ p: 2, pb: 0 }}>
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight={700}
+                      sx={{
+                        mb: 0,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2, // muestra máximo 2 líneas
+                        WebkitBoxOrient: 'vertical'
+                      }}
+                    >
+                      {template.elementName}
+                    </Typography>
 
-                <StyledMenu
-                  id="manage-menu"
-                  MenuListProps={{
-                    'aria-labelledby': 'manage-button',
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+                      {/* Status badge */}
+                      <Box
+                        sx={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          backgroundColor: getStatusColor(template.status),
+                          borderRadius: 1,
+                          px: 1,
+                          py: 0.5,
+                        }}
+                      >
+                        <Box
+                          component="span"
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            backgroundColor: getStatusDotColor(template.status),
+                            mr: 0.5
+                          }}
+                        />
+                        <Typography variant="caption" sx={{ color: getStatusTextColor(template.status), fontWeight: 500 }}>
+                          {template.status}
+                        </Typography>
+                      </Box>
+
+                      {/* Categoria badge */}
+                      <Box
+                        sx={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          backgroundColor: '#F3F4F6',
+                          borderRadius: 1,
+                          px: 1,
+                          py: 0.5,
+                        }}
+                      >
+                        <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                          {template.category}
+                        </Typography>
+                      </Box>
+
+                      {/* Tipo badge */}
+                      <Box
+                        sx={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          backgroundColor: '#F3F4F6',
+                          borderRadius: 1,
+                          px: 1,
+                          py: 0.5,
+                        }}
+                      >
+                        <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 500 }}>
+                          {template.templateType}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+
+                  {/* Razón rechazo */}
+                  {template.reason && (
+                    <React.Fragment>
+                      <Button
+                        color="error"
+                        variant="outlined"
+                        size="small"
+                        onClick={() => handleOpenReasonDialog(template.reason)}
+                        startIcon={<ErrorOutlineIcon />}
+                        sx={{
+                          mt: 1,
+                          textTransform: 'none',
+                          fontSize: '0.75rem',
+                          borderRadius: 1,
+                          py: 0.5,
+                          px: 1,
+                          ml: 2
+                        }}
+                      >
+                        Razón de rechazo
+                      </Button>
+
+                      <Dialog
+                        open={openReasonDialog}
+                        onClose={() => setOpenReasonDialog(false)}
+                        maxWidth="sm"
+                        fullWidth
+                      >
+                        <DialogTitle sx={{
+                          bgcolor: 'error.light',
+                          color: 'error.contrastText',
+                          py: 1,
+                          px: 2
+                        }}>
+                          <Box display="flex" alignItems="center">
+                            <ErrorIcon sx={{ mr: 1 }} />
+                            <Typography variant="subtitle1">Razón de rechazo</Typography>
+                          </Box>
+                        </DialogTitle>
+                        <DialogContent sx={{ py: 3, px: 2 }}>
+                          <Typography>{selectedReason}</Typography>
+                        </DialogContent>
+                        <DialogActions sx={{ px: 2, py: 1 }}>
+                          <Button
+                            onClick={() => setOpenReasonDialog(false)}
+                            variant="contained"
+                            color="primary"
+                            sx={{ borderRadius: 1 }}
+                          >
+                            Entendido
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </React.Fragment>
+                  )}
+
+                  {/* Content */}
+                  <Box
+                    sx={{
+                      backgroundColor: '#FEF9F3', // Fondo amarillo
+                      p: 2, // Aumentar padding para dar más espacio alrededor de la caja blanca
+                      mx: 1,
+                      my: 1,
+                      borderRadius: 2,
+                      height: 302, // Altura mínima en lugar de fija AMARILLA
+                      width: 286,
+                      display: 'flex',
+                      flexDirection: 'column', // Ajusta la dirección del contenido a columna
+                      alignItems: 'center', // Centra horizontalmente
+                      justifyContent: 'flex-start', // Align content to the top
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        backgroundColor: 'white',
+                        p: 1,
+                        mt: 1,
+                        borderRadius: 4,
+                        width: 284,
+                        maxWidth: '100%',
+                        display: 'inline-flex',
+                        flexDirection: 'column',
+                        alignSelf: 'center', 
+                        height: 298,
+                        overflowY: 'auto'
+                      }}
+                    >
+                      {/* Imagen para plantillas tipo CAROUSEL o IMAGE */}
+                      {(template.templateType === 'CAROUSEL' || template.templateType === 'IMAGE' || template.templateType === 'VIDEO') && (
+                        <Box sx={{ mb: 2, width: '100%', height: 140, borderRadius: 2, overflow: 'hidden' }}>
+                          <img
+                            src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-UPVXEk3VrllOtMWXfyrUi4GVlt71zdxigtTGguOkqRgWmIX8_aT35EdrnTc0Jn5yy5c&usqp=CAU'
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              borderRadius: '8px',
+                              alignContent: 'center'
+                            }}
+                          />
+                        </Box>
+                      )}
+
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          width: 'fit-content', // Ensure typography width fits content
+                          whiteSpace: 'normal', // Allow text to wrap
+                          wordBreak: 'break-word', // Añadir esta propiedad para forzar el quiebre de palabras largas
+                          overflowWrap: 'break-word' // Asegurar que las palabras largas se quiebren
+                        }}
+                      >
+                        {parseTemplateContent(template.data).text}
+                      </Typography>
+
+                      {/* Botones */}
+                      <Stack spacing={1} sx={{ mt: 2 }}>
+                        {parseTemplateContent(template.data).buttons?.map((button, index) => (
+                          <Box
+                            key={index}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "flex-start",
+                              gap: 1,
+                              border: "1px solid #ccc",
+                              borderRadius: "20px",
+                              p: 1,
+                              backgroundColor: "#ffffff",
+                              boxShadow: 1,
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: "#f5f5f5",
+                              },
+                            }}
+                          >
+                            {button.type === "QUICK_REPLY" && (
+                              <ArrowForward sx={{ fontSize: "16px", color: "#075e54" }} />
+                            )}
+                            {button.type === "URL" && (
+                              <Link sx={{ fontSize: "16px", color: "#075e54" }} />
+                            )}
+                            {button.type === "PHONE_NUMBER" && (
+                              <Phone sx={{ fontSize: "16px", color: "#075e54" }} />
+                            )}
+                            <Typography variant="body1" sx={{ fontWeight: "medium", color: "#075e54", fontSize: "14px" }}>
+                              {button.title}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Stack>
+                    </Box>
+                  </Box>
+                </CardContent>
+
+                {/* Acciones */}<CardActions
+                  sx={{
+                    mt: 'auto',           // Empuja el CardActions hacia abajo
+                    justifyContent: 'flex-end', // Alinea contenido a la izquierda
+                    padding: 2,           // Añade padding consistente
+                    position: 'relative', // Necesario para el posicionamiento
                   }}
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
                 >
-                  <MenuItem
-                    onClick={() => handleEdit(selectedTemplate)}
-                    disableRipple
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    <EditIcon />
-                    Editar
-                  </MenuItem>
-                  <MenuItem
-                    onClick={handleDeleteClick}
-                    disableRipple
+                    <Button
+                      id="manage-button"
+                      aria-controls={anchorEl ? 'manage-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={anchorEl ? 'true' : undefined}
+                      variant="contained"
+                      disableElevation
+                      onClick={(event) => { console.log("Template seleccionado:", template); handleClick(event, template) }}
+                      endIcon={<KeyboardArrowDownIcon />}
+                      color="primary"
+                      sx={{
+                        borderRadius: 1,
+                        textTransform: 'none',
+                      }}
+                    >
+                      Administrar
+                    </Button>
+                  </motion.div>
+
+                  <Menu
+                    id="manage-menu"
+                    MenuListProps={{
+                      'aria-labelledby': 'manage-button',
+                    }}
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                    TransitionComponent={Fade}
                   >
-                    <DeleteIcon />
-                    Eliminar
-                  </MenuItem>
-                </StyledMenu>
-              </CardActions>
-            </Card>
-          ))}
+                    {[
+                      {
+                        text: 'Editar',
+                        onClick: () => handleEdit(selectedTemplate),
+                        icon: <EditIcon fontSize="small" />
+                      },
+                      {
+                        text: 'Eliminar',
+                        onClick: handleDeleteClick,
+                        icon: <DeleteIcon fontSize="small" />
+                      }
+                    ].map((item, index) => (
+                      <MenuItem
+                        key={item.text}
+                        onClick={item.onClick}
+                        component={motion.div}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{
+                          delay: index * 0.1,
+                          type: "spring",
+                          stiffness: 300
+                        }}
+                        sx={{
+                          '&:hover': {
+                            transform: 'scale(1.02)',
+                            transition: 'all 0.2s ease'
+                          }
+                        }}
+                      >
+                        <ListItemIcon>{item.icon}</ListItemIcon>
+                        <ListItemText>{item.text}</ListItemText>
+                      </MenuItem>
+                    ))}
+
+
+
+                  </Menu>
+                </CardActions>
+              </Card>
+            ))}
         </Box>
       </Box>
 
