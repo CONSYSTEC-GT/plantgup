@@ -336,7 +336,7 @@ const TemplateFormCarousel = () => {
 
   // Decodifica el token para obtener appId y authCode
   //
-  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS;
+  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken;
   if (token) {
     try {
       const decoded = jwtDecode(token);
@@ -347,7 +347,9 @@ const TemplateFormCarousel = () => {
       empresaTalkMe = decoded.empresa;
       idBotRedes = decoded.id_bot_redes;
       idBot = decoded.id_bot;
-      urlTemplatesGS = decoded.urlTemplatesGS
+      urlTemplatesGS = decoded.urlTemplatesGS;
+      apiToken = decoded.apiToken;
+      console.log('apiToken', apiToken);
       //console.log('appId:', appId);
       //console.log('authCode:', authCode);
       //console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
