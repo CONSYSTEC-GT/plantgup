@@ -227,99 +227,109 @@ const EditTemplateForm = () => {
 
   // FUNCION PARA ENVIAR LA SOLICITUD GUPSHUP
   const sendRequest = async () => {
-    // Validar campos antes de enviar la solicitud
-    if (!validateFields()) {
-      return; // Detener la ejecución si hay errores
+  // Validar campos antes de enviar la solicitud
+  if (!validateFields()) {
+    return { status: "error", message: "Validación fallida" }; // Retornar error
+  }
+
+  // Recupera el token del localStorage
+  const token = localStorage.getItem('authToken');
+
+  // Decodifica el token para obtener appId y authCode
+  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      appId = decoded.app_id;
+      authCode = decoded.auth_code;
+      idUsuarioTalkMe = decoded.id_usuario;
+      idNombreUsuarioTalkMe = decoded.nombre_usuario;
+      empresaTalkMe = decoded.empresa;
+    } catch (error) {
+      console.error('Error decodificando el token:', error);
+      return { status: "error", message: "Error decodificando token" };
     }
+  }
 
-    // Recupera el token del localStorage
-    const token = localStorage.getItem('authToken');
+  const templateId = idTemplate;
+  const url = `https://partner.gupshup.io/partner/app/${appId}/templates/${templateId}`;
+  const headers = {
+    Authorization: authCode,
+    "Content-Type": "application/x-www-form-urlencoded",
+  };
 
-    // Decodifica el token para obtener appId y authCode
-    let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        appId = decoded.app_id; // Extrae appId del token
-        authCode = decoded.auth_code; // Extrae authCode del token
-        idUsuarioTalkMe = decoded.id_usuario;
-        idNombreUsuarioTalkMe = decoded.nombre_usuario;
-        empresaTalkMe = decoded.empresa;
-      } catch (error) {
-        console.error('Error decodificando el token:', error);
-      }
-    }
+  const data = new URLSearchParams();
+  data.append("elementName", templateName);
+  data.append("category", selectedCategory.toUpperCase());
+  data.append("languageCode", languageCode);
+  data.append("templateType", templateType.toUpperCase());
+  data.append("vertical", vertical);
+  data.append("content", message);
 
+  if (header) data.append("header", header);
+  if (footer) data.append("footer", footer);
+  if (mediaId) data.append("mediaId", mediaId);
 
-    const templateId = idTemplate;
-    const url = `https://partner.gupshup.io/partner/app/${appId}/templates/${templateId}`;
-    const headers = {
-      Authorization: authCode,
-      "Content-Type": "application/x-www-form-urlencoded",
+  // Construir el objeto buttons
+  const formattedButtons = buttons.map((button) => {
+    const buttonData = {
+      type: button.type,
+      text: button.title,
     };
 
-    const data = new URLSearchParams();
-    data.append("elementName", templateName);
-    data.append("category", selectedCategory.toUpperCase());
-    data.append("languageCode", languageCode); // Usamos directamente languageCode (ya está en el formato correcto)
-    data.append("templateType", templateType.toUpperCase());
-    data.append("vertical", vertical);
-    data.append("content", message);
+    if (button.type === "URL") {
+      buttonData.url = button.url;
+    } else if (button.type === "PHONE_NUMBER") {
+      buttonData.phone_number = button.phoneNumber;
+    }
 
-    if (header) data.append("header", header);
-    if (footer) data.append("footer", footer);
-    if (mediaId) data.append("mediaId", mediaId);
+    return buttonData;
+  });
 
-    // Construir el objeto buttons
-    const formattedButtons = buttons.map((button) => {
-      const buttonData = {
-        type: button.type,
-        text: button.title,
-      };
+  data.append("buttons", JSON.stringify(formattedButtons));
+  data.append("example", example);
+  data.append("enableSample", true);
+  data.append("allowTemplateCategoryChange", false);
 
-      if (button.type === "URL") {
-        buttonData.url = button.url;
-      } else if (button.type === "PHONE_NUMBER") {
-        buttonData.phone_number = button.phoneNumber;
-      }
+  console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
 
-      return buttonData;
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: headers,
+      body: data,
     });
 
-    data.append("buttons", JSON.stringify(formattedButtons));
-    data.append("example", example);
-    data.append("enableSample", true);
-    data.append("allowTemplateCategoryChange", false);
-
-    console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
-
-    try {
-      const response = await fetch(url, {
-        method: "PUT",
-        headers: headers,
-        body: data,
-      });
-
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        console.error("Error response:", errorResponse);
-        showSnackbar(`❌ Error al actualizar la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
-        return;
-      }
-
-      const result = await response.json();
-      showSnackbar("✅ Plantilla actualizada exitosamente", "success");
-      console.log("Response: ", result);
-      console.log("Plantilla:", templateId);
-      console.log("URL", URL);
-    } catch (error) {
-      console.error("Error en la solicitud:", error);
-      console.log("Response: ", result);
-      console.log("Plantilla:", templateId);
-      console.log("URL", URL);
-      showSnackbar("❌ Error al actualizar la plantilla", "error");
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Error response:", errorResponse);
+      showSnackbar(`❌ Error al actualizar la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
+      return { status: "error", message: errorResponse.message || "Solicitud inválida" };
     }
-  };
+
+    const result = await response.json();
+    showSnackbar("✅ Plantilla actualizada exitosamente", "success");
+    console.log("Response: ", result);
+    console.log("Plantilla:", templateId);
+    console.log("URL:", url); // Corregido: era URL, ahora es url
+
+    // IMPORTANTE: Retornar la respuesta con el templateId
+    return { 
+      status: "success", 
+      template: { 
+        id: templateId // Aquí está el ID que necesitas
+      },
+      ...result // Incluir también la respuesta original del servidor
+    };
+
+  } catch (error) {
+    console.error("Error en la solicitud:", error);
+    console.log("Plantilla:", templateId);
+    console.log("URL:", url); // Corregido: era URL, ahora es url
+    showSnackbar("❌ Error al actualizar la plantilla", "error");
+    return { status: "error", message: "Error en la solicitud" }; // Retornar error
+  }
+};
 
   // FUNCION PARA ENVIAR EL REQUEST A TALKME
   const sendRequest2 = async (templateId) => {
