@@ -133,7 +133,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       payload,
       {
         headers: {
-          'x-api-token': 'hHbL6yxW3EZGgWJhFTY3SLd7aZsPuPWdpefjBjHrkhP4x8NF9v',
+          'x-api-token': apiToken,
           'Content-Type': 'application/json',
         },
       }
