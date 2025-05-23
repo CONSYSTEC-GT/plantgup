@@ -77,7 +77,7 @@ const deleteTemplateParams = async (ID_PLANTILLA) => {
 
 const saveCardsTemplate = async ({ ID_PLANTILLA, cards = [] }, idNombreUsuarioTalkMe, urlTemplatesGS) => {
   console.log("Entrando a saveCardsTemplate con:", cards.length, "tarjetas");
-  const url = urlTemplatesGS + '/tarjetas/';
+  const url = urlTemplatesGS + 'tarjetas/';
   const headers = {
     "Content-Type": "application/json",
   };
