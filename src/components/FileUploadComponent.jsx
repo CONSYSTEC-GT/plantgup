@@ -205,7 +205,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         payload,
         {
           headers: {
-            'x-api-token': 'hHbL6yxW3EZGgWJhFTY3SLd7aZsPuPWdpefjBjHrkhP4x8NF9v',
+            'x-api-token': apiToken,
             'Content-Type': 'application/json',
           },
         }
@@ -215,7 +215,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         url: urlWsFTP,
         method: 'POST',
         headers: {
-          'x-api-token': 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq',
+          'x-api-token': apiToken,
           'Content-Type': 'application/json',
           'origin': 'https://certificacion.talkme.pro/',
         },
