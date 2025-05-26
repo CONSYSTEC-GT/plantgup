@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode'; // Asegúrate de instalar jwt-decode
 import { useParams } from 'react-router-dom';
 import { alpha, Box, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fade, FormControl, FormLabel, Input, InputAdornment, ListItemIcon, ListItemText, InputLabel, Menu, MenuItem, OutlinedInput, Select, Stack, styled, TextField, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
+import Swal from 'sweetalert2'
 
 // ICONOS
 import AddIcon from '@mui/icons-material/Add';
@@ -190,7 +191,7 @@ const TemplateAll = () => {
         case 'CAROUSEL':
           navigate('/modify-template-carousel', { state: { template } });
           break;
-        case 'CATALOGO':
+        case 'CATALOG':
           navigate('/modify-template-catalogo', { state: { template } });
           break;
         case 'TEXT':

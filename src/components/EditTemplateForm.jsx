@@ -109,6 +109,9 @@ const EditTemplateForm = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [variables, setVariables] = useState([]);
 
+  // Estado para almacenar ejemplos de variables
+    const [variableExamples, setVariableExamples] = useState({});
+
   //ESTE ES PARA EL EXAMPLE MEDIA
   const [mediaId, setMediaId] = useState('');
 
@@ -648,6 +651,21 @@ const EditTemplateForm = () => {
     setShowEmojiPicker(false);
   };
 
+  // Función para reemplazar las variables en el mensaje con sus ejemplos
+  const replaceVariables = (text, variables) => {
+    let result = text;
+    
+
+    Object.keys(variables).forEach(variable => {
+      const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // 🔥 Búsqueda exacta de {{variable}}
+      console.log(`Reemplazando: {{${variable}}} por ${variables[variable]}`);
+      result = result.replace(regex, variables[variable]);
+    });
+
+    
+    return result;
+  };
+
   const handlePantallas = (event) => {
     const { target: { value } } = event;
 
@@ -665,6 +683,12 @@ const EditTemplateForm = () => {
     // Guardar el texto completo para mostrar (displayPantallas)
     setDisplayPantallas(selectedOptions);
   };
+
+    // Actualizar el campo "example" y "message" cuando cambie el mensaje o los ejemplos de las variables
+    useEffect(() => {
+      const newExample = replaceVariables(message, variableExamples);
+      setExample(newExample);
+    }, [message, variableExamples]);
 
   return (
     <Grid container spacing={2} sx={{ height: '100vh' }}>
@@ -956,7 +980,7 @@ const EditTemplateForm = () => {
           </Box>
         )}
 
-        {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+        {/* Footer */}<Box sx={{ width: '100%', marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2}}>
           <FormControl fullWidth>
             <FormLabel>
               Pie de página
@@ -1059,7 +1083,7 @@ const EditTemplateForm = () => {
           </Typography>
         </Box>
 
-        {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
+        {/* Ejemplo --data-urlencode example */}<Box sx={{ width: '100%', marginTop: 2, marginBottom: 2, p: 4, border: "1px solid #ddd", borderRadius: 2, display: 'none' }}>
           <FormControl fullWidth>
             <FormLabel>
               *Ejemplo

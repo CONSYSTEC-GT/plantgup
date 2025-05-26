@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Alert, Modal, Box, Typography, Button, Snackbar } from '@mui/material';
 import { Delete as DeleteIcon, Check as CheckIcon } from '@mui/icons-material';
 import { jwtDecode } from 'jwt-decode';
+import Swal from 'sweetalert2';
 
 const modalStyle = {
   position: 'absolute',
@@ -62,9 +63,23 @@ const DeleteModal = ({ open, onClose, onConfirm, template }) => {
         await handleDelete2(templateId);
       } else {
         console.error("El primer request no fue exitoso o no tiene el formato esperado.");
+        Swal.fire({
+          title: 'Error',
+          text: 'La plantilla no pudo ser eliminada correctamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#00c3ff'
+        });
       }
     } catch (error) {
       console.error("Ocurrió un error:", error);
+      Swal.fire({
+          title: 'Error',
+          text: 'La plantilla no pudo ser eliminada correctamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#00c3ff'
+        });
     }
   };
 
@@ -83,11 +98,25 @@ const DeleteModal = ({ open, onClose, onConfirm, template }) => {
       );
   
       if (response.ok) {
-        showSnackbar('✅ Plantilla eliminada exitosamente', 'success');
+        //showSnackbar('✅ Plantilla eliminada exitosamente', 'success');
+        Swal.fire({
+                  title: '¡Éxito!',
+                  text: 'La plantilla fue eliminada correctamente.',
+                  icon: 'success',
+                  confirmButtonText: 'Aceptar',
+                  confirmButtonColor: '#00c3ff'
+                });
         setShowConfirmationModal(true); // Activamos el modal de confirmación
         return { status: "success", template: { id: template.id } }; // Devuelve el estado y el ID de la plantilla
       } else {
-        showSnackbar('❌ Error al eliminar la plantilla', 'error');
+        //showSnackbar('❌ Error al eliminar la plantilla', 'error');
+        Swal.fire({
+          title: 'Error',
+          text: 'La plantilla no pudo ser eliminada correctamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#00c3ff'
+        });
         return { status: "error" }; // Devuelve un estado de error
       }
     } catch (error) {
@@ -118,17 +147,38 @@ const DeleteModal = ({ open, onClose, onConfirm, template }) => {
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Error response:", errorResponse);
-        showSnackbar(`❌ Error en el segundo request: ${errorResponse.message || "Solicitud inválida"}`, "error");
+        //showSnackbar(`❌ Error en el segundo request: ${errorResponse.message || "Solicitud inválida"}`, "error");
+        Swal.fire({
+          title: 'Error',
+          text: 'La plantilla no pudo ser eliminada correctamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#00c3ff'
+        });
         return null; // Retornar null en caso de error
       }
   
       const result = await response.json();
-      showSnackbar("✅ Segundo request completado exitosamente", "success");
+      //showSnackbar("✅ Segundo request completado exitosamente", "success");
+      Swal.fire({
+                  title: '¡Éxito!',
+                  text: 'La plantilla fue eliminada correctamente.',
+                  icon: 'success',
+                  confirmButtonText: 'Aceptar',
+                  confirmButtonColor: '#00c3ff'
+                });
       console.log("Response del segundo request: ", result);
       return result; // Retornar el resultado en caso de éxito
     } catch (error) {
       console.error("Error en el segundo request:", error);
-      showSnackbar("❌ Error en el segundo request", "error");
+      //showSnackbar("❌ Error en el segundo request", "error");
+      Swal.fire({
+          title: 'Error',
+          text: 'La plantilla no pudo ser eliminada correctamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#00c3ff'
+        });
       return null; // Retornar null en caso de error
     }
   };
