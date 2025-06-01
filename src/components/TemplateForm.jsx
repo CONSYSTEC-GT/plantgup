@@ -418,6 +418,7 @@ const TemplateForm = () => {
 
   // PANTALLAS
   const pantallasTalkMe = [
+    '0 - Notificaciones',
     '1 - Contactos',
     '2 - Recontacto',
     '3 - Historial',
