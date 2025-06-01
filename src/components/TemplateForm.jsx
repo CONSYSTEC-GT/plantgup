@@ -30,6 +30,9 @@ const TemplateForm = () => {
   const [templateName, setTemplateName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [templateType, setTemplateType] = useState("text");
+  const [templateTypeError, setTemplateTypeError] = useState(false);
+  const [templateTypeHelperText, setTemplateTypeHelperText] = useState(false);
+
   const [pantallas, setPantallas] = useState([]);
   const [displayPantallas, setDisplayPantallas] = useState([]);
   const [pantallasError, setPantallasError] = useState(false);

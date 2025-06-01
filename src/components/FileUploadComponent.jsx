@@ -93,7 +93,14 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
     // Verificar el tamaño del archivo
     if (file.size > MAX_FILE_SIZE) {
-      setError('El archivo es demasiado grande. El tamaño máximo permitido es 5 MB.');
+      setError('El archivo es demasiado grande.');
+      Swal.fire({
+                title: 'Error',
+                text: 'El tamaño del archivo es superior al permitido.',
+                icon: 'error',
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#00c3ff'
+              });
       setSelectedFile(null);
       setImagePreview(null);
       return;

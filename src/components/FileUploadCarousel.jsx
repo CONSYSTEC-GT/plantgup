@@ -83,6 +83,13 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
 
     if (file.size > MAX_FILE_SIZE) {
       setError('El archivo es demasiado grande');
+      Swal.fire({
+                title: 'Error',
+                text: 'El tamaño del archivo es superior al permitido.',
+                icon: 'error',
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#00c3ff'
+              });
       setSelectedFile(null);
       setImagePreview(initialFile?.url || null);  // Mantener preview anterior si existe
       event.target.value = '';
@@ -272,15 +279,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
         
       </Box>
 
-      <Snackbar
-        open={!!error}
-        autoHideDuration={6000}
-        onClose={() => setError('')}
-      >
-        <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
-          {error}
-        </Alert>
-      </Snackbar>
+      
 
       <div className="space-y-4">
         {uploadStatus && (
