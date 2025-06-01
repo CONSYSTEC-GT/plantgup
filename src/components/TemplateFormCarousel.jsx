@@ -50,6 +50,8 @@ const TemplateFormCarousel = () => {
   const [templateType, setTemplateType] = useState("CAROUSEL");
   const [pantallas, setPantallas] = useState([]);
   const [displayPantallas, setDisplayPantallas] = useState([]);
+  const [pantallasError, setPantallasError] = useState(false);
+  const [pantallasHelperText, setPantallasHelperText] = useState("");
   const [carouselType, setcarouselType] = useState("IMAGE");
   const [templateNameHelperText, setTemplateNameHelperText] = useState("El nombre debe hacer referencia al contenido de la plantilla. No se permite el uso de letras mayúsculas ni espacios en blanco.");
   const [templateNameError, setTemplateNameError] = useState(false);
@@ -168,6 +170,7 @@ const TemplateFormCarousel = () => {
     setUploadedUrl("");
     setVariables([]);
     setVariableDescriptions([]);
+    setDisplayPantallas([]);
     // Agrega cualquier otro estado relacionado
   };
 
@@ -215,6 +218,18 @@ const TemplateFormCarousel = () => {
       if (templateTypeRef.current && !firstErrorFieldRef) {
         firstErrorFieldRef = templateTypeRef;
       }
+    }
+
+    if (displayPantallas.length === 0) {
+      console.log("Error: No se seleccionaron pantallas.");
+      setPantallasError(true);
+      setPantallasHelperText("Debes seleccionar al menos una pantalla");
+      isValid = false;
+      // No hay focus directo porque es un select con múltiples opciones
+    } else {
+      console.log("Pantallas seleccionadas correctamente.");
+      setPantallasError(false);
+      setPantallasHelperText("");
     }
   
     // Validación de languageCode
@@ -413,6 +428,19 @@ const TemplateFormCarousel = () => {
       /******************************
        * COMENTADO EL PRIMER REQUEST *
        ******************************/
+
+      // Validar campos antes de enviar
+        const isValidP = validateFields();
+        if (!isValidP) {
+          Swal.fire({
+                title: 'Error',
+                text: 'Campo incompletos.',
+                icon: 'error',
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#00c3ff'
+              });
+          return; // Detener si hay errores
+        }
 
       const result = await createTemplateCarouselGupshup(
         appId,
@@ -1829,8 +1857,10 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                 Aplicar en estas pantallas
               </FormLabel>
             </FormControl>
-            <FormControl fullWidth sx={{ m: 1 }}>
-              <InputLabel id="demo-multiple-checkbox-label">Selecciona una o más opciones</InputLabel>
+            <FormControl fullWidth sx={{ m: 1 }} error={pantallasError}>
+              <InputLabel id="demo-multiple-checkbox-label">
+                Selecciona una o más opciones
+              </InputLabel>
               <Select
                 labelId="demo-multiple-checkbox-label"
                 id="demo-multiple-checkbox"
@@ -1847,6 +1877,7 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
                   </MenuItem>
                 ))}
               </Select>
+              <FormHelperText>{pantallasHelperText}</FormHelperText>
             </FormControl>
           </Box>
 

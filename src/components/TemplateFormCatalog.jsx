@@ -36,6 +36,8 @@ const TemplateForm = () => {
   const [templateNameError, setTemplateNameError] = useState(false);
   const [pantallas, setPantallas] = useState([]);
   const [displayPantallas, setDisplayPantallas] = useState([]);
+  const [pantallasError, setPantallasError] = useState(false);
+  const [pantallasHelperText, setPantallasHelperText] = useState("");
   const [vertical, setVertical] = useState("");
   const [message, setMessage] = useState("");
   const [header, setHeader] = useState("");
@@ -112,6 +114,7 @@ const TemplateForm = () => {
     setUploadedUrl("");
     setVariables([]);
     setVariableDescriptions([]);
+    setDisplayPantallas([]);
     // Agrega cualquier otro estado relacionado
   };
 
@@ -158,6 +161,18 @@ const TemplateForm = () => {
       if (templateTypeRef.current && !firstErrorFieldRef) {
         firstErrorFieldRef = templateTypeRef;
       }
+    }
+
+    if (displayPantallas.length === 0) {
+      console.log("Error: No se seleccionaron pantallas.");
+      setPantallasError(true);
+      setPantallasHelperText("Debes seleccionar al menos una pantalla");
+      isValid = false;
+      // No hay focus directo porque es un select con múltiples opciones
+    } else {
+      console.log("Pantallas seleccionadas correctamente.");
+      setPantallasError(false);
+      setPantallasHelperText("");
     }
 
     // Validación de languageCode
@@ -292,6 +307,20 @@ const TemplateForm = () => {
   }
 
   const iniciarRequest = async () => {
+
+    // Validar campos antes de enviar
+      const isValid = validateFields();
+      if (!isValid) {
+        Swal.fire({
+              title: 'Error',
+              text: 'Campo incompletos.',
+              icon: 'error',
+              confirmButtonText: 'Cerrar',
+              confirmButtonColor: '#00c3ff'
+            });
+        return; // Detener si hay errores
+      }
+
     try {
       // Hacer el primer request a GupShup API
       const result = await createTemplateCatalogGupshup(
@@ -1024,8 +1053,10 @@ const handleEmojiClick = (emojiObject) => {
               Aplicar en estas pantallas
             </FormLabel>
           </FormControl>
-          <FormControl fullWidth sx={{ m: 1 }}>
-            <InputLabel id="demo-multiple-checkbox-label">Selecciona una o más opciones</InputLabel>
+          <FormControl fullWidth sx={{ m: 1 }} error={pantallasError}>
+            <InputLabel id="demo-multiple-checkbox-label">
+              Selecciona una o más opciones
+            </InputLabel>
             <Select
               labelId="demo-multiple-checkbox-label"
               id="demo-multiple-checkbox"
@@ -1042,6 +1073,7 @@ const handleEmojiClick = (emojiObject) => {
                 </MenuItem>
               ))}
             </Select>
+            <FormHelperText>{pantallasHelperText}</FormHelperText>
           </FormControl>
         </Box>
 
