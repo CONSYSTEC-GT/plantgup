@@ -1351,19 +1351,19 @@ const handleEmojiClick = (emojiObject) => {
   };
 
   // Función para reemplazar las variables en el mensaje con sus ejemplos
-  const replaceVariables = (text, variables) => {
-    let result = text;
-    console.log("Texto antes de reemplazar:", text);
-
-    Object.keys(variables).forEach(variable => {
-      const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // 🔥 Búsqueda exacta de {{variable}}
-      console.log(`Reemplazando: {{${variable}}} por ${variables[variable]}`);
-      result = result.replace(regex, variables[variable]);
-    });
-
-    console.log("Texto después de reemplazar:", result);
-    return result;
-  };
+const replaceVariables = (text, variables) => {
+  let result = text;
+  
+  Object.keys(variables).forEach(variable => {
+    // Remover las llaves de la clave para crear el regex correcto
+    const cleanVariable = variable.replace(/[{}]/g, '');
+    const regex = new RegExp(`\\{\\{${cleanVariable}\\}\\}`, 'g');
+    console.log(`Reemplazando: {{${cleanVariable}}} por ${variables[variable]}`);
+    result = result.replace(regex, variables[variable]);
+  });
+  
+  return result;
+};
 
   // Generar IDs únicos para los botones
   const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -2611,7 +2611,7 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
               }}
             >
               <Typography variant="body1" color="text.primary" sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif", whiteSpace: "pre-line", overflowWrap: "break-word" }}>
-                {message}
+                {example}
               </Typography>
               <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "flex-end" }}>
                 {new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: true })}

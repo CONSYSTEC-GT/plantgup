@@ -916,7 +916,7 @@ const handleEmojiClick = (emojiObject) => {
     messageRef.current?.focus();
   };
 
-  /* Función para previsualizar el mensaje con ejemplos aplicados
+  // Función para previsualizar el mensaje con ejemplos aplicados
   const previewMessage = () => {
     let previewHeader = header;
     let previewFooter = footer;
@@ -927,7 +927,7 @@ const handleEmojiClick = (emojiObject) => {
       previewText = previewText.replaceAll(variable, example);
     });
   }
-    */
+    //
 
   const handleUpdateExample = (variable, value) => {
     setVariableExamples(prevExamples => {
@@ -956,20 +956,19 @@ const handleEmojiClick = (emojiObject) => {
     return generatedExample;
   };
 
-  // Función para reemplazar las variables en el mensaje con sus ejemplos
-  const replaceVariables = (text, variables) => {
-    let result = text;
-    
-
-    Object.keys(variables).forEach(variable => {
-      const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g'); // 🔥 Búsqueda exacta de {{variable}}
-      console.log(`Reemplazando: {{${variable}}} por ${variables[variable]}`);
-      result = result.replace(regex, variables[variable]);
-    });
-
-    
-    return result;
-  };
+const replaceVariables = (text, variables) => {
+  let result = text;
+  
+  Object.keys(variables).forEach(variable => {
+    // Remover las llaves de la clave para crear el regex correcto
+    const cleanVariable = variable.replace(/[{}]/g, '');
+    const regex = new RegExp(`\\{\\{${cleanVariable}\\}\\}`, 'g');
+    console.log(`Reemplazando: {{${cleanVariable}}} por ${variables[variable]}`);
+    result = result.replace(regex, variables[variable]);
+  });
+  
+  return result;
+};
 
   const handlePantallas = (event) => {
     const { target: { value } } = event;
