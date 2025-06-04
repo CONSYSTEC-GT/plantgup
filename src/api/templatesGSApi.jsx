@@ -47,10 +47,11 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions,
   }
 };
 
-const deleteTemplateParams = async (ID_PLANTILLA) => {
+const deleteTemplateParams = async (ID_PLANTILLA, urlTemplatesGS) => {
+  const url = `${urlTemplatesGS}parametros/plantilla/${ID_PLANTILLA}`;
   try {
     const response = await fetch(
-      `http://localhost:3004/templatesGS/api/parametros/plantilla/${ID_PLANTILLA}`,
+      url,
       {
         method: 'DELETE',
         headers: {
@@ -137,7 +138,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   const { templateName, selectedCategory, message, uploadedUrl, templateType, pantallas } = templateData;
 
   //const url = 'https://certificacion.talkme.pro/templatesGS/api/plantillas/';
-  const url = urlTemplatesGS;
+  const url = urlTemplatesGS + 'plantillas';
   const headers = {
     "Content-Type": "application/json",
   };
@@ -176,6 +177,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     ID_BOT_REDES: idBotRedes,
     ID_INTERNO: templateId,
     NOMBRE: templateName,
+    NOMBRE_PLANTILLA: templateName,
     MENSAJE: message,
     TIPO_PLANTILLA: TIPO_PLANTILLA,
     MEDIA: MEDIA,
@@ -241,7 +243,8 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
   const { templateName, selectedCategory, message, uploadedUrl, templateType } = templateData;
 
   // URL para actualizar plantilla por ID_INTERNO
-  const url = `https://certificacion.talkme.pro/templatesGS/api/plantillas/${idTemplate}`;
+  //const url = `https://certificacion.talkme.pro/templatesGS/api/plantillas/${idTemplate}`;
+  const url = urlTemplatesGS + 'plantillas/${idTemplate}';
   const headers = {
     "Content-Type": "application/json",
   };
@@ -331,8 +334,8 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
     // Actualizar variables si existen
     if (talkmeId && variables && variables.length > 0) {
       try {
-        await deleteTemplateParams(talkmeId);
-        await saveTemplateParams(talkmeId, variables, variableDescriptions);
+        await deleteTemplateParams(talkmeId, urlTemplatesGS);
+        await saveTemplateParams(talkmeId, variables, variableDescriptions, urlTemplatesGS);
       } catch (error) {
         console.error("Error al actualizar los parámetros:", error);
         showSnackbar("⚠️ Error al actualizar los parámetros", "warning");
@@ -344,7 +347,7 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
     if (talkmeId && cards && cards.length > 0) {
       try {
         // 1. Eliminar todas las tarjetas existentes de una sola vez
-        const deleteResponse = await fetch(`https://certificacion.talkme.pro/templatesGS/api/tarjetas/plantilla/${talkmeId}`, {
+        const deleteResponse = await fetch(`${urlTemplatesGS}tarjetas/plantilla/${talkmeId}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",

@@ -351,6 +351,8 @@ const TemplateForm = () => {
           example
         },
         idTemplate,
+        idNombreUsuarioTalkMe,
+        urlTemplatesGS,
         validateFields
 
       );
@@ -371,7 +373,8 @@ const TemplateForm = () => {
           },
           idNombreUsuarioTalkMe || "Sistema.TalkMe",
           variables,
-          variableDescriptions
+          variableDescriptions,
+          urlTemplatesGS
         );
 
         // El tercer request se maneja dentro de saveTemplateToTalkMe

@@ -110,9 +110,11 @@ const TemplateForm = () => {
     setSelectedCategory("");
     setLanguageCode("");
     setVertical("");
+    setHeader("");
     setMessage("");
     setMediaId("");
     setButtons([]);
+    setFooter("");
     setExample("");
     setUploadedUrl("");
     setVariables([]);
@@ -286,7 +288,7 @@ const TemplateForm = () => {
 
   // Decodifica el token para obtener appId y authCode
   //
-  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken;
+  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken, urlWsFTP;
   if (token) {
     try {
       const decoded = jwtDecode(token);
@@ -299,22 +301,29 @@ const TemplateForm = () => {
       idBot = decoded.id_bot;
       urlTemplatesGS = decoded.urlTemplatesGS;
       apiToken = decoded.apiToken;
-      //urlWsFTP = decoded.urlWsFTP;
-      console.log('idBot:', idBot);
-      console.log('idBotRedes:', idBotRedes);
-      console.log('urlTemplatesGS', urlTemplatesGS);
-      console.log('apiToken', apiToken);
-      //console.log('urlWsFTP', urlWsFTP)
-      //console.log('authCode:', authCode);
-      //console.log('idUsuarioTalkMe:', idUsuarioTalkMe);
-      //console.log('idNombreUsuarioTalkMe:', idNombreUsuarioTalkMe);
-      //console.log('empresaTalkMe:', empresaTalkMe);
+      urlWsFTP = decoded.urlWsFTP;
 
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
   } //
 
+   //
+
+ /* let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken, urlWsFTP;
+
+  appId = '1fbd9a1e-074c-4e1e-801c-b25a0fcc9487'; // Extrae appId del token
+  authCode = 'sk_d416c60960504bab8be8bc3fac11a358'; // Extrae authCode del token
+  appName = 'DemosTalkMe55'; // Extrae el nombre de la aplicación
+  idUsuarioTalkMe = 78;  // Cambiado de idUsuario a id_usuario
+  idNombreUsuarioTalkMe = 'javier.colocho';  // Cambiado de nombreUsuario a nombre_usuario
+  empresaTalkMe = 2;
+  idBotRedes = 721;
+  idBot = 257;
+  urlTemplatesGS = 'http://localhost:3004/api/';
+  apiToken = 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq';
+  urlWsFTP = 'https://cloud-s2.talkme.pro/WsFTP/api/ftp/echo';
+*/
 
 
   /*
@@ -363,6 +372,8 @@ const TemplateForm = () => {
           example,
           exampleHeader
         },
+        idNombreUsuarioTalkMe,
+        urlTemplatesGS,
         validateFields
       );
       //

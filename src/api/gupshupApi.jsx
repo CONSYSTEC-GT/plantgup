@@ -1,8 +1,9 @@
 
 import { showSnackbar } from "../utils/Snackbar";
+import { saveTemplateLog } from "./templatesGSLog";
 
 // PLANTILLAS NORMALES
-export const createTemplateGupshup = async (appId, authCode, templateData, validateFn) => {
+export const createTemplateGupshup = async (appId, authCode, templateData, idNombreUsuarioTalkMe, urlTemplatesGS, validateFn) => {
   // Validar campos antes de enviar la solicitud
   if (validateFn && !validateFn()) {
     return null; // Detener la ejecución si hay errores
@@ -92,11 +93,67 @@ export const createTemplateGupshup = async (appId, authCode, templateData, valid
         errorResponse = { message: "Error no JSON", raw: errorText };
         console.error("Error response (texto):", errorText);
       }
+
+      // Agregar log antes de enviar para verificar los datos
+      console.log("Datos que se enviarán:", {
+        ...templateData,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: errorResponse.message || "Solicitud inválida"
+      });
+      // Guardar log de error
+      await saveTemplateLog({
+        TEMPLATE_NAME: templateData.templateName,
+        APP_ID: appId,
+        CATEGORY: templateData.selectedCategory,
+        LANGUAGE_CODE: templateData.languageCode,
+        TEMPLATE_TYPE: templateData.templateType,
+        VERTICAL: templateData.vertical,
+        CONTENT: templateData.message,
+        HEADER: templateData.header,
+        FOOTER: templateData.footer,
+        MEDIA_ID: templateData.mediaId,
+        BUTTONS: JSON.stringify(templateData.buttons), // Probablemente necesita ser string
+        EXAMPLE: templateData.example,
+        EXAMPLE_HEADER: templateData.exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        urlTemplatesGS,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: errorResponse.message || "Solicitud inválida"
+      });
+
       showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
       throw new Error(errorResponse.message || "Error al crear la plantilla");
     }
 
     const result = await response.json();
+
+    // Guardar log exitoso
+    await saveTemplateLog({
+        TEMPLATE_NAME: templateData.templateName,
+        APP_ID: appId,
+        CATEGORY: templateData.selectedCategory,
+        LANGUAGE_CODE: templateData.languageCode,
+        TEMPLATE_TYPE: templateData.templateType,
+        VERTICAL: templateData.vertical,
+        CONTENT: templateData.message,
+        HEADER: templateData.header,
+        FOOTER: templateData.footer,
+        MEDIA_ID: templateData.mediaId,
+        BUTTONS: JSON.stringify(templateData.buttons), // Probablemente necesita ser string
+        EXAMPLE: templateData.example,
+        EXAMPLE_HEADER: templateData.exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        GUPSHUP_TEMPLATE_ID: result.template.id,
+        urlTemplatesGS,
+        STATUS: "CREATED",
+        REJECTION_REASON: null,
+        CREADO_POR: idNombreUsuarioTalkMe,
+      });
+
     showSnackbar("✅ Plantilla creada exitosamente", "success");
     console.log("Response: ", result);
     return result; // Retornar el resultado
@@ -107,6 +164,30 @@ export const createTemplateGupshup = async (appId, authCode, templateData, valid
       message: error.message,
       stack: error.stack
     });
+
+    // Guardar log de error
+    await saveTemplateLog({
+        TEMPLATE_NAME: templateData.templateName,
+        APP_ID: appId,
+        CATEGORY: templateData.selectedCategory,
+        LANGUAGE_CODE: templateData.languageCode,
+        TEMPLATE_TYPE: templateData.templateType,
+        VERTICAL: templateData.vertical,
+        CONTENT: templateData.message,
+        HEADER: templateData.header,
+        FOOTER: templateData.footer,
+        MEDIA_ID: templateData.mediaId,
+        BUTTONS: JSON.stringify(templateData.buttons), // Probablemente necesita ser string
+        EXAMPLE: templateData.example,
+        EXAMPLE_HEADER: templateData.exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        urlTemplatesGS,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: errorResponse.message || "Solicitud inválida"
+      });
+
     showSnackbar("❌ Error al crear la plantilla", "error");
     return null; // Retornar null en caso de error
   }
@@ -128,7 +209,7 @@ export const editTemplateGupshup = async (appId, authCode, templateData, idTempl
     example
   } = templateData;
 
-  
+
   const url = `https://partner.gupshup.io/partner/app/${appId}/templates/${idTemplate}`;
   const headers = {
     Authorization: authCode,
@@ -148,7 +229,7 @@ export const editTemplateGupshup = async (appId, authCode, templateData, idTempl
 
 
   console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
-  
+
 
   try {
     const response = await fetch(url, {
@@ -191,7 +272,7 @@ export const editTemplateGupshup = async (appId, authCode, templateData, idTempl
 };
 
 // PLANTILLAS CATALOGO
-export const createTemplateCatalogGupshup = async (appId, authCode, templateData, validateFn) => {
+export const createTemplateCatalogGupshup = async (appId, authCode, templateData, idNombreUsuarioTalkMe, urlTemplatesGS, validateFn) => {
   // Validar campos antes de enviar la solicitud
   if (validateFn && !validateFn()) {
     return null; // Detener la ejecución si hay errores
@@ -246,11 +327,67 @@ export const createTemplateCatalogGupshup = async (appId, authCode, templateData
         errorResponse = { message: "Error no JSON", raw: errorText };
         console.error("Error response (texto):", errorText);
       }
+
+      // Agregar log antes de enviar para verificar los datos
+      console.log("Datos que se enviarán:", {
+        ...templateData,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: errorResponse.message || "Solicitud inválida"
+      });
+      // Guardar log de error
+      await saveTemplateLog({
+        TEMPLATE_NAME: templateData.templateName,
+        APP_ID: appId,
+        CATEGORY: templateData.selectedCategory,
+        LANGUAGE_CODE: templateData.languageCode,
+        TEMPLATE_TYPE: templateData.templateType,
+        VERTICAL: templateData.vertical,
+        CONTENT: templateData.message,
+        HEADER: templateData.header,
+        FOOTER: templateData.footer,
+        MEDIA_ID: templateData.mediaId,
+        BUTTONS: JSON.stringify(templateData.buttons), // Probablemente necesita ser string
+        EXAMPLE: templateData.example,
+        EXAMPLE_HEADER: templateData.exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        urlTemplatesGS,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: errorResponse.message || "Solicitud inválida"
+      });
+
       showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
       throw new Error(errorResponse.message || "Error al crear la plantilla");
     }
 
     const result = await response.json();
+
+    // Guardar log exitoso
+    await saveTemplateLog({
+        TEMPLATE_NAME: templateData.templateName,
+        APP_ID: appId,
+        CATEGORY: templateData.selectedCategory,
+        LANGUAGE_CODE: templateData.languageCode,
+        TEMPLATE_TYPE: templateData.templateType,
+        VERTICAL: templateData.vertical,
+        CONTENT: templateData.message,
+        HEADER: templateData.header,
+        FOOTER: templateData.footer,
+        MEDIA_ID: templateData.mediaId,
+        BUTTONS: JSON.stringify(templateData.buttons), // Probablemente necesita ser string
+        EXAMPLE: templateData.example,
+        EXAMPLE_HEADER: templateData.exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        GUPSHUP_TEMPLATE_ID: result.template.id,
+        urlTemplatesGS,
+        STATUS: "CREATED",
+        REJECTION_REASON: null,
+        CREADO_POR: idNombreUsuarioTalkMe,
+      });
+
     showSnackbar("✅ Plantilla creada exitosamente", "success");
     console.log("Response: ", result);
     return result; // Retornar el resultado
@@ -261,12 +398,37 @@ export const createTemplateCatalogGupshup = async (appId, authCode, templateData
       message: error.message,
       stack: error.stack
     });
+
+    // Guardar log de error
+    await saveTemplateLog({
+        TEMPLATE_NAME: templateData.templateName,
+        APP_ID: appId,
+        CATEGORY: templateData.selectedCategory,
+        LANGUAGE_CODE: templateData.languageCode,
+        TEMPLATE_TYPE: templateData.templateType,
+        VERTICAL: templateData.vertical,
+        CONTENT: templateData.message,
+        HEADER: templateData.header,
+        FOOTER: templateData.footer,
+        MEDIA_ID: templateData.mediaId,
+        BUTTONS: JSON.stringify(templateData.buttons), // Probablemente necesita ser string
+        EXAMPLE: templateData.example,
+        EXAMPLE_HEADER: templateData.exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        urlTemplatesGS,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: errorResponse.message || "Solicitud inválida"
+      });
+
+
     showSnackbar("❌ Error al crear la plantilla", "error");
     return null; // Retornar null en caso de error
   }
 };
 
-export const editTemplateCatalogGupshup = async (appId, authCode, templateData, idTemplate, validateFn) => {
+export const editTemplateCatalogGupshup = async (appId, authCode, templateData, idTemplate, idNombreUsuarioTalkMe, urlTemplatesGS, validateFn) => {
   // Validar campos antes de enviar la solicitud
   if (validateFn && !validateFn()) {
     return null; // Detener la ejecución si hay errores
@@ -282,7 +444,7 @@ export const editTemplateCatalogGupshup = async (appId, authCode, templateData, 
     example
   } = templateData;
 
-  
+
   const url = `https://partner.gupshup.io/partner/app/${appId}/templates/${idTemplate}`;
   const headers = {
     Authorization: authCode,
@@ -302,7 +464,7 @@ export const editTemplateCatalogGupshup = async (appId, authCode, templateData, 
 
 
   console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
-  
+
 
   try {
     const response = await fetch(url, {
@@ -324,11 +486,70 @@ export const editTemplateCatalogGupshup = async (appId, authCode, templateData, 
         errorResponse = { message: "Error no JSON", raw: errorText };
         console.error("Error response (texto):", errorText);
       }
+
+      // Agregar log antes de enviar para verificar los datos
+      console.log("Datos que se enviarán:", {
+        ...templateData,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: errorResponse.message || "Solicitud inválida"
+      });
+
+      // Guardar log de error
+      await saveTemplateLog({
+        TEMPLATE_NAME: templateData.templateName,
+        APP_ID: appId,
+        CATEGORY: templateData.selectedCategory,
+        LANGUAGE_CODE: templateData.languageCode,
+        TEMPLATE_TYPE: templateData.templateType,
+        VERTICAL: templateData.vertical,
+        CONTENT: templateData.message,
+        HEADER: templateData.header,
+        FOOTER: templateData.footer,
+        MEDIA_ID: templateData.mediaId,
+        BUTTONS: JSON.stringify(templateData.buttons), // Probablemente necesita ser string
+        EXAMPLE: templateData.example,
+        EXAMPLE_HEADER: templateData.exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        urlTemplatesGS,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: errorResponse.message || "Solicitud inválida"
+      });
+
+
       showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
       throw new Error(errorResponse.message || "Error al editar la plantilla");
     }
 
     const result = await response.json();
+
+    // Guardar log exitoso
+    await saveTemplateLog({
+        TEMPLATE_NAME: templateData.templateName,
+        APP_ID: appId,
+        CATEGORY: templateData.selectedCategory,
+        LANGUAGE_CODE: templateData.languageCode,
+        TEMPLATE_TYPE: templateData.templateType,
+        VERTICAL: templateData.vertical,
+        CONTENT: templateData.message,
+        HEADER: templateData.header,
+        FOOTER: templateData.footer,
+        MEDIA_ID: templateData.mediaId,
+        BUTTONS: JSON.stringify(templateData.buttons), // Probablemente necesita ser string
+        EXAMPLE: templateData.example,
+        EXAMPLE_HEADER: templateData.exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        GUPSHUP_TEMPLATE_ID: result.template.id,
+        urlTemplatesGS,
+        STATUS: "CREATED",
+        REJECTION_REASON: null,
+        CREADO_POR: idNombreUsuarioTalkMe,
+      });
+
+
     showSnackbar("✅ Plantilla editada exitosamente", "success");
     console.log("Response: ", result);
     return result; // Retornar el resultado
@@ -339,6 +560,31 @@ export const editTemplateCatalogGupshup = async (appId, authCode, templateData, 
       message: error.message,
       stack: error.stack
     });
+
+    // Guardar log de error
+    await saveTemplateLog({
+        TEMPLATE_NAME: templateData.templateName,
+        APP_ID: appId,
+        CATEGORY: templateData.selectedCategory,
+        LANGUAGE_CODE: templateData.languageCode,
+        TEMPLATE_TYPE: templateData.templateType,
+        VERTICAL: templateData.vertical,
+        CONTENT: templateData.message,
+        HEADER: templateData.header,
+        FOOTER: templateData.footer,
+        MEDIA_ID: templateData.mediaId,
+        BUTTONS: JSON.stringify(templateData.buttons), // Probablemente necesita ser string
+        EXAMPLE: templateData.example,
+        EXAMPLE_HEADER: templateData.exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        urlTemplatesGS,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: errorResponse.message || "Solicitud inválida"
+      });
+
+
     showSnackbar("❌ Error al crear la plantilla", "error");
     return null; // Retornar null en caso de error
   }
@@ -420,7 +666,7 @@ export const createTemplateCarouselGupshup = async (appId, authCode, templateDat
     showSnackbar("❌ Error al crear la plantilla", "error");
     return null; // Retornar null en caso de error
   }
-};  
+};
 
 export const editTemplateCarouselGupshup = async (appId, authCode, templateData, idTemplate, validateFn) => {
   // Validar campos antes de enviar la solicitud
@@ -439,7 +685,7 @@ export const editTemplateCarouselGupshup = async (appId, authCode, templateData,
     carousel
   } = templateData;
 
-  
+
   const url = `https://partner.gupshup.io/partner/app/${appId}/templates/${idTemplate}`;
   const headers = {
     Authorization: authCode,
@@ -460,7 +706,7 @@ export const editTemplateCarouselGupshup = async (appId, authCode, templateData,
 
 
   console.log("Request enviado:", JSON.stringify(Object.fromEntries(data.entries()), null, 2));
-  
+
 
   try {
     const response = await fetch(url, {
