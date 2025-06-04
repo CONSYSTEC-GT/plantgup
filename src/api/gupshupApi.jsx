@@ -648,11 +648,69 @@ export const createTemplateCarouselGupshup = async (appId, authCode, templateDat
         errorResponse = { message: "Error no JSON", raw: errorText };
         console.error("Error response (texto):", errorText);
       }
+
+      // Agregar log antes de enviar para verificar los datos
+      console.log("Datos que se enviarán:", {
+        ...templateData,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: errorResponse.message || "Solicitud inválida"
+      });
+      // Guardar log de error
+      await saveTemplateLog({
+        TEMPLATE_NAME: templateData.templateName,
+        APP_ID: appId,
+        CATEGORY: templateData.selectedCategory,
+        LANGUAGE_CODE: templateData.languageCode,
+        TEMPLATE_TYPE: templateData.templateType,
+        VERTICAL: templateData.vertical,
+        CONTENT: templateData.message,
+        HEADER: templateData.header,
+        FOOTER: templateData.footer,
+        MEDIA_ID: templateData.mediaId,
+        BUTTONS: JSON.stringify(templateData.buttons), // Probablemente necesita ser string
+        EXAMPLE: templateData.example,
+        EXAMPLE_HEADER: templateData.exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        urlTemplatesGS,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: errorResponse.message || "Solicitud inválida"
+      });
+
+
       showSnackbar(`❌ Error al crear la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
       throw new Error(errorResponse.message || "Error al crear la plantilla");
     }
 
     const result = await response.json();
+
+    // Guardar log exitoso
+    await saveTemplateLog({
+        TEMPLATE_NAME: templateData.templateName,
+        APP_ID: appId,
+        CATEGORY: templateData.selectedCategory,
+        LANGUAGE_CODE: templateData.languageCode,
+        TEMPLATE_TYPE: templateData.templateType,
+        VERTICAL: templateData.vertical,
+        CONTENT: templateData.message,
+        HEADER: templateData.header,
+        FOOTER: templateData.footer,
+        MEDIA_ID: templateData.mediaId,
+        BUTTONS: JSON.stringify(templateData.buttons), // Probablemente necesita ser string
+        EXAMPLE: templateData.example,
+        EXAMPLE_HEADER: templateData.exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        GUPSHUP_TEMPLATE_ID: result.template.id,
+        urlTemplatesGS,
+        STATUS: "CREATED",
+        REJECTION_REASON: null,
+        CREADO_POR: idNombreUsuarioTalkMe,
+      });
+
+
     showSnackbar("✅ Plantilla creada exitosamente", "success");
     console.log("Response: ", result);
     return result; // Retornar el resultado
@@ -663,6 +721,31 @@ export const createTemplateCarouselGupshup = async (appId, authCode, templateDat
       message: error.message,
       stack: error.stack
     });
+
+    // Guardar log de error
+    await saveTemplateLog({
+        TEMPLATE_NAME: templateData.templateName,
+        APP_ID: appId,
+        CATEGORY: templateData.selectedCategory,
+        LANGUAGE_CODE: templateData.languageCode,
+        TEMPLATE_TYPE: templateData.templateType,
+        VERTICAL: templateData.vertical,
+        CONTENT: templateData.message,
+        HEADER: templateData.header,
+        FOOTER: templateData.footer,
+        MEDIA_ID: templateData.mediaId,
+        BUTTONS: JSON.stringify(templateData.buttons), // Probablemente necesita ser string
+        EXAMPLE: templateData.example,
+        EXAMPLE_HEADER: templateData.exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        urlTemplatesGS,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: errorResponse.message || "Solicitud inválida"
+      });
+
+      
     showSnackbar("❌ Error al crear la plantilla", "error");
     return null; // Retornar null en caso de error
   }

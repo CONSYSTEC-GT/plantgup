@@ -375,16 +375,22 @@ const TemplateFormCarousel = () => {
       console.error('Error decodificando el token:', error);
     }
   }
+  //
+
   /*
+  let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken, urlWsFTP;
 
-  let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
-
-  appId = 'f63360ab-87b0-44da-9790-63a0d524f9dd'; // Extrae appId del token
-  authCode = 'sk_2662b472ec0f4eeebd664238d72b61da'; // Extrae authCode del token
-  appName = 'DemosTalkMe56'; // Extrae el nombre de la aplicación
+  appId = '1fbd9a1e-074c-4e1e-801c-b25a0fcc9487'; // Extrae appId del token
+  authCode = 'sk_d416c60960504bab8be8bc3fac11a358'; // Extrae authCode del token
+  appName = 'DemosTalkMe55'; // Extrae el nombre de la aplicación
   idUsuarioTalkMe = 78;  // Cambiado de idUsuario a id_usuario
   idNombreUsuarioTalkMe = 'javier.colocho';  // Cambiado de nombreUsuario a nombre_usuario
   empresaTalkMe = 2;
+  idBotRedes = 721;
+  idBot = 257;
+  urlTemplatesGS = 'http://localhost:3004/api/';
+  apiToken = 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq';
+  urlWsFTP = 'https://cloud-s2.talkme.pro/WsFTP/api/ftp/echo';
 */
   const iniciarRequest = async () => {
     try {
@@ -459,6 +465,8 @@ const TemplateFormCarousel = () => {
           example,
           carousel: JSON.stringify(formattedCards) // Enviar como string JSON
         },
+        idNombreUsuarioTalkMe,
+        urlTemplatesGS,
         validateFields
       );
 

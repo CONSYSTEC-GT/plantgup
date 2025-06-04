@@ -283,7 +283,7 @@ const TemplateForm = () => {
   const token = localStorage.getItem('authToken');
 
   // Decodifica el token para obtener appId y authCode
-  /*
+  //
   let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS;
   if (token) {
     try {
@@ -306,8 +306,8 @@ const TemplateForm = () => {
       console.error('Error decodificando el token:', error);
     }
   }
-*/
-   //
+//
+   /*
   let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken, urlWsFTP;
 
   appId = '1fbd9a1e-074c-4e1e-801c-b25a0fcc9487'; // Extrae appId del token
@@ -321,7 +321,7 @@ const TemplateForm = () => {
   urlTemplatesGS = 'http://localhost:3004/api/';
   apiToken = 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq';
   urlWsFTP = 'https://cloud-s2.talkme.pro/WsFTP/api/ftp/echo';
-//
+*/
 
   const iniciarRequest = async () => {
 
