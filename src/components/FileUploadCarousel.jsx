@@ -47,9 +47,9 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
   empresaTalkMe = 2;
   idBotRedes = 721;
   idBot = 257;
-  urlTemplatesGS = decoded.urlTemplatesGS;
+  urlTemplatesGS = 'https://dev.talkme.pro/templatesGS/api/';
   apiToken = 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq';
-  urlWsFTP = decoded.urlWsFTP;
+  urlWsFTP = 'https://dev.talkme.pro/WsFTP/api/ftp/upload';
   
       
 //
