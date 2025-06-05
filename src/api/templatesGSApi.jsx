@@ -142,12 +142,13 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   const headers = {
     "Content-Type": "application/json",
   };
-  //13 y 14 son en certi igual que 149 en bot redes y en dev son 17 y 18
+  //13 y 14 son en certi igual que 149 en bot redes y en dev son 17 y 
+  //10 Y 13 SON EN S1 AL S4
   let ID_PLANTILLA_CATEGORIA;
   if (selectedCategory === "MARKETING") {
-    ID_PLANTILLA_CATEGORIA = 13;
+    ID_PLANTILLA_CATEGORIA = 10;
   } else if (selectedCategory === "UTILITY") {
-    ID_PLANTILLA_CATEGORIA = 14;
+    ID_PLANTILLA_CATEGORIA = 13;
   } else {
     console.error("Categoría no válida:", selectedCategory);
     showSnackbar("❌ Categoría no válida", "error");
