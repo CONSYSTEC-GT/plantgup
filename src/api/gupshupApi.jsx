@@ -591,7 +591,7 @@ export const editTemplateCatalogGupshup = async (appId, authCode, templateData, 
 };
 
 // PLANTILLAS CARRUSEL
-export const createTemplateCarouselGupshup = async (appId, authCode, templateData, validateFn) => {
+export const createTemplateCarouselGupshup = async (appId, authCode, templateData, idNombreUsuarioTalkMe, urlTemplatesGS, validateFn) => {
   // Validar campos antes de enviar la solicitud
   if (validateFn && !validateFn()) {
     return null; // Detener la ejecución si hay errores
@@ -665,6 +665,7 @@ export const createTemplateCarouselGupshup = async (appId, authCode, templateDat
         TEMPLATE_TYPE: templateData.templateType,
         VERTICAL: templateData.vertical,
         CONTENT: templateData.message,
+        CARDS: templateData.cards,
         HEADER: templateData.header,
         FOOTER: templateData.footer,
         MEDIA_ID: templateData.mediaId,
