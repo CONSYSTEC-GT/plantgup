@@ -479,13 +479,13 @@ const TemplateForm = () => {
       icon: <EmailOutlinedIcon />,
     },
     {
-      id: 'utility',
+      id: 'UTILITY',
       title: 'Utilidad',
       description: 'Envía actualizaciones de cuenta, actualizaciones de pedidos, alertas y más para compartir información importante.',
       icon: <NotificationsNoneOutlinedIcon />,
     },
     {
-      id: 'authentication',
+      id: 'AUTHENTICATION',
       title: 'Autenticación',
       description: 'Envía códigos que permiten a tus clientes acceder a su cuenta.',
       icon: <VpnKeyOutlinedIcon />,
