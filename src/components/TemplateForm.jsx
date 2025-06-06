@@ -367,7 +367,8 @@ const TemplateForm = () => {
           message,
           header,
           footer,
-          mediaId,
+          //mediaId,
+          uploadedUrl,
           buttons,
           example,
           exampleHeader

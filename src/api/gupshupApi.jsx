@@ -18,7 +18,8 @@ export const createTemplateGupshup = async (appId, authCode, templateData, idNom
     message,
     header,
     footer,
-    mediaId,
+    //mediaId,
+    uploadedUrl,
     buttons,
     example,
     exampleHeader
@@ -46,8 +47,8 @@ export const createTemplateGupshup = async (appId, authCode, templateData, idNom
     data.append("footer", footer);
   }
 
-  if (mediaId) {
-    data.append("exampleMedia", mediaId);
+  if (uploadedUrl) {
+    data.append("exampleMedia", uploadedUrl);
   }
 
   const formattedButtons = buttons.map((button) => {
