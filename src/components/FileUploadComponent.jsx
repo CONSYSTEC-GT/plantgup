@@ -222,6 +222,17 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       console.log('Preparando solicitud al servicio propio...');
       setUploadStatus('Subiendo archivo al servicio propio...');
 
+      console.log('Request completo al servicio propio:', {
+        url: urlWsFTP,
+        method: 'POST',
+        headers: {
+          'x-api-token': apiToken,
+          'Content-Type': 'application/json',
+          'origin': 'https://certificacion.talkme.pro/',
+        },
+        data: payload,
+      });
+
       const ownServiceResponse = await axios.post(
         urlWsFTP,
         payload,
@@ -233,16 +244,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
         }
       );
 
-      console.log('Request completo al servicio propio:', {
-        url: urlWsFTP,
-        method: 'POST',
-        headers: {
-          'x-api-token': apiToken,
-          'Content-Type': 'application/json',
-          'origin': 'https://certificacion.talkme.pro/',
-        },
-        data: payload,
-      });
+      
 
       console.log('Respuesta del servicio propio recibida:', ownServiceResponse);
 
