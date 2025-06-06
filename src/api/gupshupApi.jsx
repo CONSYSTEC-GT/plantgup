@@ -68,7 +68,10 @@ export const createTemplateGupshup = async (appId, authCode, templateData, idNom
 
   data.append("buttons", JSON.stringify(formattedButtons));
   data.append("example", example);
-  data.append("exampleHeader", exampleHeader);
+  // Si exampleHeader está vacío, usar uploadedUrl como fallback
+  const finalExampleHeader = exampleHeader || uploadedUrl;
+  data.append("exampleHeader", finalExampleHeader);
+  //data.append("exampleHeader", exampleHeader);
   data.append("enableSample", true);
   data.append("allowTemplateCategoryChange", false);
 
