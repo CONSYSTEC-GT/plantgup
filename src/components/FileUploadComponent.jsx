@@ -141,7 +141,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       setIsLoading(true);
 
       // Subir archivo a Gupshup
-      /*
+      //
       const gupshupFormData = new FormData();
       gupshupFormData.append('file', selectedFile);
       gupshupFormData.append('file_type', selectedFile.type);
@@ -188,7 +188,7 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
       const mediaId = gupshupData.handleId.message;
       console.log('Media ID obtenido de Gupshup:', mediaId);
-      */
+      //
 
       //obtengo el API_TOKEN desde templatesGS
 
