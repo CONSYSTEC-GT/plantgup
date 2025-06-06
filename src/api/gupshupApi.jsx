@@ -69,8 +69,12 @@ export const createTemplateGupshup = async (appId, authCode, templateData, idNom
   data.append("buttons", JSON.stringify(formattedButtons));
   data.append("example", example);
   // Si exampleHeader está vacío, usar uploadedUrl como fallback
-  if (exampleHeader) {
-  data.append("exampleHeader", exampleHeader);}
+  if (templateType.toUpperCase() === "IMAGE" && uploadedUrl) {
+  data.append("exampleHeader", JSON.stringify({ image_url: uploadedUrl }));
+} else if (exampleHeader) {
+  data.append("exampleHeader", exampleHeader);
+}
+
   //data.append("exampleHeader", exampleHeader);
   data.append("enableSample", true);
   data.append("allowTemplateCategoryChange", false);
