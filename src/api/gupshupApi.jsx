@@ -39,7 +39,10 @@ export const createTemplateGupshup = async (appId, authCode, templateData, idNom
   data.append("vertical", vertical);
   data.append("content", message);
 
-  if (header) {
+    // Para plantillas IMAGE, el header debe ser "IMAGE"
+  if (templateType.toUpperCase() === "IMAGE") {
+    data.append("header", "IMAGE");
+  } else if (header) {
     data.append("header", header);
   }
 
@@ -47,7 +50,8 @@ export const createTemplateGupshup = async (appId, authCode, templateData, idNom
     data.append("footer", footer);
   }
 
-  if (uploadedUrl) {
+ // Para plantillas IMAGE, este campo es obligatorio
+  if (uploadedUrl && templateType.toUpperCase() === "IMAGE") {
     data.append("exampleMedia", uploadedUrl);
   }
 
@@ -68,12 +72,18 @@ export const createTemplateGupshup = async (appId, authCode, templateData, idNom
 
   data.append("buttons", JSON.stringify(formattedButtons));
   data.append("example", example);
-  // Si exampleHeader está vacío, usar uploadedUrl como fallback
+
+// CRÍTICO: Para plantillas IMAGE, exampleHeader es OBLIGATORIO
   if (templateType.toUpperCase() === "IMAGE" && uploadedUrl) {
-  data.append("exampleHeader", JSON.stringify({ image_url: uploadedUrl }));
-} else if (exampleHeader) {
-  data.append("exampleHeader", exampleHeader);
-}
+    // El formato debe ser exactamente así:
+    const exampleHeaderData = {
+      header_handle: ["image_url"],  // Array con el tipo de media
+      header_text: [uploadedUrl]     // Array con la URL de la imagen
+    };
+    data.append("exampleHeader", JSON.stringify(exampleHeaderData));
+  } else if (exampleHeader) {
+    data.append("exampleHeader", exampleHeader);
+  }
 
   //data.append("exampleHeader", exampleHeader);
   data.append("enableSample", true);
