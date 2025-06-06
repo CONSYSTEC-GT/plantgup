@@ -387,4 +387,32 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
   }
 };
 
+export const obtenerApiToken = async (idEmpresa) => {
+  const url = `${urlTemplatesGS}empresas/${idEmpresa}/token`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error al obtener token: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Solo retornar API_TOKEN
+    return data.API_TOKEN;
+
+  } catch (error) {
+    console.error("Error obteniendo el API Token:", error);
+    return null;
+  }
+};
+
+
+
 export { saveTemplateParams };

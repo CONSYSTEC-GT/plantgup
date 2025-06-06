@@ -16,6 +16,7 @@ import {
   Alert
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import { obtenerApiToken } from '../api/templatesGSApi';
 
 const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImagePreview, onHeaderChange }) => {
 
@@ -36,11 +37,11 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       idBot = decoded.id_bot;
       urlTemplatesGS = decoded.urlTemplatesGS;
       urlWsFTP = decoded.urlWsFTP;
-      apiToken = decoded.apiToken;
+      //apiToken = decoded.apiToken;
       console.log('idBot:', idBot);
       console.log('idBotRedes:', idBotRedes);
       console.log('urlTemplatesGS', urlTemplatesGS);
-      console.log('apiToken', apiToken);
+      //console.log('apiToken', apiToken);
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
@@ -188,6 +189,20 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
       const mediaId = gupshupData.handleId.message;
       console.log('Media ID obtenido de Gupshup:', mediaId);
       */
+
+      //obtengo el API_TOKEN desde templatesGS
+
+      
+      try {
+        const apiToken = await obtenerApiToken(empresaTalkMe); // Solo recibes el string del token
+        console.log("Token:", apiToken);
+        // Aquí puedes guardarlo en el estado, localStorage, o usarlo directamente
+      } catch (error) {
+        console.error("Fallo al obtener token:", error);
+      }
+
+
+
 
       // Subir archivo al servicio propio
       console.log('Convirtiendo archivo a Base64...');
