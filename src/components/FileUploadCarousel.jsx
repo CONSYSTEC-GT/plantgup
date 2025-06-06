@@ -5,13 +5,14 @@ import { Alert, Box, Button, CircularProgress, Dialog, DialogTitle, DialogConten
 import Swal from 'sweetalert2';
 
 import { CustomDialog } from '../utils/CustomDialog';
+import { obtenerApiToken } from '../api/templatesGSApi';
 
 const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, initialFile = null }) => {
 
   // Recupera el token del localStorage
   const token = localStorage.getItem('authToken');
 
-  /* Decodifica el token para obtener appId y authCode
+  // Decodifica el token para obtener appId y authCode
   let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, urlWsFTP, apiToken;
   if (token) {
     try {
@@ -25,18 +26,18 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       idBot = decoded.id_bot;
       urlTemplatesGS = decoded.urlTemplatesGS;
       urlWsFTP = decoded.urlWsFTP;
-      apiToken = decoded.apiToken;
+      //apiToken = decoded.apiToken;
       console.log('idBot:', idBot);
       console.log('idBotRedes:', idBotRedes);
       console.log('urlTemplatesGS', urlTemplatesGS);
-      console.log('apiToken', apiToken);
+      //console.log('apiToken', apiToken);
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
   }
-  */
+  //
 
-     //
+     /*
   let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken, urlWsFTP;
 
   appId = '1fbd9a1e-074c-4e1e-801c-b25a0fcc9487'; // Extrae appId del token
@@ -52,7 +53,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
   urlWsFTP = 'https://dev.talkme.pro/WsFTP/api/ftp/upload';
   
       
-//
+*/
 
   const charLimit = 60;
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -151,6 +152,16 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       nombreArchivo: selectedFile.name,
       contenidoArchivo: base64Content.split(',')[1],
     };
+
+    let apiToken;
+
+    try {
+      apiToken = await obtenerApiToken(urlTemplatesGS, empresaTalkMe);
+      console.log("Token:", apiToken);
+      
+    } catch (error) {
+      console.error("Fallo al obtener token:", error);
+    }
 
     console.log('📤 Payload enviado:', payload);
 
