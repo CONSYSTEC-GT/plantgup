@@ -387,7 +387,7 @@ export const editTemplateToTalkMe = async (idTemplate, templateData, idNombreUsu
   }
 };
 
-export const obtenerApiToken = async (idEmpresa) => {
+export const obtenerApiToken = async (urlTemplatesGS, idEmpresa) => {
   const url = `${urlTemplatesGS}empresas/${idEmpresa}/token`;
 
   try {
