@@ -192,9 +192,10 @@ const FileUploadComponent = ({ templateType = 'media', onUploadSuccess, onImageP
 
       //obtengo el API_TOKEN desde templatesGS
 
-      
+      let apiToken;
+
       try {
-        const apiToken = await obtenerApiToken(urlTemplatesGS, empresaTalkMe); // Solo recibes el string del token
+         apiToken = await obtenerApiToken(urlTemplatesGS, empresaTalkMe); // Solo recibes el string del token
         console.log("Token:", apiToken);
         // Aquí puedes guardarlo en el estado, localStorage, o usarlo directamente
       } catch (error) {
