@@ -1,6 +1,7 @@
 
 import { showSnackbar } from "../utils/Snackbar";
 import { saveTemplateLog } from "./templatesGSLog";
+import Swal from 'sweetalert2';
 
 // PLANTILLAS NORMALES
 export const createTemplateGupshup = async (appId, authCode, templateData, idNombreUsuarioTalkMe, urlTemplatesGS, validateFn) => {

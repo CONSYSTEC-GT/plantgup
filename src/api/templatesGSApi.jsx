@@ -1,4 +1,4 @@
-
+import Swal from 'sweetalert2';
 import { showSnackbar } from '../utils/Snackbar';
 import { getMediaType } from '../utils/validarUrl';
 
