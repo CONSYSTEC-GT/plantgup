@@ -151,7 +151,14 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     ID_PLANTILLA_CATEGORIA = 13;
   } else {
     console.error("Categoría no válida:", selectedCategory);
-    showSnackbar("❌ Categoría no válida", "error");
+    Swal.fire({
+      title: '❌ Error',
+      text: 'Categoría no válida.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#00c3ff'
+    });
+    return n
     return null; // Retornar null si la categoría no es válida
   }
 
@@ -208,12 +215,24 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     if (!response.ok) {
       const errorResponse = await response.json();
       console.error("Error response:", errorResponse);
-      showSnackbar(`❌ Error en el segundo request: ${errorResponse.message || "Solicitud inválida"}`, "error");
+      Swal.fire({
+        title: '❌ Error',
+        text: errorResponse.message || 'Solicitud inválida.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#00c3ff'
+      });
       return null; // Retornar null en caso de error
     }
 
     const result = await response.json();
-    showSnackbar("✅ Segundo request completado exitosamente", "success");
+    Swal.fire({
+      title: '¡Éxito!',
+      text: 'La plantilla fue creada correctamente.',
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#00c3ff'
+    });
     console.log("Response del segundo request: ", result);
 
     // Si tenemos variables, hacer el tercer request
@@ -235,7 +254,13 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     return result; // Retornar el resultado en caso de éxito
   } catch (error) {
     console.error("Error en el segundo request:", error);
-    showSnackbar("❌ Error en el segundo request", "error");
+    Swal.fire({
+      title: '❌ Error',
+      text: 'Ocurrió un error en el segundo request.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#00c3ff'
+    });
     return null; // Retornar null en caso de error
   }
 };
