@@ -206,7 +206,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       fileInputRef.current.value = '';
     }
     setFileInputKey(prev => prev + 1);
-    setShowSuccessModal(true);
+    //setShowSuccessModal(true);
 
   } catch (error) {
     console.error('❌ Error en el proceso de subida:', error);
@@ -221,7 +221,7 @@ const FileUploadComponent = ({ onUploadSuccess, onImagePreview, onHeaderChange, 
       footer: '<a href="#">¿Necesitas ayuda?</a>'
     });
 
-    setShowErrorModal(true);
+    //setShowErrorModal(true);
     setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
   } finally {
     setIsUploading(false);
