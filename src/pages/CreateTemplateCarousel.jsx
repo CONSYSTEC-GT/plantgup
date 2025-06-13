@@ -3,6 +3,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Tooltip, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import TemplateFormCarousel from '../components/TemplateFormCarousel';
+import TemplateFormCarouselV2 from '../components/TemplateFormCarouselV2';
 
 const CreateTemplateCarousel = () => {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ const CreateTemplateCarousel = () => {
         </Typography>
       </Box> */}
 
-      <TemplateFormCarousel />
+      <TemplateFormCarouselV2 />
     </Box>
   );
 };

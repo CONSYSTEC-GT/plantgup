@@ -54,22 +54,22 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/CreateTemplatePage/CreateTemplateCatalog"
-            element={
-              <ProtectedRoute>
-                <CreateTemplateCatalog />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/CreateTemplatePage/CreateTemplateCarousel"
-            element={
-              <ProtectedRoute>
-                <CreateTemplateCarousel />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/CreateTemplatePage/CreateTemplateCatalog"
+              element={
+                <ProtectedRoute>
+                  <CreateTemplateCatalog />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/CreateTemplatePage/CreateTemplateCarousel"
+              element={
+                <ProtectedRoute>
+                  <CreateTemplateCarousel />
+                </ProtectedRoute>
+              }
+            />
           <Route
             path="/edit-template"
             element={
