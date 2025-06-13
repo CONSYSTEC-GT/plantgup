@@ -5,6 +5,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import Swal from 'sweetalert2';
 
+  /*
   let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken, urlWsFTP;
 
   appId = '1fbd9a1e-074c-4e1e-801c-b25a0fcc9487'; // Extrae appId del token
@@ -18,7 +19,31 @@ import Swal from 'sweetalert2';
   urlTemplatesGS = 'http://localhost:3004/api/';
   apiToken = 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq';
   urlWsFTP = 'https://dev.talkme.pro/WsFTP/api/ftp/upload';
+  */
 
+  // Decodifica el token para obtener appId y authCode
+    let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, urlWsFTP;
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        appId = decoded.app_id; // Extrae appId del token
+        authCode = decoded.auth_code; // Extrae authCode del token
+        idUsuarioTalkMe = decoded.id_usuario;
+        idNombreUsuarioTalkMe = decoded.nombre_usuario;
+        empresaTalkMe = decoded.empresa;
+        idBotRedes = decoded.id_bot_redes;
+        idBot = decoded.id_bot;
+        urlTemplatesGS = decoded.urlTemplatesGS;
+        urlWsFTP = decoded.urlWsFTP;
+        //apiToken = decoded.apiToken;
+        console.log('idBot:', idBot);
+        console.log('idBotRedes:', idBotRedes);
+        console.log('urlTemplatesGS', urlTemplatesGS);
+        //console.log('apiToken', apiToken);
+      } catch (error) {
+        console.error('Error decodificando el token:', error);
+      }
+    }
 
 const ImprovedFileUpload = ({ onUploadSuccess, carouselType }) => {
 
@@ -140,10 +165,10 @@ const ImprovedFileUpload = ({ onUploadSuccess, carouselType }) => {
         contenidoArchivo: base64Content.split(',')[1],
       };
 
-      //let apiToken;
+      let apiToken;
 
       try {
-        //apiToken = await obtenerApiToken(urlTemplatesGS, empresaTalkMe);
+        apiToken = await obtenerApiToken(urlTemplatesGS, empresaTalkMe);
         console.log("Token:", apiToken);
       } catch (error) {
         console.error("Fallo al obtener token:", error);

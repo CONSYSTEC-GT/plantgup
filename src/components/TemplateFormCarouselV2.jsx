@@ -1768,7 +1768,7 @@ const updateButtonWithValidation = (cardId, buttonId, field, value, setCards, se
           {/* Template Name */}<Box sx={{ width: "100%", marginTop: 2, p: 4, border: "1px solid #ddd", borderRadius: 2 }}>
             <FormControl fullWidth>
               <FormLabel htmlFor="template-name-input">
-                *Nombre de la plantilla V2
+                *Nombre de la plantilla
               </FormLabel>
               <TextField
                 id="template-name-input"
