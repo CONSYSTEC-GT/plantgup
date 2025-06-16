@@ -279,7 +279,6 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
 
     try {
       console.log('Iniciando proceso de subida de archivo...');
-      setIsLoading(true);
 
       // Subir archivo a Gupshup
 
@@ -291,7 +290,6 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
       const gupshupUrl = `https://partner.gupshup.io/partner/app/${appId}/upload/media`;
 
       console.log('Preparando solicitud a Gupshup...');
-      setUploadStatus('Subiendo archivo a Gupshup...');
 
       const gupshupResponse = await axios.post(gupshupUrl, gupshupFormData, {
         headers: {
