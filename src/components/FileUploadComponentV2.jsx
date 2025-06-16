@@ -4,6 +4,7 @@ import { CloudUpload, CheckCircle, Error as ErrorIcon, Close } from '@mui/icons-
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import Swal from 'sweetalert2';
+import { obtenerApiToken } from '../api/templatesGSApi';
 
 /*
 let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken, urlWsFTP;
