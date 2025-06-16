@@ -1209,7 +1209,8 @@ const replaceVariables = (text, variables) => {
                 onUploadSuccess={(uploadData) => {
                   setMediaId(uploadData.mediaId);
                   setUploadedUrl(uploadData.url);
-                  console.log('Datos recibidos del componente hijo:', uploadData);
+                  console.log('Datos recibidos del componente hijo mediaId: ', mediaId);
+                  console.log('Datos recibidos del componente hijo uploadedUrl: ', uploadedUrl) ;
                 }}
                 onImagePreview={(preview) => setImagePreview(preview)}
                 onHeaderChange={(newHeader) => setHeader(newHeader)}
