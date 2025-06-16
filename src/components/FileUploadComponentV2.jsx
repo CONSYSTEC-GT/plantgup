@@ -210,7 +210,8 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
   };
 
   const realUpload = async (file) => {
-    try {
+
+    /*try {
       const base64Content = await convertToBase64(file);
 
       const payload = {
@@ -274,8 +275,73 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
       // SweetAlert removido - el componente ya muestra el estado de error
 
       throw error;
+    } */
+
+    try {
+      console.log('Iniciando proceso de subida de archivo...');
+      setIsLoading(true);
+
+      // Subir archivo a Gupshup
+
+      const gupshupFormData = new FormData();
+      gupshupFormData.append('file', selectedFile);
+      gupshupFormData.append('file_type', selectedFile.type);
+      console.log('filetype', setSelectedFile.type);
+
+      const gupshupUrl = `https://partner.gupshup.io/partner/app/${appId}/upload/media`;
+
+      console.log('Preparando solicitud a Gupshup...');
+      setUploadStatus('Subiendo archivo a Gupshup...');
+
+      const gupshupResponse = await axios.post(gupshupUrl, gupshupFormData, {
+        headers: {
+          Authorization: authCode,
+        },
+      });
+
+      console.log('Request completo a Gupshup:', {
+        url: gupshupUrl,
+        method: 'POST',
+        headers: {
+          Authorization: authCode,
+        },
+        data: gupshupFormData,
+      });
+
+      console.log('Respuesta de Gupshup recibida:', gupshupResponse);
+
+      if (gupshupResponse.status !== 200 || !gupshupResponse.data) {
+        console.error('Error en la respuesta de Gupshup:', {
+          status: gupshupResponse.status,
+          statusText: gupshupResponse.statusText,
+          errorDetails: gupshupResponse.data,
+        });
+        throw new Error(`Error en la respuesta de Gupshup: ${gupshupResponse.status}`);
+      }
+
+      const gupshupData = gupshupResponse.data;
+      console.log('Datos de Gupshup:', gupshupData);
+
+      if (!gupshupData.handleId) {
+        console.error('Error: Respuesta de Gupshup incompleta o no válida');
+        throw new Error('Respuesta de Gupshup incompleta o no válida');
+      }
+
+      const mediaId = gupshupData.handleId.message;
+      console.log('Media ID obtenido de Gupshup:', mediaId);
+
+      return mediaId;
+
+    } catch (error) {
+      console.error('❌ Error en el proceso de subida:', error);
+
+      // SweetAlert removido - el componente ya muestra el estado de error
+
+      throw error;
     }
-  };
+  }
+
+
 
   const handleRemoveFile = () => {
     setSelectedFile(null);

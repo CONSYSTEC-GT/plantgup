@@ -1207,7 +1207,7 @@ const replaceVariables = (text, variables) => {
               <FileUploadComponent
                 templateType={templateType}
                 onUploadSuccess={(uploadData) => {
-                  //setMediaId(uploadData.mediaId);
+                  setMediaId(uploadData.mediaId);
                   setUploadedUrl(uploadData.url);
                   console.log("UploadData: ", uploadData)
                   console.log('Datos recibidos del componente hijo mediaId: ', uploadData.mediaId);
