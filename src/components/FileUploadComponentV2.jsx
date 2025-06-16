@@ -225,6 +225,7 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
       let apiToken;
 
       try {
+        console.log('obtenerApitoken :' + 'url: ' + urlTemplatesGS + 'empresa: ', empresaTalkMe);
         apiToken = await obtenerApiToken(urlTemplatesGS, empresaTalkMe);
         console.log("Token:", apiToken);
       } catch (error) {
