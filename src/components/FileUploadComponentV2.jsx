@@ -50,7 +50,9 @@ if (token) {
   }
 }
 
-const ImprovedFileUpload = ({ onUploadSuccess, carouselType }) => {
+//
+
+const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onHeaderChange }) => {
 
   const [uploadState, setUploadState] = useState('idle'); // 'idle', 'uploading', 'success', 'error'
   const [selectedFile, setSelectedFile] = useState(null);
@@ -58,24 +60,43 @@ const ImprovedFileUpload = ({ onUploadSuccess, carouselType }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const fileInputRef = useRef(null);
   const [fileInputKey, setFileInputKey] = useState(Date.now());
+  const [imagePreview, setImagePreview] = useState(null); // Estado para la vista previa de la imagen
 
   // Configuración según el tipo
   const getFileConfig = () => {
-    if (carouselType === 'IMAGE') {
+    if (templateType === 'image') {
       return {
         accept: '.jpg, .jpeg, .png',
         maxSize: 5 * 1024 * 1024, // 5MB para imágenes
         allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
         typeLabel: 'imagen'
       };
-    } else if (carouselType === 'VIDEO') {
+    } else if (templateType === 'video') {
       return {
         accept: '.mp4',
         maxSize: 16 * 1024 * 1024, // 16MB para videos
         allowedTypes: ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska', 'video/webm'],
         typeLabel: 'video'
       };
+    } else if (templateType === 'document') {
+      return {
+        accept: '.pdf , .doc, .docx, .xls, .xlsx, .csv, .pptx',
+        maxSize: 20 * 1024 * 1024,
+        allowedTypes: [
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'text/csv',
+          'application/vnd.ms-powerpoint',
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+        ],
+        typeLabel: 'documento'
+      };
     }
+
+
     return {
       accept: '',
       maxSize: 0,
@@ -86,12 +107,20 @@ const ImprovedFileUpload = ({ onUploadSuccess, carouselType }) => {
 
   const fileConfig = getFileConfig();
 
-  // Validaciones de archivo
   const validateFile = (file) => {
     const errors = [];
 
+    // Mostrar detalles del archivo
+    console.log("📁 Validando archivo:");
+    console.log("Nombre:", file.name);
+    console.log("Tipo MIME:", file.type);
+    console.log("Tamaño (bytes):", file.size);
+    console.log("Tipos permitidos:", fileConfig.allowedTypes);
+    console.log("Tamaño máximo permitido (bytes):", fileConfig.maxSize);
+
     // Validar tipo de archivo
     if (!fileConfig.allowedTypes.includes(file.type)) {
+      console.warn('⚠️ Tipo de archivo no válido:', file.type);
       errors.push('Tipo de archivo no válido.');
       Swal.fire({
         title: 'Advertencia',
@@ -104,6 +133,7 @@ const ImprovedFileUpload = ({ onUploadSuccess, carouselType }) => {
 
     // Validar tamaño
     if (file.size > fileConfig.maxSize) {
+      console.warn('⚠️ El tamaño del archivo supera el permitido:', file.size);
       errors.push('El tamaño del archivo es superior al permitido.');
       Swal.fire({
         title: 'Advertencia',
@@ -113,8 +143,10 @@ const ImprovedFileUpload = ({ onUploadSuccess, carouselType }) => {
         confirmButtonColor: '#00c3ff'
       });
     }
+
     return errors;
   };
+
 
 
   const handleFileChange = async (event) => {
@@ -144,7 +176,27 @@ const ImprovedFileUpload = ({ onUploadSuccess, carouselType }) => {
       setErrorMessage(error.message || 'Error al subir el archivo');
     }
 
+    // Crear una vista previa de la imagen
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
 
+      // Notificar al componente padre con la vista previa
+      if (onImagePreview) {
+        onImagePreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+
+
+  };
+
+  const handleHeaderChange = (e) => {
+    const newHeader = e.target.value;
+    setHeader(newHeader);
+
+    // Añade esta línea para notificar al componente padre
+    if (onHeaderChange) onHeaderChange(newHeader);
   };
 
   const convertToBase64 = (file) => {
@@ -380,12 +432,12 @@ const ImprovedFileUpload = ({ onUploadSuccess, carouselType }) => {
 
         {renderFileStatus()}
 
-        {(uploadState === 'idle' || uploadState === 'error') && carouselType === "IMAGE" && (
+        {(uploadState === 'idle' || uploadState === 'error') && templateType === "IMAGE" && (
           <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
             Formatos permitidos: JPG, JPEG, PNG. Máximo 5 MB
           </Typography>
         )}
-        {(uploadState === 'idle' || uploadState === 'error') && carouselType === "VIDEO" && (
+        {(uploadState === 'idle' || uploadState === 'error') && templateType === "VIDEO" && (
           <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
             Formatos permitidos: MP4. Máximo 15 MB
           </Typography>

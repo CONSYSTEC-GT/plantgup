@@ -18,7 +18,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
 
-import FileUploadComponent from './FileUploadComponent';
+import FileUploadComponent from './FileUploadComponentV2';
 import { isValidURL, updateButtonWithValidation } from '../utils/validarUrl';
 import { createTemplateGupshup } from '../api/gupshupApi';
 import { saveTemplateToTalkMe } from '../api/templatesGSApi';
@@ -1189,17 +1189,31 @@ const replaceVariables = (text, variables) => {
               </FormLabel>
             </FormControl>
 
+            
             {/* Componente para subir archivos */}
-            <FileUploadComponent
+            {console.log("Valor de templateType:", templateType)}
+            {/*<FileUploadComponent
               templateType={templateType}
               onUploadSuccess={(mediaId, uploadedUrl) => {
+                console.log('Datos recibidos del componente hijo mediaId: ', mediaId);
+                console.log('Datos recibidos del componente hijo uploadedUrl: ', uploadedUrl) ;
                 setMediaId(mediaId); // Guarda el mediaId
                 setUploadedUrl(uploadedUrl); // Guarda la URL
                 //setUploadStatus("¡Archivo subido exitosamente!");
               }}
               onImagePreview={(preview) => setImagePreview(preview)} // Recibe la vista previa
               onHeaderChange={(newHeader) => setHeader(newHeader)} // Nueva prop
-            />
+            />*/}
+              <FileUploadComponent
+                templateType={templateType}
+                onUploadSuccess={(uploadData) => {
+                  setMediaId(uploadData.mediaId);
+                  setUploadedUrl(uploadData.url);
+                  console.log('Datos recibidos del componente hijo:', uploadData);
+                }}
+                onImagePreview={(preview) => setImagePreview(preview)}
+                onHeaderChange={(newHeader) => setHeader(newHeader)}
+              />
           </Box>
         )}
 
