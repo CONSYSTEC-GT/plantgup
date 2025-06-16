@@ -283,8 +283,8 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
       // Subir archivo a Gupshup
 
       const gupshupFormData = new FormData();
-      gupshupFormData.append('file', selectedFile);
-      gupshupFormData.append('file_type', selectedFile.type);
+      gupshupFormData.append('file', file);
+      gupshupFormData.append('file_type', file.type);
       console.log('filetype', setSelectedFile.type);
 
       const gupshupUrl = `https://partner.gupshup.io/partner/app/${appId}/upload/media`;
