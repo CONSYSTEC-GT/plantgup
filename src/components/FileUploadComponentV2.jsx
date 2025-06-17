@@ -328,7 +328,16 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
       const mediaId = gupshupData.handleId.message;
       console.log('Media ID obtenido de Gupshup:', mediaId);
 
-      return mediaId;
+      //return mediaId;
+
+      // Llamar al callback de éxito
+      if (onUploadSuccess) {
+        onUploadSuccess({
+          mediaId: mediaId,
+          //url: response.data.url,
+          type: file.type.includes('image') ? 'image' : 'video'
+        });
+      }
 
     } catch (error) {
       console.error('❌ Error en el proceso de subida:', error);
