@@ -115,7 +115,8 @@ export const createTemplateGupshup = async (appId, authCode, templateData, idNom
         confirmButtonColor: '#00c3ff'
       });
 
-      throw new Error(errorResponse.message || "Error al crear la plantilla");
+      return { status: "error", message: errorResponse.message };
+      //throw new Error(errorResponse.message || "Error al crear la plantilla");
     }
 
     const result = await response.json();
