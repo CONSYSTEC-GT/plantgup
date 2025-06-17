@@ -192,8 +192,9 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     URL: uploadedUrl,
     PANTALLAS: pantallas,
     ESTADO: 0,
-    AUTORIZADO: 1,
+    AUTORIZADO: 0,
     ELIMINADO: 0,
+    ESTADO_GUPSHUP: 2,
     SEGUIMIENTO_EDC: 0,
     CREADO_POR: idNombreUsuarioTalkMe,
   };
