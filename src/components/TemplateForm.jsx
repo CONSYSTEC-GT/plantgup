@@ -121,7 +121,6 @@ const TemplateForm = () => {
     setVariableDescriptions([]);
     setDisplayPantallas([]);
     setImagePreview("");
-    onImagePreview("");
     // Agrega cualquier otro estado relacionado
   };
 
