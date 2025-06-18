@@ -120,6 +120,8 @@ const TemplateForm = () => {
     setVariables([]);
     setVariableDescriptions([]);
     setDisplayPantallas([]);
+    setImagePreview("");
+    onImagePreview("");
     // Agrega cualquier otro estado relacionado
   };
 
@@ -1655,7 +1657,17 @@ const replaceVariables = (text, variables) => {
                   </video>
                 ) : imagePreview.includes("pdf") ? (
                   <iframe src={imagePreview} width="100%" height="500px"></iframe>
-                ) : null}
+                ) : (imagePreview.includes(".doc") || imagePreview.includes(".docx") ||
+                  imagePreview.includes(".xls") || imagePreview.includes(".xlsx") ||
+                  imagePreview.includes(".ppt") || imagePreview.includes(".pptx")) ? (
+                  <iframe
+                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(imagePreview)}`}
+                    width="100%"
+                    height="500px"
+                    frameBorder="0"
+                    title="Vista previa de Office"
+                  ></iframe>
+                ) : nullnull}
               </Box>
             )}
             {/* Muestra el estado de la subida */}
