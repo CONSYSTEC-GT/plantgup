@@ -383,7 +383,7 @@ const TemplateForm = () => {
 
       //
       // Verificar si el primer request fue exitoso
-      if (result && result.status === "success") {
+      if (result && result.status === "success" && result.template && result.template.id) {
         // Extraer el valor de `id` del objeto `template`
         const templateId = result.template.id;
         /*
@@ -445,6 +445,8 @@ const TemplateForm = () => {
         console.error("Resultado del primer request:", result);
       }
     } catch (error) {
+      console.error("Error detallado:", error);
+      console.error("Stack trace:", error.stack);
       Swal.fire({
         title: 'Error',
         text: 'Ocurrió un error inesperado.',
