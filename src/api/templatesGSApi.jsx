@@ -186,7 +186,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     ID_INTERNO: templateId,
     NOMBRE: templateName,
     NOMBRE_PLANTILLA: templateName,
-    MENSAJE: message,
+    MENSAJE: message = reordenarVariables(message),
     TIPO_PLANTILLA: TIPO_PLANTILLA,
     MEDIA: MEDIA,
     URL: uploadedUrl,
@@ -438,6 +438,42 @@ export const obtenerApiToken = async (urlTemplatesGS, idEmpresa) => {
     return null;
   }
 };
+
+//utils
+
+function reordenarVariables(message) {
+  // Encontrar todas las variables en el mensaje
+  const variables = message.match(/\{\{\d+\}\}/g) || [];
+  
+  // Crear un mapa para el reordenamiento: {{1}} -> {{0}}, {{2}} -> {{1}}, etc.
+  const reordenamiento = {};
+  variables.forEach((variable, index) => {
+    const numeroOriginal = variable.match(/\d+/)[0];
+    reordenamiento[variable] = `{{${index}}}`;
+  });
+  
+  // Reemplazar cada variable con su nuevo número
+  let nuevoMensaje = message;
+  for (const [vieja, nueva] of Object.entries(reordenamiento)) {
+    nuevoMensaje = nuevoMensaje.replace(new RegExp(escapeRegExp(vieja), 'g'), nueva);
+  }
+  
+  return nuevoMensaje;
+}
+
+// Función auxiliar para escapar caracteres especiales en regex
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Ejemplo de uso:
+const mensajeOriginal = "Bienvenido {{1}} que tengas un buen {{2}} !";
+const mensajeReordenado = reordenarVariables(mensajeOriginal);
+console.log(mensajeReordenado); // "Bienvenido {{0}} que tengas un buen {{1}} !"
+
+
+
+
 
 
 
