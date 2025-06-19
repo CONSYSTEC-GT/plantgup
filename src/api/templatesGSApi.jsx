@@ -15,7 +15,7 @@ const saveTemplateParams = async (ID_PLANTILLA, variables, variableDescriptions,
         ID_PLANTILLA_TIPO_DATO: tipoDatoId,
         NOMBRE: variableDescriptions[variables[i]] || '',
         PLACEHOLDER: variableDescriptions[variables[i]] || '',
-        ORDEN: i + 1,
+        ORDEN: i,
         CREADO_POR: "Sistema.TalkMe",
       };
 
