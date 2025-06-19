@@ -179,6 +179,8 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
 
   const MEDIA = mediaMap[templateType] || null;
 
+  const mensajeProcesado = reordenarVariables(message);
+
   const data = {
     ID_PLANTILLA: null,
     ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
@@ -186,7 +188,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
     ID_INTERNO: templateId,
     NOMBRE: templateName,
     NOMBRE_PLANTILLA: templateName,
-    MENSAJE: message = reordenarVariables(message),
+    MENSAJE: mensajeProcesado,
     TIPO_PLANTILLA: TIPO_PLANTILLA,
     MEDIA: MEDIA,
     URL: uploadedUrl,
