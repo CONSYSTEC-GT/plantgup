@@ -329,7 +329,6 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
       if (onUploadSuccess) {
         console.log('Notificando al componente padre con el mediaId y la URL...');
         onUploadSuccess({ mediaId, url: ownServiceData.url });
-        setIsLoading(false);
       }
 
       console.log('Proceso de subida completado exitosamente.');
