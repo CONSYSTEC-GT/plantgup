@@ -262,6 +262,8 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
       const mediaId = gupshupData.handleId.message;
       console.log('Media ID obtenido de Gupshup:', mediaId);
 
+      //### SERVICIO WSFTP PROPIO DE CONSYSTEC
+
       let apiToken;
 
       try {
@@ -274,7 +276,7 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
 
       // Subir archivo al servicio propio
       console.log('Convirtiendo archivo a Base64...');
-      const base64Content = await convertToBase64(selectedFile);
+      const base64Content = await convertToBase64(file);
       console.log('Archivo convertido a Base64.');
 
       const payload = {
@@ -283,7 +285,7 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
         idBotRedes: idBotRedes,
         idUsuario: idUsuarioTalkMe,
         tipoCarga: 3,
-        nombreArchivo: selectedFile.name,
+        nombreArchivo: file.name,
         contenidoArchivo: base64Content.split(',')[1],
       };
 
@@ -353,11 +355,6 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
           data: error.config.data,
         });
       }
-
-      setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
-      setIsLoading(false);
-      //setUploadStatus('Error al subir el archivo');
-      // Mostrar SweetAlert de error detallado
       await Swal.fire({
         icon: 'error',
         title: 'Error en la subida',
