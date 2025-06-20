@@ -290,7 +290,6 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
       };
 
       console.log('Preparando solicitud al servicio propio...');
-      setUploadStatus('Subiendo archivo al servicio propio...');
 
       const ownServiceResponse = await axios.post(
         urlWsFTP,
