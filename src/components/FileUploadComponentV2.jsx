@@ -211,72 +211,6 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
 
   const realUpload = async (file) => {
 
-    /*try {
-      const base64Content = await convertToBase64(file);
-
-      const payload = {
-        idEmpresa: empresaTalkMe,
-        idBot: idBot,
-        idBotRedes: idBotRedes,
-        idUsuario: idUsuarioTalkMe,
-        tipoCarga: 3,
-        nombreArchivo: file.name,
-        contenidoArchivo: base64Content.split(',')[1],
-      };
-
-      let apiToken;
-
-      try {
-        console.log('obtenerApitoken :' + 'url: ' + urlTemplatesGS + 'empresa: ', empresaTalkMe);
-        apiToken = await obtenerApiToken(urlTemplatesGS, empresaTalkMe);
-        console.log("Token:", apiToken);
-      } catch (error) {
-        console.error("Fallo al obtener token:", error);
-        throw new Error('Error al obtener token de autenticación');
-      }
-
-      console.log('📤 Payload enviado:', payload);
-
-      const response = await axios.post(
-        urlWsFTP,
-        payload,
-        {
-          headers: {
-            'x-api-token': apiToken,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      console.log('📥 Respuesta recibida:', response);
-
-      if (response.status !== 200 || !response.data) {
-        throw new Error('Error en la respuesta del servicio');
-      }
-
-      const mediaId = response.data.mediaId || response.data.id || `media-${Date.now()}`;
-
-      // Llamar al callback de éxito
-      if (onUploadSuccess) {
-        onUploadSuccess({
-          mediaId: mediaId,
-          url: response.data.url,
-          type: file.type.includes('image') ? 'image' : 'video'
-        });
-      }
-
-      // SweetAlert removido - el componente ya muestra el estado visual
-
-      return { mediaId, url: response.data.url };
-
-    } catch (error) {
-      console.error('❌ Error en el proceso de subida:', error);
-
-      // SweetAlert removido - el componente ya muestra el estado de error
-
-      throw error;
-    } */
-
     try {
       console.log('Iniciando proceso de subida de archivo...');
 
@@ -328,25 +262,115 @@ const ImprovedFileUpload = ({ onUploadSuccess, templateType, onImagePreview, onH
       const mediaId = gupshupData.handleId.message;
       console.log('Media ID obtenido de Gupshup:', mediaId);
 
-      //return mediaId;
+      let apiToken;
 
-      // Llamar al callback de éxito
+      try {
+        apiToken = await obtenerApiToken(urlTemplatesGS, empresaTalkMe); // Solo recibes el string del token
+        console.log("Token:", apiToken);
+        // Aquí puedes guardarlo en el estado, localStorage, o usarlo directamente
+      } catch (error) {
+        console.error("Fallo al obtener token:", error);
+      }
+
+      // Subir archivo al servicio propio
+      console.log('Convirtiendo archivo a Base64...');
+      const base64Content = await convertToBase64(selectedFile);
+      console.log('Archivo convertido a Base64.');
+
+      const payload = {
+        idEmpresa: empresaTalkMe,
+        idBot: idBot,
+        idBotRedes: idBotRedes,
+        idUsuario: idUsuarioTalkMe,
+        tipoCarga: 3,
+        nombreArchivo: selectedFile.name,
+        contenidoArchivo: base64Content.split(',')[1],
+      };
+
+      console.log('Preparando solicitud al servicio propio...');
+      setUploadStatus('Subiendo archivo al servicio propio...');
+
+      const ownServiceResponse = await axios.post(
+        urlWsFTP,
+        payload,
+        {
+          headers: {
+            'x-api-token': apiToken,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      console.log('Respuesta del servicio propio recibida:', ownServiceResponse);
+
+      if (ownServiceResponse.status !== 200 || !ownServiceResponse.data) {
+        console.error('Error en la respuesta del servicio propio:', {
+          status: ownServiceResponse.status,
+          statusText: ownServiceResponse.statusText,
+          errorDetails: ownServiceResponse.data,
+        });
+
+        // Mostrar SweetAlert de error
+        await Swal.fire({
+          icon: 'error',
+          title: 'Error en la subida',
+          text: 'Hubo un problema con la respuesta del servidor',
+          footer: `Código de estado: ${ownServiceResponse.status}`,
+        });
+
+        throw new Error('Error en la respuesta del servicio propio');
+      }
+
+      const ownServiceData = ownServiceResponse.data;
+      console.log('Datos del servicio propio:', ownServiceData);
+
+      // Notificar al componente padre con el mediaId y la URL
       if (onUploadSuccess) {
-        onUploadSuccess({
-          mediaId: mediaId,
-          //url: response.data.url,
-          type: file.type.includes('image') ? 'image' : 'video'
+        console.log('Notificando al componente padre con el mediaId y la URL...');
+        onUploadSuccess(mediaId, ownServiceData.url); // Pasar ambos valores
+        setIsLoading(false);
+      }
+
+      console.log('Proceso de subida completado exitosamente.');
+
+      // Mostrar SweetAlert de éxito
+      await Swal.fire({
+        icon: 'success',
+        title: '¡Archivo subido!',
+        text: 'El archivo se ha subido correctamente',
+        timer: 3000,
+        showConfirmButton: false
+      });
+    } catch (error) {
+      console.error('Error en el proceso de subida:', error);
+
+      // Imprimir el request completo en caso de error
+      if (error.config) {
+        console.error('Request completo que causó el error:', {
+          url: error.config.url,
+          method: error.config.method,
+          headers: error.config.headers,
+          data: error.config.data,
         });
       }
 
-    } catch (error) {
-      console.error('❌ Error en el proceso de subida:', error);
+      setError(`Error al subir el archivo: ${error.message || 'Por favor, intenta nuevamente.'}`);
+      setIsLoading(false);
+      //setUploadStatus('Error al subir el archivo');
+      // Mostrar SweetAlert de error detallado
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error en la subida',
+        html: `
+      <p>No se pudo subir el archivo.</p>
+      <p><strong>Razón:</strong> ${error.message || 'Error desconocido'}</p>
+      ${error.response?.data ? `<p><small>${JSON.stringify(error.response.data)}</small></p>` : ''}
+    `,
+        confirmButtonText: 'Entendido'
+      });
 
-      // SweetAlert removido - el componente ya muestra el estado de error
-
-      throw error;
     }
-  }
+  };
 
 
 
