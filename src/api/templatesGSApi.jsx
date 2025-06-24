@@ -142,6 +142,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   const headers = {
     "Content-Type": "application/json",
   };
+
   //13 y 14 son en certi igual que 149 en bot redes y en dev son 17 y 
   //10 Y 13 SON EN S1 AL S4
   let ID_PLANTILLA_CATEGORIA;
@@ -158,7 +159,6 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
       confirmButtonText: 'Aceptar',
       confirmButtonColor: '#00c3ff'
     });
-    return n
     return null; // Retornar null si la categoría no es válida
   }
 
@@ -170,6 +170,7 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
   }
 
   console.log("TEMPLATE TYPE:", templateType);
+
   const mediaMap = {
     image: "image",
     video: "video",
@@ -181,12 +182,14 @@ export const saveTemplateToTalkMe = async (templateId, templateData, idNombreUsu
 
   const mensajeProcesado = reordenarVariables(message);
 
+  const nombreProcesado = templateName.replace(/_/g, " ");
+
   const data = {
     ID_PLANTILLA: null,
     ID_PLANTILLA_CATEGORIA: ID_PLANTILLA_CATEGORIA,
     ID_BOT_REDES: idBotRedes,
     ID_INTERNO: templateId,
-    NOMBRE: templateName,
+    NOMBRE: nombreProcesado,
     NOMBRE_PLANTILLA: templateName,
     MENSAJE: mensajeProcesado,
     TIPO_PLANTILLA: TIPO_PLANTILLA,
@@ -467,16 +470,5 @@ function reordenarVariables(message) {
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
-
-// Ejemplo de uso:
-const mensajeOriginal = "Bienvenido {{1}} que tengas un buen {{2}} !";
-const mensajeReordenado = reordenarVariables(mensajeOriginal);
-console.log(mensajeReordenado); // "Bienvenido {{0}} que tengas un buen {{1}} !"
-
-
-
-
-
-
 
 export { saveTemplateParams };
