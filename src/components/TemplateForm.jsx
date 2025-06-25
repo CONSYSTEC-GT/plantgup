@@ -667,81 +667,112 @@ const TemplateForm = () => {
     setButtons(buttons.filter((button) => button.id !== id));
   };
 
+  const extractVariables = (text) => {
+    const regex = /\{\{\d+\}\}/g;
+    return [...new Set(text.match(regex) || [])];
+  };
+
+  const renumberVariables = (text) => {
+    const variableMap = new Map();
+    let counter = 1;
+    
+    return text.replace(/\{\{\d+\}\}/g, (match) => {
+        if (!variableMap.has(match)) {
+            variableMap.set(match, `{{${counter}}}`);
+            counter++;
+        }
+        return variableMap.get(match);
+    });
+};
+
   // Función actualizada con límite de emojis
   const handleBodyMessageChange = (e) => {
-    const newText = e.target.value;
-    const maxLength = 550;
-    const emojiCount = countEmojis(newText);
-    const maxEmojis = 10;
+  let newText = e.target.value; // ✅ Cambiar const por let
+  const maxLength = 550;
+  const emojiCount = countEmojis(newText);
+  const maxEmojis = 10;
 
-    // Verificar si se excede el límite de emojis
-    if (emojiCount > maxEmojis) {
-      // Opcional: Mostrar una alerta solo cuando se supera el límite por primera vez
-      if (countEmojis(message) <= maxEmojis) {
-        Swal.fire({
-          title: 'Límite de emojis',
-          text: 'Solo puedes incluir un máximo de 10 emojis',
-          icon: 'warning',
-          confirmButtonText: 'Entendido',
-          confirmButtonColor: '#00c3ff'
-        });
-      }
-      return; // No actualizar el texto si excede el límite de emojis
-    }
+  // Renumerar variables solo si se detectan (ej: al pegar)
+  if (newText.includes("{{")) {
+    newText = renumberVariables(newText); // ✅ Ahora funciona correctamente
+  }
 
-    if (newText.length > maxLength) {
+  // Verificar si se excede el límite de emojis
+  if (emojiCount > maxEmojis) {
+    // Opcional: Mostrar una alerta solo cuando se supera el límite por primera vez
+    if (countEmojis(message) <= maxEmojis) {
       Swal.fire({
-        title: 'Limite de caracteres',
-        text: 'Solo puedes incluir un máximo de 550 caracteres',
+        title: 'Límite de emojis',
+        text: 'Solo puedes incluir un máximo de 10 emojis',
         icon: 'warning',
         confirmButtonText: 'Entendido',
         confirmButtonColor: '#00c3ff'
       });
-      return;
+    }
+    return; // No actualizar el texto si excede el límite de emojis
+  }
+
+  if (newText.length > maxLength) {
+    Swal.fire({
+      title: 'Limite de caracteres',
+      text: 'Solo puedes incluir un máximo de 550 caracteres',
+      icon: 'warning',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#00c3ff'
+    });
+    return;
+  }
+
+  // Continuar con tu lógica existente si está dentro del límite de caracteres
+  if (newText.length <= maxLength) {
+    // Guardar el nuevo texto
+    setMessage(newText);
+
+    // Actualizar el contador de emojis (necesitas agregar este estado)
+    setEmojiCount(emojiCount);
+
+    // Extraer y actualizar variables automáticamente
+    const detectedVariables = extractVariables(newText);
+    if (
+      detectedVariables.length !== variables.length ||
+      !detectedVariables.every(v => variables.includes(v))
+    ) {
+      setVariables(detectedVariables);
     }
 
+    // Verificar qué variables se han eliminado del texto
+    const deletedVariables = [];
+    variables.forEach(variable => {
+      if (!newText.includes(variable)) {
+        deletedVariables.push(variable);
+      }
+    });
 
-    // Continuar con tu lógica existente si está dentro del límite de caracteres
-    if (newText.length <= maxLength) {
-      // Guardar el nuevo texto
-      setMessage(newText);
+    // Si se eliminaron variables, actualiza el estado
+    if (deletedVariables.length > 0) {
+      // Filtrar las variables eliminadas
+      const remainingVariables = variables.filter(v => !deletedVariables.includes(v));
 
-      // Actualizar el contador de emojis (necesitas agregar este estado)
-      setEmojiCount(emojiCount);
+      // Actualizar el estado de las variables
+      setVariables(remainingVariables);
 
-      // Verificar qué variables se han eliminado del texto
-      const deletedVariables = [];
-      variables.forEach(variable => {
-        if (!newText.includes(variable)) {
-          deletedVariables.push(variable);
-        }
+      // Actualizar las descripciones y ejemplos
+      const newDescriptions = { ...variableDescriptions };
+      const newExamples = { ...variableExamples };
+      const newErrors = { ...variableErrors };
+
+      deletedVariables.forEach(v => {
+        delete newDescriptions[v];
+        delete newExamples[v];
+        delete newErrors[v];
       });
 
-      // Si se eliminaron variables, actualiza el estado
-      if (deletedVariables.length > 0) {
-        // Filtrar las variables eliminadas
-        const remainingVariables = variables.filter(v => !deletedVariables.includes(v));
-
-        // Actualizar el estado de las variables
-        setVariables(remainingVariables);
-
-        // Actualizar las descripciones y ejemplos
-        const newDescriptions = { ...variableDescriptions };
-        const newExamples = { ...variableExamples };
-        const newErrors = { ...variableErrors };
-
-        deletedVariables.forEach(v => {
-          delete newDescriptions[v];
-          delete newExamples[v];
-          delete newErrors[v];
-        });
-
-        setVariableDescriptions(newDescriptions);
-        setVariableExamples(newExamples);
-        setVariableErrors(newErrors);
-      }
+      setVariableDescriptions(newDescriptions);
+      setVariableExamples(newExamples);
+      setVariableErrors(newErrors);
     }
-  };
+  }
+};
 
   // VARIABLES DEL BODY MESSAGE
   const handleAddVariable = () => {
