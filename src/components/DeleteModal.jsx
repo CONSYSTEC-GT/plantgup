@@ -45,18 +45,6 @@ const DeleteModal = ({ open, onClose, onConfirm, template }) => {
     }
   }
 
-  
-  const showSnackbar = (message, severity) => {
-    setSnackbarMessage(message);
-    setSnackbarSeverity(severity);
-    setOpenSnackbar(true);
-  };
-
-  const handleCloseSnackbar = (_, reason) => {
-    if (reason === 'clickaway') return;
-    setOpenSnackbar(false);
-  };
-
   const iniciarRequest = async () => {
     try {
       // Hacer el primer request
@@ -114,7 +102,7 @@ const DeleteModal = ({ open, onClose, onConfirm, template }) => {
                   confirmButtonText: 'Aceptar',
                   confirmButtonColor: '#00c3ff'
                 });
-        setShowConfirmationModal(true); // Activamos el modal de confirmación
+        //setShowConfirmationModal(true); // Activamos el modal de confirmación
         return { status: "success", template: { id: template.id } }; // Devuelve el estado y el ID de la plantilla
       } else {
         //showSnackbar('❌ Error al eliminar la plantilla', 'error');
@@ -129,7 +117,7 @@ const DeleteModal = ({ open, onClose, onConfirm, template }) => {
       }
     } catch (error) {
       console.log('Error en la solicitud:', error);
-      showSnackbar('❌ Error al eliminar la plantilla', 'error');
+      //showSnackbar('❌ Error al eliminar la plantilla', 'error');
       return { status: "error" }; // Devuelve un estado de error
     }
   };
@@ -271,15 +259,6 @@ const handleCloseConfirmationModal = () => {
           )}
         </Box>
       </Modal>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </>
   );
 };
