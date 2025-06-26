@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { Alert, Box, Button, Checkbox, Container, FormControl, FormControlLabel, FormLabel, FormHelperText, Grid, Grid2, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Radio, RadioGroup, Select, Snackbar, Stack, TextField, Tooltip, Typography, alpha } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
+import Swal from 'sweetalert2'
 
 import { Smile } from "react-feather"; // Icono para emojis
 import EmojiPicker from "emoji-picker-react"; // Selector de emojis
@@ -17,6 +18,7 @@ import Phone from "@mui/icons-material/Phone";
 
 
 import FileUploadComponent from './FileUploadComponent';
+import { saveTemplateLog } from '../api/templatesGSLog';
 
 
 const EditTemplateForm = () => {
@@ -78,6 +80,7 @@ const EditTemplateForm = () => {
   const [footer, setFooter] = useState("");
   const [buttons, setButtons] = useState([]);
   const [example, setExample] = useState("");
+  const [exampleHeader, setExampleHeader] = useState("");
   const [exampleMedia, setExampleMedia] = useState("");
   const [idTemplate, setIdTemplate] = useState("");
 
@@ -127,6 +130,44 @@ const EditTemplateForm = () => {
   const selectedCategoryRef = useRef(null);
 
 
+  // Recupera el token del localStorage
+  const token = localStorage.getItem('authToken');
+
+  let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, urlWsFTP;
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      appId = decoded.app_id; // Extrae appId del token
+      authCode = decoded.auth_code; // Extrae authCode del token
+      appName = decoded.app_name; // Extrae el nombre de la aplicación
+      idUsuarioTalkMe = decoded.id_usuario;  // Cambiado de idUsuario a id_usuario
+      idNombreUsuarioTalkMe = decoded.nombre_usuario;  // Cambiado de nombreUsuario a nombre_usuario
+      empresaTalkMe = decoded.empresa;
+      idBotRedes = decoded.id_bot_redes;
+      idBot = decoded.id_bot;
+      urlTemplatesGS = decoded.urlTemplatesGS;
+      urlWsFTP = decoded.urlWsFTP;
+    } catch (error) {
+      console.error('Error decodificando el token:', error);
+      console.log('urlWsFTP', urlWsFTP);
+    }
+  }
+    /*
+
+  let appId, authCode, appName, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe, idBotRedes, idBot, urlTemplatesGS, apiToken, urlWsFTP;
+
+  appId = '1fbd9a1e-074c-4e1e-801c-b25a0fcc9487'; // Extrae appId del token
+  authCode = 'sk_d416c60960504bab8be8bc3fac11a358'; // Extrae authCode del token
+  appName = 'DemosTalkMe55'; // Extrae el nombre de la aplicación
+  idUsuarioTalkMe = 78;  // Cambiado de idUsuario a id_usuario
+  idNombreUsuarioTalkMe = 'javier.colocho';  // Cambiado de nombreUsuario a nombre_usuario
+  empresaTalkMe = 2;
+  idBotRedes = 721;
+  idBot = 257;
+  urlTemplatesGS = 'https://dev.talkme.pro/templatesGS/api/';
+  apiToken = 'TFneZr222V896T9756578476n9J52mK9d95434K573jaKx29jq';
+  urlWsFTP = 'https://dev.talkme.pro/WsFTP/api/ftp/upload';
+  */
 
 
 
@@ -228,30 +269,10 @@ const EditTemplateForm = () => {
 
 
 
-  // FUNCION PARA ENVIAR LA SOLICITUD GUPSHUP
-  const sendRequest = async () => {
+const sendRequest = async () => {
   // Validar campos antes de enviar la solicitud
   if (!validateFields()) {
-    return { status: "error", message: "Validación fallida" }; // Retornar error
-  }
-
-  // Recupera el token del localStorage
-  const token = localStorage.getItem('authToken');
-
-  // Decodifica el token para obtener appId y authCode
-  let appId, authCode, idUsuarioTalkMe, idNombreUsuarioTalkMe, empresaTalkMe;
-  if (token) {
-    try {
-      const decoded = jwtDecode(token);
-      appId = decoded.app_id;
-      authCode = decoded.auth_code;
-      idUsuarioTalkMe = decoded.id_usuario;
-      idNombreUsuarioTalkMe = decoded.nombre_usuario;
-      empresaTalkMe = decoded.empresa;
-    } catch (error) {
-      console.error('Error decodificando el token:', error);
-      return { status: "error", message: "Error decodificando token" };
-    }
+    return { status: "error", message: "Validación fallida" };
   }
 
   const templateId = idTemplate;
@@ -291,6 +312,7 @@ const EditTemplateForm = () => {
 
   data.append("buttons", JSON.stringify(formattedButtons));
   data.append("example", example);
+  data.append("exampleHeader", exampleHeader);
   data.append("enableSample", true);
   data.append("allowTemplateCategoryChange", false);
 
@@ -303,40 +325,128 @@ const EditTemplateForm = () => {
       body: data,
     });
 
+    const responseData = await response.json(); // Mover esta línea aquí para usarla en ambos casos
+
     if (!response.ok) {
-      const errorResponse = await response.json();
-      console.error("Error response:", errorResponse);
-      showSnackbar(`❌ Error al actualizar la plantilla: ${errorResponse.message || "Solicitud inválida"}`, "error");
-      return { status: "error", message: errorResponse.message || "Solicitud inválida" };
+      console.error("Error response:", responseData);
+      
+      // Guardar log de error
+      await saveTemplateLog({
+        TEMPLATE_NAME: templateName,
+        APP_ID: appId,
+        CATEGORY: selectedCategory,
+        LANGUAGE_CODE: languageCode,
+        TEMPLATE_TYPE: templateType,
+        VERTICAL: vertical,
+        CONTENT: message,
+        HEADER: header || null,
+        FOOTER: footer || null,
+        MEDIA_ID: mediaId || null,
+        BUTTONS: JSON.stringify(buttons),
+        EXAMPLE: example,
+        EXAMPLE_HEADER: exampleHeader,
+        ENABLE_SAMPLE: true,
+        ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+        urlTemplatesGS,
+        CREADO_POR: idNombreUsuarioTalkMe,
+        STATUS: "ERROR",
+        REJECTION_REASON: responseData.message || "Solicitud inválida"
+      });
+
+      Swal.fire({
+        title: 'Error',
+        text: `❌ Error al actualizar la plantilla: ${responseData.message || "Solicitud inválida"}`,
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#00c3ff'
+      });
+      return { status: "error", message: responseData.message || "Solicitud inválida" };
     }
 
-    const result = await response.json();
-    showSnackbar("✅ Plantilla actualizada exitosamente", "success");
-    console.log("Response: ", result);
-    console.log("Plantilla:", templateId);
-    console.log("URL:", url); // Corregido: era URL, ahora es url
+    // Guardar log de éxito
+    await saveTemplateLog({
+      TEMPLATE_NAME: templateName,
+      APP_ID: appId,
+      CATEGORY: selectedCategory,
+      LANGUAGE_CODE: languageCode,
+      TEMPLATE_TYPE: templateType,
+      VERTICAL: vertical,
+      CONTENT: message,
+      HEADER: header || null,
+      FOOTER: footer || null,
+      MEDIA_ID: mediaId || null,
+      BUTTONS: JSON.stringify(buttons),
+      EXAMPLE: example,
+      EXAMPLE_HEADER: exampleHeader,
+      ENABLE_SAMPLE: true,
+      ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+      urlTemplatesGS,
+      CREADO_POR: idNombreUsuarioTalkMe,
+      STATUS: "SUCCESS",
+      REJECTION_REASON: null
+    });
 
-    // IMPORTANTE: Retornar la respuesta con el templateId
+    Swal.fire({
+      title: '¡Éxito!',
+      text: 'La plantilla fue editada correctamente.',
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#00c3ff'
+    });
+
+    console.log("Response: ", responseData);
+    console.log("Plantilla:", templateId);
+    console.log("URL:", url);
+
     return { 
       status: "success", 
       template: { 
-        id: templateId // Aquí está el ID que necesitas
+        id: templateId
       },
-      ...result // Incluir también la respuesta original del servidor
+      ...responseData
     };
 
   } catch (error) {
     console.error("Error en la solicitud:", error);
-    console.log("Plantilla:", templateId);
-    console.log("URL:", url); // Corregido: era URL, ahora es url
-    showSnackbar("❌ Error al actualizar la plantilla", "error");
-    return { status: "error", message: "Error en la solicitud" }; // Retornar error
+    
+    // Guardar log de error de excepción
+    await saveTemplateLog({
+      TEMPLATE_NAME: templateName,
+      APP_ID: appId,
+      CATEGORY: selectedCategory,
+      LANGUAGE_CODE: languageCode,
+      TEMPLATE_TYPE: templateType,
+      VERTICAL: vertical,
+      CONTENT: message,
+      HEADER: header || null,
+      FOOTER: footer || null,
+      MEDIA_ID: mediaId || null,
+      BUTTONS: JSON.stringify(buttons),
+      EXAMPLE: example,
+      EXAMPLE_HEADER: exampleHeader,
+      ENABLE_SAMPLE: true,
+      ALLOW_TEMPLATE_CATEGORY_CHANGE: false,
+      urlTemplatesGS,
+      CREADO_POR: idNombreUsuarioTalkMe,
+      STATUS: "ERROR",
+      REJECTION_REASON: error.message || "Error en la solicitud"
+    });
+
+    Swal.fire({
+      title: 'Error',
+      text: `❌ Error al actualizar la plantilla: ${error.message || "Error en la solicitud"}`,
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#00c3ff'
+    });
+    return { status: "error", message: "Error en la solicitud" };
   }
 };
 
+
   // FUNCION PARA ENVIAR EL REQUEST A TALKME
   const sendRequest2 = async (templateId) => {
-    const url = `https://certificacion.talkme.pro/templatesGS/api/plantillas/${templateId}`;
+    const url = `${urlWsFTP}${templateId}`;
     const headers = {
       "Content-Type": "application/json",
       // Agrega aquí cualquier header de autenticación si es necesario
@@ -345,12 +455,11 @@ const EditTemplateForm = () => {
     // Convertir selectedCategory a ID_PLANTILLA_CATEGORIA 13 Y 14 EN CERTI 17 Y 18 EN DEV
     let ID_PLANTILLA_CATEGORIA;
     if (selectedCategory === "MARKETING") {
-      ID_PLANTILLA_CATEGORIA = 17;
+      ID_PLANTILLA_CATEGORIA = 10;
     } else if (selectedCategory === "UTILITY") {
-      ID_PLANTILLA_CATEGORIA = 18;
+      ID_PLANTILLA_CATEGORIA = 13;
     } else {
       console.error("Categoría no válida:", selectedCategory);
-      showSnackbar("❌ Categoría no válida", "error");
       return null; // Retornar null si la categoría no es válida
     }
 
@@ -382,12 +491,12 @@ const EditTemplateForm = () => {
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Error response:", errorResponse);
-        showSnackbar(`❌ Error en el segundo request: ${errorResponse.message || "Solicitud inválida"}`, "error");
+        //showSnackbar(`❌ Error en el segundo request: ${errorResponse.message || "Solicitud inválida"}`, "error");
         return null; // Retornar null en caso de error
       }
 
       const result = await response.json();
-      showSnackbar("✅ Segundo request completado exitosamente", "success");
+      //showSnackbar("✅ Segundo request completado exitosamente", "success");
       console.log("Response del segundo request: ", result);
       return result; // Retornar el resultado en caso de éxito
     } catch (error) {
