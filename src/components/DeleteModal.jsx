@@ -136,7 +136,7 @@ const DeleteModal = ({ open, onClose, onConfirm, template }) => {
 
   const handleDelete2 = async (templateId) => {
     //const url = `https://certificacion.talkme.pro/templatesGS/api/plantillas/${templateId}`; 
-    const url = urlTemplatesGS + templateId;
+    const url = `${urlTemplatesGS}plantillas/${templateId}`;
     const headers = {
       "Content-Type": "application/json",
       // Agrega aquí cualquier header de autenticación si es necesario
